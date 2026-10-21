@@ -1,0 +1,10 @@
+[project]
+name = "livequestbench"
+version = "0.1.0"
+description = "A benchmark for long-horizon agents in continuously evolving 3D games"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[tool.uv]
+package = false
