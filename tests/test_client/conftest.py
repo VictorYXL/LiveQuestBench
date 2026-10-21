@@ -5,7 +5,7 @@ import pytest
 
 
 @pytest.fixture
-def red_png() -> bytes:
+def black_png() -> bytes:
     def chunk(kind: bytes, data: bytes) -> bytes:
         return (
             struct.pack(">I", len(data)) + kind + data
@@ -13,7 +13,7 @@ def red_png() -> bytes:
         )
 
     width = height = 64
-    pixels = (b"\x00" + b"\xff\x00\x00" * width) * height
+    pixels = (b"\x00" + b"\x00\x00\x00" * width) * height
     return (
         b"\x89PNG\r\n\x1a\n"
         + chunk(b"IHDR", struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0))

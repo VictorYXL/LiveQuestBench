@@ -5,12 +5,11 @@ long-horizon objectives in continuously evolving 3D games. The intended focus is
 the interaction between immediate reaction, persistent resources and decisions
 whose consequences affect later stages.
 
-**Current status: Python scaffold with working model clients, not a runnable game
-benchmark.** GitHub Copilot and OpenAI Responses clients are implemented. Copilot
-has passed small live text, image and tool-roundtrip checks; OpenAI is covered by
-offline protocol tests, not a live generation. There is no connected game, Agent
+**Current status: Python scaffold with model clients, not a runnable game
+benchmark.** GitHub Copilot, OpenAI Responses and local vLLM clients are implemented.
+There is no connected game, Agent
 implementation, configuration loader, Episode runner or score-producing launcher
-yet. These checks are not game benchmark results.
+yet.
 
 ## Development setup
 
@@ -73,10 +72,10 @@ agents/
       responses.py          Shared multimodal/tool Responses protocol
       github_copilot_client.py
       openai_client.py
+      vllm_client.py
 core/                       Future orchestration and shared infrastructure
 tests/
-  core/                     Offline model-client checks
-  integration/              Explicit opt-in live model checks
+  test_client/              Three opt-in checks per provider: text, image, tools
 pyproject.toml
 uv.lock
 .python-version
@@ -131,7 +130,7 @@ too early can prevent final evidence acquisition.
 The LLM message fields follow the existing Minecraft client's conventions,
 including multimodal/tool content and provider state. `LLMResponse` is an initial
 typed container, not a drop-in guarantee for existing dictionary-returning
-providers. The two implemented providers share Responses serialization and
+providers. The two hosted providers share Responses serialization and
 per-attempt usage callbacks; missing usage is never treated as zero. Aggregate
 costs and Episode-level accounting remain future work.
 
@@ -146,11 +145,12 @@ examples, retry semantics, live checks and limitations.
 
 ```bash
 uv sync --locked --group test
-uv run --locked --group test python -m pytest tests/core tests/integration -q
+uv run --locked --group test python -m pytest tests/test_client -q
 ```
 
-Live tests are skipped unless explicitly enabled. OpenAI offline tests do not
-need an API key or balance. Actual OpenAI generation requires eligible API quota;
+Live tests are skipped unless explicitly enabled. Only three types of model
+checks are retained: text, text with a generated black image, and tool calling.
+Actual OpenAI generation requires eligible API quota;
 do not assume a ChatGPT account or subscription supplies API credit.
 
 ## Bottom-up implementation sequence
@@ -178,10 +178,18 @@ Keep a few high-value checks, not a test for every edit, method or task YAML.
 Prioritize scoring correctness, lifecycle cleanup, result identity and private
 information boundaries. There is no test-count or coverage-percentage target.
 
-When real behavior is added, organize checks under `tests/core/`, `tests/game/`
-and explicitly selected `tests/integration/` as needed. Do not create a large mock
-framework or mirror every source module. The initial abstract scaffold has no
-per-method unit suite.
+Organize tests by the component being checked, not by unit/integration level:
+
+- `tests/test_client/`: supported model clients, using the same three check types.
+- `tests/test_game/`: game operations and game-specific scoring rules.
+- `tests/test_agent/`: Agent execution, stopping and per-Episode state.
+- `tests/test_benchmark/`: Episode orchestration, configuration, evaluator
+  invocation and result persistence.
+
+Only create a directory when it has actual tests; currently only `test_client`
+exists. Keep the `live` marker and explicit opt-in switches for real services.
+Do not duplicate scoring checks between game and benchmark tests, build a large
+mock framework or mirror every source module.
 
 Fast checks must not launch games, modify display sessions or make paid model
 requests. Native game smoke checks are separate and opt-in. Import/syntax checks

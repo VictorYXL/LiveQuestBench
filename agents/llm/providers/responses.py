@@ -98,9 +98,7 @@ def serialize_messages(
             if any(part["type"] != "input_text" for part in parts):
                 raise ValueError("Assistant image output is not supported")
             if parts:
-                items.append({"role": "assistant", "content": [
-                    {"type": "output_text", "text": part["text"]} for part in parts
-                ]})
+                items.append({"role": "assistant", "content": parts})
             for call in message.tool_calls:
                 items.append({
                     "type": "function_call", "call_id": call["id"],
