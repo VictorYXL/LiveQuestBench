@@ -121,7 +121,7 @@ These are small starting contracts, not a frozen public API.
 | Base | Operations | Responsibility |
 | --- | --- | --- |
 | [`BaseGame`](game/base_game.py) | `start`, `begin`, `end`, `get_agent_interface`, `save_snapshot`, `close` | One game session, public interaction handle and private evidence acquisition |
-| [`BaseAgent`](agents/base_agent.py) | `run`, `stop` | Autonomous execution using public task text and the permitted handle |
+| [`BaseAgent`](agents/base_agent.py) | `run(context)`, `stop(reason)`, `close` | Full-attempt execution, typed exit reasons, cooperative stop requests and Agent-owned cleanup |
 | [`BaseLLMClient`](agents/llm/base_client.py) | `chat`, `close` | Model requests, without taking over Agent history or tool execution |
 
 Game configuration and fixture selection belong to concrete constructors for now.
@@ -154,6 +154,106 @@ The base Game and Agent contracts remain abstract; Minecraft provides the first
 concrete game. The model base implements the
 common request lifecycle and requires provider-specific request/cleanup methods.
 There are no no-op concrete games, agents or model clients.
+
+## Agent integration
+
+The integration policy is **wrapper-first, with minimal upstream changes**.
+Preserve an Agent's existing runtime and behavior wherever possible; prefer
+configuration and supported extension points over rewriting its implementation.
+This describes the intended integration contract, not shipped adapters:
+external Agent integrations and the end-to-end benchmark runner are not yet
+implemented.
+
+### Which Agents can be integrated?
+
+The initial target is an autonomous Agent system that can:
+
+- Receive a public task and game/control instructions.
+- Run its own observation, decision and action loop, including an existing
+  upstream runner or controller.
+- Interact through the selected game's permitted observations and actions.
+  VM uses images and motor controls; ST uses approved structured observations
+  and fixed skills. Not every Agent needs to support both tracks.
+- Expose a recognizable end or return condition and allow the benchmark to
+  stop further game interaction at the deadline.
+- Honor the model and settings required by the selected experiment, or explicitly
+  declare that configuration unsupported.
+
+Agents do not need particular internal method names, a dedicated completion
+tool, native asynchronous code, or provider-native LLM tool-call output.
+Programmatic observation and safely parsed requests for permitted actions are
+valid integration paths. Agent completion does not establish task success;
+the benchmark evaluates the outcome independently.
+
+### Choosing an integration path
+
+| Existing Agent capability | Expected integration work |
+| --- | --- |
+| Configurable task/run entry point, tools and model backend | Write a thin Wrapper that binds game interactions and translates configuration and lifecycle events. Upstream source changes may be unnecessary. |
+| Supported Agent Client Protocol (ACP), Model Context Protocol (MCP), or configurable model endpoint | Reuse an appropriate protocol adapter or model bridge. Once the shared integration exists, a compatible Agent may need only configuration. These protocols are optional and do not guarantee compatibility by themselves. |
+| Custom environment, tool or model extension interfaces | Implement the upstream interface in a separate adapter and inject it through the Wrapper. |
+| Hard-coded game connections, model settings or inaccessible lifecycle hooks | Make a small, versioned upstream patch where necessary. Document its purpose and any behavioral changes. |
+| Only a next-action policy, or a runtime requiring different game permissions or timing | Requires additional controller/profile design; it is not a drop-in integration under the initial autonomous-Agent scope. |
+
+A Wrapper presents the benchmark-facing [BaseAgent](agents/base_agent.py)
+contract while delegating to the original Agent. It connects task delivery,
+execution and stopping, permitted game interactions, and experiment settings.
+It can use native calls, an external process or an existing protocol adapter;
+wrapping an Agent does not require replacing its internal architecture.
+One reusable Wrapper may serve multiple compatible Agents.
+
+### Models, instructions and adaptation limits
+
+An Agent may retain its own LLM client. For fixed-model Agent comparisons,
+experiment settings must select the actual model/backend and required generation
+parameters, including enabled auxiliary generation roles. Other components,
+such as embedding or vision models, must also be declared. Use native
+configuration, client injection or a compatible proxy as appropriate; using
+LiveQuestBench's Python model client is not mandatory.
+
+Do not silently ignore required settings, substitute models or fall back to
+defaults while claiming a controlled comparison. Record effective configuration
+and disclose any remaining verification limits. Native full-system results with
+different model stacks must be distinguished from fixed-model comparisons.
+
+Public game instructions and task information are supplied by the benchmark.
+The Wrapper delivers them through the Agent's supported input mechanism without
+requiring a custom system-prompt API. Agent-specific strategy prompts, memory,
+extra resources and adaptation changes must be disclosed.
+
+Minimal source edits are acceptable, but changing an Agent's planning method,
+skill repertoire or information access is more than interface translation.
+Native execution of model-generated programs, hidden-state access, or pausing
+the world during reasoning is not covered by the current restricted real-time
+condition merely because it can be wrapped or exposed as a tool. Such systems
+need an explicitly reviewed adaptation or a separately defined condition.
+
+Support is established for a specific Agent version, adapter, model configuration
+and game/track combination after integration checks, including observation/action
+round trips, configuration handling, termination and deadline enforcement.
+A configurable interface alone is not a claim of working support.
+
+### Python lifecycle contract
+
+[`agents/base_agent.py`](agents/base_agent.py) provides the abstract contract
+for native implementations and Wrappers:
+
+- `run(AgentContext[InterfaceT]) -> AgentExit` receives the public task, game
+  instructions, permitted interface, episode ID and host-monotonic start/deadline
+  timestamps in nanoseconds.
+- `AgentExitReason` distinguishes `completed`, `gave_up`, `returned`,
+  `native_limit` and `stopped`. The optional native reason preserves upstream
+  details. Errors propagate as exceptions; no exit reason is a benchmark score.
+- `stop(StopReason)` accepts deadline, game-terminal, operator-cancel or
+  infrastructure-error requests. It acknowledges cooperative stopping, not
+  guaranteed termination of blocking work.
+- `close()` releases Agent-owned resources and allows repeated cleanup.
+
+Create a fresh instance per attempt and pass Agent/model configuration through
+its implementation-specific constructor or factory. No model client or
+ACP/MCP dependency is required by the base. Remote adapters must translate host
+timestamps appropriately. The future runner/game gate, not this abstract class,
+must enforce deadlines and preserve final evidence independently of Agent cleanup.
 
 ## Model clients
 
@@ -203,7 +303,7 @@ Organize tests by the component being checked, not by unit/integration level:
 - `tests/test_benchmark/`: Episode orchestration, configuration, evaluator
   invocation and result persistence.
 
-Current test directories are `test_client` and `test_game/minecraft`.
+Current test directories are `test_client`, `test_agent` and `test_game/minecraft`.
 Keep explicit opt-in switches for
 real services and games.
 Do not duplicate scoring checks between game and benchmark tests, build a large
