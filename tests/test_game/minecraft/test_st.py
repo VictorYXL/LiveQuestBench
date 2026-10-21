@@ -15,22 +15,7 @@ pytest.importorskip("PIL", reason="Install the minecraft extra")
 from game.minecraft.evaluators.inventory import evaluate_inventory
 from game.minecraft.game import MinecraftGame
 from game.minecraft.init_player_state import PlayerState
-from game.minecraft.runtime.account import offline_identity
-from game.minecraft.structured_tools.interface import StructuredInterface, tool_schemas, validate_tool
-
-
-def test_st_profile() -> None:
-    assert offline_identity() == offline_identity("LiveQuestBot")
-    assert offline_identity("OtherBot") != offline_identity()
-    schemas = tool_schemas()
-    assert len({schema["name"] for schema in schemas}) == len(schemas)
-    validate_tool("MoveTool", {"direction": "forward", "duration": 1})
-    with pytest.raises(ValueError):
-        validate_tool("MoveTool", {"direction": "forward", "duration": 11})
-    with pytest.raises(ValueError):
-        validate_tool("console", {"command": "give"})
-    with pytest.raises(ValueError):
-        validate_tool("SelectTool", {"slot": True})
+from game.minecraft.structured_tools.interface import StructuredInterface
 
 
 @pytest.mark.game

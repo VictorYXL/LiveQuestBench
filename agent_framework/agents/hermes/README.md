@@ -51,15 +51,17 @@ agent = HermesAgent(
 The caller supplies a consistently configured client, restricted bindings and
 `AgentContext`. The experiment ID remains `hermes`.
 
-Run the actual installed native loop with scripted model replies and fake tools:
+Prepare Minecraft and model credentials using the
+[shared live-test instructions](../../../README.md#agent-validation), then run:
 
 ```bash
-LIVEQUEST_EXTERNAL_TEST=1 uv run --locked --extra minecraft --group test \
-  python -m pytest tests/test_agent/test_agents.py -m external -k hermes -q
+LIVEQUEST_MINECRAFT_TEST=1 LIVEQUEST_LIVE_COPILOT=1 \
+uv run --locked --extra minecraft --group test python -m pytest \
+  tests/test_agent/test_agents.py -k hermes --headless --recording -q -s
 ```
 
-For real Minecraft checks, follow the [shared live-test instructions](../../../README.md#agent-validation)
-and add `-k hermes`. These consume model quota.
+Both cases run the native Agent with actual Minecraft VM/ST and `gpt-6-astra`.
+They consume model quota; there are no scripted-model Agent tests.
 
 The [shared process rules](../../../README.md#shared-process-integration) document
 model/tool mediation, observation-history differences, cancellation, evidence

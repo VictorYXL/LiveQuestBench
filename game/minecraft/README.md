@@ -127,8 +127,11 @@ uv run --locked --extra minecraft --group test python -m pytest \
 | `test_vm.py` | Fresh native-client images, hotbar selection, movement, mouse look and playable recording |
 | `test_st.py` | Local state, crafting, digging, movement, cancellation, final inventory and first-person recording |
 
-Default result with dependencies installed: **4 passed, 3 skipped**.
-With live checks enabled and both modes prepared: **7 passed**.
+There are two focused non-game checks for world/scoring evidence and explicit
+startup consent, plus three actual game checks. The removed VM/ST schema and
+profile-literal checks are not replaced by additional test scaffolding.
+Without live opt-in, the three game checks skip; this does not establish that
+the real game works.
 For ST only, replace the directory with
 `tests/test_game/minecraft/test_st.py`. All three live cases deliberately point
 Prism at a nonexistent directory to detect accidental account dependencies.

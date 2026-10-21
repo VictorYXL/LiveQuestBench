@@ -18,7 +18,6 @@ pythonpath = ["."]
 markers = [
     "live: opt-in requests that may consume provider quota",
     "game: opt-in real game checks requiring installed runtimes and explicit consent",
-    "external: opt-in installed external Agent checks without model or game calls",
 ]
 
 [tool.uv]

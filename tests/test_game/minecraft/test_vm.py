@@ -12,76 +12,9 @@ nbtlib = pytest.importorskip("nbtlib", reason="Install the minecraft extra")
 pytest.importorskip("Xlib", reason="Install the minecraft extra")
 pytest.importorskip("PIL", reason="Install the minecraft extra")
 
-from core.backends.x11.actions import ActionError
 from game.minecraft.game import MinecraftGame
 from game.minecraft.init_player_state import PlayerState
-from game.minecraft.visual_motor.interface import action_tool_schema, validate_actions
 from game.minecraft.visual_motor.interface import MotorInterface
-
-
-def test_motor_commands() -> None:
-    assert validate_actions([{"name": "wait", "arguments": {"milliseconds": 10000}}])
-    with pytest.raises(ActionError):
-        validate_actions([{"name": "wait", "arguments": {"milliseconds": 10001}}])
-    with pytest.raises(ActionError):
-        validate_actions([{"name": "console", "arguments": {"command": "give"}}])
-
-
-def test_motor_schema_and_validation_agree() -> None:
-    from agent_framework.llm_client.responses import array, obj, text
-
-    schema = action_tool_schema()
-    commands = obj(obj(obj(schema["parameters"])["properties"])["commands"])
-    assert commands["minItems"] == 1 and commands["maxItems"] == 64
-    variants = array(obj(commands["items"])["anyOf"])
-    names = set()
-    for raw in variants:
-        properties = obj(obj(raw)["properties"])
-        name = text(array(obj(properties["name"])["enum"])[0])
-        names.add(name)
-        arguments_schema = obj(properties["arguments"])
-        fields = obj(arguments_schema["properties"])
-        assert set(array(arguments_schema["required"])) == set(fields)
-        assert arguments_schema["additionalProperties"] is False
-        arguments = {
-            field: array(obj(spec)["enum"])[0] if "enum" in obj(spec) else obj(spec)["minimum"]
-            for field, spec in fields.items()
-        }
-        assert validate_actions([{"name": name, "arguments": arguments}]) == [(name, arguments)]
-        for field, raw_spec in fields.items():
-            spec = obj(raw_spec)
-            if "enum" in spec:
-                valid = array(spec["enum"])
-                invalid = ["not-a-supported-input", 0, True]
-            else:
-                low, high = spec["minimum"], spec["maximum"]
-                assert isinstance(low, int) and isinstance(high, int)
-                valid, invalid = [low, high], [low - 1, high + 1, 0.5, True, "0"]
-            for value in valid:
-                assert validate_actions([{"name": name, "arguments": {**arguments, field: value}}])
-            for value in invalid:
-                with pytest.raises(ActionError):
-                    validate_actions([{"name": name, "arguments": {**arguments, field: value}}])
-        with pytest.raises(ActionError):
-            validate_actions([{"name": name, "arguments": {**arguments, "extra": 1}}])
-        for field in arguments:
-            with pytest.raises(ActionError):
-                validate_actions([{"name": name, "arguments": {
-                    key: value for key, value in arguments.items() if key != field
-                }}])
-    assert names == {
-        "key_down", "key_up", "mouse_down", "mouse_up", "mouse_move_relative",
-        "mouse_move_to", "mouse_scroll", "wait", "release_all",
-    }
-    release = {"name": "release_all", "arguments": {}}
-    assert len(validate_actions([release] * 64)) == 64
-    for invalid in ([], [release] * 65, [{"name": "wait", "arguments": {"milliseconds": 5001}}] * 2):
-        with pytest.raises(ActionError):
-            validate_actions(invalid)
-    assert validate_actions([{"name": "wait", "arguments": {"milliseconds": 5000}}] * 2)
-
-    obj(schema["parameters"])["required"] = []
-    assert obj(action_tool_schema()["parameters"])["required"] == ["commands"]
 
 
 @pytest.mark.game

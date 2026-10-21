@@ -97,8 +97,7 @@ core/                       Orchestration boundary and shared infrastructure
 tests/
   conftest.py               Shared display and recording options
   test_agent/
-    test_base_agent.py      Lifecycle contract checks
-    test_agents.py          Shared baseline/external checks and Minecraft runs
+    test_agents.py          Real Minecraft + live-model runs for all three Agents
   test_client/              Three opt-in checks per provider: text, image, tools
   test_game/
     minecraft/
@@ -353,23 +352,22 @@ not supported. Unmapped non-null settings fail; new profiles/pins need admission
 
 ### Agent validation
 
-Run offline checks from the repository root:
+`tests/test_agent/test_agents.py` contains **only real-time game tests using
+a live model**: three Agents times two Minecraft modes. It contains no scripted
+model responses, fake game interfaces or unit checks. Without explicit opt-in,
+all six cases skip; that is not a passing Agent validation.
+
+To inspect the six cases without running them:
 
 ```bash
-uv run --locked --extra minecraft --group test python -m pytest tests/test_agent -q
+uv run --locked --extra minecraft --group test python -m pytest \
+  tests/test_agent/test_agents.py --collect-only -q
 ```
 
-After explicitly preparing the pinned runtimes using their individual READMEs,
-test the actual native loops with scripted model replies and fake tools:
-
-```bash
-LIVEQUEST_EXTERNAL_TEST=1 uv run --locked --extra minecraft --group test \
-  python -m pytest tests/test_agent/test_agents.py -m external -q
-```
-
-The legacy marker/environment name is retained for command compatibility, not
-as a directory classification. Missing runtimes are explicit skips, not evidence
-of successful integration.
+Prepare the pinned runtimes using each Agent's README. Missing runtimes are
+explicit skips, not evidence of successful integration. The former `external`
+marker and `LIVEQUEST_EXTERNAL_TEST` flag have been removed along with the
+simulated/native-offline Agent checks.
 
 The six-case Minecraft matrix combines `tool_calling`, `deepseek`, `hermes`
 with VM/ST, using `gpt-6-astra`, reasoning `low`, output limit 4096 and one request
@@ -410,6 +408,13 @@ Task failure fails the test. Execution errors are not task outcomes; admission
 rejection is recorded as `integration_incompatible` and must be investigated,
 not treated as successful integration. Single samples establish neither
 success rates nor Agent rankings or long-horizon competence.
+
+For engineering acceptance, distinguish a valid task failure caused by Agent
+capability from a broken integration. The former does not block accepting the
+integration, but remains a task failure in scores and test artifacts. Failures
+caused by benchmark communication, adaptation, test fixtures, parameters or
+scripts must be corrected and revalidated; do not relabel them as capability
+limits. Base attribution on recorded evidence, not just the pytest exit code.
 
 ## Model clients
 
@@ -649,12 +654,23 @@ combination will run reproducibly.
 Keep a few high-value checks, not a test for every edit, method or task YAML.
 Prioritize scoring correctness, lifecycle cleanup, result identity and private
 information boundaries. There is no test-count or coverage-percentage target.
+Agent validation means an actual Agent running a real evolving game with a
+live model. Do not substitute scripted replies or import/schema assertions
+and report that as successful Agent validation. Static checks can support
+development, but they are not Agent acceptance tests.
+
+Keep unit tests only for consequential cases difficult to establish through a
+successful gameplay sample. Currently two remain: immutable world-copy/native
+scoring evidence (including failed thresholds and missing evidence), and refusal
+to start without explicit EULA consent. Removed tests must not be relocated into
+new files simply to retain a large suite; avoid assertions that just repeat
+dataclass fields, enum values, schema literals or trivial constructor behavior.
 
 Organize tests by the component being checked, not by unit/integration level:
 
 - `tests/test_client/`: supported model clients, using the same three check types.
 - `tests/test_game/<game>/`: game basics, VM and ST checks in separate files.
-- `tests/test_agent/`: Agent execution, stopping and per-Episode state.
+- `tests/test_agent/`: real-time game/model runs and independently scored outcomes.
 - `tests/test_benchmark/`: Episode orchestration, configuration, evaluator
   invocation and result persistence.
 

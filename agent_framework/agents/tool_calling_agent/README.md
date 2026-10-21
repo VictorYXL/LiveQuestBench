@@ -54,13 +54,16 @@ gate/end game access before awaiting Agent cleanup, on normal and error exits.
 
 ## Validation
 
+Prepare the runtime and credentials using the
+[shared live-test instructions](../../../README.md#agent-validation), then run:
+
 ```bash
+LIVEQUEST_MINECRAFT_TEST=1 LIVEQUEST_LIVE_COPILOT=1 \
 uv run --locked --extra minecraft --group test python -m pytest \
-  tests/test_agent -m 'not game and not external' -q
+  tests/test_agent/test_agents.py -k tool_calling --headless --recording -q -s
 ```
 
-The [shared live-test instructions](../../../README.md#agent-validation) run
-Minecraft VM/ST with `gpt-6-astra`; add `-k tool_calling` for this Agent.
+Both cases use real Minecraft VM/ST and `gpt-6-astra`, not scripted replies.
 Live checks consume quota and independently score inventory, not completion
 claims. They are integration samples, not long-horizon rankings. The
 [Minecraft README](../../../game/minecraft/README.md) covers setup and EULA.
