@@ -1,0 +1,35 @@
+import groovy.json.JsonOutput
+import net.fabricmc.loom.configuration.ide.RunConfig
+
+plugins {
+    id 'fabric-loom' version '1.6.12'
+}
+
+version = '1.0.0'
+group = 'org.livequestbench'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+dependencies {
+    minecraft 'com.mojang:minecraft:1.20.4'
+    mappings 'net.fabricmc:yarn:1.20.4+build.3:v2'
+    modImplementation 'net.fabricmc:fabric-loader:0.15.11'
+}
+
+tasks.register('prepareClient') {
+    dependsOn { tasks.named('runClient').get().taskDependencies.getDependencies(tasks.named('runClient').get()) }
+    doLast {
+        def run = tasks.named('runClient').get()
+        def config = RunConfig.runConfig(project, loom.runs.client)
+        file('launch.json').text = JsonOutput.prettyPrint(JsonOutput.toJson([
+            main_class: config.mainClass,
+            jvm_args: config.vmArgs,
+            program_args: config.programArgs,
+            classpath: run.classpath.files.collect { it.absolutePath },
+            environment: config.environmentVariables,
+        ]))
+    }
+}

@@ -15,7 +15,17 @@ class BaseGame(ABC, Generic[InterfaceT]):
 
     @abstractmethod
     async def start(self) -> None:
-        """Initialize a fresh session and return only after readiness validation."""
+        """Initialize and validate a fresh session without starting measured play."""
+        raise NotImplementedError
+
+    @abstractmethod
+    async def begin(self) -> None:
+        """Enable play after the runner has collected initial evidence."""
+        raise NotImplementedError
+
+    @abstractmethod
+    async def end(self) -> None:
+        """Disable further Agent actions and establish the final evidence boundary."""
         raise NotImplementedError
 
     @abstractmethod

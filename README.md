@@ -5,11 +5,17 @@ long-horizon objectives in continuously evolving 3D games. The intended focus is
 the interaction between immediate reaction, persistent resources and decisions
 whose consequences affect later stages.
 
-**Current status: Python scaffold with model clients, not a runnable game
+**Current status: model clients and a Minecraft VM/ST integration, not a complete
 benchmark.** GitHub Copilot, OpenAI Responses and local vLLM clients are implemented.
-There is no connected game, Agent
-implementation, configuration loader, Episode runner or score-producing launcher
-yet.
+Minecraft shares isolated local sessions, initialization and native snapshot
+inventory evaluation across VM and ST using one native-client implementation.
+VM supports screenshots/input; ST exposes fixed native-client structured tools.
+Both support desktop/headless execution and native first-person recording,
+including the controlled player's HUD and inventory screens.
+Both local modes run without Microsoft login; VM uses a prepared Fabric
+development client with Minecraft's native renderer, not a replacement viewer.
+There is no concrete Agent, configuration loader,
+Episode runner or score-producing benchmark launcher yet.
 
 ## Development setup
 
@@ -37,7 +43,7 @@ uv run --locked python -c "from game.base_game import BaseGame; from agents.base
   file if needed; do not maintain a second dependency list manually.
 
 uv manages the Python environment, not Minecraft/Veloren installations, Java,
-FFmpeg, X11 setup or game assets. Future per-game setup scripts handle explicit
+FFmpeg, X11 setup or game assets. Per-game setup scripts handle explicit
 system/game provisioning. External Agents may retain an upstream Conda or
 container environment and connect through an adapter; all Agents need not share
 one environment.
@@ -54,9 +60,13 @@ game/
   base_game.py              Minimal administrative game contract
   minecraft/
     README.md
-    setup/
+    setup.sh
+    game.py
+    runtime/                Installation, accounts and client/server lifecycle
+    init_player_state.py    Private initial player state and verification
     guide/
     evaluators/
+    visual_motor/
     structured_tools/
       actions/
       observations/
@@ -73,9 +83,15 @@ agents/
       github_copilot_client.py
       openai_client.py
       vllm_client.py
-core/                       Future orchestration and shared infrastructure
+core/                       Orchestration boundary and shared infrastructure
+  backends/x11/             Shared input and isolated display
 tests/
   test_client/              Three opt-in checks per provider: text, image, tools
+  test_game/
+    minecraft/
+      test_game.py          Installation, world isolation, snapshots and recording
+      test_vm.py            Pixels and basic motor actions
+      test_st.py            Structured state, tools and cancellation
 pyproject.toml
 uv.lock
 .python-version
@@ -104,15 +120,15 @@ These are small starting contracts, not a frozen public API.
 
 | Base | Operations | Responsibility |
 | --- | --- | --- |
-| [`BaseGame`](game/base_game.py) | `start`, `get_agent_interface`, `save_snapshot`, `close` | One game session, public interaction handle and private evidence acquisition |
+| [`BaseGame`](game/base_game.py) | `start`, `begin`, `end`, `get_agent_interface`, `save_snapshot`, `close` | One game session, public interaction handle and private evidence acquisition |
 | [`BaseAgent`](agents/base_agent.py) | `run`, `stop` | Autonomous execution using public task text and the permitted handle |
 | [`BaseLLMClient`](agents/llm/base_client.py) | `chat`, `close` | Model requests, without taking over Agent history or tool execution |
 
 Game configuration and fixture selection belong to concrete constructors for now.
-`start()` initializes a fresh session; a reusable reset operation, measured-start
-control and exact snapshot receipts will be added only as the first integration
-establishes their requirements. No universal world serializer or session-reuse
-policy is implemented.
+`start()` initializes a fresh session; the runner collects before evidence,
+calls `begin()`, runs the Agent, calls `end()`, collects after evidence and
+finally calls `close()`. Snapshot timing and limitations remain game-specific.
+No universal world serializer or session-reuse policy is implemented.
 
 Game and Agent bases are generic over their public interface type. This keeps the
 scaffold typed without inventing a universal observation/action vocabulary before
@@ -134,7 +150,8 @@ providers. The two hosted providers share Responses serialization and
 per-attempt usage callbacks; missing usage is never treated as zero. Aggregate
 costs and Episode-level accounting remain future work.
 
-Game and Agent operations remain abstract. The model base now implements the
+The base Game and Agent contracts remain abstract; Minecraft provides the first
+concrete game. The model base implements the
 common request lifecycle and requires provider-specific request/cleanup methods.
 There are no no-op concrete games, agents or model clients.
 
@@ -181,13 +198,14 @@ information boundaries. There is no test-count or coverage-percentage target.
 Organize tests by the component being checked, not by unit/integration level:
 
 - `tests/test_client/`: supported model clients, using the same three check types.
-- `tests/test_game/`: game operations and game-specific scoring rules.
+- `tests/test_game/<game>/`: game basics, VM and ST checks in separate files.
 - `tests/test_agent/`: Agent execution, stopping and per-Episode state.
 - `tests/test_benchmark/`: Episode orchestration, configuration, evaluator
   invocation and result persistence.
 
-Only create a directory when it has actual tests; currently only `test_client`
-exists. Keep the `live` marker and explicit opt-in switches for real services.
+Current test directories are `test_client` and `test_game/minecraft`.
+Keep explicit opt-in switches for
+real services and games.
 Do not duplicate scoring checks between game and benchmark tests, build a large
 mock framework or mirror every source module.
 
@@ -195,10 +213,9 @@ Fast checks must not launch games, modify display sessions or make paid model
 requests. Native game smoke checks are separate and opt-in. Import/syntax checks
 do not qualify real gameplay, timing, reset, scoring or provider compatibility.
 
-## Design record
-
-The development workspace contains a longer discussion archive at
-`output/survey/design.md`. That directory is currently Git-ignored, so this
-README is the tracked-facing starting point; a fresh clone should not assume the
-local archive exists. Research hypotheses and proposed protocols must not be
-presented as implemented or independently validated behavior.
+Tests should not write persistent reports by default. Necessary game runtime
+files, snapshots and recordings belong under `output/test/`; client reports are
+opt-in. These are generated outputs, not prerequisites supplied by the repository.
+Public instructions must not depend on private development notes, credentials or
+other untracked intermediate files. Research hypotheses and proposed protocols
+must not be presented as implemented or independently validated behavior.

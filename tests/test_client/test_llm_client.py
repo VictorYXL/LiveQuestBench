@@ -17,7 +17,7 @@ from agents.llm.providers.vllm_client import VLLMClient
 @pytest.mark.live
 @pytest.mark.parametrize("provider", ["copilot", "openai", "vllm"])
 @pytest.mark.parametrize("kind", ["text", "image", "tool_calling"])
-def test_live_client(provider, kind, black_png, tmp_path):
+def test_live_client(provider, kind, black_png):
     if os.environ.get(f"LIVEQUEST_LIVE_{provider.upper()}") != "1":
         pytest.skip(f"Set LIVEQUEST_LIVE_{provider.upper()}=1 to consume provider quota")
     model = os.environ.get(f"LIVEQUEST_{provider.upper()}_MODEL")
@@ -66,9 +66,11 @@ def test_live_client(provider, kind, black_png, tmp_path):
             assert len(result.tool_calls) == 1
             call = result.tool_calls[0]
             assert call["name"] == "lookup_code" and call["arguments"] == {"key": "island"}
+            call_id = call["id"]
+            assert isinstance(call_id, str) and call_id
             history.extend([
                 Message("assistant", result.content, result.tool_calls, provider_data=result.provider_data),
-                Message("tool", '{"code":"LQB_7391"}', tool_call_id=call["id"]),
+                Message("tool", '{"code":"LQB_7391"}', tool_call_id=call_id),
             ])
             final = await client.chat(history, tools=tools, tool_choice="none")
             assert not final.tool_calls
@@ -79,7 +81,9 @@ def test_live_client(provider, kind, black_png, tmp_path):
         report["status"] = "passed"
     finally:
         report["attempts"] = [asdict(event) for event in events]
-        destination = Path(os.environ.get("LIVEQUEST_LIVE_REPORT_DIR", str(tmp_path)))
-        destination.mkdir(parents=True, exist_ok=True)
-        path = destination / f"{provider}-{kind}.json"
-        path.write_text(json.dumps(report, indent=2) + "\n")
+        report_directory = os.environ.get("LIVEQUEST_LIVE_REPORT_DIR")
+        if report_directory:
+            destination = Path(report_directory)
+            destination.mkdir(parents=True, exist_ok=True)
+            path = destination / f"{provider}-{kind}.json"
+            path.write_text(json.dumps(report, indent=2) + "\n")

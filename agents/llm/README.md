@@ -28,7 +28,6 @@ It does not search other projects' credential caches.
 
 ```python
 import asyncio
-from pathlib import Path
 
 from agents.llm.base_client import Message
 from agents.llm.providers.github_copilot_client import GitHubCopilotClient
@@ -37,7 +36,6 @@ from agents.llm.providers.github_copilot_client import GitHubCopilotClient
 async def main():
     async with GitHubCopilotClient(
         "gpt-5.4-nano",  # Use a model available to your account.
-        token_file=Path("output/support/github_copilot_token.txt"),
         max_output_tokens=1024,
         reasoning_effort="none",  # Only if this model supports it.
     ) as client:
@@ -57,6 +55,8 @@ OpenAI reports unsupported model features through the official endpoint.
 ## Image input
 
 ```python
+from pathlib import Path
+
 message = Message("user", [
     {"type": "text", "text": "Describe this game screen."},
     {
@@ -158,14 +158,18 @@ The earlier offline contract suite was removed at the user's request and remains
 available in Git history. Default execution skips all nine cases without network
 requests; skipped tests are not evidence of working service integration.
 
+No report files are written unless `LIVEQUEST_LIVE_REPORT_DIR` is explicitly set.
+The examples below opt in to generated reports under `output/test/`; these
+directories do not need to exist beforehand. Credentials come from your own
+environment, not a file supplied by this repository.
+
 Opt-in live Copilot validation (four generations, potentially consuming quota):
 
 ```bash
 LIVEQUEST_LIVE_COPILOT=1 \
 LIVEQUEST_COPILOT_MODEL=gpt-5.4-nano \
 LIVEQUEST_REASONING_EFFORT=none \
-LIVEQUEST_COPILOT_TOKEN_FILE=output/support/github_copilot_token.txt \
-LIVEQUEST_LIVE_REPORT_DIR=output/runs/client-smoke \
+LIVEQUEST_LIVE_REPORT_DIR=output/test/client-smoke \
 uv run --locked --group test python -m pytest \
   tests/test_client/test_llm_client.py -k copilot -x -q
 ```
@@ -197,7 +201,7 @@ uv run --locked --group test python -m pytest tests/test_client --collect-only -
 LIVEQUEST_LIVE_OPENAI=1 \
 LIVEQUEST_OPENAI_MODEL=gpt-5.4-nano \
 LIVEQUEST_REASONING_EFFORT=none \
-LIVEQUEST_LIVE_REPORT_DIR=output/runs/openai-client-smoke \
+LIVEQUEST_LIVE_REPORT_DIR=output/test/openai-client-smoke \
 uv run --locked --group test python -m pytest \
   tests/test_client/test_llm_client.py -k openai -x -q
 
@@ -212,7 +216,7 @@ if all stages succeed; requests can incur charges even when assertions fail.
 
 Return the commit hash, Python version, pytest outcome and
 the `openai-text.json`, `openai-image.json` and `openai-tool_calling.json` files
-under `output/runs/openai-client-smoke/`. Each report records its check status
+under `output/test/openai-client-smoke/`. Each report records its check status
 and per-attempt usage. With `-x`, testing stops on the first failure; later reports
 will not be produced. Inspect any
 additional error logs before sharing; exclude keys, HTTP headers and account
@@ -256,11 +260,11 @@ the main benchmark environment. The following starting configuration targets
 a single NVIDIA GPU and a small VLM, not production throughput:
 
 ```bash
-uv venv --python 3.11 output/temp/vllm-env
-uv pip install --python output/temp/vllm-env/bin/python 'vllm==0.11.2'
+uv venv --python 3.11 "$HOME/.local/share/livequestbench/vllm-env"
+uv pip install --python "$HOME/.local/share/livequestbench/vllm-env/bin/python" 'vllm==0.11.2'
 
 CUDA_VISIBLE_DEVICES=0 VLLM_NO_USAGE_STATS=1 DO_NOT_TRACK=1 \
-output/temp/vllm-env/bin/vllm serve Qwen/Qwen3-VL-2B-Instruct \
+"$HOME/.local/share/livequestbench/vllm-env/bin/vllm" serve Qwen/Qwen3-VL-2B-Instruct \
   --revision 89644892e4d85e24eaac8bacfd4f463576704203 \
   --served-model-name qwen3-vl-2b \
   --host 127.0.0.1 --port 8001 \
@@ -280,7 +284,7 @@ curl --fail http://127.0.0.1:8001/health
 LIVEQUEST_LIVE_VLLM=1 \
 LIVEQUEST_VLLM_MODEL=qwen3-vl-2b \
 LIVEQUEST_VLLM_BASE_URL=http://127.0.0.1:8001/v1 \
-LIVEQUEST_LIVE_REPORT_DIR=output/runs/vllm-client-smoke \
+LIVEQUEST_LIVE_REPORT_DIR=output/test/vllm-client-smoke \
 uv run --locked --group test python -m pytest \
   tests/test_client/test_llm_client.py -k vllm -x -q
 ```

@@ -11,6 +11,7 @@ htmlcov/
 build/
 dist/
 *.egg-info/
+node_modules/
 
 # Local credentials and editor settings
 .env
