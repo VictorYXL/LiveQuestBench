@@ -35,7 +35,9 @@ def test_st_profile() -> None:
 
 @pytest.mark.game
 @pytest.mark.skipif(os.environ.get("LIVEQUEST_MINECRAFT_TEST") != "1", reason="Opt-in ST check")
-def test_st_observation_and_tools(monkeypatch: pytest.MonkeyPatch, headless: bool) -> None:
+def test_st_observation_and_tools(
+    monkeypatch: pytest.MonkeyPatch, headless: bool, recording: bool,
+) -> None:
     root = Path(os.environ.get(
         "MINECRAFT_TEST_OUTPUT", str(Path(__file__).resolve().parents[3] / "output" / "test"),
     )).resolve()
@@ -44,7 +46,7 @@ def test_st_observation_and_tools(monkeypatch: pytest.MonkeyPatch, headless: boo
     monkeypatch.setenv("MINECRAFT_PRISM_ROOT", str(output / "no-prism-or-accounts"))
     game = MinecraftGame(
         track="structured_tool", output_dir=output,
-        recording=os.environ.get("MINECRAFT_TEST_RECORDING", "1") != "0", recording_fps=10,
+        recording=recording, recording_fps=10,
         headless=headless,
         fixture=Path(os.environ["MINECRAFT_TEST_FIXTURE"]) if os.environ.get("MINECRAFT_TEST_FIXTURE") else None,
         player_state=PlayerState(position=(0.5, 72, 0.5), yaw=180,

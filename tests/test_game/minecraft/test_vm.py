@@ -29,7 +29,9 @@ def test_motor_commands() -> None:
 
 @pytest.mark.game
 @pytest.mark.skipif(os.environ.get("LIVEQUEST_MINECRAFT_TEST") != "1", reason="Opt-in VM check")
-def test_vm_observation_and_movement(monkeypatch: pytest.MonkeyPatch, headless: bool) -> None:
+def test_vm_observation_and_movement(
+    monkeypatch: pytest.MonkeyPatch, headless: bool, recording: bool,
+) -> None:
     monkeypatch.setenv("MINECRAFT_PRISM_ROOT", "/nonexistent-livequest-prism")
     root = Path(os.environ.get(
         "MINECRAFT_TEST_OUTPUT", str(Path(__file__).resolve().parents[3] / "output" / "test"),
@@ -41,7 +43,7 @@ def test_vm_observation_and_movement(monkeypatch: pytest.MonkeyPatch, headless: 
         fixture=Path(os.environ["MINECRAFT_TEST_FIXTURE"]) if os.environ.get("MINECRAFT_TEST_FIXTURE") else None,
         output_dir=output,
         player_state=state,
-        recording=os.environ.get("MINECRAFT_TEST_RECORDING", "1") != "0", recording_fps=10,
+        recording=recording, recording_fps=10,
         headless=headless,
     )
 

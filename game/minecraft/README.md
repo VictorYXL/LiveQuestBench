@@ -98,8 +98,13 @@ For ST only, replace the directory with
 Prism at a nonexistent directory to detect accidental account dependencies.
 Select `test_vm.py` similarly to check VM alone.
 Both mode tests record `video.mp4` at 10 FPS by default, with brief viewing pauses
-before and after their scripted actions. Set `MINECRAFT_TEST_RECORDING=0` to
-disable their videos and save encoding cost; the native renderer is still used.
+before and after their scripted actions. All game tests use the shared
+`recording` fixture from [`tests/conftest.py`](../../tests/conftest.py).
+Pass `--no-recording` to disable videos and video decoding checks, or
+`--recording` to enable them explicitly. The native renderer, observations and
+snapshot checks are unchanged. These options are independent of `--headless`.
+For compatibility, `MINECRAFT_TEST_RECORDING=0` disables recording when neither
+CLI option is supplied; an explicit CLI option takes precedence.
 
 ### Show a window while tests run
 

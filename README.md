@@ -5,8 +5,9 @@ long-horizon objectives in continuously evolving 3D games. The intended focus is
 the interaction between immediate reaction, persistent resources and decisions
 whose consequences affect later stages.
 
-**Current status: model clients and a Minecraft VM/ST integration, not a complete
-benchmark.** GitHub Copilot, OpenAI Responses and local vLLM clients are implemented.
+**Current status: model clients, a native tool-calling baseline and a Minecraft
+VM/ST integration, not a complete benchmark.** GitHub Copilot, OpenAI Responses
+and local vLLM clients are implemented.
 Minecraft shares isolated local sessions, initialization and native snapshot
 inventory evaluation across VM and ST using one native-client implementation.
 VM supports screenshots/input; ST exposes fixed native-client structured tools.
@@ -14,8 +15,9 @@ Both support desktop/headless execution and native first-person recording,
 including the controlled player's HUD and inventory screens.
 Both local modes run without Microsoft login; VM uses a prepared Fabric
 development client with Minecraft's native renderer, not a replacement viewer.
-There is no concrete Agent, configuration loader,
-Episode runner or score-producing benchmark launcher yet.
+`ToolCallingAgent` implements the autonomous loop directly, with Minecraft
+bindings and opt-in scored integration tests. There is no experiment
+configuration loader, production Episode runner or benchmark launcher yet.
 
 ## Development setup
 
@@ -73,7 +75,9 @@ game/
       tools/
 agents/
   base_agent.py             Autonomous per-Episode Agent contract
-  reference/                Future first-party reference Agent
+  tool_calling_agent.py     Native vanilla tool-calling baseline
+  minecraft_tool_calling.py Minecraft VM/ST observation and tool bindings
+  README.md                 Baseline behavior, ownership and live checks
   adapters/                 Future external Agent adapters
   llm/
     base_client.py          Message/response types and model client contract
@@ -86,6 +90,10 @@ agents/
 core/                       Orchestration boundary and shared infrastructure
   backends/x11/             Shared input and isolated display
 tests/
+  conftest.py               Shared display and recording options
+  test_agent/
+    test_base_agent.py      Lifecycle contract checks
+    test_tool_calling_agent.py Offline loop checks and opt-in Minecraft runs
   test_client/              Three opt-in checks per provider: text, image, tools
   test_game/
     minecraft/
@@ -257,6 +265,10 @@ must enforce deadlines and preserve final evidence independently of Agent cleanu
 
 ## Model clients
 
+The native [`ToolCallingAgent`](agents/README.md) can use these clients directly.
+Its Minecraft VM/ST tests exercise the full observation/tool loop and independently
+score native inventory snapshots; the provider checks below test clients alone.
+
 See [the client guide](agents/llm/README.md) for authentication, text/image/tool
 examples, retry semantics, live checks and limitations.
 
@@ -304,6 +316,14 @@ Organize tests by the component being checked, not by unit/integration level:
   invocation and result persistence.
 
 Current test directories are `test_client`, `test_agent` and `test_game/minecraft`.
+Shared options live in [`tests/conftest.py`](tests/conftest.py):
+`--recording` / `--no-recording` control test video capture independently of
+`--headless` / `--no-headless`. Tests that create a game must pass the shared
+`recording` fixture to its constructor and check video only when enabled.
+Recording defaults to on; the legacy `MINECRAFT_TEST_RECORDING=0` override is
+honored unless a recording CLI option is supplied. Tests without game video
+are unaffected.
+
 Keep explicit opt-in switches for
 real services and games.
 Do not duplicate scoring checks between game and benchmark tests, build a large

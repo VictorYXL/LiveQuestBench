@@ -84,7 +84,9 @@ def test_minecraft_lifecycle_requires_explicit_consent(tmp_path: Path, monkeypat
 
 @pytest.mark.game
 @pytest.mark.skipif(os.environ.get("LIVEQUEST_MINECRAFT_TEST") != "1", reason="Opt-in installed-game check")
-def test_installation_world_and_recording(monkeypatch: pytest.MonkeyPatch, headless: bool) -> None:
+def test_installation_world_and_recording(
+    monkeypatch: pytest.MonkeyPatch, headless: bool, recording: bool,
+) -> None:
     monkeypatch.setenv("MINECRAFT_PRISM_ROOT", "/nonexistent-livequest-prism")
     installation = check_installation()
     assert installation["version"] == "1.20.4"
@@ -100,7 +102,7 @@ def test_installation_world_and_recording(monkeypatch: pytest.MonkeyPatch, headl
                         inventory=[{"slot": 0, "item": "dirt", "count": 2}])
     game = MinecraftGame(
         fixture=fixture, output_dir=output, player_state=state,
-        recording=True, recording_fps=2, headless=headless,
+        recording=recording, recording_fps=2, headless=headless,
     )
     hashes = {str(path.relative_to(fixture)): hashlib.sha256(path.read_bytes()).hexdigest()
               for path in fixture.rglob("*") if path.is_file()} if fixture is not None else {}
@@ -126,11 +128,12 @@ def test_installation_world_and_recording(monkeypatch: pytest.MonkeyPatch, headl
         finally:
             await game.close()
         await game.close()
-        subprocess.run(
-            ["ffmpeg", "-v", "error", "-xerror", "-i", str(output / "video.mp4"),
-             "-map", "0:v:0", "-f", "null", "-"],
-            check=True, capture_output=True, timeout=30,
-        )
+        if game.recording:
+            subprocess.run(
+                ["ffmpeg", "-v", "error", "-xerror", "-i", str(output / "video.mp4"),
+                 "-map", "0:v:0", "-f", "null", "-"],
+                check=True, capture_output=True, timeout=30,
+            )
         if fixture is not None:
             assert hashes == {str(path.relative_to(fixture)): hashlib.sha256(path.read_bytes()).hexdigest()
                               for path in fixture.rglob("*") if path.is_file()}
