@@ -1,0 +1,5 @@
+# Dependencies of the selected native runner/zeroshot path, not every Orak game.
+gymnasium==1.1.1
+mcp>=1.9,<2
+omegaconf==2.3.0
+pillow>=11,<13

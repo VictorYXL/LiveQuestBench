@@ -12,7 +12,7 @@ import time
 from uuid import UUID
 
 from core.backends.x11.display import VirtualDisplay
-from game.base_game import BaseGame
+from game.base_game import AgentAccessClosed, BaseGame
 from game.minecraft.runtime.account import offline_identity, resolve_account
 from game.minecraft.runtime.install import check_installation
 from game.minecraft.init_player_state import PlayerState
@@ -160,7 +160,7 @@ class MinecraftGame(BaseGame[MotorInterface | StructuredInterface]):
 
     def _check_running(self) -> MinecraftSession:
         if self.phase != "running" or self._stopped.is_set() or self._session is None:
-            raise RuntimeError("Agent access is only available during running play")
+            raise AgentAccessClosed("Agent access is only available during running play")
         if self._recorder is not None and self._recorder.task is not None and self._recorder.task.done():
             self._recorder.task.result()
             raise RuntimeError("Recording stopped during play")

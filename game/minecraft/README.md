@@ -372,6 +372,12 @@ unacknowledged cancellation terminates the client and raises infrastructure
 failure. Pending multi-tick work is removed without reconnect or respawn.
 Death does not automatically respawn.
 
+Public observation/action access outside running play raises `AgentAccessClosed`
+(a `RuntimeError` subclass). During an intentional benchmark cutoff, an in-flight
+Agent may encounter this gate before its stop request arrives. The runner may
+classify that specific denial as stopped after successfully ending the game;
+it must not suppress arbitrary runtime/infrastructure exceptions.
+
 Normal ST action refusal returns `success=false`; bridge errors/timeouts raise.
 Broken blocks, spent ingredients, in-flight packets and furnace contents are
 not rolled back. The cooperative Python/stdio API is not a sandbox for hostile

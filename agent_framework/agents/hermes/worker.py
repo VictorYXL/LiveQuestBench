@@ -6,28 +6,18 @@ import os
 from pathlib import Path
 import signal
 import sys
-import threading
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
+
+from agent_framework.utils.worker import WorkerBridge
 
 
 def main() -> None:
     os.environ["HERMES_HOME"] = os.environ["HOME"]
     root = Path(sys.argv[1]).resolve()
     sys.path.insert(0, str(root))
-    output = sys.stdout
-    config = json.loads(sys.stdin.readline())
-    lock = threading.Lock()
-    sequence = 0
-
-    def rpc(operation: str, **payload: object) -> object:
-        nonlocal sequence
-        with lock:
-            sequence += 1
-            output.write(json.dumps({"id": sequence, "op": operation, **payload}) + "\n")
-            output.flush()
-            reply = json.loads(sys.stdin.readline())
-            if reply.get("id") != sequence:
-                raise RuntimeError("Mismatched benchmark bridge reply")
-            return reply["result"]
+    bridge = WorkerBridge()
+    output, config, rpc = bridge.output, bridge.config, bridge.rpc
 
     with contextlib.redirect_stdout(sys.stderr):
         from openai.types.chat import ChatCompletion

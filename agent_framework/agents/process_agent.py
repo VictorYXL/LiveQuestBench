@@ -6,14 +6,13 @@ from collections.abc import Awaitable, Callable, Sequence
 import json
 import os
 from pathlib import Path
-import subprocess
 import time
 from typing import ClassVar, Generic, TypeVar
 
 from agent_framework.agents.base_agent import AgentContext, AgentExit, AgentExitReason, BaseAgent, StopReason
 from agent_framework.llm_client.base_client import BaseLLMClient, Message
 from agent_framework.llm_client.responses import array, obj, text
-from agent_framework.utils.source import SourceSpec
+from agent_framework.utils.source import SourceSpec, verify_checkout
 from agent_framework.utils.tools import Observation, Tool
 
 
@@ -41,6 +40,9 @@ class ProcessAgent(BaseAgent[InterfaceT], Generic[InterfaceT]):
     source: ClassVar[SourceSpec]
     required_runtime: ClassVar[str]
 
+    def _additional_tools(self) -> Sequence[Tool[InterfaceT]]:
+        return ()
+
     @classmethod
     def source_root(cls) -> Path:
         source = cls.source
@@ -50,14 +52,10 @@ class ProcessAgent(BaseAgent[InterfaceT], Generic[InterfaceT]):
         root = Path(value).resolve()
         if not root.is_dir():
             raise IntegrationUnavailable(f"{cls.name}: configured checkout does not exist: {root}")
-        pin = subprocess.run(["git", "-C", str(root), "rev-parse", "HEAD"],
-                             capture_output=True, text=True, check=True).stdout.strip()
-        if pin != source["commit"]:
-            raise IntegrationIncompatible(f"{cls.name}: checkout {pin} differs from required {source['commit']}")
-        changed = subprocess.run(["git", "-C", str(root), "status", "--porcelain", "--untracked-files=no"],
-                                 capture_output=True, text=True, check=True).stdout
-        if changed:
-            raise IntegrationIncompatible(f"{cls.name}: undeclared tracked source changes")
+        try:
+            verify_checkout(source, root, cls.directory)
+        except ValueError as error:
+            raise IntegrationIncompatible(f"{cls.name}: {error}") from error
         if not (root / cls.required_runtime).is_file():
             raise IntegrationUnavailable(f"{cls.name}: runtime is not built; see {cls.directory / 'README.md'}")
         return root
@@ -78,6 +76,7 @@ class ProcessAgent(BaseAgent[InterfaceT], Generic[InterfaceT]):
     ) -> None:
         self.root = self.source_root()
         self.client, self.output_dir = client, Path(output_dir).resolve()
+        tools = [*tools, *self._additional_tools()]
         self.tools = {tool.name: tool for tool in tools}
         if not self.tools or len(self.tools) != len(tools):
             raise ValueError("Provide uniquely named tools")
@@ -177,8 +176,8 @@ class ProcessAgent(BaseAgent[InterfaceT], Generic[InterfaceT]):
                 if operation == "exit":
                     result = obj(request.get("result"))
                     code = await self._process.wait()
-                    if code != 0 or not self.admitted:
-                        raise IntegrationIncompatible(f"{self.name}: invalid exit or no tool admission")
+                    if code != 0 or not self.admitted or self._pending_calls:
+                        raise IntegrationIncompatible(f"{self.name}: invalid exit, no admission, or unsettled tool calls")
                     reason = AgentExitReason(text(result.get("reason")))
                     return AgentExit(reason, text(result.get("message", "")), text(result.get("native_reason", "")))
                 if operation == "ready":
@@ -205,6 +204,11 @@ class ProcessAgent(BaseAgent[InterfaceT], Generic[InterfaceT]):
                     self._pending_calls.remove(proposed)
                     value = await self.tools[name].execute(context.interface, arguments)
                     self._record(Message("tool", value, tool_call_id=text(proposed["id"])))
+                elif operation == "observe":
+                    observation = await self.observe(context.interface)
+                    value = observation if isinstance(observation, str) else "\n".join(
+                        text(block["text"]) for block in observation if block.get("type") == "text"
+                    )
                 elif operation == "chat":
                     value = await self._chat(context, obj(request.get("request")))
                 else:

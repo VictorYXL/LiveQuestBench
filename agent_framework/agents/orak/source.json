@@ -1,0 +1,7 @@
+{
+  "repository": "https://github.com/krafton-ai/Orak.git",
+  "commit": "c14e5a01f998c222c76e09da2564aa8b72ebc75e",
+  "license": "MIT",
+  "environment": "LIVEQUEST_ORAK_ROOT",
+  "patches": ["patches/0001-lazy-optional-services.patch"]
+}

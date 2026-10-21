@@ -6,6 +6,10 @@ from typing import Generic, TypeVar
 InterfaceT = TypeVar("InterfaceT")
 
 
+class AgentAccessClosed(RuntimeError):
+    """The public game interface is outside its permitted running boundary."""
+
+
 class BaseGame(ABC, Generic[InterfaceT]):
     """Operations for one game session; the benchmark owns Episode orchestration.
 

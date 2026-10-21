@@ -5,7 +5,7 @@ long-horizon objectives in continuously evolving 3D games. The intended focus is
 the interaction between immediate reaction, persistent resources and decisions
 whose consequences affect later stages.
 
-**Current status: model clients, three Agent integrations and Minecraft
+**Current status: model clients, five Agent integrations and Minecraft
 VM/ST, not a complete benchmark.** GitHub Copilot, OpenAI Responses
 and local vLLM clients are implemented.
 Minecraft shares isolated local sessions, initialization and native snapshot
@@ -17,8 +17,14 @@ Both local modes run without Microsoft login; VM uses a prepared Fabric
 development client with Minecraft's native renderer, not a replacement viewer.
 `ToolCallingAgent` implements the autonomous loop directly. Pinned DeepSeek
 harness and Hermes integrations preserve their native loops using process
-Wrappers, with disclosed restrictions and no upstream patches. All three use
+Wrappers, with disclosed restrictions and no upstream patches. Orak's native
+zeroshot runner has a fixed-tool game extension with a lazy-service patch;
+smolagents uses its unpatched native ToolCallingAgent, not CodeAgent. All five use
 Minecraft's mode-local tool/observation bindings and shared scored tests.
+See the [Orak](agent_framework/agents/orak/README.md) and
+[smolagents](agent_framework/agents/smolagents/README.md) profiles for setup and
+fidelity boundaries, and the [live acceptance report](output/survey/additional_agent_integrations_20261022.md)
+for the latest twelve-case evidence and deferred Game Agent candidates.
 There is no experiment
 configuration loader, production Episode runner or benchmark launcher yet.
 
@@ -92,12 +98,14 @@ agent_framework/
     tool_calling_agent/     Vanilla baseline, with its own README
     deepseek_harness/       Agent, worker, pinned setup and README
     hermes/                 Agent, worker, configuration, pinned setup and README
+    orak/                   Native zeroshot runner extension, declared patch and locked runtime
+    smolagents/             Native tool-calling loop and locked runtime, no source patches
 core/                       Orchestration boundary and shared infrastructure
   backends/x11/             Shared input and isolated display
 tests/
   conftest.py               Shared display and recording options
   test_agent/
-    test_agents.py          Real Minecraft + live-model runs for all three Agents
+    test_agents.py          Real Minecraft/model acceptance for five Agents and operator-stop cases
   test_client/              Three opt-in checks per provider: text, image, tools
   test_game/
     minecraft/
@@ -323,9 +331,12 @@ Source URLs, exact commits, licenses and patch lists live in per-Agent
 `source.json` files. Game/asset licensing is separate from framework licensing.
 
 [`source.py`](agent_framework/utils/source.py) shares metadata loading and
-non-destructive checkout preparation. Setup rejects mismatched pins and tracked
-edits without resetting them. Runtime admission checks the pin, tracked
-cleanliness and required build. Dependencies and built outputs are trusted, not
+non-destructive checkout preparation. Setup rejects mismatched pins and unexpected
+edits without resetting them. Declared patches are applied only to a pristine
+checkout; already-patched checkouts must match exactly. Runtime admission builds
+the expected pin-plus-patches tree in a temporary Git index and compares it with
+tracked working files, without modifying the checkout's real index.
+It also checks the required build. Dependencies and built outputs are trusted, not
 integrity-verified; use dedicated checkouts. Tests/runs never install dependencies.
 The pinned checkouts are neither vendored source nor submodules.
 
@@ -333,9 +344,16 @@ The pinned checkouts are neither vendored source nor submodules.
   interaction before awaiting Agent shutdown. Workers have fresh homes; pending
   work is cancelled and forced termination is reported. Clients/games stay
   caller-owned.
+  A raced `AgentAccessClosed` denial is a stopped outcome only when the runner
+  intentionally requested cutoff and established the final game boundary.
+  Other runtime errors remain failures; they are not converted into stops.
 - Workers receive public task/instructions and approved schemas, not game
   administration. A serial JSON-line bridge checks tool admission and each
   model request's tool names. Execution must match model-proposed calls.
+  Explicit native control tools such as smolagents' `final_answer` have no game
+  access. Python workers share the credential-free
+  [`WorkerBridge`](agent_framework/utils/worker.py); Orak can also request public
+  observation text for its native memory. It cannot inspect scoring state.
 - Model requests use the injected client; credentials stay in the parent.
   Provider continuation state and call IDs are retained. Native settings are
   checked against declared configuration; callers must configure clients
@@ -344,8 +362,9 @@ The pinned checkouts are neither vendored source nor submodules.
   not native HTTP timeout defaults.
 
 This is cooperative isolation, **not an OS sandbox for untrusted code**.
-The latest observation is injected at the model bridge, not stored in native
-text/tool history. VM gets one current image and ST one current state. Full
+The latest observation is injected at the model bridge. VM gets one current
+image and ST one current state. Images are not stored in native history; Orak
+also retains public observation text through its native memory adapter. Full
 observations stay in audit traces. This differs from the baseline's historical
 observation-text retention and must be disclosed in comparisons.
 Arbitrary native attachments, extra model roles and every provider setting are
@@ -354,11 +373,12 @@ not supported. Unmapped non-null settings fail; new profiles/pins need admission
 ### Agent validation
 
 `tests/test_agent/test_agents.py` contains **only real-time game tests using
-a live model**: three Agents times two Minecraft modes. It contains no scripted
+a live model**: five Agents times two Minecraft modes, plus two operator-stop
+cases for the new native workers. It contains no scripted
 model responses, fake game interfaces or unit checks. Without explicit opt-in,
-all six cases skip; that is not a passing Agent validation.
+all twelve cases skip; that is not a passing Agent validation.
 
-To inspect the six cases without running them:
+To inspect the cases without running them:
 
 ```bash
 uv run --locked --extra minecraft --group test python -m pytest \
@@ -370,14 +390,20 @@ explicit skips, not evidence of successful integration. The former `external`
 marker and `LIVEQUEST_EXTERNAL_TEST` flag have been removed along with the
 simulated/native-offline Agent checks.
 
-The six-case Minecraft matrix combines `tool_calling`, `deepseek`, `hermes`
+The ten-case Minecraft matrix combines `tool_calling`, `deepseek`, `hermes`,
+`orak` and `smolagents`
 with VM/ST, using `gpt-6-astra`, reasoning `low`, output limit 4096 and one request
 attempt. Each case has a 180-second wall-clock budget beginning just before
 `game.begin()`, excluding setup/evidence/cleanup. End-request timing is not an
 atomic native tick cutoff. These are simple integration tasks: an isolated
 peaceful flat world with an empty inventory and a privately prepared three-log
-column. Success requires independently saved inventory count and delta of at
-least three oak logs, not an Agent completion claim.
+column. Task success requires independently saved inventory count and delta of at
+least three oak logs, not an Agent completion claim. Test acceptance instead
+requires the configured actual model, real game tool/results, advancing world
+time, revoked observation access after the gate, and native admission/cleanup.
+Returning an answer without any real game interaction does not establish
+integration. Expected operator-stop cases terminate after the first game tool,
+not after task completion, and verify the stop outcome and final evidence.
 
 Prepare Minecraft and review/accept its EULA using its
 [README](game/minecraft/README.md), then explicitly opt in:
@@ -392,7 +418,8 @@ uv run --locked --extra minecraft --group test python -m pytest \
   tests/test_agent/test_agents.py -m game -q -s --headless --recording
 ```
 
-Use `-k tool_calling`, `-k deepseek` or `-k hermes` to select an Agent.
+Use `-k tool_calling`, `-k deepseek`, `-k hermes`, `-k orak` or `-k smolagents`
+to select an Agent. `-k stop` selects both operator-stop cases.
 `--no-recording` disables video/decoding, not observations or snapshots.
 `--no-headless` uses a dedicated existing X11 desktop.
 Credentials are never discovered in other repositories; no substitute model
@@ -401,13 +428,16 @@ is chosen if the requested one is unavailable. These checks consume quota.
 Unique `output/test/` directories (or `MINECRAFT_TEST_OUTPUT`) retain messages,
 VM observation images, optional decoded video, private before/after saves, and
 `result.json` with configuration, actual instructions, model identity, timing,
-usage, Agent exit and independent inventory scoring. Process attempts additionally
-save admission, native/effective model requests, worker logs, native results
+usage, Agent exit, real game interactions, `integration_status` and independent
+inventory scoring. Process attempts additionally
+save admission, native/effective model requests, worker logs, native results when emitted,
 and cleanup outcomes.
 
-Task failure fails the test. Execution errors are not task outcomes; admission
+An independently scored task failure does **not** fail an otherwise validated
+integration test: `integration_status=passed` can coexist with
+`status=task_failure`. Execution errors are not task outcomes; admission
 rejection is recorded as `integration_incompatible` and must be investigated,
-not treated as successful integration. Single samples establish neither
+not skipped or treated as successful integration. Single samples establish neither
 success rates nor Agent rankings or long-horizon competence.
 
 For engineering acceptance, distinguish a valid task failure caused by Agent

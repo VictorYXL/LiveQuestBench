@@ -1,4 +1,4 @@
-"""Real-time Minecraft runs for three Agents using a live model, with a three-minute budget."""
+"""Real game/model integration acceptance, independent of three-log task success."""
 
 import asyncio
 from collections.abc import Awaitable, Callable, Sequence
@@ -19,34 +19,52 @@ from agent_framework.agents.tool_calling_agent import ToolCallingAgent
 from agent_framework.utils.tools import Observation, Tool
 from agent_framework.agents.deepseek_harness import DeepSeekHarnessAgent
 from agent_framework.agents.hermes import HermesAgent
+from agent_framework.agents.orak import OrakAgent
+from agent_framework.agents.smolagents import SmolagentsAgent
 from agent_framework.agents.process_agent import IntegrationIncompatible, IntegrationUnavailable, ProcessAgent
+from game.base_game import AgentAccessClosed
 
 
 InterfaceT = TypeVar("InterfaceT")
-NATIVE_AGENTS = {"deepseek": DeepSeekHarnessAgent, "hermes": HermesAgent}
+NATIVE_AGENTS = {
+    "deepseek": DeepSeekHarnessAgent, "hermes": HermesAgent,
+    "orak": OrakAgent, "smolagents": SmolagentsAgent,
+}
 
 
 async def run_bounded(
     agent: BaseAgent[InterfaceT], public: AgentContext[InterfaceT],
     end_game: Callable[[], Awaitable[None]],
+    stop_after_tool: asyncio.Event | None = None,
 ) -> tuple[AgentExit, bool]:
     running = asyncio.create_task(agent.run(public))
+    stop_wait = asyncio.create_task(stop_after_tool.wait()) if stop_after_tool is not None else None
     timed_out = False
+    operator_stop = False
     try:
         done, _ = await asyncio.wait(
-            {running}, timeout=max(0, (public.deadline_at_ns - time.monotonic_ns()) / 1e9),
+            {running, stop_wait} if stop_wait is not None else {running},
+            timeout=max(0, (public.deadline_at_ns - time.monotonic_ns()) / 1e9),
+            return_when=asyncio.FIRST_COMPLETED,
         )
         timed_out = not done
+        operator_stop = stop_wait is not None and stop_wait in done
     finally:
+        if stop_wait is not None:
+            stop_wait.cancel()
+            await asyncio.gather(stop_wait, return_exceptions=True)
         try:
             await end_game()
         finally:
-            if not running.done():
-                await agent.stop(StopReason.DEADLINE if timed_out else StopReason.INFRASTRUCTURE_ERROR)
+            if timed_out or operator_stop or not running.done():
+                await agent.stop(StopReason.DEADLINE if timed_out else
+                                 StopReason.OPERATOR_CANCEL if operator_stop else StopReason.INFRASTRUCTURE_ERROR)
             outcomes = await asyncio.wait_for(asyncio.gather(running, return_exceptions=True), timeout=10)
     outcome = outcomes[0]
-    if isinstance(outcome, asyncio.CancelledError) and timed_out:
-        return AgentExit(AgentExitReason.STOPPED, native_reason="deadline_game_gate_cancelled_tool"), True
+    if isinstance(outcome, asyncio.CancelledError) and (timed_out or operator_stop):
+        return AgentExit(AgentExitReason.STOPPED, native_reason="benchmark_game_gate_cancelled_tool"), timed_out
+    if isinstance(outcome, AgentAccessClosed) and (timed_out or operator_stop):
+        return AgentExit(AgentExitReason.STOPPED, native_reason="benchmark_game_gate_closed"), timed_out
     if isinstance(outcome, BaseException):
         raise outcome
     return outcome, timed_out
@@ -54,14 +72,20 @@ async def run_bounded(
 
 @pytest.mark.live
 @pytest.mark.game
-@pytest.mark.parametrize("agent_name", ["tool_calling", "deepseek", "hermes"])
-@pytest.mark.parametrize("track", ["visual_motor", "structured_tool"])
+@pytest.mark.parametrize("agent_name,track,interrupt", [
+    pytest.param(name, track, False, id=f"{name}-{track}")
+    for name in ["tool_calling", *NATIVE_AGENTS]
+    for track in ("visual_motor", "structured_tool")
+] + [
+    pytest.param(name, "structured_tool", True, id=f"{name}-stop-structured_tool")
+    for name in ("orak", "smolagents")
+])
 def test_minecraft_collect_three_logs(
-    track: str, agent_name: str, headless: bool, recording: bool,
+    track: str, agent_name: str, interrupt: bool, headless: bool, recording: bool,
 ) -> None:
     if os.environ.get("LIVEQUEST_MINECRAFT_TEST") != "1" or os.environ.get("LIVEQUEST_LIVE_COPILOT") != "1":
         pytest.skip("Set LIVEQUEST_MINECRAFT_TEST=1 and LIVEQUEST_LIVE_COPILOT=1 for game/model runs")
-    pytest.importorskip("nbtlib")
+    nbtlib = pytest.importorskip("nbtlib")
     pytest.importorskip("PIL")
     pytest.importorskip("Xlib")
     from agent_framework.llm_client.github_copilot_client import GitHubCopilotClient
@@ -82,12 +106,15 @@ def test_minecraft_collect_three_logs(
     if not os.environ.get("COPILOT_GITHUB_TOKEN") and not token_file:
         pytest.fail("Set COPILOT_GITHUB_TOKEN or LIVEQUEST_COPILOT_TOKEN_FILE; credentials are not auto-discovered")
     events: list[RequestEvent] = []
+    interactions: list[dict[str, object]] = []
     report: dict[str, object] = {
         "status": "execution_error", "track": track, "agent": agent_name,
         "provider": "github_copilot", "model": "gpt-6-astra",
         "reasoning_effort": "low", "max_output_tokens": 4096, "max_attempts": 1,
         "budget_seconds": 180, "recording": recording, "headless": headless,
         "fixture": "three-oak-logs-v1",
+        "interrupt_after_first_game_tool": interrupt,
+        "integration_status": "not_verified",
         "upstream": NATIVE_AGENTS[agent_name].source if agent_name in NATIVE_AGENTS else None,
         "fixture_commands": ["fill 0 72 -2 0 74 -2 minecraft:oak_log"],
         "task": "Collect at least 3 oak logs in your inventory. Keep them as logs, not planks. "
@@ -115,6 +142,7 @@ def test_minecraft_collect_three_logs(
             stream.write(json.dumps({"at_ns": time.monotonic_ns(), **entry}) + "\n")
 
     async def scenario() -> None:
+        first_tool = asyncio.Event()
         client = GitHubCopilotClient(
             "gpt-6-astra", token_file=Path(token_file) if token_file else None,
             reasoning_effort="low", max_output_tokens=4096, timeout=180, on_request=events.append,
@@ -127,10 +155,21 @@ def test_minecraft_collect_three_logs(
             tools: Sequence[Tool[InterfaceT]],
             observe: Callable[[InterfaceT], Awaitable[Observation]],
         ) -> ToolCallingAgent[InterfaceT] | ProcessAgent[InterfaceT]:
+            tracked_tools = []
+            for tool in tools:
+                async def execute(
+                    interface: InterfaceT, arguments: dict[str, object], original: Tool[InterfaceT] = tool,
+                ) -> str:
+                    result = await original.execute(interface, arguments)
+                    interactions.append({"name": original.name, "arguments": arguments,
+                                         "result": result, "completed_at_ns": time.monotonic_ns()})
+                    first_tool.set()
+                    return result
+                tracked_tools.append(Tool(tool.name, tool.description, tool.parameters, execute))
             return (
-                ToolCallingAgent(client, tools=tools, observe=observe, on_message=record)
+                ToolCallingAgent(client, tools=tracked_tools, observe=observe, on_message=record)
                 if agent_name == "tool_calling" else NATIVE_AGENTS[agent_name](
-                    client, output_dir=output / "external", tools=tools,
+                    client, output_dir=output / "external", tools=tracked_tools,
                     observe=observe, on_message=record, model="gpt-6-astra",
                     reasoning_effort="low", max_output_tokens=4096,
                 )
@@ -160,7 +199,9 @@ def test_minecraft_collect_three_logs(
                 output.name, str(report["task"]), interface, started, deadline,
                 instructions,
             )
-            outcome, timed_out = await run_bounded(agent, public, game.end)
+            outcome, timed_out = await run_bounded(agent, public, game.end, first_tool if interrupt else None)
+            with pytest.raises(AgentAccessClosed):
+                await interface.observe()
             after = await game.save_snapshot(output / "after")
             report["elapsed_to_gate_seconds"] = (game._boundary["end_requested_at_ns"] - started) / 1e9
             report["deadline_reached"] = timed_out
@@ -174,7 +215,17 @@ def test_minecraft_collect_three_logs(
                 str(message.provider_data["response_model"]) for message in agent.messages
                 if message.role == "assistant" and "response_model" in message.provider_data
             })
+            ticks = int(nbtlib.load(after / "level.dat")["Data"]["Time"]) - int(nbtlib.load(before / "level.dat")["Data"]["Time"])
+            report["world_ticks_advanced"] = ticks
             assert score["inventory_before"] == {}, "This fixture must start with an empty inventory"
+            assert ticks > 0, "The game world did not advance"
+            assert report["response_models"] == ["gpt-6-astra"], "Missing or unexpected underlying model"
+            assert interactions, "No real game tool round trip; integration is not established"
+            assert any(message.role == "tool" for message in agent.messages), "No tool-result telemetry"
+            if interrupt:
+                assert isinstance(agent, ProcessAgent)
+                assert not timed_out and agent.stop_reason == StopReason.OPERATOR_CANCEL
+                assert outcome.reason == AgentExitReason.STOPPED
         finally:
             try:
                 await agent.close()
@@ -187,6 +238,10 @@ def test_minecraft_collect_three_logs(
                 report["integration_admitted"] = agent.admitted
                 report["forced_worker_termination"] = agent.forced_termination
                 report["worker_returncode"] = agent._process.returncode if agent._process else None
+        if isinstance(agent, ProcessAgent):
+            assert agent.admitted, "Native tool set was not admitted"
+            assert not agent.forced_termination, "Native worker required forced termination"
+            assert agent._process is not None and agent._process.returncode is not None, "Native worker leaked"
         if recording:
             subprocess.run(
                 ["ffmpeg", "-v", "error", "-xerror", "-i", str(output / "video.mp4"),
@@ -194,7 +249,7 @@ def test_minecraft_collect_three_logs(
                 check=True, capture_output=True, timeout=30,
             )
         report["status"] = "task_success" if score["success"] else "task_failure"
-        assert score["success"], f"Agent did not collect three logs: {score['checks']}; artifacts: {output}"
+        report["integration_status"] = "passed"
 
     print(f"{agent_name} artifacts: {output}")
     try:
@@ -202,11 +257,12 @@ def test_minecraft_collect_three_logs(
     except IntegrationIncompatible as error:
         report["status"] = "integration_incompatible"
         report["reason"] = str(error)
-        pytest.skip(f"Native integration rejected (not a task failure): {error}")
+        raise
     except BaseException as error:
         report["error_type"] = type(error).__name__
         raise
     finally:
         output.mkdir(parents=True, exist_ok=True)
         report["attempts"] = [asdict(event) for event in events]
+        report["game_interactions"] = interactions
         (output / "result.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")

@@ -1,0 +1,164 @@
+diff --git a/src/mcp_agent_client/base_agent.py b/src/mcp_agent_client/base_agent.py
+index 9fe06b7..fd62604 100644
+--- a/src/mcp_agent_client/base_agent.py
++++ b/src/mcp_agent_client/base_agent.py
+@@ -6,12 +6,6 @@ from typing import Dict, Optional, Union, Any
+ 
+ from omegaconf import DictConfig
+ 
+-from mcp_agent_client.llms.llm import load_model, LocalBase
+-from mcp_agent_client.llms.openai_utils import (
+-    Logger,
+-    MoneyManager,
+-    pretty_print_conversation,
+-)
+ from mcp_agent_client.json_schemas import SCHEMA_REGISTRY
+ 
+ from mcp_game_servers.utils.types.misc import Configurable
+@@ -87,6 +81,9 @@ class BaseAgent(Configurable):
+         self._setup_logger()
+ 
+     def _setup_model(self):
++        from mcp_agent_client.llms.llm import load_model
++        from mcp_agent_client.llms.openai_utils import MoneyManager
++
+         loaded_model = load_model(
+             self.orig_model,
+             temperature=self.temperature,
+@@ -101,6 +98,8 @@ class BaseAgent(Configurable):
+         self.tokenizer = loaded_model["tokenizer"]
+ 
+     def _setup_logger(self):
++        from mcp_agent_client.llms.openai_utils import Logger
++
+         self.logger = Logger(log_path=self.log_path)
+ 
+     def chat_completion(self, system_prompt, user_prompt, images={}, **kwargs):
+@@ -171,6 +170,8 @@ class BaseAgent(Configurable):
+         messages.append({"total_cost": self.ctx_manager.total_cost})
+ 
+         if self.debug_mode:
++            from mcp_agent_client.llms.openai_utils import pretty_print_conversation
++
+             pretty_print_conversation(messages)
+         self.logger(messages)
+ 
+@@ -286,6 +287,8 @@ class BaselineAgent(BaseAgent):
+ 
+             structured_output_kwargs = {}
+             if module in self.structured_output:
++                from mcp_agent_client.llms.llm import LocalBase
++
+                 assert isinstance(self.llm, LocalBase), "Structured output is currently tested for local models."
+ 
+                 if "guided_regex" in self.structured_output[module]:
+diff --git a/src/mcp_agent_client/runner/eval.py b/src/mcp_agent_client/runner/eval.py
+index a406c2a..9d3fd23 100644
+--- a/src/mcp_agent_client/runner/eval.py
++++ b/src/mcp_agent_client/runner/eval.py
+@@ -7,7 +7,6 @@ from mcp_game_servers.utils.types.misc import Configurable
+ from mcp_game_servers.base_env import BaseEnv
+ from mcp_agent_client.base_agent import BaseAgent
+ from mcp_agent_client.base_client import MCPAgentClient
+-from mcp_agent_client.llms.llm import LocalBase
+ from mcp_agent_client.json_schemas import SCHEMA_REGISTRY
+ from mcp_agent_client.runner.action_tool_execution import action_execution
+ import omegaconf
+@@ -114,6 +113,8 @@ class BaseRunner(Configurable):
+             for module_type in self.agent.agent_modules:
+                 structured_output_kwargs = {}
+                 if module_type in self.agent.structured_output:
++                    from mcp_agent_client.llms.llm import LocalBase
++
+                     assert isinstance(self.agent.llm, LocalBase), "Structured output is currently tested for local models."
+ 
+                     if "guided_regex" in self.agent.structured_output[module_type]:
+diff --git a/src/mcp_agent_servers/memory.py b/src/mcp_agent_servers/memory.py
+index 56b11ff..c62aa6b 100644
+--- a/src/mcp_agent_servers/memory.py
++++ b/src/mcp_agent_servers/memory.py
+@@ -3,14 +3,10 @@ from datetime import datetime
+ import json
+ import uuid
+ import logging
+-from langchain_openai import OpenAIEmbeddings
+-from langchain_chroma import Chroma
+-from mcp_agent_servers.setup_openai import setup_openai
++from functools import cached_property
+ 
+ logger = logging.getLogger(__name__)
+ 
+-setup_openai()
+-
+ class GenericMemory:
+     def __init__(self, path: str):
+         self.memories: Dict[str, List[Any]] = {}
+@@ -18,11 +14,6 @@ class GenericMemory:
+ 
+         # long-term memory
+         self.save_path = f"data/long_term_memory/{path.replace('logs/', '', 1)}/"
+-        self.vectordb = Chroma(
+-            collection_name="long_term_memory",
+-            embedding_function=OpenAIEmbeddings(),
+-            persist_directory=self.save_path,
+-        )
+         self.retrieval_top_k = 3
+         
+         # Pokemon specific
+@@ -34,6 +25,19 @@ class GenericMemory:
+         self.num_action_buffer = 5
+         self.num_history_buffer = 20
+         
++    @cached_property
++    def vectordb(self):
++        from langchain_openai import OpenAIEmbeddings
++        from langchain_chroma import Chroma
++        from mcp_agent_servers.setup_openai import setup_openai
++
++        setup_openai()
++        return Chroma(
++            collection_name="long_term_memory",
++            embedding_function=OpenAIEmbeddings(),
++            persist_directory=self.save_path,
++        )
++
+     def add(self, key: str, value: Any) -> None:
+         if key not in self.memories:
+             self.memories[key] = []
+diff --git a/src/mcp_agent_servers/skill_manager.py b/src/mcp_agent_servers/skill_manager.py
+index eab5d57..a7b81da 100644
+--- a/src/mcp_agent_servers/skill_manager.py
++++ b/src/mcp_agent_servers/skill_manager.py
+@@ -1,21 +1,25 @@
+ from typing import Dict, List, Any
+ import json
+-from langchain_openai import OpenAIEmbeddings
+-from langchain_chroma import Chroma
+-from mcp_agent_servers.setup_openai import setup_openai
+-
+-setup_openai()
++from functools import cached_property
+ 
+ class SkillManager:
+     def __init__(self, path):
+         self.save_path = f"data/skills/{path.replace('logs/', '', 1)}/"
+         self.skills: Dict[str, List[Any]] = {}
+-        self.vectordb = Chroma(
++        self.retrieval_top_k = 5
++
++    @cached_property
++    def vectordb(self):
++        from langchain_openai import OpenAIEmbeddings
++        from langchain_chroma import Chroma
++        from mcp_agent_servers.setup_openai import setup_openai
++
++        setup_openai()
++        return Chroma(
+             collection_name="skill_vectordb",
+             embedding_function=OpenAIEmbeddings(),
+             persist_directory=self.save_path,
+         )
+-        self.retrieval_top_k = 5
+     
+     def add_new_skill(self, skill_name: str, skill: str, description: str) -> None:
+         if all((skill_name, skill, description)): # if all not None
