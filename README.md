@@ -9,7 +9,7 @@ whose consequences affect later stages.
 VM/ST, not a complete benchmark.** GitHub Copilot, OpenAI Responses
 and local vLLM clients are implemented.
 Minecraft shares isolated local sessions, initialization and native snapshot
-inventory evaluation across VM and ST using one native-client implementation.
+inventory and bounded structure evaluation across VM and ST using one native-client implementation.
 VM supports screenshots/input; ST exposes fixed native-client structured tools.
 Both support desktop/headless execution and native first-person recording,
 including the controlled player's HUD and inventory screens.
@@ -104,6 +104,7 @@ tests/
       test_game.py          Installation, world isolation, snapshots and recording
       test_vm.py            Pixels and basic motor actions
       test_st.py            Structured state, tools and cancellation
+      test_structure.py     Native construction scoring and consequential counterexamples
 pyproject.toml
 uv.lock
 .python-version
@@ -660,9 +661,11 @@ and report that as successful Agent validation. Static checks can support
 development, but they are not Agent acceptance tests.
 
 Keep unit tests only for consequential cases difficult to establish through a
-successful gameplay sample. Currently two remain: immutable world-copy/native
-scoring evidence (including failed thresholds and missing evidence), and refusal
-to start without explicit EULA consent. Removed tests must not be relocated into
+successful gameplay sample. Currently three remain: immutable world-copy/native
+inventory evidence, refusal to start without explicit EULA consent, and structure
+scoring counterexamples with incomplete/corrupt saved evidence. Structure scoring
+also has a real native placement test; no model is needed to validate a scorer.
+Removed tests must not be relocated into
 new files simply to retain a large suite; avoid assertions that just repeat
 dataclass fields, enum values, schema literals or trivial constructor behavior.
 

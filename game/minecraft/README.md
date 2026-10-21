@@ -126,14 +126,15 @@ uv run --locked --extra minecraft --group test python -m pytest \
 | `test_game.py` | Installation, startup gates, world copying/scoring, world-time progression, snapshot hashes and playable recording |
 | `test_vm.py` | Fresh native-client images, hotbar selection, movement, mouse look and playable recording |
 | `test_st.py` | Local state, crafting, digging, movement, cancellation, final inventory and first-person recording |
+| `test_structure.py` | Native block placement scored from before/after saves, plus structure counterexamples and corrupt/missing evidence |
 
-There are two focused non-game checks for world/scoring evidence and explicit
-startup consent, plus three actual game checks. The removed VM/ST schema and
+There are three focused non-game checks for inventory/structure evidence and explicit
+startup consent, plus four actual game checks. The removed VM/ST schema and
 profile-literal checks are not replaced by additional test scaffolding.
-Without live opt-in, the three game checks skip; this does not establish that
+Without live opt-in, the four game checks skip; this does not establish that
 the real game works.
 For ST only, replace the directory with
-`tests/test_game/minecraft/test_st.py`. All three live cases deliberately point
+`tests/test_game/minecraft/test_st.py`. All four live cases deliberately point
 Prism at a nonexistent directory to detect accidental account dependencies.
 Select `test_vm.py` similarly to check VM alone.
 Both mode tests record `video.mp4` at 10 FPS by default, with brief viewing pauses
@@ -389,6 +390,78 @@ or a particular skill's use. Missing/malformed evidence raises. Recording is
 host-sampled rather than native-frame-exact; recording errors propagate.
 Distinguish game failure from infrastructure and measurement failure.
 
+### Structure evaluator
+
+[`evaluate_structure`](evaluators/structure.py) reads private native Anvil
+regions, not Agent observations or tool-reported success. It is track-independent:
+
+```python
+from pathlib import Path
+from game.minecraft.evaluators.structure import evaluate_structure
+
+result = evaluate_structure(Path("run/before"), Path("run/after"), {
+    "target": {"structure": [
+        [["oak_planks", "oak_planks"]],
+        [["oak_planks", "oak_planks"]],
+    ]},
+    "region": {"min": [-8, 72, -8], "max": [8, 76, 8]},
+})
+```
+
+The blueprint is rectangular **[y][z][x]**. A block name requires that material;
+`"air"` requires any vanilla air variant; `None` ignores the cell. At least one
+non-air target is required. Only vanilla block identifiers and Java 1.20.4 saves
+(DataVersion 3700) are supported. Block-state properties and block/entity NBT are
+not matched: this cannot establish door orientation, a working mechanism,
+enclosure safety or visual quality.
+
+`region.min` and `region.max` are inclusive XYZ corners. Declare the scoring
+area in the task configuration and ensure its chunks are fully saved in **both**
+snapshots. The entire translated blueprint must fit inside it. Unlike the
+upstream whole-save search, all matching and extra-material penalties are
+restricted to this region; unrelated changes outside it cannot affect the score.
+The reader raises on absent/incomplete chunks, malformed payloads or unsupported
+versions; missing evidence is not air and is not a task-failure score.
+Optional `dimension` defaults to `"minecraft:overworld"`; the vanilla Nether and
+End paths/heights are also recognized. Custom dimensions/height overrides are
+unsupported. Only the Overworld has been live-tested here.
+
+Optional `match` settings (all flags default to `True`, thresholds to `1.0`):
+
+- `rotation_invariant`: allow 0/90/180/270-degree rotations about Y, plus
+  translation; no reflection or vertical rotation.
+- `require_new_blocks`: a matched positive cell must differ from that same
+  target block name in the before snapshot. An unchanged existing build cannot
+  pass by default. This is an endpoint difference, not proof of who built it
+  or whether a block was removed and replaced during the Episode.
+- `require_empty`: enforce the blueprint's air cells.
+- `min_recall`, `min_precision`, `min_iou`: finite thresholds in `[0, 1]`.
+  For `M` matched positive cells, `T` target positive cells and `E` newly changed
+  target-material cells outside the selected blueprint footprint:
+  recall = `M/T`, precision = `M/(M+E)` (1 for zero denominator),
+  IoU = `M/(T+E)`. These preserve upstream blueprint metrics, not arbitrary
+  solid-volume IoU. Air violations independently fail a candidate.
+
+The full rectangular footprint includes ignored cells. Extra target material
+inside ignored cells is not penalized; changes to other materials are not a
+collateral-damage check. `require_new_blocks=False` admits preexisting target
+cells but still only counts **new** outside-footprint target material as extras.
+At least one matching material anchor is needed even with zero thresholds.
+Best-match ranking is deterministic: passed, recall, precision, IoU, then fewer
+air violations; rotation/offset order breaks ties.
+
+The result contains `success`, evaluator `version`, resolved settings/region,
+coverage, `best_match` with metrics and mismatch coordinates, and a bounded change
+sample. Successful evaluation covers every requested cell in both saves.
+Regions are limited to 262,144 cells and searches to 5,000,000 candidate-generation
+and scoring comparisons; exceeding either raises explicitly. Narrow the task's
+scoring region rather than silently accepting a partial search.
+
+Use the same Episode's completed `save_snapshot()` outputs and retain their
+receipts. The scorer does not validate Episode identity or snapshot hashes for
+the caller, and the save-boundary caveats above still apply. Do not give private
+saves or scoring coordinates to an Agent unless permitted by the task contract.
+
 ## Installation overrides
 
 | Variable | Meaning |
@@ -427,3 +500,14 @@ retains the separately prepared Prism path. ST shares the client with its
 private bridge. There is no replacement renderer or step-based simulation
 controller. This provenance grants no Minecraft binary/asset redistribution
 rights.
+
+The structure matcher and native block reader adapt the same Visual branch's
+`benchmark/evaluator/StructureEvaluator/evaluator.py` and
+`benchmark/evaluator/world.py`. The target/match vocabulary is preserved; the
+bounded region and strict full-region evidence requirement are intentional
+departures. The Research implementation at
+`92b6d7f983dfe36929c851e8ae521a508cc60e82` was also inspected: it scores a final
+nearby-block projection and only warns for `require_new_blocks`, so it was not
+used as the scoring authority. This is source provenance, not a claim of an
+upstream license grant; see the [evaluator study](../../output/survey/endpoint_evaluators_20261022.md)
+for validation evidence and remaining scope.
