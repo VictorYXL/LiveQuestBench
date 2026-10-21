@@ -127,7 +127,7 @@ class MinecraftGame(BaseGame[MotorInterface | StructuredInterface]):
                 if self.display is None and self.headless:
                     virtual = VirtualDisplay()
                     self._stack.push_async_callback(virtual.close)
-                    config.display = await virtual.start()
+                    config.display = await virtual.start(self.output_dir / "xvfb.log")
                 self._session = MinecraftSession(
                     self.output_dir, config, self.player_state, world=world,
                 )

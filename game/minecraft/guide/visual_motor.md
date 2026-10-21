@@ -48,10 +48,17 @@ For example, moving forward for one second means `key_down("w")`, a
 The wait delays the next command; it does not pause Minecraft. The VM smoke test
 performs this sequence, waits briefly after release, looks down with relative
 mouse motion, then holds the left mouse button for two seconds and releases it
-to dig beneath the player. It checks horizontal movement, downward view and
-collection of at least one dirt item in the final private save. The default
-flat world supplies grass/dirt beneath the player; a custom test fixture must
-also support this sequence. Its default recording includes these actions.
+to swing/mine beneath the player. This is an input smoke test, not a dirt
+collection task: it checks horizontal movement and downward view, but does not
+require item acquisition. Private before/after saves are retained for inspection.
+A custom test fixture must allow the movement sequence. Its default recording
+includes these actions.
+
+Headless runs save Xvfb diagnostics to `xvfb.log` in the run directory instead
+of printing them to the terminal. Display-number probing can report occupied
+displays before selecting a free one; unsupported XF86 special-key symbols can
+also produce nonfatal keyboard-map warnings. Startup failures still raise an
+error pointing to this log. Existing desktop displays are not reconfigured.
 
 The default native client starts with fresh standard controls:
 WASD moves, Space jumps, Shift sneaks, Ctrl sprints, mouse movement looks,

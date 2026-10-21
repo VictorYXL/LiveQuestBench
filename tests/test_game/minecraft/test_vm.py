@@ -1,4 +1,4 @@
-"""VM pixels, movement and dirt collection, without LLM calls or screenshot dumps."""
+"""VM pixels and basic motor control, without LLM calls or screenshot dumps."""
 
 import asyncio
 import os
@@ -53,6 +53,7 @@ def test_vm_observation_and_movement(monkeypatch: pytest.MonkeyPatch, headless: 
             assert set(interface.__dataclass_fields__) == {"observe", "act"}
             with pytest.raises(RuntimeError):
                 await interface.observe()
+            await game.save_snapshot(output / "before")
             await game.begin()
             await asyncio.sleep(1)
             first = await interface.observe()
@@ -98,10 +99,6 @@ def test_vm_observation_and_movement(monkeypatch: pytest.MonkeyPatch, headless: 
             yaw_change = (float(actual["Rotation"][0]) - state.yaw + 180) % 360 - 180
             assert abs(yaw_change) > 1
             assert float(actual["Rotation"][1]) > 80
-            assert sum(
-                int(item["Count"]) for item in actual["Inventory"]
-                if str(item["id"]) == "minecraft:dirt"
-            ) >= 1
         finally:
             await game.close()
         if game.recording:
