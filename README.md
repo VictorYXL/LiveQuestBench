@@ -5,8 +5,8 @@ long-horizon objectives in continuously evolving 3D games. The intended focus is
 the interaction between immediate reaction, persistent resources and decisions
 whose consequences affect later stages.
 
-**Current status: model clients, a native tool-calling baseline and a Minecraft
-VM/ST integration, not a complete benchmark.** GitHub Copilot, OpenAI Responses
+**Current status: model clients, three Agent integrations and Minecraft
+VM/ST, not a complete benchmark.** GitHub Copilot, OpenAI Responses
 and local vLLM clients are implemented.
 Minecraft shares isolated local sessions, initialization and native snapshot
 inventory evaluation across VM and ST using one native-client implementation.
@@ -15,8 +15,11 @@ Both support desktop/headless execution and native first-person recording,
 including the controlled player's HUD and inventory screens.
 Both local modes run without Microsoft login; VM uses a prepared Fabric
 development client with Minecraft's native renderer, not a replacement viewer.
-`ToolCallingAgent` implements the autonomous loop directly, with Minecraft
-bindings and opt-in scored integration tests. There is no experiment
+`ToolCallingAgent` implements the autonomous loop directly. Pinned DeepSeek
+harness and Hermes integrations preserve their native loops using process
+Wrappers, with disclosed restrictions and no upstream patches. All three use
+Minecraft's mode-local tool/observation bindings and shared scored tests.
+There is no experiment
 configuration loader, production Episode runner or benchmark launcher yet.
 
 ## Development setup
@@ -32,7 +35,7 @@ the repository root:
 
 ```bash
 uv sync --locked
-uv run --locked python -c "from game.base_game import BaseGame; from agents.base_agent import BaseAgent; from agents.llm.base_client import BaseLLMClient; print('Scaffold imports OK')"
+uv run --locked python -c "from game.base_game import BaseGame; from agent_framework.agents.base_agent import BaseAgent; from agent_framework.llm_client.base_client import BaseLLMClient; print('Scaffold imports OK')"
 ```
 
 - `pyproject.toml` declares Python dependencies; `uv.lock` pins their resolution.
@@ -66,34 +69,36 @@ game/
     game.py
     runtime/                Installation, accounts and client/server lifecycle
     init_player_state.py    Private initial player state and verification
-    guide/
+    prompts/                introduction.txt plus visual_motor.txt / structured_tool.txt
     evaluators/
     visual_motor/
     structured_tools/
       actions/
       observations/
       tools/
-agents/
-  base_agent.py             Autonomous per-Episode Agent contract
-  tool_calling_agent.py     Native vanilla tool-calling baseline
-  minecraft_tool_calling.py Minecraft VM/ST observation and tool bindings
-  README.md                 Baseline behavior, ownership and live checks
-  adapters/                 Future external Agent adapters
-  llm/
+agent_framework/
+  llm_client/
     base_client.py          Message/response types and model client contract
-    README.md               Provider usage and validation instructions
-    providers/
-      responses.py          Shared multimodal/tool Responses protocol
-      github_copilot_client.py
-      openai_client.py
-      vllm_client.py
+    responses.py            Shared multimodal/tool Responses protocol
+    github_copilot_client.py
+    openai_client.py
+    vllm_client.py
+  utils/
+    tools.py                Shared public tool and observation types
+    source.py               Shared pinned-checkout preparation
+  agents/
+    base_agent.py           Autonomous per-Episode Agent contract
+    process_agent.py        Shared native-process lifecycle and tool/model bridge
+    tool_calling_agent/     Vanilla baseline, with its own README
+    deepseek_harness/       Agent, worker, pinned setup and README
+    hermes/                 Agent, worker, configuration, pinned setup and README
 core/                       Orchestration boundary and shared infrastructure
   backends/x11/             Shared input and isolated display
 tests/
   conftest.py               Shared display and recording options
   test_agent/
     test_base_agent.py      Lifecycle contract checks
-    test_tool_calling_agent.py Offline loop checks and opt-in Minecraft runs
+    test_agents.py          Shared baseline/external checks and Minecraft runs
   test_client/              Three opt-in checks per provider: text, image, tools
   test_game/
     minecraft/
@@ -114,7 +119,7 @@ The four business directories have distinct ownership:
 
 - **config:** what to evaluate, under which conditions and with which fixtures.
 - **game:** how to launch/interact with a game and acquire/interpret its evidence.
-- **agents:** how an Agent reasons and acts, plus model integrations.
+- **agent_framework:** Agent execution, model clients and shared integration utilities.
 - **core:** when to initialize, run, terminate, score and clean up an Episode.
 
 Task-specific fixture assets belong with evaluation configuration conceptually,
@@ -129,8 +134,8 @@ These are small starting contracts, not a frozen public API.
 | Base | Operations | Responsibility |
 | --- | --- | --- |
 | [`BaseGame`](game/base_game.py) | `start`, `begin`, `end`, `get_agent_interface`, `save_snapshot`, `close` | One game session, public interaction handle and private evidence acquisition |
-| [`BaseAgent`](agents/base_agent.py) | `run(context)`, `stop(reason)`, `close` | Full-attempt execution, typed exit reasons, cooperative stop requests and Agent-owned cleanup |
-| [`BaseLLMClient`](agents/llm/base_client.py) | `chat`, `close` | Model requests, without taking over Agent history or tool execution |
+| [`BaseAgent`](agent_framework/agents/base_agent.py) | `run(context)`, `stop(reason)`, `close` | Full-attempt execution, typed exit reasons, cooperative stop requests and Agent-owned cleanup |
+| [`BaseLLMClient`](agent_framework/llm_client/base_client.py) | `chat`, `close` | Model requests, without taking over Agent history or tool execution |
 
 Game configuration and fixture selection belong to concrete constructors for now.
 `start()` initializes a fresh session; the runner collects before evidence,
@@ -168,9 +173,12 @@ There are no no-op concrete games, agents or model clients.
 The integration policy is **wrapper-first, with minimal upstream changes**.
 Preserve an Agent's existing runtime and behavior wherever possible; prefer
 configuration and supported extension points over rewriting its implementation.
-This describes the intended integration contract, not shipped adapters:
-external Agent integrations and the end-to-end benchmark runner are not yet
-implemented.
+The concrete integrations currently available are
+[ToolCallingAgent](agent_framework/agents/tool_calling_agent/README.md),
+[DeepSeek harness](agent_framework/agents/deepseek_harness/README.md) and
+[Hermes](agent_framework/agents/hermes/README.md). This does not establish
+support for arbitrary upstream features or other Agents. An end-to-end
+benchmark runner is not yet implemented.
 
 ### Which Agents can be integrated?
 
@@ -203,7 +211,7 @@ the benchmark evaluates the outcome independently.
 | Hard-coded game connections, model settings or inaccessible lifecycle hooks | Make a small, versioned upstream patch where necessary. Document its purpose and any behavioral changes. |
 | Only a next-action policy, or a runtime requiring different game permissions or timing | Requires additional controller/profile design; it is not a drop-in integration under the initial autonomous-Agent scope. |
 
-A Wrapper presents the benchmark-facing [BaseAgent](agents/base_agent.py)
+A Wrapper presents the benchmark-facing [BaseAgent](agent_framework/agents/base_agent.py)
 contract while delegating to the original Agent. It connects task delivery,
 execution and stopping, permitted game interactions, and experiment settings.
 It can use native calls, an external process or an existing protocol adapter;
@@ -243,7 +251,7 @@ A configurable interface alone is not a claim of working support.
 
 ### Python lifecycle contract
 
-[`agents/base_agent.py`](agents/base_agent.py) provides the abstract contract
+[`base_agent.py`](agent_framework/agents/base_agent.py) provides the abstract contract
 for native implementations and Wrappers:
 
 - `run(AgentContext[InterfaceT]) -> AgentExit` receives the public task, game
@@ -263,14 +271,269 @@ ACP/MCP dependency is required by the base. Remote adapters must translate host
 timestamps appropriately. The future runner/game gate, not this abstract class,
 must enforce deadlines and preserve final evidence independently of Agent cleanup.
 
+### Adding a game and supplying instructions
+
+Implement [BaseGame](game/base_game.py) under `game/<game_name>/`, document
+installation, reset, public permissions, timing, termination, private evidence
+and scoring limitations in that game's README. Reuse the existing runtime and
+interface patterns where appropriate; do not expose an administrative game
+object to an Agent. Admission must reject unsupported game/track combinations.
+Validate initialization, observation/action round trips, stopping and evidence
+acquisition before interpreting task scores.
+
+The fixed public-text layout is:
+
+```text
+game/<game_name>/prompts/
+  introduction.txt          Common game introduction and interaction rules
+  visual_motor.txt          Optional VM-specific controls/observation format
+  structured_tool.txt       Optional ST-specific tools/observation format
+```
+
+Load the introduction followed by the selected mode's text. A common-only game
+needs only the introduction; file existence alone does not establish track
+support. These static files must not contain fixture coordinates, target
+resources, task solutions or task-specific strategies. Supply the public task
+separately in `AgentContext`. Developer README text is not model input.
+
+Minecraft exposes `get_instructions()` on [MinecraftGame](game/minecraft/game.py).
+Its existing [VM](game/minecraft/visual_motor/interface.py) and
+[ST](game/minecraft/structured_tools/interface.py) modules each expose
+`agent_tools()` and `agent_observation(interface)`. They reuse native schemas
+and restricted operations; there is no additional centralized binding module.
+VM encodes PNG images; ST losslessly run-length encodes its native palette cube.
+No cells or unknown states are removed.
+
+Agent packages do not import games or read game prompt files. The caller
+injects game instructions, observation functions and
+[Tool definitions](agent_framework/utils/tools.py).
+The baseline uses the supplied instructions without adding a system prompt;
+upstream Agents retain their own native prompts and disclose differences.
+Earlier three-log results used older public instructions. They remain
+historical evidence, not task-performance certification of revised prompts.
+New live results save the actual game instructions.
+
+### Shared process integration
+
+[`ProcessAgent`](agent_framework/agents/process_agent.py) is an abstract base
+for native-process Wrappers, not a standalone Agent. Each concrete Agent owns
+its worker, runtime configuration, source pin and setup entrypoint.
+Import the concrete class rather than passing a name to the abstract base.
+Source URLs, exact commits, licenses and patch lists live in per-Agent
+`source.json` files. Game/asset licensing is separate from framework licensing.
+
+[`source.py`](agent_framework/utils/source.py) shares metadata loading and
+non-destructive checkout preparation. Setup rejects mismatched pins and tracked
+edits without resetting them. Runtime admission checks the pin, tracked
+cleanliness and required build. Dependencies and built outputs are trusted, not
+integrity-verified; use dedicated checkouts. Tests/runs never install dependencies.
+The pinned checkouts are neither vendored source nor submodules.
+
+- The runner owns game lifecycle, deadline and private scoring. Gate game
+  interaction before awaiting Agent shutdown. Workers have fresh homes; pending
+  work is cancelled and forced termination is reported. Clients/games stay
+  caller-owned.
+- Workers receive public task/instructions and approved schemas, not game
+  administration. A serial JSON-line bridge checks tool admission and each
+  model request's tool names. Execution must match model-proposed calls.
+- Model requests use the injected client; credentials stay in the parent.
+  Provider continuation state and call IDs are retained. Native settings are
+  checked against declared configuration; callers must configure clients
+  consistently because arbitrary client internals cannot be inspected.
+  Parent transport settings and the benchmark deadline govern actual calls,
+  not native HTTP timeout defaults.
+
+This is cooperative isolation, **not an OS sandbox for untrusted code**.
+The latest observation is injected at the model bridge, not stored in native
+text/tool history. VM gets one current image and ST one current state. Full
+observations stay in audit traces. This differs from the baseline's historical
+observation-text retention and must be disclosed in comparisons.
+Arbitrary native attachments, extra model roles and every provider setting are
+not supported. Unmapped non-null settings fail; new profiles/pins need admission.
+
+### Agent validation
+
+Run offline checks from the repository root:
+
+```bash
+uv run --locked --extra minecraft --group test python -m pytest tests/test_agent -q
+```
+
+After explicitly preparing the pinned runtimes using their individual READMEs,
+test the actual native loops with scripted model replies and fake tools:
+
+```bash
+LIVEQUEST_EXTERNAL_TEST=1 uv run --locked --extra minecraft --group test \
+  python -m pytest tests/test_agent/test_agents.py -m external -q
+```
+
+The legacy marker/environment name is retained for command compatibility, not
+as a directory classification. Missing runtimes are explicit skips, not evidence
+of successful integration.
+
+The six-case Minecraft matrix combines `tool_calling`, `deepseek`, `hermes`
+with VM/ST, using `gpt-6-astra`, reasoning `low`, output limit 4096 and one request
+attempt. Each case has a 180-second wall-clock budget beginning just before
+`game.begin()`, excluding setup/evidence/cleanup. End-request timing is not an
+atomic native tick cutoff. These are simple integration tasks: an isolated
+peaceful flat world with an empty inventory and a privately prepared three-log
+column. Success requires independently saved inventory count and delta of at
+least three oak logs, not an Agent completion claim.
+
+Prepare Minecraft and review/accept its EULA using its
+[README](game/minecraft/README.md), then explicitly opt in:
+
+```bash
+export MINECRAFT_EULA_ACCEPTED=true
+export LIVEQUEST_MINECRAFT_TEST=1
+export LIVEQUEST_LIVE_COPILOT=1
+# Set COPILOT_GITHUB_TOKEN or an existing authorized token file:
+export LIVEQUEST_COPILOT_TOKEN_FILE=/absolute/path/to/copilot-token.txt
+uv run --locked --extra minecraft --group test python -m pytest \
+  tests/test_agent/test_agents.py -m game -q -s --headless --recording
+```
+
+Use `-k tool_calling`, `-k deepseek` or `-k hermes` to select an Agent.
+`--no-recording` disables video/decoding, not observations or snapshots.
+`--no-headless` uses a dedicated existing X11 desktop.
+Credentials are never discovered in other repositories; no substitute model
+is chosen if the requested one is unavailable. These checks consume quota.
+
+Unique `output/test/` directories (or `MINECRAFT_TEST_OUTPUT`) retain messages,
+VM observation images, optional decoded video, private before/after saves, and
+`result.json` with configuration, actual instructions, model identity, timing,
+usage, Agent exit and independent inventory scoring. Process attempts additionally
+save admission, native/effective model requests, worker logs, native results
+and cleanup outcomes.
+
+Task failure fails the test. Execution errors are not task outcomes; admission
+rejection is recorded as `integration_incompatible` and must be investigated,
+not treated as successful integration. Single samples establish neither
+success rates nor Agent rankings or long-horizon competence.
+
 ## Model clients
 
-The native [`ToolCallingAgent`](agents/README.md) can use these clients directly.
+The native [`ToolCallingAgent`](agent_framework/agents/tool_calling_agent/README.md) can use these clients directly.
 Its Minecraft VM/ST tests exercise the full observation/tool loop and independently
 score native inventory snapshots; the provider checks below test clients alone.
 
-See [the client guide](agents/llm/README.md) for authentication, text/image/tool
-examples, retry semantics, live checks and limitations.
+Clients live directly under [`llm_client/`](agent_framework/llm_client/), without
+a nested provider directory. All implement `Message` / `LLMResponse`:
+
+- [GitHubCopilotClient](agent_framework/llm_client/github_copilot_client.py):
+  direct Copilot Responses protocol adapted from GameAgentVisual, not Copilot
+  SDK or a guaranteed stable public GitHub API. Entitlement, policy and upstream
+  changes affect availability.
+- [OpenAIClient](agent_framework/llm_client/openai_client.py):
+  official `https://api.openai.com/v1/responses` over `httpx`, not the OpenAI SDK,
+  avoiding two transport/retry stacks.
+- [VLLMClient](agent_framework/llm_client/vllm_client.py):
+  local OpenAI-compatible Chat Completions, with inference/GPU dependencies in
+  a separate environment.
+
+Clients return complete responses, not token callbacks. Copilot consumes SSE
+internally; OpenAI and vLLM use non-streamed requests. They support encoded
+PNG/JPEG/WebP user images, tools, provider-state replay, usage, cancellation and
+explicit cleanup, without owning Agent history or tool execution.
+
+### Authentication and requests
+
+Use `COPILOT_GITHUB_TOKEN` or `OPENAI_API_KEY` in the environment; never commit
+credentials. Copilot optionally accepts an explicit `token_file`: the environment
+wins initially, with one file fallback on authentication rejection. It does not
+search other repositories' caches. OpenAI has no token-file parameter.
+
+```python
+import asyncio
+from agent_framework.llm_client.base_client import Message
+from agent_framework.llm_client.github_copilot_client import GitHubCopilotClient
+
+async def main():
+    async with GitHubCopilotClient(
+        "gpt-5.4-nano", max_output_tokens=1024, reasoning_effort="none",
+    ) as client:
+        response = await client.chat([Message("user", "Say hello.")])
+        print(response.content)
+
+asyncio.run(main())
+```
+
+The model/effort are examples; choose supported settings for your account.
+No model substitution occurs. Copilot checks model metadata for Responses,
+vision and tools; OpenAI reports unsupported features through its endpoint.
+
+```python
+from pathlib import Path
+message = Message("user", [
+    {"type": "text", "text": "Describe this game screen."},
+    {"type": "image", "data": Path("screen.png").read_bytes(), "mime_type": "image/png"},
+])
+response = await client.chat([message])
+```
+
+Images are encoded bytes, not paths, raw pixels or PIL objects. Validation
+checks byte type/MIME, not decoding or model size limits. Providers create
+Base64 data URLs without resizing. System/assistant images, audio/video,
+generated-image output and hosted built-in tools are unsupported.
+
+### Tools, history and accounting
+
+Pass flat definitions with `name`, optional `description` and JSON-schema
+`parameters`, not a nested Chat Completions `function` envelope:
+
+```python
+tools = [{
+    "name": "get_inventory",
+    "description": "Read the player's permitted inventory.",
+    "parameters": {"type": "object", "properties": {}},
+}]
+messages = [Message("user", "Check my inventory.")]
+response = await client.chat(messages, tools=tools, tool_choice="required")
+messages.append(Message(
+    "assistant", response.content, response.tool_calls,
+    provider_data=response.provider_data,
+))
+# Validate and execute allowed calls, then append each result:
+# messages.append(Message("tool", result_text, tool_call_id=call_id))
+```
+
+`tool_choice` supports `auto`, `none`, `required`; Responses tools use
+`strict=False` for schema compatibility. Append every result before the next
+model request. Missing/duplicate/unmatched IDs fail explicitly. Multiple calls
+do not prescribe parallel game execution. Clients never execute tools, mutate
+caller history or score success. Agents authorize tools and validate arguments.
+
+Keep `provider_data` with assistant replies. Responses replay includes reasoning
+state tied to the provider/model; cross-provider/model replay is rejected.
+Do not edit raw replay independently of public calls. This is protocol state,
+not a credential store or transcript export. Tool-image results map to a text
+result linked by ID, followed by a labeled user image, not native image-valued
+function output; that mapping can affect interpretation.
+
+- `timeout` bounds a whole attempt, including authentication/body reading, not
+  the entire Episode. Wrap the call for a separate overall deadline.
+- `max_attempts=1` by default. Additional attempts retry connection-establishment
+  errors and HTTP 429 with exponential backoff, not known quota/billing limits.
+- Timeouts, interrupted streams, HTTP 5xx, incomplete/malformed responses are
+  not replayed automatically: remote completion/cost may be uncertain.
+  Cancellation propagates but cannot guarantee remote inference/billing stops.
+- Copilot refreshes once on rejected authentication within an attempt, without
+  replaying a successful generation.
+- HTTP failures expose sanitized `ClientError`, not arbitrary server text or
+  authorization headers. Accepted finish reasons are `stop`, `tool_calls`,
+  `content_filter`; incomplete output raises. Refusal text is not success.
+- Missing usage is `None`, never zero. Responses retain provider usage/detail
+  fields; vLLM retains Chat Completions usage names.
+
+`on_request` receives per-attempt elapsed time, success/error and available
+usage, including failed/cancelled calls, without prompts/credentials. It is not
+aggregate cost accounting. Callbacks must be fast and non-throwing; their errors
+propagate. Avoid HTTP header/body debug logging with real credentials.
+`close()` is repeatable; cancel/await caller-owned concurrent requests first.
+Pricing, streaming callbacks, arbitrary structured output and external SDK
+adapters are not implemented by these clients.
+
+### Client validation
 
 ```bash
 uv sync --locked --group test
@@ -281,6 +544,86 @@ Live tests are skipped unless explicitly enabled. Only three types of model
 checks are retained: text, text with a generated black image, and tool calling.
 Actual OpenAI generation requires eligible API quota;
 do not assume a ChatGPT account or subscription supplies API credit.
+
+Default execution skips nine opt-in client cases without network calls. A skip
+is not evidence of provider availability. Tests check exact text, a synthetic
+black PNG and a tool round trip; they do not transmit repository code or real
+game screenshots. Reports are written only with `LIVEQUEST_LIVE_REPORT_DIR`;
+they retain status/usage, not credentials or raw provider state.
+
+```bash
+LIVEQUEST_LIVE_COPILOT=1 LIVEQUEST_COPILOT_MODEL=gpt-5.4-nano \
+LIVEQUEST_REASONING_EFFORT=none LIVEQUEST_LIVE_REPORT_DIR=output/test/client-smoke \
+uv run --locked --group test python -m pytest \
+  tests/test_client/test_llm_client.py -k copilot -x -q
+```
+
+The full check makes four generation requests, potentially billable even when
+assertions fail. For OpenAI use `LIVEQUEST_LIVE_OPENAI=1`,
+`LIVEQUEST_OPENAI_MODEL=<available-model>`, `OPENAI_API_KEY`, and `-k openai`.
+Omit reasoning settings for models without them. Opting in without a model or
+usable credentials fails rather than skipping.
+
+Run OpenAI checks in an eligible service region with authorized project
+credentials and API credit. Keys issued elsewhere do not remove
+[region restrictions](https://developers.openai.com/api/docs/supported-countries).
+For collaborator handoff, return the commit, Python version, pytest outcome and
+the three provider text/image/tool JSON reports from a fresh report directory.
+With `-x`, later reports may be absent after a failure. Inspect logs before
+sharing and exclude keys, headers and account details. Generated reports are
+Git-ignored and not automatically published.
+
+### Local vLLM
+
+```python
+from agent_framework.llm_client.vllm_client import VLLMClient
+async with VLLMClient(
+    "qwen3-vl-2b", base_url="http://127.0.0.1:8001/v1", max_output_tokens=1024,
+) as client:
+    response = await client.chat([Message("user", "Say hello.")])
+```
+
+Set `VLLM_API_KEY` only if your server needs it. Plain HTTP is loopback-only;
+remote endpoints require HTTPS. The client never launches servers, changes GPUs,
+truncates history or reduces budgets. Context-limit errors propagate. Defaults
+are `temperature=0`, `chat_template_kwargs.enable_thinking=False` and
+`parallel_tool_calls=False`; model templates must support them. Tool results
+are text-only; images are user messages. Native assistant state cannot be
+replayed across endpoints/models.
+
+An optional single-GPU example uses a separate environment, not benchmark
+dependencies:
+
+```bash
+uv venv --python 3.11 "$HOME/.local/share/livequestbench/vllm-env"
+uv pip install --python "$HOME/.local/share/livequestbench/vllm-env/bin/python" 'vllm==0.11.2'
+CUDA_VISIBLE_DEVICES=0 VLLM_NO_USAGE_STATS=1 DO_NOT_TRACK=1 \
+"$HOME/.local/share/livequestbench/vllm-env/bin/vllm" serve Qwen/Qwen3-VL-2B-Instruct \
+  --revision 89644892e4d85e24eaac8bacfd4f463576704203 \
+  --served-model-name qwen3-vl-2b --host 127.0.0.1 --port 8001 \
+  --dtype bfloat16 --max-model-len 4096 --max-num-seqs 1 \
+  --gpu-memory-utilization 0.4 --enforce-eager \
+  --limit-mm-per-prompt '{"image":1,"video":0}' \
+  --mm-processor-kwargs '{"min_pixels":4096,"max_pixels":262144}' \
+  --enable-auto-tool-choice --tool-call-parser hermes
+```
+
+Check free GPU memory first; the fraction is an allocation budget, not a hard
+memory cap. Image/context/concurrency settings affect resources. In another
+terminal:
+
+```bash
+curl --fail http://127.0.0.1:8001/health
+LIVEQUEST_LIVE_VLLM=1 LIVEQUEST_VLLM_MODEL=qwen3-vl-2b \
+LIVEQUEST_VLLM_BASE_URL=http://127.0.0.1:8001/v1 \
+LIVEQUEST_LIVE_REPORT_DIR=output/test/vllm-client-smoke \
+uv run --locked --group test python -m pytest \
+  tests/test_client/test_llm_client.py -k vllm -x -q
+```
+
+Stop your own server afterward; never terminate unrelated GPU services.
+Weights remain cached. The tool check uses required/constrained tool selection,
+verifying protocol round trips rather than autonomous planning.
 
 ## Bottom-up implementation sequence
 

@@ -6,7 +6,7 @@ import inspect
 
 import pytest
 
-from agents.base_agent import (
+from agent_framework.agents.base_agent import (
     AgentContext,
     AgentExit,
     AgentExitReason,

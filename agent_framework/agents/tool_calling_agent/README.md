@@ -1,0 +1,66 @@
+# ToolCallingAgent
+
+[`ToolCallingAgent`](agent.py) is the vanilla tool-calling baseline. It implements
+[`BaseAgent`](../base_agent.py) directly, without a process Wrapper, separate
+planner, reflection, memory summarization, skill learning or `query_agent`.
+It receives game instructions and restricted observation/tool bindings from
+the caller; it does not import games or read prompt files.
+
+## Loop
+
+1. Use supplied game instructions as the system message (omit it if empty).
+   Supply the public task, wall-clock budget and initial observation.
+2. Ask the configured model with tool schemas.
+3. Validate complete response, tool names, unique call IDs and argument-object
+   shapes before executing the batch sequentially. Tools validate their own
+   argument values. Return results under the original call IDs.
+4. Acquire a fresh observation after the batch and repeat.
+5. A nonempty text-only answer returns `AgentExitReason.RETURNED`, not a task
+   success verdict. The runner scores independently.
+
+Text/tool history and provider continuation state are retained. Only the latest
+image is sent per model request; earlier images become explicit omission notices,
+not generated descriptions. Full image-bearing messages remain in `messages`
+and may be recorded with `on_message`. This accommodates a one-image limit.
+There is no automatic tool retry.
+
+## Construction
+
+From the repository root, after preparing a VM Minecraft instance:
+
+```python
+from agent_framework.agents.tool_calling_agent import ToolCallingAgent
+from game.minecraft.visual_motor.interface import agent_tools, agent_observation
+
+agent = ToolCallingAgent(
+    client,
+    tools=agent_tools(),
+    observe=agent_observation,
+)
+# The runner supplies AgentContext with the restricted interface and
+# game.get_instructions(), and owns the game lifecycle and deadline.
+exit = await agent.run(context)
+```
+
+For ST, use the same function names from
+`game.minecraft.structured_tools.interface`. For another game, inject its
+bindings instead. See the [public interface contract](../../../README.md#python-lifecycle-contract).
+
+Create a fresh Agent per attempt. `stop(reason)` cancels active loop work;
+`close()` drains owned work and is repeatable. The caller owns the model client
+and game, including closing them. External cancellation and errors propagate.
+The Agent does not enforce its own deadline or pause the game. The runner must
+gate/end game access before awaiting Agent cleanup, on normal and error exits.
+
+## Validation
+
+```bash
+uv run --locked --extra minecraft --group test python -m pytest \
+  tests/test_agent -m 'not game and not external' -q
+```
+
+The [shared live-test instructions](../../../README.md#agent-validation) run
+Minecraft VM/ST with `gpt-6-astra`; add `-k tool_calling` for this Agent.
+Live checks consume quota and independently score inventory, not completion
+claims. They are integration samples, not long-horizon rankings. The
+[Minecraft README](../../../game/minecraft/README.md) covers setup and EULA.

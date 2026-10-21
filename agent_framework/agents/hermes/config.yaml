@@ -1,0 +1,10 @@
+model:
+  streaming: false
+compression:
+  enabled: false
+memory:
+  memory_enabled: false
+  user_profile_enabled: false
+tools:
+  tool_search:
+    enabled: 'off'

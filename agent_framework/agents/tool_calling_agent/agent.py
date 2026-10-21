@@ -2,28 +2,15 @@
 
 import asyncio
 from collections.abc import Awaitable, Callable, Sequence
-from dataclasses import dataclass, replace
-from typing import Generic, TypeVar
+from dataclasses import replace
+from typing import TypeVar
 
-from agents.base_agent import AgentContext, AgentExit, AgentExitReason, BaseAgent, StopReason
-from agents.llm.base_client import BaseLLMClient, LLMResponse, Message
+from agent_framework.agents.base_agent import AgentContext, AgentExit, AgentExitReason, BaseAgent, StopReason
+from agent_framework.llm_client.base_client import BaseLLMClient, LLMResponse, Message
+from agent_framework.utils.tools import Observation, Tool
 
 
 InterfaceT = TypeVar("InterfaceT")
-Observation = str | list[dict[str, object]]
-
-
-@dataclass(frozen=True)
-class Tool(Generic[InterfaceT]):
-    """A schema and handler using only the restricted interface supplied to run."""
-
-    name: str
-    description: str
-    parameters: dict[str, object]
-    execute: Callable[[InterfaceT, dict[str, object]], Awaitable[str]]
-
-    def schema(self) -> dict[str, object]:
-        return {"name": self.name, "description": self.description, "parameters": self.parameters}
 
 
 class ToolCallingAgent(BaseAgent[InterfaceT]):
@@ -129,15 +116,8 @@ class ToolCallingAgent(BaseAgent[InterfaceT]):
         self._call_ids.update(ids)
 
     async def _loop(self, context: AgentContext[InterfaceT]) -> AgentExit:
-        self._append(Message("system", (
-            "You control a game through the supplied tools. Follow the public task and "
-            "game instructions. The world continues while you think. Execute actions "
-            "through tools, not prose. Tool calls in one response execute sequentially; "
-            "a fresh observation follows the whole batch. Use a text-only final answer "
-            "when finished or unable to continue; state what happened without inventing "
-            "success. No separate observation or query Agent is needed.\n\n"
-            + context.game_instructions
-        )))
+        if context.game_instructions:
+            self._append(Message("system", context.game_instructions))
         first = True
         while True:
             observed = await self._observe(context.interface)

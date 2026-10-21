@@ -3,10 +3,13 @@
 from collections.abc import Awaitable, Callable
 from copy import deepcopy
 from dataclasses import dataclass
+from itertools import groupby
+import json
 import math
 import time
 
 from game.minecraft.runtime.bridge import BridgeError, NativeBridge
+from agent_framework.utils.tools import Tool
 
 
 PROFILE_ID = "minecraft-1.20.4-st-native-v2"
@@ -57,6 +60,34 @@ class StructuredInterface:
     observe: Callable[[], Awaitable[dict]]
     call_tool: Callable[[str, dict], Awaitable[dict]]
     tool_schemas: Callable[[], list[dict]]
+
+
+async def agent_observation(interface: StructuredInterface) -> str:
+    state = await interface.observe()
+    cube = dict(state["nearby_blocks"])
+    data = cube.pop("data")
+    if not isinstance(data, list) or any(type(value) is not int for value in data):
+        raise ValueError("Expected palette-index block data")
+    cube["format"] = "palette_cube_rle"
+    cube["data_rle"] = [[value, sum(1 for _ in run)] for value, run in groupby(data)]
+    cube["axis_order"] = "x_fastest_then_y_then_z"
+    return json.dumps({**state, "nearby_blocks": cube}, separators=(",", ":"))
+
+
+def agent_tools() -> list[Tool[StructuredInterface]]:
+    result: list[Tool[StructuredInterface]] = []
+    for schema in tool_schemas():
+        name = schema["name"]
+        if name == "GetObservationTool":
+            continue
+
+        async def execute(
+            interface: StructuredInterface, arguments: dict[str, object], tool_name: str = name,
+        ) -> str:
+            return json.dumps(await interface.call_tool(tool_name, arguments), separators=(",", ":"))
+
+        result.append(Tool(name, schema["description"], schema["parameters"], execute))
+    return result
 
 
 def tool_schemas() -> list[dict]:

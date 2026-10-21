@@ -150,6 +150,14 @@ class MinecraftGame(BaseGame[MotorInterface | StructuredInterface]):
             raise RuntimeError("Game is not ready")
         return self._interface
 
+    def get_instructions(self) -> str:
+        """Load public game introduction and the selected mode's instructions."""
+        prompts = Path(__file__).parent / "prompts"
+        return "\n".join(
+            (prompts / name).read_text(encoding="utf-8").strip()
+            for name in ("introduction.txt", f"{self.track}.txt")
+        )
+
     def _check_running(self) -> MinecraftSession:
         if self.phase != "running" or self._stopped.is_set() or self._session is None:
             raise RuntimeError("Agent access is only available during running play")

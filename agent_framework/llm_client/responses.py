@@ -7,7 +7,7 @@ from collections.abc import Callable, Sequence
 
 import httpx
 
-from agents.llm.base_client import BaseLLMClient, ClientError, LLMResponse, Message, RequestEvent
+from agent_framework.llm_client.base_client import BaseLLMClient, ClientError, LLMResponse, Message, RequestEvent
 
 
 def obj(value: object) -> dict[str, object]:

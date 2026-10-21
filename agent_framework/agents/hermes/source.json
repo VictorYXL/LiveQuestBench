@@ -1,0 +1,7 @@
+{
+  "repository": "https://github.com/NousResearch/hermes-agent.git",
+  "commit": "47b23fa048536c413a53ae5ad391f9a911f5d4e5",
+  "license": "MIT",
+  "environment": "LIVEQUEST_HERMES_ROOT",
+  "patches": []
+}

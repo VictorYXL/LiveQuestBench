@@ -1,8 +1,8 @@
 import os
 from collections.abc import Sequence
 
-from agents.llm.base_client import LLMResponse, Message
-from agents.llm.providers.responses import ResponsesClient
+from agent_framework.llm_client.base_client import LLMResponse, Message
+from agent_framework.llm_client.responses import ResponsesClient
 
 
 class OpenAIClient(ResponsesClient):

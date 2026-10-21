@@ -8,10 +8,10 @@ from pathlib import Path
 
 import pytest
 
-from agents.llm.base_client import Message
-from agents.llm.providers.github_copilot_client import GitHubCopilotClient
-from agents.llm.providers.openai_client import OpenAIClient
-from agents.llm.providers.vllm_client import VLLMClient
+from agent_framework.llm_client.base_client import Message
+from agent_framework.llm_client.github_copilot_client import GitHubCopilotClient
+from agent_framework.llm_client.openai_client import OpenAIClient
+from agent_framework.llm_client.vllm_client import VLLMClient
 
 
 @pytest.mark.live

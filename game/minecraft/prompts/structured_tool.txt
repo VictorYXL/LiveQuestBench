@@ -1,0 +1,5 @@
+Observations contain the fixed native projection: position, health, inventory, nearby entities and a radius-15 block cube without line-of-sight filtering. Unloaded cells are unknown, not air.
+
+nearby_blocks.data_rle contains [palette_index, repeat_count] pairs encoding the complete flattened cube, x fastest, then y, then z, starting at minp. Expanding runs reconstructs every original cell. Inventory slots 1-9 are the hotbar.
+
+Tool arguments and effects are defined by the provided tool schemas. A normal tool refusal is reported as success=false. Observations arrive automatically after each tool batch.

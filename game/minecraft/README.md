@@ -1,5 +1,41 @@
 # Test Minecraft with LiveQuestBench
 
+## Public instructions and developer documentation
+
+[`prompts/`](prompts/) contains task-independent, model-facing descriptions of
+the game, controls, timing and observation encoding.
+[`MinecraftGame.get_instructions()`](game.py) loads these text files for all Agents;
+the public task is supplied separately. These prompts do not include fixture
+coordinates, target items or task-specific strategies.
+
+The fixed layout is `game/<game_name>/prompts/`:
+
+- `introduction.txt`: common game introduction and interaction rules.
+- `visual_motor.txt`: VM-specific controls and observation format, when needed.
+- `structured_tool.txt`: ST-specific tools and observation format, when needed.
+
+Common introduction comes first, followed by the selected mode's text.
+A game without mode-specific instructions needs only `introduction.txt`;
+do not add empty mode files or infer support for a track from file existence.
+Minecraft provides both mode files. These files are shared by all Agents, not
+stored in Agent packages. The public task remains separate. Agents receive the
+loaded text through `AgentContext` and do not import this game.
+
+The existing [VM interface](visual_motor/interface.py) and
+[ST interface](structured_tools/interface.py) each expose `agent_tools()` and
+`agent_observation(interface)`. VM handles PNG encoding and bounded motor
+commands; ST handles fixed native tools and lossless state encoding.
+These functions use only the restricted interface, with no planner, task solution,
+scoring or lifecycle management. Both modes reuse their own tool schemas. In VM,
+the command vocabulary and bounds have one definition used to generate the
+model-facing schema and validate execution. No separate binding module,
+second action specification or lifecycle bypass is introduced.
+
+This README contains developer documentation for integration, lifecycle, tool
+semantics, failures, installation and private evidence. It is not loaded into
+Agent requests. Keep interface facts consistent with tool schemas and public
+instructions, without copying developer-only material into model input.
+
 Both modes use **one Minecraft Java 1.20.4 runtime**: isolated local server,
 initial player state, lifecycle, native snapshots and scoring.
 
@@ -170,12 +206,14 @@ Snapshots are saved-state boundaries, not exact atomic native-tick cutoffs.
 ## 5. Prepare an LLM and connect an Agent
 
 LLM checks are independent and optional. See the
-[client guide](../../agents/llm/README.md) for Copilot, OpenAI and local vLLM.
+[model client instructions](../../README.md#model-clients) for Copilot, OpenAI and local vLLM.
 Keep `--extra minecraft` in `uv run`/`uv sync` commands in this environment.
 Store credentials in your own environment; none are shipped with the repository.
 
-There is no built-in autonomous Agent or end-to-end Benchmark launcher yet.
-Custom integrations use [`BaseAgent`](../../agents/base_agent.py) and one
+The [Agent integration section](../../README.md#agent-integration) describes the native ToolCallingAgent
+and pinned DeepSeek/Hermes integrations, including opt-in live model tests.
+There is no end-to-end Benchmark launcher yet.
+Integrations use [`BaseAgent`](../../agent_framework/agents/base_agent.py) and one
 `MinecraftGame`, selecting `track="visual_motor"` or `track="structured_tool"`.
 Both follow:
 
@@ -184,9 +222,9 @@ start -> before snapshot -> begin -> Agent -> end -> after snapshot -> close
 ```
 
 Always close in `finally`. Pass only `get_agent_interface()` to the Agent:
-the [VM guide](guide/visual_motor.md) covers pixels/input; the
-[ST guide](guide/structured_tool.md) lists the fixed tool profile and semantics.
-The test suite uses scripted actions, not an LLM, and passing it is not an Agent
+the [VM interface](#vm-interface) covers pixels/input; the
+[ST interface](#st-interface) lists the fixed tool profile and semantics.
+The game interface tests use scripted actions, not an LLM, and passing them is not an Agent
 benchmark score.
 
 ## Troubleshooting
@@ -206,4 +244,183 @@ benchmark score.
   [Flatpak Prism](https://prismlauncher.org/download/linux/) 1.20.4 instance
   and a legitimate account; setup no longer provisions it. ST accepts offline only.
 - **Custom installation paths:** see
-  [environment overrides](guide/visual_motor.md#installation-overrides).
+  [installation overrides](#installation-overrides).
+
+## VM interface
+
+`await interface.observe()` returns a fresh `CapturedFrame`: frame/window IDs,
+host monotonic capture-start/end timestamps and a PIL RGB image. These bound
+host readback, not a native tick. Only the bound Minecraft window is captured;
+there is no desktop fallback. No inventory transcription, coordinates, semantic
+navigation, console commands or private scorer state are exposed.
+
+`await interface.act(commands)` accepts objects with exactly `name` and
+`arguments`:
+
+| Operation | Arguments |
+| --- | --- |
+| `key_down`, `key_up` | Supported `key` |
+| `mouse_down`, `mouse_up` | `button`: `left`, `middle`, `right` |
+| `mouse_move_relative` | Integer `dx`, `dy`, each -32768 through 32767 |
+| `mouse_move_to` | Integer window-relative `x`, `y`, within the current window |
+| `mouse_scroll` | Integer `steps`, -20 through 20 |
+| `wait` | Integer `milliseconds`, 0 through 10000 |
+| `release_all` | Empty object |
+
+Batches contain 1-64 commands and at most 10000 ms of explicit waits. Structure
+is validated before execution; geometry, focus and pointer ownership are
+checked during execution. Concurrent calls are serialized; calls waiting for
+the interface are rejected after `end`.
+
+Keys include `a`-`z`, `0`-`9`, `space`, `enter`, `escape`, `tab`, `backspace`,
+`delete`, `insert`, arrows, `home`, `end`, `page_up`, `page_down`,
+`left_shift`, `right_shift`, `left_ctrl` and `right_ctrl`. Alt/Super/Meta and
+game commands are not exposed. The fresh native client uses standard bindings;
+the optional authenticated Prism path retains its instance's bindings.
+
+Held inputs persist across calls and reasoning until released, an executor
+failure or game termination. A successful call acknowledges X11 submission,
+not an in-game effect. Cancellation releases inputs but cannot undo effects;
+do not automatically retry partially executed batches. Waits and menus do not
+pause this multiplayer server.
+
+The VM smoke test presses W for one second, releases it, looks down and holds
+the left mouse button for two seconds. It checks movement/view and input, not
+item acquisition. Before/after saves and optional recordings are retained.
+This test example is developer documentation, not an Agent instruction.
+
+XTest is display-global; focus checks are not a security boundary. Use a
+dedicated desktop or virtual display without manual interference. Input and
+observations are unavailable before `begin` and after `end`. Headless display
+diagnostics go to `xvfb.log`; occupied-display probing and unsupported XF86
+key symbols can produce nonfatal warnings. Startup failures raise with the log
+location; existing displays are not reconfigured.
+
+## ST interface
+
+Profile: **`minecraft-1.20.4-st-native-v2`**, replacing
+`minecraft-1.20.4-st-basic-v1`. Tool names are familiar, but backend, navigation,
+recipe ordering and observation details changed; do not pool scores as the
+same condition.
+
+The client-side Fabric mod accepts private stdio control of the player's own
+native client, not a Mineflayer bot or spectator. It is inactive in VM.
+ST is still rendered; native inventory/crafting/furnace screens appear in
+recordings. Programmatic recipe placement and slot clicks do not reproduce
+human mouse travel. Recording is for human inspection, not ST input.
+
+- `await interface.observe()` returns whitelisted state and host request/readback timestamps.
+- `interface.tool_schemas()` returns fixed name/description/JSON-schema definitions.
+- `await interface.call_tool(name, arguments)` validates and executes one tool.
+
+State includes player identity, feet position, health/hunger, inventory, held
+item/slot, look direction, aimed/supporting block, nearby entities and a block
+palette cube. The radius-15 cube (31 cubed cells) is centered one block above
+floored feet, without line-of-sight filtering. Unloaded/out-of-height cells are
+unknown, not air. Descriptors include native state ID, collision, fluid,
+replaceability and breakability. Entities are within 15 blocks; health is
+limited to what the client has received. The shared Agent binding losslessly
+run-length encodes the cube; its public format is documented in the instruction
+file, without changing observation permissions.
+
+Inventory slots 1-9 are hotbar and 10-36 storage. Armor/offhand, crafting-grid,
+container and cursor contents are not transcribed in the player inventory.
+Dropped items include name/count. Recipe queries use client-synced recipes.
+Admin commands, raw protocol access, server files and unrestricted client
+objects are not exposed.
+
+| Tool | Behavior |
+| --- | --- |
+| `GetObservationTool` | Same projection as `observe`; omitted by the automatic-observation Agent binding |
+| `MoveTool`, `JumpTool` | Bounded native movement/jump keys, then release |
+| `LookAtPositionTool`, `SelectTool`, `StopTool` | Look direction, hotbar selection, release controls |
+| `GoToPositionTool` | Walk to block center within 64 blocks; search limited to 4096 expansions; single-block steps/jumps/drops, no digging/building/parkour |
+| `DigTool` | Aim at and break a reachable visible block, with native swing/damage |
+| `PlaceTool` | Use held item on a reachable visible support face and check resulting block |
+| `QueryCraftRecipeTool` | Output recipes, indices, ingredient alternatives and availability |
+| `CraftItemTool` | Open inventory or aimed-at table; execute recipe count, not target inventory count |
+| `SmeltItemTool` | Open aimed-at empty furnace, insert carried input/fuel, wait and collect output |
+
+Schemas are authoritative. Recipe indices are sorted by native recipe ID;
+without an index, the first recipe with available ingredients is selected.
+There is no automatic collection, station setup/recovery, equipment selection
+or material-chain planning.
+
+Mutating calls are serialized and run on client ticks; observations can occur
+while a tool is active. Final actions have a 60-second budget; digging also
+has a preceding aim request. Long smelts can leave partial furnace contents.
+The runner separately owns the Episode deadline.
+
+## Lifecycle, failures and private evidence
+
+Use a fresh game and Agent per Episode, and always `close` in `finally`,
+including after partial startup. `start` copies a fresh world, freezes ticks
+and verifies the initial player state. VM also checks actual mouse-look and
+hotbar acceptance because the first cursor event may be discarded. Private
+initialization restores orientation/slot 1 and rechecks state; no such
+administrative correction occurs during measured play. A connected player
+alone does not prove that loading screens have cleared.
+
+`begin` verifies again and unfreezes; the world progresses during reasoning
+and waits. `end` gates new calls, cancels active control and requests a freeze
+without closing the client. ST waits for native release acknowledgement;
+unacknowledged cancellation terminates the client and raises infrastructure
+failure. Pending multi-tick work is removed without reconnect or respawn.
+Death does not automatically respawn.
+
+Normal ST action refusal returns `success=false`; bridge errors/timeouts raise.
+Broken blocks, spent ingredients, in-flight packets and furnace contents are
+not rolled back. The cooperative Python/stdio API is not a sandbox for hostile
+Agent code.
+
+Snapshots are permitted only at initial/terminal frozen boundaries. The harness
+disables autosave, confirms `save-all flush`, copies the world with hashes and
+host timestamps, then restores autosave. **Vanilla tick freeze does not freeze
+players or their packets.** These are acknowledged save boundaries, not atomic
+all-entity snapshots or exact tick/deadline cutoffs. Startup advances the world;
+the initialized live before snapshot is the scoring baseline. Failed/partial
+snapshots are not valid scoring evidence.
+
+Inventory evaluation measures native saved counts/deltas, not item provenance
+or a particular skill's use. Missing/malformed evidence raises. Recording is
+host-sampled rather than native-frame-exact; recording errors propagate.
+Distinguish game failure from infrastructure and measurement failure.
+
+## Installation overrides
+
+| Variable | Meaning |
+| --- | --- |
+| `MINECRAFT_JAVA` | Client/server Java 21 executable; also used during setup |
+| `MINECRAFT_SERVER_JAR` | Server JAR or explicit installation destination |
+| `MINECRAFT_PRISM_ROOT` | Existing Flatpak Prism directory, only for explicit online VM |
+| `LIVEQUEST_MINECRAFT_HOME` | Build/cache/downloads/locks; default `~/.local/share/livequestbench/minecraft` |
+
+Without an explicit JAR, the managed download is preferred, then an existing
+GameAgentVisual download under `GAMEAGENTVISUAL_HOME` or
+`~/.local/share/gameagentvisual`. Verify reuse with
+`game/minecraft/setup.sh --check --verify-server`.
+
+Setup uses checksum-verified Gradle 8.6, Fabric Loom 1.6.12, Fabric Loader
+0.15.11 and Yarn 1.20.4+build.3. It exports development classpath/configuration;
+Episodes start Java directly, not Gradle or a launcher. Each Episode has a
+private client directory and standard options; dependency caches are shared.
+Setup checks build-source fingerprints and dependency presence. Receipts
+identify the client as `fabric-development`.
+
+Local startup neither reads account files nor takes the legacy login lock.
+Only the optional authenticated Prism path uses private profiles outside run
+artifacts, removed at cleanup. Credential permissions are restricted; assets,
+libraries and metadata use private writable caches so downloads do not mutate
+the original installation.
+
+## Implementation provenance
+
+VM adapts GameAgentVisual branch `xianya/init_mincraft`, commit
+`696257de4ba7788f68026084b794d1265677f75b`; that checkout is not a runtime
+dependency. Fabric development launch removes the default Prism/account
+requirement without changing the renderer or public motor interface.
+Offline authentication uses a consistent player UUID; explicit online VM
+retains the separately prepared Prism path. ST shares the client with its
+private bridge. There is no replacement renderer or step-based simulation
+controller. This provenance grants no Minecraft binary/asset redistribution
+rights.

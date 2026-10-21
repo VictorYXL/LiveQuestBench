@@ -1,0 +1,3 @@
+Minecraft is a first-person 3D survival game. The server keeps running during model reasoning and tool execution. Only the provided controls and observations are available.
+
+Interact through the supplied tools and observations. Follow the public task and game instructions. Tool calls are serviced sequentially, and a fresh observation is supplied before the next model request. A text-only final answer ends the attempt; it is not a success verdict. No separate observation or query Agent is needed.

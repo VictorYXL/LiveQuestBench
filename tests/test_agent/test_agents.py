@@ -3,10 +3,11 @@
 import asyncio
 from collections.abc import Awaitable, Callable, Sequence
 from copy import deepcopy
-from dataclasses import asdict
+from dataclasses import asdict, replace
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
 import time
 from typing import TypeVar
@@ -14,12 +15,17 @@ from uuid import uuid4
 
 import pytest
 
-from agents.base_agent import AgentContext, AgentExit, AgentExitReason, BaseAgent, StopReason
-from agents.llm.base_client import BaseLLMClient, LLMResponse, Message, RequestEvent
-from agents.tool_calling_agent import Observation, Tool, ToolCallingAgent
+from agent_framework.agents.base_agent import AgentContext, AgentExit, AgentExitReason, BaseAgent, StopReason
+from agent_framework.llm_client.base_client import BaseLLMClient, LLMResponse, Message, RequestEvent
+from agent_framework.agents.tool_calling_agent import ToolCallingAgent
+from agent_framework.utils.tools import Observation, Tool
+from agent_framework.agents.deepseek_harness import DeepSeekHarnessAgent
+from agent_framework.agents.hermes import HermesAgent
+from agent_framework.agents.process_agent import IntegrationIncompatible, IntegrationUnavailable, ProcessAgent
 
 
 InterfaceT = TypeVar("InterfaceT")
+NATIVE_AGENTS = {"deepseek": DeepSeekHarnessAgent, "hermes": HermesAgent}
 
 
 async def run_bounded(
@@ -91,6 +97,46 @@ def make_tool() -> Tool[list[str]]:
 
 def call(call_id: str, value: str = "one") -> dict[str, object]:
     return {"id": call_id, "name": "act", "arguments": {"value": value}}
+
+
+def test_prompt_files_and_public_task_separation(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    from game.minecraft.game import MinecraftGame
+    from game.minecraft import game as minecraft_module
+
+    PROMPTS = Path(minecraft_module.__file__).parent / "prompts"
+    assert {path.name for path in PROMPTS.iterdir()} == {
+        "introduction.txt", "visual_motor.txt", "structured_tool.txt",
+    }
+    monkeypatch.chdir(tmp_path)
+    GAME_INSTRUCTIONS = (PROMPTS / "introduction.txt").read_text(encoding="utf-8").strip()
+    VM_INSTRUCTIONS = MinecraftGame(output_dir=tmp_path / "vm").get_instructions()
+    ST_INSTRUCTIONS = MinecraftGame(output_dir=tmp_path / "st", track="structured_tool").get_instructions()
+    assert VM_INSTRUCTIONS == GAME_INSTRUCTIONS + "\n" + (PROMPTS / "visual_motor.txt").read_text(encoding="utf-8").strip()
+    assert ST_INSTRUCTIONS == GAME_INSTRUCTIONS + "\n" + (PROMPTS / "structured_tool.txt").read_text(encoding="utf-8").strip()
+    public_text = "\n".join([GAME_INSTRUCTIONS, VM_INSTRUCTIONS, ST_INSTRUCTIONS]).lower()
+    for fixture_hint in ("oak", "collect", "pick up", "pickup", "craft", "0, 72", "three logs",
+                         "aim the crosshair", "release inputs before finishing"):
+        assert re.search(r"\b" + re.escape(fixture_hint) + r"\b", public_text) is None
+
+    monkeypatch.chdir(tmp_path)
+
+    async def scenario() -> None:
+        for task, instructions in (
+            ("Collect three logs", VM_INSTRUCTIONS),
+            ("Reach the destination", ST_INSTRUCTIONS),
+            ("Play another game", "Instructions supplied by a different game."),
+            ("No system instructions", ""),
+        ):
+            client = ScriptedClient([LLMResponse(content="Finished.", finish_reason="stop")])
+            agent = ToolCallingAgent(client, tools=[make_tool()], observe=observe)
+            try:
+                await agent.run(replace(context([]), task=task, game_instructions=instructions))
+                systems = [message.content for message in client.requests[0] if message.role == "system"]
+                assert systems == ([instructions] if instructions else [])
+                assert task in str(next(message.content for message in client.requests[0] if message.role == "user"))
+            finally:
+                await agent.close()
+    asyncio.run(scenario())
 
 
 def test_observe_tool_loop_and_history() -> None:
@@ -218,10 +264,11 @@ def test_minecraft_bindings_preserve_permissions() -> None:
     pytest.importorskip("PIL")
     pytest.importorskip("Xlib")
     from PIL import Image
-    from agents.minecraft_tool_calling import minecraft_tools, observe_minecraft
+    from game.minecraft.structured_tools import interface as st_api
+    from game.minecraft.visual_motor import interface as vm_api
     from game.minecraft.structured_tools.interface import StructuredInterface, tool_schemas
     from game.minecraft.visual_motor.capture import CapturedFrame
-    from game.minecraft.visual_motor.interface import MotorInterface
+    from game.minecraft.visual_motor.interface import MotorInterface, action_tool_schema
 
     async def scenario() -> None:
         state = {"inventory": [], "nearby_blocks": {
@@ -240,14 +287,15 @@ def test_minecraft_bindings_preserve_permissions() -> None:
             return {"success": False, "message": "ordinary refusal"}
 
         st = StructuredInterface(observe_st, st_call, tool_schemas)
-        encoded = await observe_minecraft(st)
+        encoded = await st_api.agent_observation(st)
         assert isinstance(encoded, str)
         cube = json.loads(encoded)["nearby_blocks"]
         assert [value for value, count in cube["data_rle"] for _ in range(count)] == state["nearby_blocks"]["data"]
         assert state["nearby_blocks"]["format"] == "palette_cube"
-        tools = minecraft_tools("structured_tool")
+        tools = st_api.agent_tools()
         assert {tool.name for tool in tools} == {s["name"] for s in tool_schemas()} - {"GetObservationTool"}
         for tool in tools:
+            assert tool.schema() == next(schema for schema in tool_schemas() if schema["name"] == tool.name)
             assert json.loads(await tool.execute(st, {}))["success"] is False
         assert names == [tool.name for tool in tools]
 
@@ -261,11 +309,12 @@ def test_minecraft_bindings_preserve_permissions() -> None:
             return []
 
         vm = MotorInterface(observe_vm, act_vm)
-        observed = await observe_minecraft(vm)
+        observed = await vm_api.agent_observation(vm)
         assert isinstance(observed, list)
         assert [block["type"] for block in observed] == ["text", "image"]
         assert "inventory" not in str(observed)
-        action, = minecraft_tools("visual_motor")
+        action, = vm_api.agent_tools()
+        assert action.schema() == action_tool_schema()
         commands = [{"name": "wait", "arguments": {"milliseconds": 10}}]
         await action.execute(vm, {"commands": commands})
         assert submitted == commands
@@ -276,31 +325,41 @@ def test_minecraft_bindings_preserve_permissions() -> None:
 
 @pytest.mark.live
 @pytest.mark.game
+@pytest.mark.parametrize("agent_name", ["tool_calling", "deepseek", "hermes"])
 @pytest.mark.parametrize("track", ["visual_motor", "structured_tool"])
-def test_minecraft_collect_three_logs(track: str, headless: bool, recording: bool) -> None:
+def test_minecraft_collect_three_logs(
+    track: str, agent_name: str, headless: bool, recording: bool,
+) -> None:
     if os.environ.get("LIVEQUEST_MINECRAFT_TEST") != "1" or os.environ.get("LIVEQUEST_LIVE_COPILOT") != "1":
         pytest.skip("Set LIVEQUEST_MINECRAFT_TEST=1 and LIVEQUEST_LIVE_COPILOT=1 for game/model runs")
     pytest.importorskip("nbtlib")
     pytest.importorskip("PIL")
     pytest.importorskip("Xlib")
-    from agents.llm.providers.github_copilot_client import GitHubCopilotClient
-    from agents.minecraft_tool_calling import ST_INSTRUCTIONS, VM_INSTRUCTIONS, minecraft_tools, observe_minecraft
+    from agent_framework.llm_client.github_copilot_client import GitHubCopilotClient
+    from game.minecraft.structured_tools import interface as st_api
+    from game.minecraft.visual_motor import interface as vm_api
     from game.minecraft.evaluators.inventory import evaluate_inventory
     from game.minecraft.game import MinecraftGame
     from game.minecraft.init_player_state import PlayerState
 
     root = Path(os.environ.get("MINECRAFT_TEST_OUTPUT", str(Path(__file__).resolve().parents[2] / "output/test")))
-    output = root.resolve() / f"tool-calling-{track}-{uuid4().hex}"
+    output = root.resolve() / f"{agent_name}-{track}-{uuid4().hex}"
+    if agent_name != "tool_calling":
+        try:
+            NATIVE_AGENTS[agent_name].source_root()
+        except IntegrationUnavailable as error:
+            pytest.skip(str(error))
     token_file = os.environ.get("LIVEQUEST_COPILOT_TOKEN_FILE")
     if not os.environ.get("COPILOT_GITHUB_TOKEN") and not token_file:
         pytest.fail("Set COPILOT_GITHUB_TOKEN or LIVEQUEST_COPILOT_TOKEN_FILE; credentials are not auto-discovered")
     events: list[RequestEvent] = []
     report: dict[str, object] = {
-        "status": "execution_error", "track": track, "agent": "tool_calling",
+        "status": "execution_error", "track": track, "agent": agent_name,
         "provider": "github_copilot", "model": "gpt-6-astra",
         "reasoning_effort": "low", "max_output_tokens": 4096, "max_attempts": 1,
         "budget_seconds": 180, "recording": recording, "headless": headless,
         "fixture": "three-oak-logs-v1",
+        "upstream": NATIVE_AGENTS[agent_name].source if agent_name in NATIVE_AGENTS else None,
         "fixture_commands": ["fill 0 72 -2 0 74 -2 minecraft:oak_log"],
         "task": "Collect at least 3 oak logs in your inventory. Keep them as logs, not planks. "
                 "Do not drop them. Finish with a text answer when you believe the task is complete.",
@@ -335,10 +394,23 @@ def test_minecraft_collect_three_logs(track: str, headless: bool, recording: boo
             track=track, output_dir=output, headless=headless, recording=recording,
             difficulty="peaceful", player_state=PlayerState(position=(0.5, 72, 0.5), yaw=180),
         )
-        agent = ToolCallingAgent(
-            client, tools=minecraft_tools(track), observe=observe_minecraft, on_message=record,
-        )
+        def build_agent(
+            tools: Sequence[Tool[InterfaceT]],
+            observe: Callable[[InterfaceT], Awaitable[Observation]],
+        ) -> ToolCallingAgent[InterfaceT] | ProcessAgent[InterfaceT]:
+            return (
+                ToolCallingAgent(client, tools=tools, observe=observe, on_message=record)
+                if agent_name == "tool_calling" else NATIVE_AGENTS[agent_name](
+                    client, output_dir=output / "external", tools=tools,
+                    observe=observe, on_message=record, model="gpt-6-astra",
+                    reasoning_effort="low", max_output_tokens=4096,
+                )
+            )
+        agent = (build_agent(vm_api.agent_tools(), vm_api.agent_observation)
+                 if track == "visual_motor" else build_agent(st_api.agent_tools(), st_api.agent_observation))
         try:
+            instructions = game.get_instructions()
+            report["game_instructions"] = instructions
             models = await client.list_models()
             metadata = next((model for model in models if model.get("id") == "gpt-6-astra"), None)
             if metadata is None:
@@ -357,7 +429,7 @@ def test_minecraft_collect_three_logs(track: str, headless: bool, recording: boo
             await game.begin()
             public = AgentContext(
                 output.name, str(report["task"]), interface, started, deadline,
-                VM_INSTRUCTIONS if track == "visual_motor" else ST_INSTRUCTIONS,
+                instructions,
             )
             outcome, timed_out = await run_bounded(agent, public, game.end)
             after = await game.save_snapshot(output / "after")
@@ -382,6 +454,10 @@ def test_minecraft_collect_three_logs(track: str, headless: bool, recording: boo
                     await game.close()
                 finally:
                     await client.close()
+            if isinstance(agent, ProcessAgent):
+                report["integration_admitted"] = agent.admitted
+                report["forced_worker_termination"] = agent.forced_termination
+                report["worker_returncode"] = agent._process.returncode if agent._process else None
         if recording:
             subprocess.run(
                 ["ffmpeg", "-v", "error", "-xerror", "-i", str(output / "video.mp4"),
@@ -391,9 +467,13 @@ def test_minecraft_collect_three_logs(track: str, headless: bool, recording: boo
         report["status"] = "task_success" if score["success"] else "task_failure"
         assert score["success"], f"Agent did not collect three logs: {score['checks']}; artifacts: {output}"
 
-    print(f"ToolCallingAgent artifacts: {output}")
+    print(f"{agent_name} artifacts: {output}")
     try:
         asyncio.run(scenario())
+    except IntegrationIncompatible as error:
+        report["status"] = "integration_incompatible"
+        report["reason"] = str(error)
+        pytest.skip(f"Native integration rejected (not a task failure): {error}")
     except BaseException as error:
         report["error_type"] = type(error).__name__
         raise
@@ -401,3 +481,118 @@ def test_minecraft_collect_three_logs(track: str, headless: bool, recording: boo
         output.mkdir(parents=True, exist_ok=True)
         report["attempts"] = [asdict(event) for event in events]
         (output / "result.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+
+
+@pytest.mark.parametrize("agent_name", ["deepseek", "hermes"])
+def test_external_missing_checkout(agent_name: str, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    variable = NATIVE_AGENTS[agent_name].source["environment"]
+    monkeypatch.delenv(variable, raising=False)
+    with pytest.raises(IntegrationUnavailable, match="prepared pinned checkout"):
+        NATIVE_AGENTS[agent_name].source_root()
+    monkeypatch.setenv(variable, str(tmp_path / "missing"))
+    with pytest.raises(IntegrationUnavailable, match="does not exist"):
+        NATIVE_AGENTS[agent_name].source_root()
+
+
+@pytest.mark.external
+@pytest.mark.parametrize("agent_name", ["deepseek", "hermes"])
+def test_native_external_roundtrip(agent_name: str, tmp_path: Path) -> None:
+    if os.environ.get("LIVEQUEST_EXTERNAL_TEST") != "1":
+        pytest.skip("Set LIVEQUEST_EXTERNAL_TEST=1 for installed native Agent checks without model/game calls")
+    try:
+        NATIVE_AGENTS[agent_name].source_root()
+    except IntegrationUnavailable as error:
+        pytest.skip(str(error))
+
+    async def scenario() -> None:
+        state: list[str] = []
+        client = ScriptedClient([
+            LLMResponse(tool_calls=[call("native-1")], finish_reason="tool_calls",
+                        provider_data={"marker": "native-state"}),
+            LLMResponse(content="Finished.", finish_reason="stop"),
+        ])
+        agent = NATIVE_AGENTS[agent_name](
+            client, output_dir=tmp_path / agent_name, tools=[make_tool()], observe=observe,
+            model="gpt-6-astra", reasoning_effort="low", max_output_tokens=4096,
+        )
+        try:
+            for invalid in (
+                {"model": "unapproved-model"},
+                {"model": "gpt-6-astra", "max_tokens": 999},
+                {"model": "gpt-6-astra", "reasoning_effort": "high"},
+                {"model": "gpt-6-astra", "unmapped_option": True},
+                {"model": "gpt-6-astra", "stream": True},
+                {"model": "gpt-6-astra", "parallel_tool_calls": False},
+                {"model": "gpt-6-astra", "tools": []},
+            ):
+                with pytest.raises(IntegrationIncompatible):
+                    await agent._chat(context(state), invalid)
+            assert not client.requests and state == []
+            result = await asyncio.wait_for(agent.run(context(state)), timeout=30)
+            assert result.reason is AgentExitReason.RETURNED
+            assert result.message == "Finished."
+            assert state == ["one"]
+            assert agent.admitted and len(client.requests) == 2
+            assert any("Public game instructions" in str(message.content) for message in client.requests[0])
+            replay = next(message for message in client.requests[1] if message.tool_calls)
+            assert replay.provider_data == {"marker": "native-state"}
+            assert next(message for message in agent.messages if message.role == "tool").tool_call_id == "native-1"
+        finally:
+            await agent.close()
+        assert agent._process is not None and agent._process.returncode == 0
+        assert not client.closed
+    asyncio.run(scenario())
+
+
+@pytest.mark.external
+@pytest.mark.parametrize("agent_name", ["deepseek", "hermes"])
+def test_native_external_cancellation(agent_name: str, tmp_path: Path) -> None:
+    if os.environ.get("LIVEQUEST_EXTERNAL_TEST") != "1":
+        pytest.skip("Set LIVEQUEST_EXTERNAL_TEST=1 for installed native Agent checks")
+    try:
+        NATIVE_AGENTS[agent_name].source_root()
+    except IntegrationUnavailable as error:
+        pytest.skip(str(error))
+
+    async def scenario() -> None:
+        for cooperative in (True, False):
+            entered = asyncio.Event()
+
+            class WaitingClient(ScriptedClient):
+                async def _request_impl(
+                    self, messages: Sequence[Message], *, tools: Sequence[dict[str, object]] | None,
+                    tool_choice: str | None,
+                ) -> LLMResponse:
+                    entered.set()
+                    await asyncio.Event().wait()
+                    raise AssertionError("Blocked model request must be cancelled")
+
+            client = WaitingClient([])
+            state: list[str] = []
+            agent = NATIVE_AGENTS[agent_name](
+                client, output_dir=tmp_path / f"{agent_name}-{cooperative}",
+                tools=[make_tool()], observe=observe, model="gpt-6-astra",
+                reasoning_effort="low", max_output_tokens=4096,
+            )
+            running = asyncio.create_task(agent.run(context(state)))
+            try:
+                await asyncio.wait_for(entered.wait(), timeout=30)
+                assert agent.admitted
+                if cooperative:
+                    await agent.stop(StopReason.DEADLINE)
+                    result = await asyncio.wait_for(running, timeout=10)
+                    assert result.reason is AgentExitReason.STOPPED
+                    assert result.native_reason == "deadline"
+                else:
+                    running.cancel()
+                    with pytest.raises(asyncio.CancelledError):
+                        await asyncio.wait_for(running, timeout=10)
+                assert state == []
+                assert agent._process is not None and agent._process.returncode is not None
+                assert not client.closed
+            finally:
+                running.cancel()
+                await asyncio.gather(running, return_exceptions=True)
+                await agent.close()
+                await agent.close()
+    asyncio.run(scenario())

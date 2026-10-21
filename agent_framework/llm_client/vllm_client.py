@@ -9,8 +9,8 @@ from urllib.parse import urlsplit
 
 import httpx
 
-from agents.llm.base_client import BaseLLMClient, ClientError, LLMResponse, Message, RequestEvent
-from agents.llm.providers.responses import ResponsesClient, array, content_parts, obj, text
+from agent_framework.llm_client.base_client import BaseLLMClient, ClientError, LLMResponse, Message, RequestEvent
+from agent_framework.llm_client.responses import ResponsesClient, array, content_parts, obj, text
 
 
 class VLLMClient(BaseLLMClient):
