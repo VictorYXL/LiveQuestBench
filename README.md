@@ -5,10 +5,12 @@ long-horizon objectives in continuously evolving 3D games. The intended focus is
 the interaction between immediate reaction, persistent resources and decisions
 whose consequences affect later stages.
 
-**Current status: inspectable Python scaffold, not a runnable game benchmark.**
-There is no connected game, Agent implementation, model provider, configuration
-loader, Episode runner or score-producing launcher yet. No benchmark results or
-runtime compatibility claims are implied by this scaffold.
+**Current status: Python scaffold with working model clients, not a runnable game
+benchmark.** GitHub Copilot and OpenAI Responses clients are implemented. Copilot
+has passed small live text, image and tool-roundtrip checks; OpenAI is covered by
+offline protocol tests, not a live generation. There is no connected game, Agent
+implementation, configuration loader, Episode runner or score-producing launcher
+yet. These checks are not game benchmark results.
 
 ## Development setup
 
@@ -28,9 +30,8 @@ uv run --locked python -c "from game.base_game import BaseGame; from agents.base
 
 - `pyproject.toml` declares Python dependencies; `uv.lock` pins their resolution.
 - `.python-version` selects the development interpreter; `.venv/` is local only.
-- The scaffold has no third-party runtime dependencies. Add dependencies when
-  implementing the component that needs them, rather than installing all future
-  Agent frameworks now.
+- The model clients use `httpx`; tests use the optional `test` dependency group.
+  Do not install all future Agent frameworks into the environment in advance.
 - This is a source-run project (`tool.uv.package = false`), not an installable
   distribution yet. Run commands from the repository root.
 - Keep one authoritative dependency declaration and lock. Export a requirements
@@ -67,8 +68,15 @@ agents/
   adapters/                 Future external Agent adapters
   llm/
     base_client.py          Message/response types and model client contract
+    README.md               Provider usage and validation instructions
     providers/
+      responses.py          Shared multimodal/tool Responses protocol
+      github_copilot_client.py
+      openai_client.py
 core/                       Future orchestration and shared infrastructure
+tests/
+  core/                     Offline model-client checks
+  integration/              Explicit opt-in live model checks
 pyproject.toml
 uv.lock
 .python-version
@@ -123,11 +131,27 @@ too early can prevent final evidence acquisition.
 The LLM message fields follow the existing Minecraft client's conventions,
 including multimodal/tool content and provider state. `LLMResponse` is an initial
 typed container, not a drop-in guarantee for existing dictionary-returning
-providers. Provider-specific serialization, usage accounting and retries need
-explicit adaptation; missing usage must not be treated as zero.
+providers. The two implemented providers share Responses serialization and
+per-attempt usage callbacks; missing usage is never treated as zero. Aggregate
+costs and Episode-level accounting remain future work.
 
-All base operations are abstract and fail if invoked without an implementation.
+Game and Agent operations remain abstract. The model base now implements the
+common request lifecycle and requires provider-specific request/cleanup methods.
 There are no no-op concrete games, agents or model clients.
+
+## Model clients
+
+See [the client guide](agents/llm/README.md) for authentication, text/image/tool
+examples, retry semantics, live checks and limitations.
+
+```bash
+uv sync --locked --group test
+uv run --locked --group test python -m pytest tests/core tests/integration -q
+```
+
+Live tests are skipped unless explicitly enabled. OpenAI offline tests do not
+need an API key or balance. Actual OpenAI generation requires eligible API quota;
+do not assume a ChatGPT account or subscription supplies API credit.
 
 ## Bottom-up implementation sequence
 
