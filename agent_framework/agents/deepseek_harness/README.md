@@ -56,11 +56,16 @@ Prepare Minecraft and model credentials using the
 ```bash
 LIVEQUEST_MINECRAFT_TEST=1 LIVEQUEST_LIVE_COPILOT=1 \
 uv run --locked --extra minecraft --group test python -m pytest \
-  tests/test_agent/test_agents.py -k deepseek --headless --recording -q -s
+  tests/test_agent/test_agents_minecraft.py -k deepseek --headless --recording -q -s
 ```
 
-Both cases run the native Agent with actual Minecraft VM/ST and `gpt-6-astra`.
+The cases run the native Agent with actual Minecraft VM/ST and `gpt-6-astra`,
+plus an explicit ST stop after the first completed game tool. The corresponding
+Veloren suite also includes VM/ST and an explicit ST stop.
 They consume model quota; there are no scripted-model Agent tests.
+
+Benchmark-requested cancellation is reported as `stopped` and the worker exits
+cleanly. Unexpected native aborts still fail; cancellation is not task success.
 
 The [shared process rules](../../../README.md#shared-process-integration) document
 model/tool mediation, observation-history differences, cancellation, evidence

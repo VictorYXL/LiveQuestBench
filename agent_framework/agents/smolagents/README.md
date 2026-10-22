@@ -50,7 +50,7 @@ Follow the [shared game/model preparation](../../../README.md#agent-validation):
 ```bash
 LIVEQUEST_MINECRAFT_TEST=1 LIVEQUEST_LIVE_COPILOT=1 \
 uv run --locked --extra minecraft --group test python -m pytest \
-  tests/test_agent/test_agents.py -k smolagents --headless --recording -q -s
+  tests/test_agent/test_agents_minecraft.py -k smolagents --headless --recording -q -s
 ```
 
 The three selected cases use actual VM/ST and a native ST operator-stop test.

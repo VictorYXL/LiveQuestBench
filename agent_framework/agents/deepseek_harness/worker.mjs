@@ -89,6 +89,7 @@ class BenchmarkModel extends LlmAdapter {
 
 const ctx = new Context()
 let handle
+let stopRequested = false
 try {
   await ctx.plugin(LlmRuntime)
   await ctx.plugin(SessionStore)
@@ -114,7 +115,10 @@ try {
     agentOptions: { provider: 'livequestbench', model: config.model,
       reasoningEffort: ReasoningEffortId(config.reasoning_effort), maxTokens: config.max_output_tokens },
   })
-  process.on('SIGTERM', () => handle.agent.cancel({ kind: 'user' }))
+  process.on('SIGTERM', () => {
+    stopRequested = true
+    handle?.agent.cancel({ kind: 'user' })
+  })
   handle.agent.followup(createUserMessage({
     content: [{ type: 'text', text: config.task }], source: { kind: 'user' },
   }))
@@ -122,14 +126,18 @@ try {
   const events = handle.agent.session.snapshotEvents()
   await writeFile('native_events.json', JSON.stringify(events, null, 2) + '\n')
   const terminal = events.findLast(event => event.type === 'turn/end')
-  if (terminal?.data.reason.kind !== 'completed' || !lastAnswer.trim()) {
+  const stopped = stopRequested && terminal?.data.reason.kind === 'aborted'
+    && terminal.data.reason.reason?.kind === 'user'
+  if (!stopped && (terminal?.data.reason.kind !== 'completed' || !lastAnswer.trim())) {
     throw new Error(`Native turn did not complete: ${JSON.stringify(terminal?.data)}`)
   }
   await handle.dispose()
   handle = undefined
   await ctx.fiber.dispose()
   process.stdout.write(JSON.stringify({ op: 'exit', result: {
-    reason: 'returned', message: lastAnswer, native_reason: 'completed',
+    reason: stopped ? 'stopped' : 'returned',
+    message: stopped ? 'Benchmark requested termination' : lastAnswer,
+    native_reason: stopped ? 'benchmark_stop' : 'completed',
   } }) + '\n')
 } finally {
   if (handle) await handle.dispose()

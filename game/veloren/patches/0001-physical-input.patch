@@ -1,0 +1,135 @@
+--- a/voxygen/src/native_agent.rs
++++ b/voxygen/src/native_agent.rs
+@@ -32,6 +32,8 @@
+ 
+ pub struct NativeAgent {
+     pub state: BridgeState,
++    pub physical_input_allowed: bool,
++    pub physical_input_enabled: bool,
+     receiver: mpsc::Receiver<Input>,
+     frame_dir: PathBuf,
+     pending_frame: Option<Value>,
+@@ -166,6 +168,8 @@
+         protocol::emit(&renderer_ready(&state.session_id, &identity, &args.agent_observation));
+         Ok(Self {
+             state, receiver, frame_dir, pending_frame: None,
++            physical_input_allowed: std::env::var("LIVEQUEST_PHYSICAL_INPUT").as_deref() == Ok("1"),
++            physical_input_enabled: false,
+             in_flight: Arc::new(AtomicBool::new(false)), frame_sequence: 0,
+             dispatch_sequence: 0, last_dispatched_request_id: Value::Null,
+             last_actuator_dispatch: Value::Null,
+@@ -233,6 +237,35 @@
+                 });
+             }
+             match request.cmd.as_str() {
++                "physical_input" => {
++                    let actor = protocol::actuator_identity(client, &self.state)["actor"].clone();
++                    let mut fence = request.args.clone();
++                    let enabled = fence.as_object_mut().and_then(|args| args.remove("enabled"))
++                        .and_then(|value| value.as_bool());
++                    if !self.physical_input_allowed {
++                        self.error(request.id, "physical_input_disabled", "explicit launch opt-in required");
++                    } else if let Err(code) = frame_fence(&fence, &self.state.session_id, &actor) {
++                        self.error(request.id, code, code);
++                    } else if let Some(enabled) = enabled {
++                        self.physical_input_enabled = enabled;
++                        if !enabled {
++                            let held = client.current::<comp::Controller>()
++                                .map(|controller| controller.queued_inputs.keys().copied().collect::<Vec<_>>());
++                            if let Some(held) = held {
++                                for input in held {
++                                    client.handle_input(input, false, None, None);
++                                }
++                            }
++                        }
++                        protocol::emit(&json!({
++                            "type": "response", "protocol_version": protocol::PROTOCOL_VERSION,
++                            "session_id": self.state.session_id, "id": request.id,
++                            "ok": true, "result": {"enabled": enabled}, "error": null,
++                        }));
++                    } else {
++                        self.error(request.id, "invalid_physical_input", "enabled must be a boolean");
++                    }
++                },
+                 "step" if request.args["action"]["type"] == "visual_input" => {
+                     if let Err((request, code)) = self.visual.submit(client, hud, &mut self.state, request, talk) {
+                         self.error(request.id, code, code);
+@@ -306,6 +339,13 @@
+                 "action_effect_ordering": "unconfirmed",
+             },
+         });
++        if self.physical_input_allowed {
++            metadata["physical_input"] = json!({
++                "enabled": self.physical_input_enabled,
++                "queued_inputs": client.current::<comp::Controller>().map(|controller|
++                    controller.queued_inputs.keys().map(|input| format!("{input:?}")).collect::<Vec<_>>()),
++            });
++        }
+         let path = self.frame_dir.join(format!("frame-{frame_id}.png"));
+         let session = self.state.session_id.clone();
+         self.in_flight.store(true, Ordering::Release);
+--- a/voxygen/src/session/mod.rs
++++ b/voxygen/src/session/mod.rs
+@@ -301,12 +301,17 @@
+             if !agent.poll(&mut client, &mut self.hud, &self.interactables) {
+                 return Ok(TickAction::Disconnect);
+             }
+-            let inputs = client::agent_protocol::inputs_for_tick(&mut client, &mut agent.state);
+-            let direction = agent.state.look_dir.to_vec();
+-            self.scene.camera_mut().set_orientation_instant(Vec3::new(
+-                direction.x.atan2(direction.y), -direction.z.clamp(-1.0, 1.0).asin(), 0.0,
+-            ));
+-            inputs
++            if agent.physical_input_enabled {
++                agent.state.look_dir = self.inputs.look_dir;
++                self.inputs.clone()
++            } else {
++                let inputs = client::agent_protocol::inputs_for_tick(&mut client, &mut agent.state);
++                let direction = agent.state.look_dir.to_vec();
++                self.scene.camera_mut().set_orientation_instant(Vec3::new(
++                    direction.x.atan2(direction.y), -direction.z.clamp(-1.0, 1.0).asin(), 0.0,
++                ));
++                inputs
++            }
+         } else {
+             self.inputs.clone()
+         };
+@@ -623,9 +628,16 @@
+ 
+     fn tick(&mut self, global_state: &mut GlobalState, mut events: Vec<Event>) -> PlayStateResult {
+         span!(_guard, "tick", "<Session as PlayState>::tick");
+-        if self.native_agent.is_some() {
++        if self.native_agent.as_ref().is_some_and(|agent| !agent.physical_input_enabled) {
+             // The protocol owns the actuator; physical input must not bypass its fences.
+-            events.retain(|event| matches!(event, Event::Close));
++            let physical = self.native_agent.as_ref().is_some_and(|agent| agent.physical_input_allowed);
++            events.retain(|event| matches!(event, Event::Close)
++                || physical && matches!(event, Event::Focused(_)));
++            if self.native_agent.as_ref().is_some_and(|agent| agent.physical_input_allowed) {
++                self.key_state = KeyState::default();
++                self.inputs = comp::ControllerInputs::default();
++                self.auto_walk = false;
++            }
+         }
+         // TODO: let mut client = self.client.borrow_mut();
+         // TODO: can this be a method on the session or are there borrowcheck issues?
+@@ -1447,7 +1459,8 @@
+             }
+ 
+             // Talk to entities when we are in dialogue with them
+-            if self.native_agent.is_none() && let Some(tgt) = self.hud.current_dialogue() {
++            if self.native_agent.as_ref().is_none_or(|agent| agent.physical_input_enabled)
++                && let Some(tgt) = self.hud.current_dialogue() {
+                 let mut client = self.client.borrow_mut();
+                 client.do_talk(Some(tgt));
+                 // Turn to face the entity when in first-person mode
+@@ -1848,7 +1861,8 @@
+ 
+             let mut has_repaired = false;
+             let sfx_triggers = self.scene.sfx_mgr.triggers.read();
+-            if let Some(agent) = &mut self.native_agent {
++            if let Some(agent) = &mut self.native_agent
++                && !agent.physical_input_enabled {
+                 agent.finish_ui(&mut self.client.borrow_mut(), &self.hud, &mut hud_events, &self.interactables);
+             }
+             // Maintain the UI.

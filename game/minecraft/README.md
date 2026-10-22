@@ -257,6 +257,10 @@ host monotonic capture-start/end timestamps and a PIL RGB image. These bound
 host readback, not a native tick. Only the bound Minecraft window is captured;
 there is no desktop fallback. No inventory transcription, coordinates, semantic
 navigation, console commands or private scorer state are exposed.
+Capture, recording and the atomic motor implementation are shared with Veloren
+under [`core/backends/x11`](../../core/backends/x11). Minecraft retains its
+explicit window-title/class selectors and mode-local Agent binding; the shared
+backend does not infer which game's window to control.
 
 `await interface.act(commands)` accepts objects with exactly `name` and
 `arguments`:

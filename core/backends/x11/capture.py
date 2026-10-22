@@ -1,4 +1,4 @@
-"""On-demand Minecraft window capture on X11, without desktop screenshots."""
+"""On-demand application-window capture on X11, without desktop screenshots."""
 
 from __future__ import annotations
 
@@ -58,14 +58,18 @@ def decode_image(data: bytes, width: int, height: int, bits_per_pixel: int,
     return Image.frombytes("RGB", (width, height), data, "raw", mode, stride, 1)
 
 
-class MinecraftCapture:
+class WindowCapture:
     """One synchronous, single-caller X11 capture connection.
 
     Each capture reads a new window pixmap; no historical frame is cached.
     Timestamps use monotonic_ns and describe readback, not the game's render tick.
     """
 
-    def __init__(self, display_name: str | None = None) -> None:
+    def __init__(self, display_name: str | None = None, *, title_prefix: str,
+                 class_tokens: tuple[str, ...] = ()) -> None:
+        if not title_prefix:
+            raise ValueError("A nonempty window title prefix is required")
+        self.title_prefix, self.class_tokens = title_prefix, class_tokens
         self._display = None
         self._frame_id = 0
         try:
@@ -88,7 +92,7 @@ class MinecraftCapture:
             self._display.close()
             self._display = None
 
-    def __enter__(self) -> MinecraftCapture:
+    def __enter__(self) -> WindowCapture:
         return self
 
     def __exit__(self, *_args) -> None:
@@ -111,10 +115,9 @@ class MinecraftCapture:
         )
         if not isinstance(title, str):
             return None
-        if not title.startswith("Minecraft") or not any(
-            "minecraft" in value.lower() or "lwjgl" in value.lower()
-            for value in classes
-        ):
+        if not title.startswith(self.title_prefix) or (self.class_tokens and not any(
+            token in value.lower() for value in classes for token in self.class_tokens
+        )):
             return None
         geometry = window.get_geometry()
         return GameWindow(window.id, title, geometry.width, geometry.height)
@@ -148,8 +151,8 @@ class MinecraftCapture:
             windows = self.list_windows()
             if len(windows) != 1:
                 raise CaptureError(
-                    f"Expected one Minecraft window, found {len(windows)}. "
-                    "Open Minecraft or use --list and select --window-id."
+                    f"Expected one {self.title_prefix} window, found {len(windows)}. "
+                    "Open the game or use --list and select --window-id."
                 )
             window_id = windows[0].window_id
         window = connection.create_resource_object("window", window_id)
@@ -157,14 +160,14 @@ class MinecraftCapture:
         redirected = False
         try:
             if self._describe(window) is None:
-                raise CaptureError("Selected window is not identified as Minecraft.")
+                raise CaptureError("Selected window does not match the configured application.")
             attributes = window.get_attributes()
             geometry = window.get_geometry()
             if attributes.map_state != X.IsViewable:
-                raise CaptureError("Minecraft window is unmapped/minimized; restore it before capture.")
+                raise CaptureError("Game window is unmapped/minimized; restore it before capture.")
             hidden = window.get_full_property(connection.intern_atom("_NET_WM_STATE"), X.AnyPropertyType)
             if hidden is not None and connection.intern_atom("_NET_WM_STATE_HIDDEN") in hidden.value:
-                raise CaptureError("Minecraft window is minimized; restore it before capture.")
+                raise CaptureError("Game window is minimized; restore it before capture.")
             if not 0 < geometry.width * geometry.height <= 32_000_000:
                 raise CaptureError("Invalid or excessively large game window.")
             started = time.monotonic_ns()
@@ -224,14 +227,15 @@ class MinecraftCapture:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--display", help="Authorized X11 display; defaults to DISPLAY.")
-    parser.add_argument("--list", action="store_true", help="List Minecraft windows without capturing.")
+    parser.add_argument("--title", required=True, help="Required application window title prefix.")
+    parser.add_argument("--list", action="store_true", help="List matching windows without capturing.")
     parser.add_argument("--window-id", type=lambda value: int(value, 0))
     parser.add_argument("--output", type=Path, help="New PNG path; existing files are not overwritten.")
     args = parser.parse_args()
     if not args.list and args.output is None:
         parser.error("--output is required unless --list is used")
     try:
-        with MinecraftCapture(args.display) as capture:
+        with WindowCapture(args.display, title_prefix=args.title) as capture:
             if args.list:
                 for window in capture.list_windows():
                     print(f"{window.window_id:#x} {window.width}x{window.height} {window.title}")

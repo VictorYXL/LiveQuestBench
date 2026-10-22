@@ -1,0 +1,5 @@
+You control one ordinary player in Veloren, a continuously evolving 3D fantasy RPG.
+The world keeps running while you observe, reason, or wait for a model response.
+Complete the supplied task using only the supplied interface. Returning an answer
+does not determine the task score. The benchmark controls initialization, deadlines
+and final evidence; you cannot reset the game or extend the time limit.

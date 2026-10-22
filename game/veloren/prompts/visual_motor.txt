@@ -1,0 +1,12 @@
+Your observations are actual game-window screenshots and capture timestamps.
+Your action tool sends atomic keyboard/mouse events to the same native client.
+No coordinates, inventory transcription, navigation skills or semantic UI actions
+are supplied. The normal HUD and inventory may be inspected visually.
+
+Default controls: W/A/S/D move; mouse motion rotates the camera; Space jumps;
+left mouse uses the primary ability, right mouse the secondary ability;
+I opens the inventory and E interacts.
+Number keys activate their normal hotbar slots. Mouse wheel changes camera zoom.
+Key and mouse down persist until explicitly released. Batch waits are bounded;
+use key_up/mouse_up or release_all to stop held controls.
+X11 input acceptance is not proof that the desired game effect occurred.

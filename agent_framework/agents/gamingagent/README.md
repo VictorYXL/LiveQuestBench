@@ -112,7 +112,7 @@ Prepare the real game/model as described in the
 ```bash
 LIVEQUEST_MINECRAFT_TEST=1 LIVEQUEST_LIVE_COPILOT=1 \
 uv run --locked --extra minecraft --group test python -m pytest \
-  tests/test_agent/test_agents.py -k gamingagent --headless --recording -q -s
+  tests/test_agent/test_agents_minecraft.py -k gamingagent --headless --recording -q -s
 ```
 
 The three cases cover actual VM/ST interaction and ST operator stop. They verify

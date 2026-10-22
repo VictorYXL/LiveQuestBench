@@ -57,7 +57,7 @@ Prepare Minecraft and model credentials using the
 ```bash
 LIVEQUEST_MINECRAFT_TEST=1 LIVEQUEST_LIVE_COPILOT=1 \
 uv run --locked --extra minecraft --group test python -m pytest \
-  tests/test_agent/test_agents.py -k hermes --headless --recording -q -s
+  tests/test_agent/test_agents_minecraft.py -k hermes --headless --recording -q -s
 ```
 
 Both cases run the native Agent with actual Minecraft VM/ST and `gpt-6-astra`.

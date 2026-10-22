@@ -24,7 +24,7 @@ import nbtlib
 from Xlib import X, display
 
 from core.backends.x11.actions import WindowActions
-from game.minecraft.visual_motor.capture import MinecraftCapture
+from core.backends.x11.capture import WindowCapture
 from game.minecraft.runtime.install import (
     INSTANCE_ID, PRISM_APP_ID, check_instance, check_java, check_prism, data_root, prism_root, server_jar,
 )
@@ -172,7 +172,7 @@ class MinecraftSession:
         if self.world.parent != output.resolve() or not re.fullmatch(r"[A-Za-z0-9_.-]+", self.world.name):
             raise ValueError("The running world must be a named directory directly inside output_dir")
         self.server: MinecraftServer | None = None
-        self.capture: MinecraftCapture | None = None
+        self.capture: WindowCapture | None = None
         self.actions: WindowActions | None = None
         self.window_id: int | None = None
         self.bridge: NativeBridge | None = None
@@ -207,7 +207,7 @@ class MinecraftSession:
             fcntl.flock(display_lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError as exc:
             raise RuntimeError("Another visual experiment owns this X11 display; use separate virtual displays") from exc
-        with MinecraftCapture(self.config.display) as capture:
+        with WindowCapture(self.config.display, title_prefix="Minecraft", class_tokens=("minecraft", "lwjgl")) as capture:
             if capture.list_windows():
                 raise RuntimeError("The selected display already has a Minecraft window")
         self._prepare_client()
@@ -317,7 +317,9 @@ class MinecraftSession:
         feedback = await self.server.command("tick freeze")
         if not any("The game is frozen" in line for line in feedback):
             raise RuntimeError("Could not verify freezing the experiment during initialization")
-        self.capture = self._stack.enter_context(MinecraftCapture(self.config.display))
+        self.capture = self._stack.enter_context(WindowCapture(
+            self.config.display, title_prefix="Minecraft", class_tokens=("minecraft", "lwjgl"),
+        ))
         self._stack.push_async_callback(self._stop_client)
         try:
             await self._start_client(port)

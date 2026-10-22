@@ -64,7 +64,7 @@ Follow the [shared preparation and credential instructions](../../../README.md#a
 ```bash
 LIVEQUEST_MINECRAFT_TEST=1 LIVEQUEST_LIVE_COPILOT=1 \
 uv run --locked --extra minecraft --group test python -m pytest \
-  tests/test_agent/test_agents.py -k orak --headless --recording -q -s
+  tests/test_agent/test_agents_minecraft.py -k orak --headless --recording -q -s
 ```
 
 This selects VM, ST and an actual ST operator-stop case. Tests require a real

@@ -4,24 +4,27 @@ import asyncio
 from pathlib import Path
 import shutil
 
-from game.minecraft.visual_motor.capture import MinecraftCapture
+from core.backends.x11.capture import WindowCapture
 
 
 class WindowRecording:
-    def __init__(self, window_id: int, display_name: str, path: Path, fps: int = 10):
+    def __init__(self, window_id: int, display_name: str, path: Path, fps: int = 10,
+                 *, title_prefix: str, class_tokens: tuple[str, ...] = ()):
         if shutil.which("ffmpeg") is None:
             raise RuntimeError("ffmpeg is required when recording is enabled")
         if type(fps) is not int or not 1 <= fps <= 60:
             raise ValueError("recording fps must be an integer in [1, 60]")
         self.window_id, self.display_name, self.path, self.fps = window_id, display_name, path, fps
+        self.title_prefix, self.class_tokens = title_prefix, class_tokens
         self._stop = asyncio.Event()
         self.task: asyncio.Task | None = None
-        self._capture: MinecraftCapture | None = None
+        self._capture: WindowCapture | None = None
         self._process: asyncio.subprocess.Process | None = None
         self._stderr: asyncio.Task | None = None
 
     async def start(self) -> None:
-        self._capture = MinecraftCapture(self.display_name)
+        self._capture = WindowCapture(self.display_name, title_prefix=self.title_prefix,
+                                      class_tokens=self.class_tokens)
         try:
             first = self._capture.capture(self.window_id).image
             self.path.parent.mkdir(parents=True, exist_ok=True)

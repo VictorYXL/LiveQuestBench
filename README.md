@@ -5,7 +5,7 @@ long-horizon objectives in continuously evolving 3D games. The intended focus is
 the interaction between immediate reaction, persistent resources and decisions
 whose consequences affect later stages.
 
-**Current status: model clients, six Agent integrations and Minecraft
+**Current status: model clients, six Agent integrations and Minecraft/Veloren
 VM/ST, not a complete benchmark.** GitHub Copilot, OpenAI Responses
 and local vLLM clients are implemented.
 Minecraft shares isolated local sessions, initialization and native snapshot
@@ -22,8 +22,13 @@ zeroshot runner has a fixed-tool game extension with a lazy-service patch;
 smolagents uses its unpatched native ToolCallingAgent, not CodeAgent.
 GamingAgent preserves its native perception-memory-reflection-reasoning harness
 and episode runner through a declared transport patch and fixed-tool extension.
-All six use
-Minecraft's mode-local tool/observation bindings and shared scored tests.
+The Agents use game-owned, mode-local tool/observation bindings and real-game
+acceptance tests. Veloren has the same lifecycle shape, actual screenshot plus
+atomic keyboard/mouse VM, fixed native-tool ST, and private endpoint evaluators.
+Its world continues after public input is revoked: its endpoint evidence is not
+an atomic server save. See [Veloren setup and scope](game/veloren/README.md).
+The [Veloren acceptance record](output/survey/veloren_integration_20261022.md)
+documents 13 real model/game cases and the native input/skill checks.
 See the [Orak](agent_framework/agents/orak/README.md) and
 [smolagents](agent_framework/agents/smolagents/README.md) profiles for setup and
 fidelity boundaries, and the [live acceptance report](output/survey/additional_agent_integrations_20261022.md)
@@ -40,8 +45,9 @@ configuration loader, production Episode runner or benchmark launcher yet.
 The initial development target is Linux with Python 3.11, matching the minimum
 declared by the existing Minecraft projects. Python metadata permits newer
 versions, but game/Agent combinations must be checked before claiming support.
-Veloren's existing harness declares Python 3.13 or newer; its integration is
-deferred, not certified by this environment.
+Veloren's existing harness runs in its separately verified Python 3.13 runtime.
+The benchmark-facing process remains Python 3.11; the integration does not raise
+the project's minimum or imply certification of every interpreter/game combination.
 
 Install [uv](https://docs.astral.sh/uv/getting-started/installation/) and run from
 the repository root:
@@ -89,6 +95,16 @@ game/
       actions/
       observations/
       tools/
+  veloren/
+    README.md
+    setup.sh
+    game.py
+    runtime/                Verified upstream reuse, native patch build and private worker
+    patches/                Explicit physical-input opt-in; native license
+    prompts/
+    evaluators/             Private displacement, inventory and health endpoints
+    visual_motor/           Shared atomic X11 binding
+    structured_tools/       Explicit observation projection and fixed native skills
 agent_framework/
   llm_client/
     base_client.py          Message/response types and model client contract
@@ -109,11 +125,13 @@ agent_framework/
     smolagents/             Native tool-calling loop and locked runtime, no source patches
     gamingagent/            Native perception/memory/reflection/reasoning and episode runner
 core/                       Orchestration boundary and shared infrastructure
-  backends/x11/             Shared input and isolated display
+  backends/x11/             Shared atomic input, capture, recording and isolated display
 tests/
   conftest.py               Shared display and recording options
   test_agent/
-    test_agents.py          Real Minecraft/model acceptance for six Agents and operator-stop cases
+    test_agents_minecraft.py  Real Minecraft/model acceptance and operator-stop cases
+    test_agents_veloren.py    Real Veloren/model acceptance and operator-stop case
+    support.py               Shared Agent roster and benchmark-owned stop logic
   test_client/              Three opt-in checks per provider: text, image, tools
   test_game/
     minecraft/
@@ -121,6 +139,9 @@ tests/
       test_vm.py            Pixels and basic motor actions
       test_st.py            Structured state, tools and cancellation
       test_structure.py     Native construction scoring and consequential counterexamples
+    veloren/
+      test_game.py          Real VM/ST movement, cutoff, snapshots and recording
+      test_evaluators.py    Threshold and evidence-integrity counterexamples
 pyproject.toml
 uv.lock
 .python-version
@@ -389,8 +410,8 @@ Unmapped non-null settings fail; new profiles/pins need admission.
 
 ### Agent validation
 
-`tests/test_agent/test_agents.py` contains **only real-time game tests using
-a live model**: six Agents times two Minecraft modes, plus three operator-stop
+`tests/test_agent/test_agents_minecraft.py` contains **only real-time game tests using
+a live model**: six Agents times two Minecraft modes, plus four operator-stop
 cases for the new native workers. It contains no scripted
 model responses, fake game interfaces or unit checks. Without explicit opt-in,
 all fifteen cases skip; that is not a passing Agent validation.
@@ -399,7 +420,7 @@ To inspect the cases without running them:
 
 ```bash
 uv run --locked --extra minecraft --group test python -m pytest \
-  tests/test_agent/test_agents.py --collect-only -q
+  tests/test_agent/test_agents_minecraft.py --collect-only -q
 ```
 
 Prepare the pinned runtimes using each Agent's README. Missing runtimes are
@@ -432,15 +453,32 @@ export LIVEQUEST_LIVE_COPILOT=1
 # Set COPILOT_GITHUB_TOKEN or an existing authorized token file:
 export LIVEQUEST_COPILOT_TOKEN_FILE=/absolute/path/to/copilot-token.txt
 uv run --locked --extra minecraft --group test python -m pytest \
-  tests/test_agent/test_agents.py -m game -q -s --headless --recording
+  tests/test_agent/test_agents_minecraft.py -m game -q -s --headless --recording
 ```
 
 Use `-k tool_calling`, `-k deepseek`, `-k hermes`, `-k orak`, `-k smolagents`
-or `-k gamingagent` to select an Agent. `-k stop` selects all three operator-stop cases.
+or `-k gamingagent` to select an Agent. `-k stop` selects all four operator-stop cases.
 `--no-recording` disables video/decoding, not observations or snapshots.
 `--no-headless` uses a dedicated existing X11 desktop.
 Credentials are never discovered in other repositories; no substitute model
 is chosen if the requested one is unavailable. These checks consume quota.
+
+The corresponding Veloren suite is `tests/test_agent/test_agents_veloren.py`.
+It uses the same six Agents and model settings with a small displacement task,
+plus intentional DeepSeek and GamingAgent ST stops. Prepare the native runtime and set
+`LIVEQUEST_VELOREN_RUNTIME` and `LIVEQUEST_VELOREN_TEST=1` as described in
+[the game README](game/veloren/README.md), then run:
+
+```bash
+uv run --locked --extra veloren --group test python -m pytest \
+  tests/test_agent/test_agents_veloren.py -q -s --headless --recording
+```
+
+Veloren's budget starts after `begin()` acknowledges input admission.
+Its native counter measures variable-duration client updates, not fixed-rate
+server ticks. Task failure does not fail acceptance if actual model/game exchange,
+deadline/operator control and cleanup remain correct; transport, fixture and
+adapter errors do fail acceptance.
 
 Unique `output/test/` directories (or `MINECRAFT_TEST_OUTPUT`) retain messages,
 VM observation images, optional decoded video, private before/after saves, and
@@ -687,7 +725,8 @@ verifying protocol round trips rather than autonomous planning.
    before evidence, Agent execution, terminal boundary/after evidence, scoring,
    artifacts and cleanup.
 4. Integrate a second meaningfully different Agent to check the Agent boundary.
-5. Adapt one representative Veloren task to check the game/evidence boundary.
+5. Expand the small Veloren integration task into representative long-horizon
+   tasks after calibrating native timing, observation scope and endpoint evidence.
 6. Expand Agent, task and interface coverage after both extension points work.
 
 Steps 2 and 3 should iterate closely rather than producing a separate temporary
@@ -708,9 +747,10 @@ and report that as successful Agent validation. Static checks can support
 development, but they are not Agent acceptance tests.
 
 Keep unit tests only for consequential cases difficult to establish through a
-successful gameplay sample. Currently three remain: immutable world-copy/native
+successful gameplay sample. Current checks cover immutable world-copy/native
 inventory evidence, refusal to start without explicit EULA consent, and structure
-scoring counterexamples with incomplete/corrupt saved evidence. Structure scoring
+scoring counterexamples with incomplete/corrupt saved evidence, plus Veloren
+endpoint thresholds and evidence integrity. Structure scoring
 also has a real native placement test; no model is needed to validate a scorer.
 Removed tests must not be relocated into
 new files simply to retain a large suite; avoid assertions that just repeat
@@ -719,12 +759,14 @@ dataclass fields, enum values, schema literals or trivial constructor behavior.
 Organize tests by the component being checked, not by unit/integration level:
 
 - `tests/test_client/`: supported model clients, using the same three check types.
-- `tests/test_game/<game>/`: game basics, VM and ST checks in separate files.
+- `tests/test_game/<game>/`: game basics, VM/ST checks and evaluator validation.
 - `tests/test_agent/`: real-time game/model runs and independently scored outcomes.
 - `tests/test_benchmark/`: Episode orchestration, configuration, evaluator
   invocation and result persistence.
 
-Current test directories are `test_client`, `test_agent` and `test_game/minecraft`.
+Current test directories are `test_client`, `test_agent`, `test_game/minecraft`
+and `test_game/veloren`. Pytest uses `--import-mode=importlib` so same-named test
+modules in different game directories can be collected together.
 Shared options live in [`tests/conftest.py`](tests/conftest.py):
 `--recording` / `--no-recording` control test video capture independently of
 `--headless` / `--no-headless`. Tests that create a game must pass the shared

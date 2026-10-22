@@ -17,9 +17,9 @@ from game.minecraft.runtime.account import offline_identity, resolve_account
 from game.minecraft.runtime.install import check_installation
 from game.minecraft.init_player_state import PlayerState
 from game.minecraft.runtime.session import MinecraftSession, SessionConfig, copy_world
-from game.minecraft.visual_motor.capture import CapturedFrame
+from core.backends.x11.capture import CapturedFrame
 from game.minecraft.visual_motor.interface import MotorInterface, execute_actions
-from game.minecraft.visual_motor.recording import WindowRecording
+from core.backends.x11.recording import WindowRecording
 from core.backends.x11.actions import ActionResult
 from game.minecraft.structured_tools.interface import (
     PROFILE_ID, StructuredInterface, execute_tool, observe, tool_schemas, validate_tool,
@@ -219,6 +219,7 @@ class MinecraftGame(BaseGame[MotorInterface | StructuredInterface]):
                 self._recorder = WindowRecording(
                     self._session.window_id, self._session.config.display,
                     self.output_dir / "video.mp4", self.recording_fps,
+                    title_prefix="Minecraft", class_tokens=("minecraft", "lwjgl"),
                 )
                 self._stack.push_async_callback(self._recorder.stop)
                 await self._recorder.start()

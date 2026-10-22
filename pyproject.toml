@@ -8,6 +8,7 @@ dependencies = ["httpx>=0.28,<0.29"]
 
 [project.optional-dependencies]
 minecraft = ["pillow>=11,<13", "python-xlib>=0.33,<1", "nbtlib>=2,<3"]
+veloren = ["pillow>=11,<13", "python-xlib>=0.33,<1"]
 
 [dependency-groups]
 test = ["pytest>=8,<10"]
@@ -15,6 +16,7 @@ test = ["pytest>=8,<10"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+addopts = "--import-mode=importlib"
 markers = [
     "live: opt-in requests that may consume provider quota",
     "game: opt-in real game checks requiring installed runtimes and explicit consent",

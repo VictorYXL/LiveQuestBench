@@ -60,7 +60,7 @@ Prepare the runtime and credentials using the
 ```bash
 LIVEQUEST_MINECRAFT_TEST=1 LIVEQUEST_LIVE_COPILOT=1 \
 uv run --locked --extra minecraft --group test python -m pytest \
-  tests/test_agent/test_agents.py -k tool_calling --headless --recording -q -s
+  tests/test_agent/test_agents_minecraft.py -k tool_calling --headless --recording -q -s
 ```
 
 Both cases use real Minecraft VM/ST and `gpt-6-astra`, not scripted replies.
