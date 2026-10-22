@@ -105,7 +105,10 @@ def test_agent_task_repetition_matrix_is_serial_and_separately_summarized(tmp_pa
         nonlocal active
         assert active == 0
         active += 1
-        assert root == output / selected.id / f"{task.id}--{task.task_type}" / f"episode_{row['repetition']}"
+        assert root == output / selected.id / f"{task.id}.{task.task_type}" / f"episode_{row['repetition']}"
+        assert row["episode_id"] == (
+            f"{selected.id}.{task.game}.{task.id}.{task.task_type}.{row['repetition']:04d}"
+        )
         assert root == output / row["output_path"]
         root.mkdir(parents=True)
         calls.append((selected.id, task.id, task.task_type, row["repetition"]))

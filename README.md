@@ -331,7 +331,7 @@ including a previous admission failure. The output includes:
 - `provenance.json` and `launch.json`: repository revision/dirty state, implementation
   hashes, Python/package versions and operational settings. Native game/Agent
   receipts remain alongside their execution evidence.
-- One `<agent-id>/<task-id>--<task_type>/episode_<repetition>` directory per started Episode,
+- One `<agent-id>/<task-id>.<task_type>/episode_<repetition>` directory per started Episode,
   containing `result.json`, before/after snapshots, `evaluation.json` when valid,
   `trace.jsonl`, deduplicated VM images, native logs and optional game video.
 - `summary.json`: every scheduled Episode, including errors and unstarted cases,
@@ -340,7 +340,7 @@ including a previous admission failure. The output includes:
   cross-Agent score is emitted.
 
 For example, a result may be stored at
-`tool_calling_astra/move_2_metres--structured_tool/episode_1/result.json`.
+`tool_calling_astra/move_2_metres.structured_tool/episode_1/result.json`.
 The Agent directory uses the unique configured `agents[].id`, not the shared
 implementation name, so different models using the same Agent cannot overwrite
 each other. The task directory includes its mode to support mixed VM/ST plans.

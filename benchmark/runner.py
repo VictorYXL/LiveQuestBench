@@ -253,9 +253,9 @@ async def run_experiment(
             for task in experiment.tasks:
                 for repetition in range(1, experiment.repetitions + 1):
                     episode_id = (
-                        f"{agent_config.id}--{task.game}--{task.id}--{task.task_type}--{repetition:04d}"
+                        f"{agent_config.id}.{task.game}.{task.id}.{task.task_type}.{repetition:04d}"
                     )
-                    episode_path = Path(agent_config.id) / f"{task.id}--{task.task_type}" / f"episode_{repetition}"
+                    episode_path = Path(agent_config.id) / f"{task.id}.{task.task_type}" / f"episode_{repetition}"
                     rows.append({
                         "episode_id": episode_id, "agent_id": agent_config.id, "agent": agent_config.resolved(),
                         "output_path": episode_path.as_posix(),
