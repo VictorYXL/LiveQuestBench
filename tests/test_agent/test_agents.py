@@ -21,6 +21,7 @@ from agent_framework.agents.deepseek_harness import DeepSeekHarnessAgent
 from agent_framework.agents.hermes import HermesAgent
 from agent_framework.agents.orak import OrakAgent
 from agent_framework.agents.smolagents import SmolagentsAgent
+from agent_framework.agents.gamingagent import GamingAgent
 from agent_framework.agents.process_agent import IntegrationIncompatible, IntegrationUnavailable, ProcessAgent
 from game.base_game import AgentAccessClosed
 
@@ -29,6 +30,7 @@ InterfaceT = TypeVar("InterfaceT")
 NATIVE_AGENTS = {
     "deepseek": DeepSeekHarnessAgent, "hermes": HermesAgent,
     "orak": OrakAgent, "smolagents": SmolagentsAgent,
+    "gamingagent": GamingAgent,
 }
 
 
@@ -78,7 +80,7 @@ async def run_bounded(
     for track in ("visual_motor", "structured_tool")
 ] + [
     pytest.param(name, "structured_tool", True, id=f"{name}-stop-structured_tool")
-    for name in ("orak", "smolagents")
+    for name in ("orak", "smolagents", "gamingagent")
 ])
 def test_minecraft_collect_three_logs(
     track: str, agent_name: str, interrupt: bool, headless: bool, recording: bool,
@@ -222,6 +224,18 @@ def test_minecraft_collect_three_logs(
             assert report["response_models"] == ["gpt-6-astra"], "Missing or unexpected underlying model"
             assert interactions, "No real game tool round trip; integration is not established"
             assert any(message.role == "tool" for message in agent.messages), "No tool-result telemetry"
+            if agent_name == "gamingagent":
+                native = output / "external/native"
+                reasoning = json.loads((native / "reasoning_module.json").read_text())
+                memory = json.loads((native / "memory_module.json").read_text())
+                assert reasoning and all(entry["reflection"] for entry in reasoning)
+                assert any("###Action" in entry for entry in memory)
+                if track == "visual_motor":
+                    assert all(entry["processed_visual_description"] for entry in reasoning)
+                report["native_harness"] = {
+                    "reasoning_steps": len(reasoning), "memory_entries": len(memory),
+                    "reflection_verified": True, "visual_perception_verified": track == "visual_motor",
+                }
             if interrupt:
                 assert isinstance(agent, ProcessAgent)
                 assert not timed_out and agent.stop_reason == StopReason.OPERATOR_CANCEL

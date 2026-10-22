@@ -1,0 +1,7 @@
+{
+  "repository": "https://github.com/lmgame-org/GamingAgent.git",
+  "commit": "996d848ae5e3bf68433d663f38ef4da5bdfe5332",
+  "license": "MIT",
+  "environment": "LIVEQUEST_GAMINGAGENT_ROOT",
+  "patches": ["patches/0001-injected-transport.patch"]
+}

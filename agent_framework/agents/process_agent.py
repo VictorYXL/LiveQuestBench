@@ -1,6 +1,7 @@
 """Supervised native Agent processes with an allowlisted stdio tool/model bridge."""
 
 import asyncio
+import base64
 from abc import abstractmethod
 from collections.abc import Awaitable, Callable, Sequence
 import json
@@ -39,6 +40,7 @@ class ProcessAgent(BaseAgent[InterfaceT], Generic[InterfaceT]):
     directory: ClassVar[Path]
     source: ClassVar[SourceSpec]
     required_runtime: ClassVar[str]
+    native_observations: ClassVar[bool] = False
 
     def _additional_tools(self) -> Sequence[Tool[InterfaceT]]:
         return ()
@@ -206,9 +208,17 @@ class ProcessAgent(BaseAgent[InterfaceT], Generic[InterfaceT]):
                     self._record(Message("tool", value, tool_call_id=text(proposed["id"])))
                 elif operation == "observe":
                     observation = await self.observe(context.interface)
-                    value = observation if isinstance(observation, str) else "\n".join(
-                        text(block["text"]) for block in observation if block.get("type") == "text"
-                    )
+                    if self.native_observations:
+                        self._record(Message("user", observation))
+                        value = observation if isinstance(observation, str) else [
+                            {**block, "data": base64.b64encode(block["data"]).decode("ascii")}
+                            if block.get("type") == "image" and isinstance(block.get("data"), bytes) else block
+                            for block in observation
+                        ]
+                    else:
+                        value = observation if isinstance(observation, str) else "\n".join(
+                            text(block["text"]) for block in observation if block.get("type") == "text"
+                        )
                 elif operation == "chat":
                     value = await self._chat(context, obj(request.get("request")))
                 else:
@@ -250,8 +260,25 @@ class ProcessAgent(BaseAgent[InterfaceT], Generic[InterfaceT]):
             role = item.get("role")
             if role not in ("system", "user", "assistant", "tool"):
                 raise IntegrationIncompatible(f"Unsupported native message role: {role}")
-            content = item.get("content")
-            if content is not None and not isinstance(content, str):
+            raw_content = item.get("content")
+            content: str | list[dict[str, object]] | None
+            if isinstance(raw_content, list) and self.native_observations:
+                content = []
+                for raw_block in raw_content:
+                    block = obj(raw_block)
+                    if block.get("type") == "text":
+                        content.append({"type": "text", "text": text(block.get("text"))})
+                    elif block.get("type") == "image" and role == "user":
+                        mime = text(block.get("mime_type"))
+                        if mime not in ("image/png", "image/jpeg"):
+                            raise IntegrationIncompatible("Unsupported native image MIME type")
+                        content.append({"type": "image", "mime_type": mime,
+                                        "data": base64.b64decode(text(block.get("data")), validate=True)})
+                    else:
+                        raise IntegrationIncompatible("Unsupported native content block")
+            elif raw_content is None or isinstance(raw_content, str):
+                content = raw_content
+            else:
                 raise IntegrationIncompatible("Native history must contain text; public images are injected separately")
             calls: list[dict[str, object]] = []
             for raw_call in array(item.get("tool_calls", [])):
@@ -264,10 +291,15 @@ class ProcessAgent(BaseAgent[InterfaceT], Generic[InterfaceT]):
             if call_id is not None and not isinstance(call_id, str):
                 raise IntegrationIncompatible("Invalid native tool-call ID")
             messages.append(Message(role, content, calls, call_id, state))
-        observation = await self.observe(context.interface)
-        current = Message("user", observation)
-        messages.append(current)
-        self._record(current)
+        if self.native_observations:
+            for message in messages:
+                if isinstance(message.content, list):
+                    self._record(message)
+        else:
+            observation = await self.observe(context.interface)
+            current = Message("user", observation)
+            messages.append(current)
+            self._record(current)
         with (self.output_dir / "requests.jsonl").open("a", encoding="utf-8") as log:
             log.write(json.dumps({"at_ns": time.monotonic_ns(), "native": request, "effective": {
                 "model": self.model, "reasoning_effort": self.reasoning_effort,

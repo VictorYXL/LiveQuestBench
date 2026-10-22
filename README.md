@@ -5,7 +5,7 @@ long-horizon objectives in continuously evolving 3D games. The intended focus is
 the interaction between immediate reaction, persistent resources and decisions
 whose consequences affect later stages.
 
-**Current status: model clients, five Agent integrations and Minecraft
+**Current status: model clients, six Agent integrations and Minecraft
 VM/ST, not a complete benchmark.** GitHub Copilot, OpenAI Responses
 and local vLLM clients are implemented.
 Minecraft shares isolated local sessions, initialization and native snapshot
@@ -19,12 +19,19 @@ development client with Minecraft's native renderer, not a replacement viewer.
 harness and Hermes integrations preserve their native loops using process
 Wrappers, with disclosed restrictions and no upstream patches. Orak's native
 zeroshot runner has a fixed-tool game extension with a lazy-service patch;
-smolagents uses its unpatched native ToolCallingAgent, not CodeAgent. All five use
+smolagents uses its unpatched native ToolCallingAgent, not CodeAgent.
+GamingAgent preserves its native perception-memory-reflection-reasoning harness
+and episode runner through a declared transport patch and fixed-tool extension.
+All six use
 Minecraft's mode-local tool/observation bindings and shared scored tests.
 See the [Orak](agent_framework/agents/orak/README.md) and
 [smolagents](agent_framework/agents/smolagents/README.md) profiles for setup and
 fidelity boundaries, and the [live acceptance report](output/survey/additional_agent_integrations_20261022.md)
-for the latest twelve-case evidence and deferred Game Agent candidates.
+for the earlier twelve-case evidence and deferred Game Agent candidates.
+See [GamingAgent](agent_framework/agents/gamingagent/README.md) for its
+native-image profile and real validation command, and the
+[Game Agent follow-up](output/survey/game_agent_followup_20261022.md) for
+refreshed candidate evidence and integration results.
 There is no experiment
 configuration loader, production Episode runner or benchmark launcher yet.
 
@@ -100,12 +107,13 @@ agent_framework/
     hermes/                 Agent, worker, configuration, pinned setup and README
     orak/                   Native zeroshot runner extension, declared patch and locked runtime
     smolagents/             Native tool-calling loop and locked runtime, no source patches
+    gamingagent/            Native perception/memory/reflection/reasoning and episode runner
 core/                       Orchestration boundary and shared infrastructure
   backends/x11/             Shared input and isolated display
 tests/
   conftest.py               Shared display and recording options
   test_agent/
-    test_agents.py          Real Minecraft/model acceptance for five Agents and operator-stop cases
+    test_agents.py          Real Minecraft/model acceptance for six Agents and operator-stop cases
   test_client/              Three opt-in checks per provider: text, image, tools
   test_game/
     minecraft/
@@ -183,8 +191,11 @@ Preserve an Agent's existing runtime and behavior wherever possible; prefer
 configuration and supported extension points over rewriting its implementation.
 The concrete integrations currently available are
 [ToolCallingAgent](agent_framework/agents/tool_calling_agent/README.md),
-[DeepSeek harness](agent_framework/agents/deepseek_harness/README.md) and
-[Hermes](agent_framework/agents/hermes/README.md). This does not establish
+[DeepSeek harness](agent_framework/agents/deepseek_harness/README.md),
+[Hermes](agent_framework/agents/hermes/README.md),
+[Orak](agent_framework/agents/orak/README.md),
+[smolagents](agent_framework/agents/smolagents/README.md) and
+[GamingAgent](agent_framework/agents/gamingagent/README.md). This does not establish
 support for arbitrary upstream features or other Agents. An end-to-end
 benchmark runner is not yet implemented.
 
@@ -362,21 +373,27 @@ The pinned checkouts are neither vendored source nor submodules.
   not native HTTP timeout defaults.
 
 This is cooperative isolation, **not an OS sandbox for untrusted code**.
-The latest observation is injected at the model bridge. VM gets one current
+By default, the latest observation is injected at the model bridge. VM gets one current
 image and ST one current state. Images are not stored in native history; Orak
 also retains public observation text through its native memory adapter. Full
 observations stay in audit traces. This differs from the baseline's historical
 observation-text retention and must be disclosed in comparisons.
-Arbitrary native attachments, extra model roles and every provider setting are
-not supported. Unmapped non-null settings fail; new profiles/pins need admission.
+GamingAgent explicitly opts into native observation handling: public frames/text
+are captured at native environment boundaries, and its native image resizing,
+perception and reflection stages run before action reasoning. Its bridge accepts
+inline PNG/JPEG content, not arbitrary attachment paths or URLs, and does not
+replace that frame with a newer one during reasoning. Auxiliary roles use the
+same configured model/settings with actions disabled. This observation-age and
+inference-cost difference must be retained in comparisons.
+Unmapped non-null settings fail; new profiles/pins need admission.
 
 ### Agent validation
 
 `tests/test_agent/test_agents.py` contains **only real-time game tests using
-a live model**: five Agents times two Minecraft modes, plus two operator-stop
+a live model**: six Agents times two Minecraft modes, plus three operator-stop
 cases for the new native workers. It contains no scripted
 model responses, fake game interfaces or unit checks. Without explicit opt-in,
-all twelve cases skip; that is not a passing Agent validation.
+all fifteen cases skip; that is not a passing Agent validation.
 
 To inspect the cases without running them:
 
@@ -390,8 +407,8 @@ explicit skips, not evidence of successful integration. The former `external`
 marker and `LIVEQUEST_EXTERNAL_TEST` flag have been removed along with the
 simulated/native-offline Agent checks.
 
-The ten-case Minecraft matrix combines `tool_calling`, `deepseek`, `hermes`,
-`orak` and `smolagents`
+The twelve-case Minecraft matrix combines `tool_calling`, `deepseek`, `hermes`,
+`orak`, `smolagents` and `gamingagent`
 with VM/ST, using `gpt-6-astra`, reasoning `low`, output limit 4096 and one request
 attempt. Each case has a 180-second wall-clock budget beginning just before
 `game.begin()`, excluding setup/evidence/cleanup. End-request timing is not an
@@ -418,8 +435,8 @@ uv run --locked --extra minecraft --group test python -m pytest \
   tests/test_agent/test_agents.py -m game -q -s --headless --recording
 ```
 
-Use `-k tool_calling`, `-k deepseek`, `-k hermes`, `-k orak` or `-k smolagents`
-to select an Agent. `-k stop` selects both operator-stop cases.
+Use `-k tool_calling`, `-k deepseek`, `-k hermes`, `-k orak`, `-k smolagents`
+or `-k gamingagent` to select an Agent. `-k stop` selects all three operator-stop cases.
 `--no-recording` disables video/decoding, not observations or snapshots.
 `--no-headless` uses a dedicated existing X11 desktop.
 Credentials are never discovered in other repositories; no substitute model
