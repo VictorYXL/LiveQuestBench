@@ -122,10 +122,12 @@ def logged_controls(public: Controls, log: EpisodeLog) -> Controls:
 
 async def run_episode(
     agent_config: AgentConfig, task: TaskConfig, root: Path, result: dict, *,
-    headless: bool, recording: bool, recording_fps: int,
+    headless: bool, recording: bool, recording_fps: int, record_chat: bool = True,
 ) -> dict:
     root.mkdir(parents=True)
-    log = EpisodeLog(root)
+    results = root / "results"
+    results.mkdir()
+    log = EpisodeLog(root, record_chat=record_chat)
     binding = None
     agent: BaseAgent[Controls] | None = None
     client: BaseLLMClient | None = None
@@ -133,7 +135,7 @@ async def run_episode(
     cancelled = False
     begun = False
     result.update(status="running", measurement="unavailable", task_outcome="unknown", errors=[])
-    write_json(root / "result.json", result)
+    write_json(results / "result.json", result)
 
     def record_error(error: BaseException, failed_stage: str) -> None:
         result["errors"].append({
@@ -143,8 +145,10 @@ async def run_episode(
         print(f"{result['episode_id']} [{failed_stage}]: {type(error).__name__}: {error}", file=sys.stderr)
 
     try:
-        binding = make_game(task, root / "game", headless=headless, recording=recording, recording_fps=recording_fps)
+        binding = make_game(task, root / "game", headless=headless, recording=recording,
+                            recording_fps=recording_fps, recording_path=root / "recording" / "video.mp4")
         client = make_client(agent_config.model, log.request)
+        client.on_query = log.query if record_chat else None
         await binding.game.start()
         before = await binding.game.save_snapshot(root / "before")
         binding.verify_initial(before)
@@ -176,7 +180,7 @@ async def run_episode(
         evaluation = await asyncio.to_thread(binding.evaluate, before, after)
         if type(evaluation.get("success")) is not bool:
             raise ValueError("Evaluator must return a boolean success field")
-        write_json(root / "evaluation.json", evaluation)
+        write_json(results / "evaluation.json", evaluation)
         result.update(status="completed", measurement="valid",
                       task_outcome="success" if evaluation["success"] else "failure")
     except asyncio.CancelledError as error:
@@ -228,7 +232,14 @@ async def run_episode(
                 "deadline_request_lateness_seconds": max(0, result["end_requested_at_ns"] - result["deadline_at_ns"]) / 1e9,
             }
         result["accounting"] = log.accounting()
-        write_json(root / "result.json", result)
+        try:
+            log.event("end", status=result["status"], errors=result["errors"],
+                      agent_exit=result.get("agent_exit"), deadline_reached=result.get("deadline_reached"))
+        except Exception as error:
+            record_error(error, "chat_recording")
+            if not cancelled:
+                result["status"] = "error"
+        write_json(results / "result.json", result)
     if cancelled:
         raise asyncio.CancelledError
     return result
@@ -254,13 +265,18 @@ def output_lock(output: Path):
 def prepare_episode(output: Path, row: dict) -> bool:
     """Reuse completed measurements; remove only the exact incomplete episode."""
     root = output / row["output_path"]
-    if any(path.is_symlink() for path in (root, root.parent, root.parent.parent)):
+    if any(path.is_symlink() for path in (root, root.parent, root.parent.parent, root / "results")):
         raise ValueError(f"Episode paths must not contain symlinks: {root}")
     if not root.exists():
         return False
     if not root.is_dir():
         raise ValueError(f"Episode path is not a directory: {root}")
-    result_path = root / "result.json"
+    results = root / "results"
+    if results.exists() and not results.is_dir():
+        raise ValueError(f"Episode results path is not a directory: {results}")
+    if not results.exists():
+        results = root
+    result_path = results / "result.json"
     previous = None
     if result_path.exists():
         try:
@@ -273,7 +289,7 @@ def prepare_episode(output: Path, row: dict) -> bool:
             raise ValueError(f"Episode configuration changed or lacks a fingerprint; use a new output or Agent ID: {root}")
         if previous.get("episode_id") != row["episode_id"]:
             raise ValueError(f"Episode identity conflict: {root}")
-    evaluation_path = root / "evaluation.json"
+    evaluation_path = results / "evaluation.json"
     if previous and previous.get("status") == "completed" and previous.get("measurement") == "valid":
         if not evaluation_path.is_file():
             raise ValueError(f"Completed result lacks evaluation.json: {root}")
@@ -291,18 +307,23 @@ def prepare_episode(output: Path, row: dict) -> bool:
 
 
 async def run_experiment(
-    config: Path, output: Path, *, headless: bool = True, recording: bool = False, recording_fps: int = 10,
+    config: Path, output: Path, *, headless: bool = True, recording: bool = True, recording_fps: int = 10,
+    record_chat: bool = True,
 ) -> dict:
     output = output.resolve()
     with output_lock(output):
         return await _run_experiment(
             config, output, headless=headless, recording=recording, recording_fps=recording_fps,
+            record_chat=record_chat,
         )
 
 
 async def _run_experiment(
-    config: Path, output: Path, *, headless: bool = True, recording: bool = False, recording_fps: int = 10,
+    config: Path, output: Path, *, headless: bool = True, recording: bool = True, recording_fps: int = 10,
+    record_chat: bool = True,
 ) -> dict:
+    if type(record_chat) is not bool:
+        raise ValueError("record_chat must be a boolean")
     if type(recording_fps) is not int or not 1 <= recording_fps <= 60:
         raise ValueError("recording_fps must be an integer in [1, 60]")
     output = output.resolve()
@@ -330,6 +351,7 @@ async def _run_experiment(
         write_json(launch_root / "provenance.json", source)
         launch = {
             "headless": headless, "recording": recording, "recording_fps": recording_fps,
+            "record_chat": record_chat,
             "config": str(config.resolve()), "output": str(output),
         }
         write_json(output / "launch.json", launch)
@@ -346,6 +368,7 @@ async def _run_experiment(
                     configuration = {
                         "task": task_settings, "agent": agent_config.resolved(),
                         "headless": headless, "recording": recording, "recording_fps": recording_fps,
+                        "record_chat": record_chat,
                     }
                     fingerprint = hashlib.sha256(
                         json.dumps(configuration, sort_keys=True, allow_nan=False).encode()
@@ -369,7 +392,8 @@ async def _run_experiment(
             summary = {"launch_id": launch_id, "experiment_id": experiment.id, "status": "running", **summarize(rows)}
             save_summary()
             await run_episode(agent_config, task, output / row["output_path"], row,
-                              headless=headless, recording=recording, recording_fps=recording_fps)
+                              headless=headless, recording=recording, recording_fps=recording_fps,
+                              record_chat=record_chat)
             if row["status"] != "completed":
                 break
         summary.update(status="completed" if all(row["status"] == "completed" for row in rows) else "error")

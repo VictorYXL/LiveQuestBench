@@ -13,13 +13,14 @@ def main() -> int:
     parser.add_argument("--config", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path, help="Output root; reuse completed Episodes and retry incomplete ones")
     parser.add_argument("--headless", action=argparse.BooleanOptionalAction, default=True)
-    parser.add_argument("--recording", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--recording", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--recording-fps", type=int, default=10)
+    parser.add_argument("--record-chat", action=argparse.BooleanOptionalAction, default=True)
     args = parser.parse_args()
     try:
         summary = asyncio.run(run_experiment(
             args.config, args.output, headless=args.headless,
-            recording=args.recording, recording_fps=args.recording_fps,
+            recording=args.recording, recording_fps=args.recording_fps, record_chat=args.record_chat,
         ))
     except KeyboardInterrupt:
         print("Benchmark interrupted; completed evidence and cancellation status were preserved.", file=sys.stderr)

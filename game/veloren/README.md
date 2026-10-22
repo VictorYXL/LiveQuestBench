@@ -10,6 +10,9 @@ The production launcher runs the explicit VM/ST examples in
 [experiment usage and result semantics](../../README.md#running-an-experiment).
 The same private endpoint evaluators validate configuration before a scheduled
 run and score native before/after evidence afterward.
+Benchmark recordings live under each Episode's `recording/`: `video.mp4`
+and `chat/`. Standalone game tests retain their own output layout;
+`VelorenGame(recording_path=...)` can select an explicit video destination.
 
 ## Setup
 

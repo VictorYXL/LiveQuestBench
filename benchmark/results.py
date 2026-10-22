@@ -2,6 +2,7 @@
 
 from collections import Counter
 from dataclasses import asdict, is_dataclass
+from datetime import datetime, timezone
 import hashlib
 import importlib.metadata
 import json
@@ -21,21 +22,28 @@ def write_json(path: Path, value: object) -> None:
 
 
 class EpisodeLog:
-    def __init__(self, root: Path):
-        self.root = root
+    def __init__(self, root: Path, *, record_chat: bool = True):
+        self.directory = root / "recording" / "chat"
+        self.record_chat = record_chat
         self.requests: list[RequestEvent] = []
         self.tool_calls = 0
         self.observations = 0
+        if record_chat:
+            self.directory.mkdir(parents=True)
+            for name in ("agent.jsonl", "agent.log", "query.jsonl", "query.log"):
+                (self.directory / name).touch()
 
     def encode(self, value: object) -> object:
         if isinstance(value, bytes):
             digest = hashlib.sha256(value).hexdigest()
-            suffix = ".png" if value.startswith(b"\x89PNG") else ".bin"
-            path = self.root / "images" / (digest + suffix)
+            suffix = (".png" if value.startswith(b"\x89PNG") else
+                      ".jpg" if value.startswith(b"\xff\xd8") else
+                      ".webp" if value.startswith(b"RIFF") and value[8:12] == b"WEBP" else ".bin")
+            path = self.directory / "images" / (digest + suffix)
             path.parent.mkdir(exist_ok=True)
             if not path.exists():
                 path.write_bytes(value)
-            return {"path": str(path.relative_to(self.root)), "sha256": digest, "bytes": len(value)}
+            return "{image: " + path.relative_to(self.directory).as_posix() + "}"
         if is_dataclass(value) and not isinstance(value, type):
             return self.encode(asdict(value))
         if isinstance(value, dict):
@@ -44,17 +52,64 @@ class EpisodeLog:
             return [self.encode(child) for child in value]
         return value
 
-    def event(self, kind: str, **data: object) -> None:
-        row = self.encode({"event": kind, "at_ns": time.monotonic_ns(), **data})
-        with (self.root / "trace.jsonl").open("a", encoding="utf-8") as stream:
+    @staticmethod
+    def render_message(message: dict) -> str:
+        content = message.get("content")
+        if isinstance(content, list):
+            text = "\n\n".join(
+                str(block.get("text", block.get("data", ""))) for block in content
+            )
+        else:
+            text = content or ""
+        if message.get("tool_call_id"):
+            text = f"Tool call ID: {message['tool_call_id']}\n{text}"
+        for call in message.get("tool_calls", []):
+            text += "\n\nTool call:\n" + json.dumps(call, ensure_ascii=False, indent=2)
+        return f"--- [{message.get('role', 'assistant').upper()}] ---\n{text}\n"
+
+    def write(self, name: str, kind: str, data: dict[str, object]) -> None:
+        if not self.record_chat:
+            return
+        row = {
+            "event": kind, "at_ns": time.monotonic_ns(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            **{key: self.encode(value) for key, value in data.items()},
+        }
+        with (self.directory / f"{name}.jsonl").open("a", encoding="utf-8") as stream:
             stream.write(json.dumps(row, allow_nan=False) + "\n")
+        text = f"--- [{kind.upper()}] {row['timestamp']} at_ns={row['at_ns']} ---\n"
+        rendered = {"event", "timestamp", "at_ns"}
+        for key, expected in (("message", dict), ("messages", list), ("response", dict)):
+            if isinstance(row.get(key), expected):
+                rendered.add(key)
+        details = {key: value for key, value in row.items() if key not in rendered}
+        if details:
+            text += json.dumps(details, ensure_ascii=False, indent=2) + "\n"
+        message = row.get("message")
+        if isinstance(message, dict):
+            text += self.render_message(message)
+        messages = row.get("messages")
+        if isinstance(messages, list):
+            text += "\n".join(self.render_message(message) for message in messages)
+        response = row.get("response")
+        if isinstance(response, dict):
+            text += self.render_message(response)
+            text += json.dumps({key: value for key, value in response.items()
+                                if key not in ("content", "tool_calls")}, ensure_ascii=False, indent=2) + "\n"
+        with (self.directory / f"{name}.log").open("a", encoding="utf-8") as stream:
+            stream.write(text + "\n")
+
+    def event(self, kind: str, **data: object) -> None:
+        self.write("agent", kind, data)
+
+    def query(self, kind: str, data: dict[str, object]) -> None:
+        self.write("query", kind, data)
 
     def message(self, message: Message) -> None:
         self.event("message", message=message)
 
     def request(self, event: RequestEvent) -> None:
         self.requests.append(event)
-        self.event("model_request", request=event)
 
     def accounting(self) -> dict:
         known: Counter[str] = Counter()

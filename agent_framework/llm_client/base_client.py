@@ -87,6 +87,8 @@ class BaseLLMClient(ABC):
         self.max_attempts = max_attempts
         self.retry_backoff = retry_backoff
         self.on_request = on_request
+        self.on_query: Callable[[str, dict[str, object]], None] | None = None
+        self._query_index = 0
 
     async def chat(
         self,
@@ -96,7 +98,14 @@ class BaseLLMClient(ABC):
         tool_choice: str | None = None,
     ) -> LLMResponse:
         """Retry transport failures, incomplete generations and invalid JSON only."""
+        self._query_index += 1
+        query_id = self._query_index
         for attempt in range(1, self.max_attempts + 1):
+            if self.on_query:
+                self.on_query("prompt", {
+                    "query_id": query_id, "attempt": attempt, "messages": list(messages),
+                    "tools": list(tools) if tools is not None else None, "tool_choice": tool_choice,
+                })
             started = time.monotonic()
             response = None
             error: BaseException | None = None
@@ -138,6 +147,13 @@ class BaseLLMClient(ABC):
                 )
                 if self.on_request:
                     self.on_request(event)
+                if self.on_query:
+                    self.on_query("response" if response is not None else "error", {
+                        "query_id": query_id, "attempt": attempt, "response": response,
+                        "request": event,
+                        "error_code": error.code if isinstance(error, ClientError) else None,
+                        "http_status": error.status if isinstance(error, ClientError) else None,
+                    })
             await asyncio.sleep(self.retry_backoff * 2 ** (attempt - 1))
         raise RuntimeError("No request attempt was made")
 

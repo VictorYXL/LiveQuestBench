@@ -9,13 +9,75 @@ import time
 import pytest
 
 from agent_framework.agents.base_agent import AgentContext, AgentExit, AgentExitReason, BaseAgent, StopReason
+from agent_framework.llm_client.base_client import BaseLLMClient, LLMResponse, Message
 from benchmark.config import ConfigError, load_experiment
+from benchmark.results import EpisodeLog
 from game.bindings import Controls, GameBinding
 from benchmark.runner import output_lock, prepare_episode, run_bounded, run_episode, run_experiment
 from game.base_game import BaseGame
 
 
 ROOT = Path(__file__).resolve().parents[2]
+
+
+@pytest.mark.parametrize("enabled", [True, False])
+def test_chat_recording_preserves_inputs_retries_and_cancellation(tmp_path, enabled):
+    log = EpisodeLog(tmp_path, record_chat=enabled)
+    image = b"\x89PNG\r\n\x1a\nrecording-probe"
+    message = Message("user", [{"type": "text", "text": "Inspect this frame"},
+                               {"type": "image", "mime_type": "image/png", "data": image}])
+
+    class Client(BaseLLMClient):
+        calls = 0
+
+        async def _request_impl(self, messages, **kwargs):
+            self.calls += 1
+            assert messages[0] is message and message.content[1]["data"] is image
+            if self.calls == 1:
+                raise TimeoutError("retry probe")
+            if self.calls == 3:
+                raise asyncio.CancelledError()
+            return LLMResponse(content="Observed", finish_reason="stop", usage={"total_tokens": 3})
+
+        async def close(self):
+            pass
+
+    async def run():
+        client = Client(max_attempts=2, retry_backoff=0, on_request=log.request)
+        client.on_query = log.query if enabled else None
+        log.message(message)
+        log.event("observation", observation=message.content)
+        response = await client.chat([message], tools=[], tool_choice="auto")
+        log.message(Message("assistant", response.content))
+        with pytest.raises(asyncio.CancelledError):
+            await client.chat([message])
+        log.event("tool_error", call_id=1, name="probe", error_type="RuntimeError", message="tool failure detail")
+        log.event("end", status="cancelled")
+        await client.close()
+
+    asyncio.run(run())
+    assert log.accounting()["request_attempts"] == 3
+    assert log.accounting()["successful_attempts"] == 1
+    assert not (tmp_path / "trace.jsonl").exists()
+    if not enabled:
+        assert not (tmp_path / "recording").exists()
+        return
+    directory = tmp_path / "recording/chat"
+    rows = [json.loads(line) for line in (directory / "query.jsonl").read_text().splitlines()]
+    assert [(row["query_id"], row["attempt"], row["event"]) for row in rows] == [
+        (1, 1, "prompt"), (1, 1, "error"), (1, 2, "prompt"), (1, 2, "response"),
+        (2, 1, "prompt"), (2, 1, "error"),
+    ]
+    assert rows[-1]["request"]["error_type"] == "CancelledError"
+    assert rows[3]["response"]["content"] == "Observed"
+    images = list((directory / "images").iterdir())
+    assert len(images) == 1 and images[0].read_bytes() == image
+    marker = "{image: images/" + images[0].name + "}"
+    for name in ("agent.jsonl", "agent.log", "query.jsonl", "query.log"):
+        assert marker in (directory / name).read_text()
+    agent = [json.loads(line) for line in (directory / "agent.jsonl").read_text().splitlines()]
+    assert [row["event"] for row in agent] == ["message", "observation", "message", "tool_error", "end"]
+    assert "tool failure detail" in (directory / "agent.log").read_text()
 
 
 def test_bounded_retirement_on_deadline_cancel_and_gate_failure():
@@ -112,7 +174,7 @@ def test_agent_task_repetition_matrix_is_serial_and_separately_summarized(tmp_pa
             f"{selected.id}.{task.game}.{task.id}.{task.task_type}.{row['repetition']:04d}"
         )
         assert root == output / row["output_path"]
-        root.mkdir(parents=True)
+        (root / "results").mkdir(parents=True)
         calls.append((selected.id, task.id, task.task_type, row["repetition"]))
         assert row["agent"]["model"]["name"] == selected.model.name
         await asyncio.sleep(0)
@@ -120,9 +182,9 @@ def test_agent_task_repetition_matrix_is_serial_and_separately_summarized(tmp_pa
                    measurement="unavailable" if fail_first else "valid",
                    task_outcome="unknown" if fail_first else "failure",
                    errors=[], finished_at_ns=1)
-        (root / "result.json").write_text(json.dumps(row))
+        (root / "results/result.json").write_text(json.dumps(row))
         if not fail_first:
-            (root / "evaluation.json").write_text('{"success": false}')
+            (root / "results/evaluation.json").write_text('{"success": false}')
         active -= 1
 
     monkeypatch.setattr("benchmark.runner.run_episode", episode)
@@ -153,8 +215,15 @@ def test_agent_task_repetition_matrix_is_serial_and_separately_summarized(tmp_pa
         added = asyncio.run(run_experiment(Path(config.source.path), output))
         assert calls == [(extra.id, tasks[0].id, tasks[0].task_type, 1)]
         assert added["experiment_id"] == "another-experiment"
-        assert len(list(output.glob("*/*/episode_*/result.json"))) == 9
+        assert len(list(output.glob("*/*/episode_*/results/result.json"))) == 9
         assert len(list((output / "runs").glob("*/summary.json"))) == 3
+        legacy = output / added["episodes"][0]["output_path"]
+        for name in ("result.json", "evaluation.json"):
+            (legacy / "results" / name).rename(legacy / name)
+        (legacy / "results").rmdir()
+        calls.clear()
+        asyncio.run(run_experiment(Path(config.source.path), output))
+        assert calls == []
 
 
 def test_resume_protects_conflicts_and_active_output(tmp_path):
@@ -254,8 +323,9 @@ def test_episode_faults_preserve_evidence_and_cleanup(tmp_path, monkeypatch):
         assert (output / "after").is_dir()
         assert events.index("end") < events.index("after") < events.index("game_close")
         assert events[-1] == "client_close" and "agent_close" in events
-        assert result["errors"] and json.loads((output / "result.json").read_text()) == result
+        assert result["errors"] and json.loads((output / "results/result.json").read_text()) == result
         if fault == "measurement":
             assert result["measurement"] == "invalid" and result["task_outcome"] == "unknown"
         elif fault == "cleanup":
             assert result["measurement"] == "valid" and result["task_outcome"] == "failure"
+            assert json.loads((output / "results/evaluation.json").read_text()) == {"success": False}

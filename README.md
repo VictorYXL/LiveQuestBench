@@ -142,8 +142,10 @@ Legacy top-level `agent` and `model` settings are not accepted.
 Useful options:
 
 - `--headless` (default) or `--no-headless` for an existing display.
-- `--recording` to record; recording is disabled by default.
+- `--recording` (default) or `--no-recording` to disable video.
 - `--recording-fps 10` (default), supported range 1-60.
+- `--record-chat` (default) or `--no-record-chat` to disable benchmark chat
+  and detailed execution recording. This is independent of video recording.
 
 Model settings default to `max_output_tokens: 4096`, `max_attempts: 3` and
 `timeout_seconds: 120`. Hosted providers optionally accept `reasoning_effort`.
@@ -166,10 +168,14 @@ against the same output root. The decision is made **per Episode**:
    from a fresh game and Agent. Partial logs/video in that directory are lost.
 3. **No Episode directory:** run normally.
 
-A completed evaluation means consistent `result.json` and `evaluation.json`,
-with completed measurement and cleanup. Merely having `result.json` is not
-enough: it also exists during execution and after errors. Corrupt/inconsistent
+A completed evaluation means consistent `results/result.json` and
+`results/evaluation.json`, with completed measurement and cleanup.
+Merely having `results/result.json` is not enough: it also exists during
+execution and after errors. Corrupt/inconsistent
 completed evidence raises an error instead of silently being accepted.
+Legacy root-level result files remain readable, but outputs predating chat
+recording have incompatible fingerprints and require a new output root or
+Agent ID. Existing evidence is not migrated or overwritten.
 
 The runner checks the saved task, Agent/model and launch settings before
 reusing or replacing an existing result. If they differ, it stops with a
@@ -211,12 +217,20 @@ output_dir/
   tool_calling_astra/
     move_2_metres.structured_tool/
       episode_1/
-        result.json
-        evaluation.json
+        results/
+          result.json
+          evaluation.json
         before/
         after/
-        trace.jsonl
-        game/                  Native logs and video when recording is enabled
+        recording/
+          video.mp4            Unless --no-recording is set, in either mode
+          chat/                Unless --no-record-chat is set
+            agent.jsonl
+            agent.log
+            query.jsonl
+            query.log
+            images/            Referenced images, normally VM only
+        game/                  Native runtime files and logs
         agent/                 External Agent artifacts when applicable
 ```
 
@@ -227,8 +241,17 @@ Start with `summary.json`, then open the relevant Episode:
 - `status: error` means execution, measurement or cleanup failed; inspect
   `errors` and native logs. It is not automatically a zero task score.
 - `cancelled` and `not_run` are not completed measurements.
-- `evaluation.json` gives the game-owned scoring details.
-- `trace.jsonl` records actual observations, model requests and tool activity.
+- `results/evaluation.json` gives the game-owned scoring details.
+- `recording/chat/agent.jsonl` records Agent messages, observations, tool
+  execution and termination events with timestamps; it replaces `trace.jsonl`.
+- `recording/chat/query.jsonl` records normalized model inputs and responses
+  or errors, including retries and cancellation, linked by query/attempt IDs.
+  It records model calls, not a separate QueryAgent or raw HTTP traffic.
+- The matching `.log` files are readable transcripts. Images use
+  `{image: images/<hash>.<extension>}` placeholders and are stored once in
+  `chat/images/`, without changing model inputs.
+- Disabling chat recording preserves results, aggregate usage and native
+  game/Agent artifacts, but omits detailed transcripts and exported images.
 - Video helps diagnose interaction failures but does not replace private
   evaluator evidence. Check recording validity before claiming visual coverage.
 

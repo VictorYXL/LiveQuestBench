@@ -18,6 +18,7 @@ from game.minecraft.visual_motor import interface as vm
 def create_binding(
     *, fixture: dict[str, object], task_type: str, evaluator: str, parameters: dict[str, object],
     tools: tuple[str, ...] | None, output_dir: Path, headless: bool, recording: bool, recording_fps: int,
+    recording_path: Path | None = None,
 ) -> GameBinding:
     required = {"world_path", "instance", "difficulty", "player_state"}
     if set(fixture) != required:
@@ -38,7 +39,7 @@ def create_binding(
     game = MinecraftGame(
         output_dir=output_dir, track=task_type, world_path=world_path,
         instance=instance, difficulty=difficulty, player_state=state,
-        headless=headless, recording=recording, recording_fps=recording_fps,
+        headless=headless, recording=recording, recording_fps=recording_fps, recording_path=recording_path,
     )
     if task_type == "structured_tool":
         validate_tools(st.agent_tools(), tools)

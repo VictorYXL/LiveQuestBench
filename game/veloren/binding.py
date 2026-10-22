@@ -17,10 +17,11 @@ from game.veloren.visual_motor import interface as vm
 def create_binding(
     *, fixture: dict[str, object], task_type: str, evaluator: str, parameters: dict[str, object],
     tools: tuple[str, ...] | None, output_dir: Path, headless: bool, recording: bool, recording_fps: int,
+    recording_path: Path | None = None,
 ) -> GameBinding:
     game = VelorenGame(
         output_dir=output_dir, track=task_type, fixture=fixture,
-        headless=headless, recording=recording, recording_fps=recording_fps,
+        headless=headless, recording=recording, recording_fps=recording_fps, recording_path=recording_path,
     )
     if task_type == "structured_tool":
         validate_tools(st.agent_tools(), tools)

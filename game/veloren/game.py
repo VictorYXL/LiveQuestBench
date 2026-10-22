@@ -25,7 +25,7 @@ class VelorenGame(BaseGame[MotorInterface | StructuredInterface]):
     def __init__(
         self, *, output_dir: Path, fixture: dict, track: str = "visual_motor",
         headless: bool = True, display_name: str | None = None,
-        recording: bool = False, recording_fps: int = 10,
+        recording: bool = False, recording_fps: int = 10, recording_path: Path | None = None,
     ) -> None:
         if track not in ("visual_motor", "structured_tool"):
             raise ValueError("track must be visual_motor or structured_tool")
@@ -35,6 +35,7 @@ class VelorenGame(BaseGame[MotorInterface | StructuredInterface]):
         if type(recording_fps) is not int or not 1 <= recording_fps <= 60:
             raise ValueError("recording_fps must be an integer in [1, 60]")
         self.output_dir = Path(output_dir).resolve()
+        self.recording_path = Path(recording_path).resolve() if recording_path is not None else self.output_dir / "video.mp4"
         self.track, self.fixture, self.headless = track, fixture, headless
         self.display_name, self.recording, self.recording_fps = display_name, recording, recording_fps
         self.phase = "new"
@@ -166,7 +167,7 @@ class VelorenGame(BaseGame[MotorInterface | StructuredInterface]):
             if self.recording:
                 assert self._window_id is not None and self.display_name is not None
                 self._recorder = WindowRecording(
-                    self._window_id, self.display_name, self.output_dir / "video.mp4", self.recording_fps,
+                    self._window_id, self.display_name, self.recording_path, self.recording_fps,
                     title_prefix="Veloren",
                 )
                 self._stack.push_async_callback(self._recorder.stop)

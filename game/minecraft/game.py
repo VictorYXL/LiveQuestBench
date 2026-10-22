@@ -34,7 +34,7 @@ class MinecraftGame(BaseGame[MotorInterface | StructuredInterface]):
         difficulty: str = "normal", recording: bool = False, recording_fps: int = 10,
         startup_timeout: float = 120, track: str = "visual_motor",
         authentication: str = "offline", player_name: str = "LiveQuestBot",
-        headless: bool = True,
+        headless: bool = True, recording_path: Path | None = None,
     ) -> None:
         if track not in ("visual_motor", "structured_tool"):
             raise ValueError("track must be visual_motor or structured_tool")
@@ -46,6 +46,7 @@ class MinecraftGame(BaseGame[MotorInterface | StructuredInterface]):
             raise ValueError("authentication must be offline or online")
         self.authentication, self.player_name = authentication, player_name
         self.output_dir = Path(output_dir).resolve()
+        self.recording_path = Path(recording_path).resolve() if recording_path is not None else self.output_dir / "video.mp4"
         self.player_state = player_state
         self.account, self.instance, self.display = account, instance, display
         if type(headless) is not bool:
@@ -212,7 +213,7 @@ class MinecraftGame(BaseGame[MotorInterface | StructuredInterface]):
                 assert self._session.window_id is not None
                 self._recorder = WindowRecording(
                     self._session.window_id, self._session.config.display,
-                    self.output_dir / "video.mp4", self.recording_fps,
+                    self.recording_path, self.recording_fps,
                     title_prefix="Minecraft", class_tokens=("minecraft", "lwjgl"),
                 )
                 self._stack.push_async_callback(self._recorder.stop)

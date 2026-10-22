@@ -3,6 +3,9 @@
 The production launcher runs the explicit VM/ST examples in
 [`config/minecraft/`](../../config/minecraft/); see the
 [experiment usage and result semantics](../../README.md#running-an-experiment).
+Benchmark recordings live under each Episode's `recording/`: `video.mp4`
+and `chat/`. Standalone game tests retain their own output layout;
+`MinecraftGame(recording_path=...)` can select an explicit video destination.
 `MinecraftGame` requires an existing `world_path` and explicit `player_state`.
 The small integration fixture already contains the task's three logs; the
 separate resource-island fixture supports the full island progression catalog.

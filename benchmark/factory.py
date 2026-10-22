@@ -26,7 +26,10 @@ NATIVE_AGENTS = {
 }
 
 
-def make_game(task: TaskConfig, output: Path, *, headless: bool, recording: bool, recording_fps: int) -> GameBinding:
+def make_game(
+    task: TaskConfig, output: Path, *, headless: bool, recording: bool, recording_fps: int,
+    recording_path: Path | None = None,
+) -> GameBinding:
     if task.game == "minecraft":
         from game.minecraft.binding import create_binding
     elif task.game == "veloren":
@@ -36,7 +39,7 @@ def make_game(task: TaskConfig, output: Path, *, headless: bool, recording: bool
     return create_binding(
         fixture=task.fixture, task_type=task.task_type, evaluator=task.evaluator,
         parameters=task.evaluator_parameters, tools=task.tools, output_dir=output,
-        headless=headless, recording=recording, recording_fps=recording_fps,
+        headless=headless, recording=recording, recording_fps=recording_fps, recording_path=recording_path,
     )
 
 
