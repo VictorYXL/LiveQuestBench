@@ -1,0 +1,49 @@
+id: move_2_metres
+game: veloren
+task_type: structured_tool
+task: >-
+  Move at least 2 horizontal metres away from your starting position while
+  staying alive, then release movement controls and finish with a text answer.
+  You start on a small elevated stone platform.
+  Use a short movement burst, not a long walk.
+time_limit_seconds: 180
+
+fixture:
+  map_asset: world.map.veloren_0_18_0_0
+  world_seed: 130626853
+  time_of_day: "12:00"
+  day_length: 30
+  calendar: none
+  platform:
+    origin: [18704, 10800, 401]
+    size: [12, 12]
+    block: Rock
+  player_state:
+    position: [18706.5, 10806.5, 402]
+    look: [0, 1, 0]
+    health: 100
+    inventory:
+      common.items.consumable.potion_minor: 1
+      common.items.food.cheese: 1
+    equipment:
+      active_mainhand: common.items.weapons.sword.starter
+      chest: common.items.armor.misc.chest.worker_purple_brown
+      feet: common.items.armor.misc.foot.sandals
+      glider: common.items.glider.basic_white
+      lantern: common.items.lantern.black_0
+      legs: common.items.armor.misc.pants.worker_brown
+
+# Omit tools to use all game-provided ST Agent tools. An explicit list is an allowlist.
+# Observation remains available through the public observe interface.
+tools:
+  - MoveTool
+  - TurnTool
+  - JumpTool
+  - PickupTool
+  - UseItemTool
+  - CraftTool
+
+evaluator:
+  name: displacement
+  parameters:
+    min_distance: 2

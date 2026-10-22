@@ -9,7 +9,7 @@ from uuid import uuid4
 
 
 class VelorenSession:
-    def __init__(self, output: Path, display: str, track: str, fixture: str):
+    def __init__(self, output: Path, display: str, track: str, fixture: dict):
         self.output, self.display, self.track, self.fixture = output, display, track, fixture
         self.process: asyncio.subprocess.Process | None = None
         self.reader: asyncio.Task | None = None
@@ -28,9 +28,11 @@ class VelorenSession:
         ) if key in os.environ}
         environment.update(PYTHONUNBUFFERED="1", DISPLAY=self.display)
         self.log = (self.output / "worker.log").open("xb")
+        fixture_path = self.output / "fixture-input.json"
+        fixture_path.write_text(json.dumps(self.fixture, indent=2, allow_nan=False) + "\n")
         self.process = await asyncio.create_subprocess_exec(
             runtime["python"], str(Path(__file__).with_name("worker.py")),
-            str(runtime_path), str(self.output), self.track, self.fixture,
+            str(runtime_path), str(self.output), self.track, str(fixture_path),
             env=environment, stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE,
             stderr=self.log, limit=16 * 1024 * 1024,
         )

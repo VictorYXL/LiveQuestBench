@@ -5,8 +5,8 @@ long-horizon objectives in continuously evolving 3D games. The intended focus is
 the interaction between immediate reaction, persistent resources and decisions
 whose consequences affect later stages.
 
-**Current status: model clients, six Agent integrations and Minecraft/Veloren
-VM/ST, not a complete benchmark.** GitHub Copilot, OpenAI Responses
+**Current status: an executable serial benchmark framework, six Agent integrations
+and Minecraft/Veloren VM/ST; not a frozen research benchmark.** GitHub Copilot, OpenAI Responses
 and local vLLM clients are implemented.
 Minecraft shares isolated local sessions, initialization and native snapshot
 inventory and bounded structure evaluation across VM and ST using one native-client implementation.
@@ -37,8 +37,11 @@ See [GamingAgent](agent_framework/agents/gamingagent/README.md) for its
 native-image profile and real validation command, and the
 [Game Agent follow-up](output/survey/game_agent_followup_20261022.md) for
 refreshed candidate evidence and integration results.
-There is no experiment
-configuration loader, production Episode runner or benchmark launcher yet.
+The file-based configuration loader, production Episode runner and
+[`run_benchmark.py`](run_benchmark.py) launcher execute independent tasks and
+persist private evidence, traces, scores and mode-separated summaries.
+The small built-in tasks are integration examples, not evidence of long-horizon
+task coverage or a finalized evaluation distribution.
 
 ## Development setup
 
@@ -77,28 +80,36 @@ one environment.
 ```text
 config/
   minecraft/
-    tasks/                  Task definitions
+    fixtures/               Immutable native worlds shared by VM/ST
+    tasks/vm/               Visual-motor task definitions
+    tasks/st/               Structured-tool task definitions
     experiments/            Task/Agent/settings selections
-    fixtures/               Immutable starting assets or references
+  veloren/
+    tasks/vm/
+    tasks/st/
+    experiments/
 game/
   base_game.py              Minimal administrative game contract
+  bindings.py               Shared public controls and private Episode bindings
+  backends/x11/             Shared input, capture, recording and isolated display
   minecraft/
     README.md
     setup.sh
     game.py
+    binding.py              Minecraft fixture/tool admission and private scoring
     runtime/                Installation, accounts and client/server lifecycle
     init_player_state.py    Private initial player state and verification
     prompts/                introduction.txt plus visual_motor.txt / structured_tool.txt
     evaluators/
     visual_motor/
     structured_tools/
-      actions/
-      observations/
-      tools/
+      interface.py          Public observations, fixed tools and native execution
   veloren/
     README.md
     setup.sh
     game.py
+    binding.py              Veloren fixture/tool admission and private scoring
+    fixture.py              Explicit native scene initialization and readback
     runtime/                Verified upstream reuse, native patch build and private worker
     patches/                Explicit physical-input opt-in; native license
     prompts/
@@ -124,14 +135,19 @@ agent_framework/
     orak/                   Native zeroshot runner extension, declared patch and locked runtime
     smolagents/             Native tool-calling loop and locked runtime, no source patches
     gamingagent/            Native perception/memory/reflection/reasoning and episode runner
-core/                       Orchestration boundary and shared infrastructure
-  backends/x11/             Shared atomic input, capture, recording and isolated display
+benchmark/                  Experiment orchestration and result persistence
+  config.py                 Strict, explicit file-based Task/Experiment loading
+  factory.py                Explicit game, Agent and model selection
+  runner.py                 Serial lifecycle, deadline, interruption and cleanup
+  results.py                Evidence logging, provenance and mode-separated summaries
 tests/
   conftest.py               Shared display and recording options
+  test_benchmark.py         Consequential offline configuration/lifecycle checks
+  test_benchmark_live.py    Opt-in real CLI/native Agent/deadline/SIGINT checks
   test_agent/
     test_agents_minecraft.py  Real Minecraft/model acceptance and operator-stop cases
     test_agents_veloren.py    Real Veloren/model acceptance and operator-stop case
-    support.py               Shared Agent roster and benchmark-owned stop logic
+    support.py               Re-exports the production roster and bounded runner
   test_client/              Three opt-in checks per provider: text, image, tools
   test_game/
     minecraft/
@@ -143,21 +159,207 @@ tests/
       test_game.py          Real VM/ST movement, cutoff, snapshots and recording
       test_evaluators.py    Threshold and evidence-integrity counterexamples
 pyproject.toml
+run_benchmark.py             Thin operational launcher
 uv.lock
 .python-version
 README.md
 ```
 
-Empty reserved directories contain `.gitkeep` files so that the structure survives
-a checkout. They do not indicate implemented functionality. No dummy task YAML,
-nonfunctional installer or fake-success runner is supplied.
+## Running an experiment
+
+The six YAML files under [`config/`](config/) define Minecraft
+`collect_3_logs` and Veloren `move_2_metres`, each with separate VM/ST tasks and
+one shared `gpt-6-astra` experiment per game. Each experiment runs both tasks once,
+as two independently initialized and scored Episodes. Prepare the game runtime
+and provider credentials first using the game/client setup instructions below.
+
+Task references accept absolute paths or paths relative to the declaring
+experiment file, with no implicit name lookup. Each task declares `task_type`;
+experiments do not override it. ST `tools` lists select public Agent tools;
+omitting the list means all supported public ST Agent tools, not administrative
+operations. VM observations remain on demand, without a task-level capture
+interval. Recording cadence is independent.
+
+An experiment is a task execution plan with shared Agent/model settings, not a
+single-mode condition. Results identify tasks by game, task ID and `task_type`;
+VM/ST scores remain separate. Unsupported Agent/task combinations must be
+rejected before execution, not silently skipped.
+
+From the repository root:
+
+```bash
+uv sync --locked --extra minecraft --extra veloren
+uv run --locked --extra minecraft --extra veloren python run_benchmark.py \
+  --config config/minecraft/experiments/collect_3_logs.yaml \
+  --output output/runs/minecraft_collect_3_logs \
+  --headless --recording
+```
+
+For Veloren, use `config/veloren/experiments/move_2_metres.yaml` and a separate
+output directory. Remove a task entry to select only one mode in a custom experiment.
+Provider credentials and prepared game runtime locations remain external to the
+task configuration. Copilot accepts `COPILOT_GITHUB_TOKEN` or the explicit
+`LIVEQUEST_COPILOT_TOKEN_FILE`; OpenAI uses `OPENAI_API_KEY`. Veloren requires
+`LIVEQUEST_VELOREN_RUNTIME`; Minecraft requires explicit
+`MINECRAFT_EULA_ACCEPTED=true` and an installed runtime.
+External Agents retain their documented `LIVEQUEST_<AGENT>_ROOT` setup.
+
+The launcher defaults to headless execution without recording. Use
+`--no-headless` for an authorized existing X11 desktop, `--recording` for video
+and `--recording-fps N` for 1-60 FPS. Rendering and on-demand VM observations
+remain enabled without recording. These options do not override task or model
+settings.
+
+### Configuration and admission
+
+- Tasks run in explicit list order, with all repetitions of each task in order.
+  Every Episode gets a fresh game session and Agent. There is no task discovery,
+  task registry, inheritance, automatic Episode retry, concurrency or resume.
+- YAML duplicate/unknown keys, invalid types, conflicting task identities,
+  unsupported tools/evaluators and invalid scorer thresholds are rejected.
+  Paths are absolute or relative to the declaring file, including Minecraft
+  fixture directories relative to their Task YAML.
+- `agent.name` is `tool_calling`, `deepseek`, `hermes`, `orak`, `smolagents` or
+  `gamingagent`. Native process profiles currently require a Responses provider
+  and explicit `reasoning_effort`; vLLM is supported with `tool_calling`.
+- Model settings: `provider`, `name`, optional `reasoning_effort`,
+  `max_output_tokens` (4096), `max_attempts` (1), `timeout_seconds` (120).
+  Only vLLM additionally accepts `base_url`, `temperature`, `enable_thinking`;
+  it rejects `reasoning_effort`. Inapplicable settings are not silently dropped.
+- Every Task requires an explicit top-level `fixture` mapping. There is no
+  `initialization` wrapper, null/default fixture, implicit world generation,
+  named scene lookup or arbitrary setup-command list.
+- Minecraft fixtures require `world_path`, `instance` (currently `"1.20.4"`),
+  `difficulty` and `player_state`. `world_path` is a native save directory,
+  absolute or relative to the Task YAML. The save must exist, contain
+  `level.dat`, have no saved players and no symlinks. The loader copies it
+  into a fresh Episode directory, then installs and verifies the declared player.
+  Both built-in tasks share [`config/minecraft/fixtures/collect_3_logs`](config/minecraft/fixtures/collect_3_logs/).
+  This approximately 2.2 MB template already contains the three logs; no
+  runtime `fill` is needed. It is a generated superflat task scene, not the
+  upstream island map. Its export provenance and native-file checksums are in
+  [`collect_3_logs.source.json`](config/minecraft/fixtures/collect_3_logs.source.json).
+- Veloren fixtures combine explicit `map_asset`, `world_seed`, `time_of_day`,
+  `day_length`, `calendar`, absolute `platform` geometry and `player_state`.
+  The game-side [`initialize_fixture`](game/veloren/fixture.py) authors the
+  declared platform, establishes position/health/inventory, verifies equipment
+  and initial look, and rejects a mismatched native readback.
+  The map is an explicitly named asset in the verified game installation, not
+  a hidden world-generation preset; its actual file hash is recorded.
+  Calendar-driven holidays are disabled explicitly with `calendar: none`.
+  There is no relative-to-spawn platform placement.
+- Veloren's current loader supports Rock platforms, initial look `[0, 1, 0]`,
+  positive health up to 100 and native simple-item inventory counts. Equipment
+  is an exact admission requirement against the pinned ordinary-character
+  loadout, not an arbitrary equipment editor. Unsupported values fail rather
+  than being substituted. Changed inventories are rebuilt using the existing
+  native cleanup/gift helpers; discarded supplies are dropped away from the
+  scene, as documented by those helpers.
+- A fixture defines authored initial conditions for a pinned game/runtime.
+  It does not promise bitwise simulation replay. Veloren has native map files,
+  but those are not complete ECS/character/world snapshots. This implementation
+  deliberately combines map plus explicit initialization fields; it does not
+  claim complete save-state restoration. Incidental IDs, setup ticks, ambient
+  simulation and post-start trajectories can differ.
+- Evaluators remain game-owned: Minecraft `inventory` and `structure`;
+  Veloren `displacement`, `inventory` and `health`.
+  `evaluator.parameters` contains the evaluator's named parameters, excluding
+  private evidence paths and player identity. For Minecraft structure, that
+  means a `config` mapping containing `target`, `region` and optional match settings.
+
+### Boundaries, outputs and failures
+
+The runner initializes and verifies the scene, saves before evidence, binds
+public controls and creates the Agent before opening play. The monotonic
+deadline starts immediately before `begin()`; its acknowledgement/recording
+startup consumes that budget. During reasoning and model/network waits, the
+world continues. At Agent return, deadline or SIGINT, the runner requests
+game access revocation **before** stopping/joining the Agent. Final evidence and
+evaluation precede resource cleanup. Retirement and cleanup waits are bounded;
+failures remain explicit. A second forced termination or machine failure cannot
+guarantee cleanup or a finalized summary.
+
+Minecraft acknowledges a world freeze at its endpoint. Veloren revokes inputs
+but its world continues until the native endpoint capture. Neither the runner
+nor its clock timestamps turn Veloren evidence into an atomic server snapshot.
+Results retain requested/acknowledged boundaries and host monotonic timing;
+they do not claim a zero-latency real-time cutoff.
+
+`--output` must name a **new directory**. Existing output is never overwritten,
+including a previous admission failure. The output includes:
+
+- `config.json`: resolved configurations, original YAML text, source paths and hashes.
+- `provenance.json` and `launch.json`: repository revision/dirty state, implementation
+  hashes, Python/package versions and operational settings. Native game/Agent
+  receipts remain alongside their execution evidence.
+- One `<game>--<task-id>--<task_type>--<repetition>` directory per started Episode,
+  containing `result.json`, before/after snapshots, `evaluation.json` when valid,
+  `trace.jsonl`, deduplicated VM images, native logs and optional game video.
+- `summary.json`: every scheduled Episode, including errors and unstarted cases,
+  plus separate groups for each game/task/mode. No combined VM/ST score is emitted.
+
+The private trace retains public observations, messages/provider state, tools
+and model request attempts, but is never supplied wholesale to the Agent.
+Token usage reports known sums **and unknown-attempt counts**; missing usage
+and monetary cost remain unknown, not zero. No price estimator is implemented.
+
+`result.status` separates `completed`, `error` and `cancelled`;
+`measurement` separates `valid`, `invalid` and `unavailable`;
+`task_outcome` is `success`, `failure` or `unknown`. Agent exit is an independent
+field. Admission failures have experiment status `admission_error`.
+The runner stops scheduling after an execution/measurement/cleanup error, marks
+remaining Episodes `not_run`, and preserves earlier evidence. A normal
+unsuccessful task or deadline is **not** an infrastructure error and does not
+stop subsequent tasks. Valid-completed success rates explicitly report their
+denominator alongside all scheduled statuses.
+
+CLI exit codes: **0** for completed execution, even with unsuccessful tasks;
+**1** for admission/execution/measurement/cleanup failure; **130** for SIGINT.
+There is no automatic game-terminal detector beyond native Agent return and
+the current game gates; no pricing, parallel scheduling or sandbox for untrusted
+Agent implementations is claimed.
+
+### Runner validation
+
+After installing the `test` dependency group:
+
+```bash
+.venv/bin/python -m pytest tests/test_benchmark.py -q
+```
+
+The opt-in CLI lifecycle checks require prepared Veloren, DeepSeek and Copilot
+credentials, retain their configurations/results under `output/test/benchmark-*`,
+and exercise a native Agent, a scored deadline and a real SIGINT:
+
+```bash
+LIVEQUEST_BENCHMARK_TEST=1 LIVEQUEST_LIVE_COPILOT=1 \
+  .venv/bin/python -m pytest tests/test_benchmark_live.py -q --headless --recording
+```
+
+Create directories when they contain actual implementation or resources; do not
+retain empty scaffolding with `.gitkeep` files. Fixture directories contain
+actual resources; parameter-defined scenes can remain directly in Task YAML.
 
 The four business directories have distinct ownership:
 
 - **config:** what to evaluate, under which conditions and with which fixtures.
 - **game:** how to launch/interact with a game and acquire/interpret its evidence.
 - **agent_framework:** Agent execution, model clients and shared integration utilities.
-- **core:** when to initialize, run, terminate, score and clean up an Episode.
+- **benchmark:** when to initialize, run, terminate, score and clean up an Episode.
+
+[`runner.py`](benchmark/runner.py) keeps `run_experiment`, `run_episode` and
+their bounded Agent execution helper together. Experiment scheduling and single-
+Episode lifecycle are separate functions, not separate frameworks.
+[`factory.py`](benchmark/factory.py) selects existing implementations; each
+game's `binding.py` owns fixture validation, allowed tools, evaluator selection
+and private evidence wiring. Game modules do not import benchmark configuration
+or orchestration. Initialization finishes inside `game.start()`; there is no
+empty secondary `prepare` hook.
+
+The shared [`game/backends/x11`](game/backends/x11/) is used by both games, not
+by the scheduler directly. VM uses its capture/input tools; both VM and ST use
+its display and optional recording infrastructure. It is not a plugin registry
+and does not expose administrative game handles to Agents.
 
 Task-specific fixture assets belong with evaluation configuration conceptually,
 even when stored externally by version/hash. Keep templates immutable and create
@@ -170,7 +372,7 @@ These are small starting contracts, not a frozen public API.
 
 | Base | Operations | Responsibility |
 | --- | --- | --- |
-| [`BaseGame`](game/base_game.py) | `start`, `begin`, `end`, `get_agent_interface`, `save_snapshot`, `close` | One game session, public interaction handle and private evidence acquisition |
+| [`BaseGame`](game/base_game.py) | `start`, `begin`, `end`, `get_agent_interface`, `get_instructions`, `save_snapshot`, `close` | One game session, public interaction handle and private evidence acquisition |
 | [`BaseAgent`](agent_framework/agents/base_agent.py) | `run(context)`, `stop(reason)`, `close` | Full-attempt execution, typed exit reasons, cooperative stop requests and Agent-owned cleanup |
 | [`BaseLLMClient`](agent_framework/llm_client/base_client.py) | `chat`, `close` | Model requests, without taking over Agent history or tool execution |
 
@@ -187,7 +389,7 @@ different allowed operations. The Agent must not receive the administrative game
 object, private snapshots, hidden task parameters or evaluator state. A Python
 handle alone is not an isolation boundary for untrusted code.
 
-Agents own their reasoning/observation/action loops. The future runner owns
+Agents own their reasoning/observation/action loops. The runner owns
 lifecycle and budgets, initializes a fresh Agent per Episode and coordinates
 termination with evidence capture. Returning from `run()` is not a successful
 score. Stopping an Agent does not stop world evolution, and closing a connection
@@ -197,8 +399,9 @@ The LLM message fields follow the existing Minecraft client's conventions,
 including multimodal/tool content and provider state. `LLMResponse` is an initial
 typed container, not a drop-in guarantee for existing dictionary-returning
 providers. The two hosted providers share Responses serialization and
-per-attempt usage callbacks; missing usage is never treated as zero. Aggregate
-costs and Episode-level accounting remain future work.
+per-attempt usage callbacks; missing usage is never treated as zero.
+The runner persists Episode-level request/usage accounting; monetary pricing
+remains unimplemented.
 
 The base Game and Agent contracts remain abstract; Minecraft provides the first
 concrete game. The model base implements the
@@ -217,8 +420,8 @@ The concrete integrations currently available are
 [Orak](agent_framework/agents/orak/README.md),
 [smolagents](agent_framework/agents/smolagents/README.md) and
 [GamingAgent](agent_framework/agents/gamingagent/README.md). This does not establish
-support for arbitrary upstream features or other Agents. An end-to-end
-benchmark runner is not yet implemented.
+support for arbitrary upstream features or other Agents. The production runner
+uses these same integrations without replacing their native loops.
 
 ### Which Agents can be integrated?
 
@@ -308,7 +511,7 @@ for native implementations and Wrappers:
 Create a fresh instance per attempt and pass Agent/model configuration through
 its implementation-specific constructor or factory. No model client or
 ACP/MCP dependency is required by the base. Remote adapters must translate host
-timestamps appropriately. The future runner/game gate, not this abstract class,
+timestamps appropriately. The runner/game gate, not this abstract class,
 must enforce deadlines and preserve final evidence independently of Agent cleanup.
 
 ### Adding a game and supplying instructions

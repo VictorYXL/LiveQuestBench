@@ -11,16 +11,16 @@ import shutil
 import time
 from uuid import UUID
 
-from core.backends.x11.display import VirtualDisplay
+from game.backends.x11.display import VirtualDisplay
 from game.base_game import AgentAccessClosed, BaseGame
 from game.minecraft.runtime.account import offline_identity, resolve_account
 from game.minecraft.runtime.install import check_installation
 from game.minecraft.init_player_state import PlayerState
 from game.minecraft.runtime.session import MinecraftSession, SessionConfig, copy_world
-from core.backends.x11.capture import CapturedFrame
+from game.backends.x11.capture import CapturedFrame
 from game.minecraft.visual_motor.interface import MotorInterface, execute_actions
-from core.backends.x11.recording import WindowRecording
-from core.backends.x11.actions import ActionResult
+from game.backends.x11.recording import WindowRecording
+from game.backends.x11.actions import ActionResult
 from game.minecraft.structured_tools.interface import (
     PROFILE_ID, StructuredInterface, execute_tool, observe, tool_schemas, validate_tool,
 )
@@ -28,7 +28,7 @@ from game.minecraft.structured_tools.interface import (
 
 class MinecraftGame(BaseGame[MotorInterface | StructuredInterface]):
     def __init__(
-        self, *, output_dir: Path, fixture: Path | None = None, player_state: PlayerState | None = None,
+        self, *, output_dir: Path, world_path: Path, player_state: PlayerState,
         account: str | None = None, instance: str = "1.20.4",
         display: str | None = None, memory_mb: int = 2048,
         difficulty: str = "normal", recording: bool = False, recording_fps: int = 10,
@@ -41,12 +41,12 @@ class MinecraftGame(BaseGame[MotorInterface | StructuredInterface]):
         if track == "structured_tool" and authentication != "offline":
             raise ValueError("ST supports local offline connections only")
         self.track = track
-        self.fixture = Path(fixture) if fixture is not None else None
+        self.world_path = Path(world_path)
         if authentication not in ("offline", "online"):
             raise ValueError("authentication must be offline or online")
         self.authentication, self.player_name = authentication, player_name
         self.output_dir = Path(output_dir).resolve()
-        self.player_state = player_state or PlayerState(position=(0.5, 72, 0.5), yaw=180)
+        self.player_state = player_state
         self.account, self.instance, self.display = account, instance, display
         if type(headless) is not bool:
             raise ValueError("headless must be a boolean")
@@ -94,7 +94,7 @@ class MinecraftGame(BaseGame[MotorInterface | StructuredInterface]):
                     "instance": self.instance, "memory_mb": self.memory_mb,
                     "difficulty": self.difficulty, "startup_timeout": self.startup_timeout,
                     "authentication": self.authentication, "account": account["player_name"] if account else None,
-                    "track": self.track, "generated_world": self.fixture is None,
+                    "track": self.track,
                 })
                 self.output_dir.mkdir(parents=True, exist_ok=False)
                 self._write_json("environment.json", {
@@ -109,21 +109,15 @@ class MinecraftGame(BaseGame[MotorInterface | StructuredInterface]):
                     },
                 })
                 world = self.output_dir / "world"
-                if self.fixture is not None:
-                    copy_world(self.fixture, world, self.player_state, self.player_uuid)
-                    self._write_json("fixture.json", {
-                        "source": str(self.fixture.resolve()),
-                        "sha256": {
-                            str(path.relative_to(self.fixture)): hashlib.sha256(path.read_bytes()).hexdigest()
-                            for path in sorted(self.fixture.rglob("*"))
-                            if path.is_file() and path.name != "session.lock"
-                        },
-                    })
-                else:
-                    world.mkdir()
-                    self.player_state.write(world, self.player_uuid)
-                    self._write_json("fixture.json", {"preset": "flat-smoke-v1", "seed": 0,
-                                                     "purpose": "installation and interface checks, not a benchmark task"})
+                copy_world(self.world_path, world, self.player_state, self.player_uuid)
+                self._write_json("fixture.json", {
+                    "world_path": str(self.world_path.resolve()),
+                    "sha256": {
+                        str(path.relative_to(world)): hashlib.sha256(path.read_bytes()).hexdigest()
+                        for path in sorted(world.rglob("*"))
+                        if path.is_file() and "playerdata" not in path.relative_to(world).parts
+                    },
+                })
                 if self.display is None and self.headless:
                     virtual = VirtualDisplay()
                     self._stack.push_async_callback(virtual.close)

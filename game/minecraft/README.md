@@ -1,5 +1,12 @@
 # Test Minecraft with LiveQuestBench
 
+The production launcher runs the explicit VM/ST examples in
+[`config/minecraft/`](../../config/minecraft/); see the
+[experiment usage and result semantics](../../README.md#running-an-experiment).
+`MinecraftGame` requires an existing `world_path` and explicit `player_state`.
+The shared native world template already contains the task's three logs.
+There is no default/generated world or benchmark-time scene-construction command.
+
 ## Public instructions and developer documentation
 
 [`prompts/`](prompts/) contains task-independent, model-facing descriptions of
@@ -101,10 +108,12 @@ initialization and scoring. Original account files and worlds are not modified.
 
 ## 3. Run basic tests
 
-No map download, model, API key or Agent is needed. By default, live tests
-generate a fresh flat world with grass at Y=71 and player feet at Y=72.
-This `flat-smoke-v1` preset is for installation/interface checks, not benchmark
-task difficulty or long-horizon evaluation.
+No additional map download, model, API key or Agent is needed. Live tests
+explicitly copy the repository's immutable
+[`collect_3_logs`](../../config/minecraft/fixtures/collect_3_logs/) save, with
+grass at Y=71 and player feet at Y=72. This small scene is for interface/task
+execution checks, not evidence of long-horizon task difficulty.
+VM and ST start from the same source world; previous Episode mutations are not reused.
 
 Run offline checks first:
 
@@ -171,7 +180,7 @@ For Python integrations, use `MinecraftGame(headless=False)` or pass an explicit
 ### Optional existing world
 
 Set `MINECRAFT_TEST_FIXTURE` to a complete pristine 1.20.4 native save to test
-world-copy reuse instead of the generated preset. It must contain `level.dat`,
+another world instead of the bundled template. It must contain `level.dat`,
 no saved players and no symlinks; these tests also require the safe starting
 position `[0.5, 72, 0.5]` and a diggable block at `[1, 71, 0]`.
 The existing prepared island is suitable. The source is never the writable world.
@@ -258,7 +267,7 @@ host readback, not a native tick. Only the bound Minecraft window is captured;
 there is no desktop fallback. No inventory transcription, coordinates, semantic
 navigation, console commands or private scorer state are exposed.
 Capture, recording and the atomic motor implementation are shared with Veloren
-under [`core/backends/x11`](../../core/backends/x11). Minecraft retains its
+under [`game/backends/x11`](../backends/x11). Minecraft retains its
 explicit window-title/class selectors and mode-local Agent binding; the shared
 backend does not infer which game's window to control.
 
@@ -399,6 +408,21 @@ Inventory evaluation measures native saved counts/deltas, not item provenance
 or a particular skill's use. Missing/malformed evidence raises. Recording is
 host-sampled rather than native-frame-exact; recording errors propagate.
 Distinguish game failure from infrastructure and measurement failure.
+
+### Inventory evaluator
+
+[`evaluate_inventory`](evaluators/inventory.py) reads private before/after
+inventories. Each item requirement must specify at least one nonnegative integer
+threshold: `min_count` (final minimum), `max_count` (final maximum), or `min_delta`
+(minimum net increase). Only explicitly supplied thresholds apply, combined with
+AND; omitted thresholds impose no constraint. Null thresholds are invalid in
+requirement mappings.
+
+For the fixed empty-inventory `collect_3_logs` task, use `min_count: 3` alone.
+Use `min_delta: 3` when the objective is explicitly a net increase of three.
+Net increase is not cumulative collection: consumed or dropped items reduce it.
+The before inventory remains available for auditing even for final-state goals.
+Requirements without thresholds now raise instead of implicitly requiring one item.
 
 ### Structure evaluator
 

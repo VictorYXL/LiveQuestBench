@@ -1,0 +1,16 @@
+{
+  "source": "output/benchmark_acceptance/minecraft-first/minecraft--collect_3_logs--structured_tool--0001/before",
+  "source_level_sha256": "98dc8c4d38c73ed527ecb70cb955351b224bdd0c73e65238a6b915d11bedc662",
+  "export": "Native generated superflat save; player/history/private command storage excluded; time 0, day 6000, clear weather and mob spawning disabled.",
+  "sha256": {
+    "entities/r.-1.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "entities/r.-1.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "entities/r.0.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "entities/r.0.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "level.dat": "8bc71987106aa644e9963c5bd10174806a4697c7cea7ef0e4e77d9d8ab184374",
+    "region/r.-1.-1.mca": "55d16163cbe4f6d66a88fea7b6921ca106788e4009c271a3f0fbbc14ee785b08",
+    "region/r.-1.0.mca": "bc8da2859829b4b9d5a4e0c199750f0c78aee347acb3e89fd952f4045e91d42a",
+    "region/r.0.-1.mca": "76336cf0d7a238f8f21d7ca0fda73e9a2c1d5b47cadf0bdcc46b1a0ff5c437c7",
+    "region/r.0.0.mca": "615a7db1c1a720d5a2eb00f85cf737638d2f13983c79372c8fc4c73d40dfe9e0"
+  }
+}

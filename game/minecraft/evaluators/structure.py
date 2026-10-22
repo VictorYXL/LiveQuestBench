@@ -36,12 +36,7 @@ def _rotate(position: Position, turns: int) -> Position:
     return x, y, z
 
 
-def evaluate_structure(before: Path, after: Path, config: dict) -> dict:
-    """Match a translated, optionally Y-rotated blueprint inside an explicit region.
-
-    Names are scored, not block properties, entities, functionality or causality.
-    Invalid configuration and incomplete evidence raise instead of yielding a score.
-    """
+def validate_config(config: object) -> tuple[dict[Position, str | None], str, Position, Position, dict]:
     if not isinstance(config, dict) or set(config) - {"target", "match", "dimension", "region"}:
         raise ValueError("Invalid structure evaluator configuration")
     target = config.get("target")
@@ -67,6 +62,16 @@ def evaluate_structure(before: Path, after: Path, config: dict) -> dict:
     settings = {key: match.get(key, 1.0) for key in thresholds} | {key: match.get(key, True) for key in flags}
     if len(cells) > MAX_CELL_COMPARISONS:
         raise ValueError("Structure exceeds the supported comparison budget")
+    return cells, dimension, low, high, settings
+
+
+def evaluate_structure(before: Path, after: Path, config: dict) -> dict:
+    """Match a translated, optionally Y-rotated blueprint inside an explicit region.
+
+    Names are scored, not block properties, entities, functionality or causality.
+    Invalid configuration and incomplete evidence raise instead of yielding a score.
+    """
+    cells, dimension, low, high, settings = validate_config(config)
     initial = read_blocks(before, low, high, dimension)
     final = read_blocks(after, low, high, dimension)
     changes = {p: (initial[p], value) for p, value in final.items() if initial[p] != value}

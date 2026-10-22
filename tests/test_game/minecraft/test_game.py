@@ -50,19 +50,25 @@ def test_world_evidence(tmp_path: Path) -> None:
     assert not evaluate_inventory(before, after, player, [{"item": "dirt", "min_delta": 4}])["success"]
     with pytest.raises(ValueError, match="thresholds"):
         evaluate_inventory(before, after, player, [{"item": "dirt", "min_count": None}])
+    with pytest.raises(ValueError, match="thresholds"):
+        evaluate_inventory(before, after, player, [{"item": "dirt"}])
+    assert evaluate_inventory(after, before, player, [{"item": "dirt", "min_count": 2}])["success"]
+    assert not evaluate_inventory(after, before, player, [{"item": "dirt", "min_delta": 0}])["success"]
+    assert evaluate_inventory(before, after, player, [{"item": "oak_log", "min_delta": 0}])["success"]
+    assert evaluate_inventory(before, after, player, [{"item": "oak_log", "max_count": 0}])["success"]
     with pytest.raises(FileExistsError):
         copy_world(fixture, before, initial, player)
     with pytest.raises(ValueError, match="player data"):
         copy_world(before, tmp_path / "invalid", initial, player)
     with pytest.raises(FileNotFoundError):
-        evaluate_inventory(before, tmp_path / "missing", player, [{"item": "dirt"}])
+        evaluate_inventory(before, tmp_path / "missing", player, [{"item": "dirt", "min_count": 1}])
     with pytest.raises(ValueError):
         PlayerState(position=(float("nan"), 72, 0))
 
 
 def test_minecraft_lifecycle_requires_explicit_consent(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.delenv("MINECRAFT_EULA_ACCEPTED", raising=False)
-    game = MinecraftGame(fixture=tmp_path / "missing", output_dir=tmp_path / "run",
+    game = MinecraftGame(world_path=tmp_path / "missing", output_dir=tmp_path / "run",
                          player_state=PlayerState(position=(0.5, 72, 0.5)))
 
     async def check() -> None:
@@ -85,14 +91,14 @@ def test_minecraft_lifecycle_requires_explicit_consent(tmp_path: Path, monkeypat
 @pytest.mark.game
 @pytest.mark.skipif(os.environ.get("LIVEQUEST_MINECRAFT_TEST") != "1", reason="Opt-in installed-game check")
 def test_installation_world_and_recording(
-    monkeypatch: pytest.MonkeyPatch, headless: bool, recording: bool,
+    monkeypatch: pytest.MonkeyPatch, headless: bool, recording: bool, minecraft_world_path: Path,
 ) -> None:
     monkeypatch.setenv("MINECRAFT_PRISM_ROOT", "/nonexistent-livequest-prism")
     installation = check_installation()
     assert installation["version"] == "1.20.4"
     assert installation["client"] == "fabric-development"
     assert "prism_root" not in installation
-    fixture = Path(os.environ["MINECRAFT_TEST_FIXTURE"]) if os.environ.get("MINECRAFT_TEST_FIXTURE") else None
+    fixture = minecraft_world_path
     root = Path(os.environ.get(
         "MINECRAFT_TEST_OUTPUT", str(Path(__file__).resolve().parents[3] / "output" / "test"),
     )).resolve()
@@ -101,7 +107,7 @@ def test_installation_world_and_recording(
     state = PlayerState(position=(0.5, 72, 0.5), yaw=180,
                         inventory=[{"slot": 0, "item": "dirt", "count": 2}])
     game = MinecraftGame(
-        fixture=fixture, output_dir=output, player_state=state,
+        world_path=fixture, output_dir=output, player_state=state,
         recording=recording, recording_fps=2, headless=headless,
     )
     hashes = {str(path.relative_to(fixture)): hashlib.sha256(path.read_bytes()).hexdigest()
@@ -117,7 +123,7 @@ def test_installation_world_and_recording(
             after = await game.save_snapshot(output / "after")
             assert game.player_uuid is not None
             assert int(nbtlib.load(after / "level.dat")["Data"]["Time"]) > int(nbtlib.load(before / "level.dat")["Data"]["Time"])
-            result = evaluate_inventory(before, after, game.player_uuid, [{"item": "dirt", "min_count": 2, "min_delta": 0}])
+            result = evaluate_inventory(before, after, game.player_uuid, [{"item": "dirt", "min_count": 2}])
             assert result["success"]
             for snapshot, phase in ((before, "ready"), (after, "ended")):
                 receipt = json.loads((snapshot / "_livequest_snapshot.json").read_text())

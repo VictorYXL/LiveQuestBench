@@ -1,0 +1,31 @@
+id: collect_3_logs
+game: minecraft
+task_type: visual_motor
+task: >-
+  Collect at least 3 oak logs (minecraft:oak_log) and keep them in your inventory.
+  Keep them as logs, not planks. Finish with a text answer when you believe
+  the task is complete.
+time_limit_seconds: 180
+
+fixture:
+  world_path: ../../fixtures/collect_3_logs
+  instance: "1.20.4"
+  difficulty: peaceful
+  player_state:
+    position: [0.5, 72, 0.5]
+    dimension: minecraft:overworld
+    yaw: 180
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory: []
+
+evaluator:
+  name: inventory
+  parameters:
+    requirements:
+      - item: minecraft:oak_log
+        min_count: 3

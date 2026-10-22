@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Generic, TypeVar
 
 
-InterfaceT = TypeVar("InterfaceT")
+InterfaceT = TypeVar("InterfaceT", covariant=True)
 
 
 class AgentAccessClosed(RuntimeError):
@@ -35,6 +35,11 @@ class BaseGame(ABC, Generic[InterfaceT]):
     @abstractmethod
     def get_agent_interface(self) -> InterfaceT:
         """Return allowed observation/action access without reset or scorer access."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_instructions(self) -> str:
+        """Return public game/control instructions, without private task evidence."""
         raise NotImplementedError
 
     @abstractmethod

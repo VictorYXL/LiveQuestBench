@@ -1,8 +1,22 @@
 """Shared command-line switches for local game tests."""
 
 import os
+from pathlib import Path
 
 import pytest
+from benchmark.config import load_task
+
+
+@pytest.fixture
+def minecraft_world_path() -> Path:
+    return Path(os.environ["MINECRAFT_TEST_FIXTURE"]) if os.environ.get("MINECRAFT_TEST_FIXTURE") else (
+        Path(__file__).resolve().parents[1] / "config/minecraft/fixtures/collect_3_logs"
+    )
+
+
+@pytest.fixture
+def veloren_fixture() -> dict:
+    return load_task(Path(__file__).resolve().parents[1] / "config/veloren/tasks/st/move_2_metres.yaml").fixture
 
 
 def pytest_addoption(parser: pytest.Parser) -> None:

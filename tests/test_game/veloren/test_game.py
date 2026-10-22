@@ -12,8 +12,8 @@ import pytest
 pytest.importorskip("Xlib", reason="Install the veloren extra to run game checks")
 pytest.importorskip("PIL", reason="Install the veloren extra to run game checks")
 
-from core.backends.x11.actions import ActionError
-from core.backends.x11.interface import MotorInterface
+from game.backends.x11.actions import ActionError
+from game.backends.x11.interface import MotorInterface
 from game.base_game import AgentAccessClosed
 from game.veloren.evaluators.endpoints import evaluate_displacement, evaluate_health, evaluate_inventory, inventory
 from game.veloren.game import VelorenGame
@@ -23,11 +23,11 @@ from game.veloren.structured_tools.interface import StructuredInterface
 @pytest.mark.game
 @pytest.mark.skipif(os.environ.get("LIVEQUEST_VELOREN_TEST") != "1", reason="Opt-in native Veloren test")
 @pytest.mark.parametrize("track", ["visual_motor", "structured_tool"])
-def test_native_movement_and_cutoff(track: str, headless: bool, recording: bool) -> None:
+def test_native_movement_and_cutoff(track: str, headless: bool, recording: bool, veloren_fixture: dict) -> None:
     root = Path(__file__).resolve().parents[3] / "output/test"
     output = root / f"veloren-{track}-{uuid4().hex}"
     print(f"Veloren game artifacts: {output}")
-    game = VelorenGame(output_dir=output, track=track, headless=headless, recording=recording)
+    game = VelorenGame(output_dir=output, fixture=veloren_fixture, track=track, headless=headless, recording=recording)
 
     async def scenario() -> None:
         try:
@@ -110,7 +110,7 @@ def test_native_movement_and_cutoff(track: str, headless: bool, recording: bool)
                 assert released["physical_input"] == {"enabled": False, "queued_inputs": []}
             score = evaluate_displacement(before, after, min_distance=.5)
             assert score["success"], score
-            assert evaluate_health(before, after, min_health=1, min_delta=-1000)["success"]
+            assert evaluate_health(before, after, min_health=1)["success"]
             first = json.loads((before / "observation.json").read_text())
             last = json.loads((after / "observation.json").read_text())
             assert last["tick"] > first["tick"]

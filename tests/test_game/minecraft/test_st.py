@@ -21,7 +21,7 @@ from game.minecraft.structured_tools.interface import StructuredInterface
 @pytest.mark.game
 @pytest.mark.skipif(os.environ.get("LIVEQUEST_MINECRAFT_TEST") != "1", reason="Opt-in ST check")
 def test_st_observation_and_tools(
-    monkeypatch: pytest.MonkeyPatch, headless: bool, recording: bool,
+    monkeypatch: pytest.MonkeyPatch, headless: bool, recording: bool, minecraft_world_path: Path,
 ) -> None:
     root = Path(os.environ.get(
         "MINECRAFT_TEST_OUTPUT", str(Path(__file__).resolve().parents[3] / "output" / "test"),
@@ -33,7 +33,7 @@ def test_st_observation_and_tools(
         track="structured_tool", output_dir=output,
         recording=recording, recording_fps=10,
         headless=headless,
-        fixture=Path(os.environ["MINECRAFT_TEST_FIXTURE"]) if os.environ.get("MINECRAFT_TEST_FIXTURE") else None,
+        world_path=minecraft_world_path,
         player_state=PlayerState(position=(0.5, 72, 0.5), yaw=180,
                                  inventory=[{"slot": 0, "item": "oak_log", "count": 1}]),
     )
@@ -80,7 +80,7 @@ def test_st_observation_and_tools(
             assert game.player_uuid is not None
             assert {path.stem for path in (after / "playerdata").glob("*.dat")} == {str(game.player_uuid)}
             assert evaluate_inventory(before, after, game.player_uuid, [
-                {"item": "oak_planks", "min_count": 4, "min_delta": 4},
+                {"item": "oak_planks", "min_count": 4},
             ])["success"]
         finally:
             await game.close()

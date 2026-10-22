@@ -5,6 +5,12 @@ Minecraft: `start`, `begin`, `end`, `get_agent_interface`, `save_snapshot`, `clo
 This is a new engineering profile, not a reproduction of published VelorenBench
 task qualification or Agent scores.
 
+The production launcher runs the explicit VM/ST examples in
+[`config/veloren/`](../../config/veloren/); see the
+[experiment usage and result semantics](../../README.md#running-an-experiment).
+The same private endpoint evaluators validate configuration before a scheduled
+run and score native before/after evidence afterward.
+
 ## Setup
 
 The current installer reuses an **already prepared and validated VelorenBench
@@ -48,10 +54,13 @@ This source-only integration does not grant asset redistribution rights.
 
 ```python
 from pathlib import Path
+from benchmark.config import load_task
 from game.veloren.game import VelorenGame
 
+task = load_task(Path("config/veloren/tasks/vm/move_2_metres.yaml"))
 game = VelorenGame(
     output_dir=Path("output/my-unique-veloren-episode"),
+    fixture=task.fixture,
     track="visual_motor",  # or "structured_tool"
     headless=True,
     recording=True,
@@ -68,13 +77,37 @@ finally:
     await game.close()
 ```
 
-`start()` creates a fresh private standard-world server, private fixture helper
-and ordinary renderer-owned player. The default `movement` fixture constructs
-and verifies a 12x12 elevated Rock platform through upstream authoring helpers.
-The optional `spawn` fixture uses the settled ordinary spawn instead.
-These are smoke-test fixtures, not long-horizon benchmark tasks. The upstream
-small-world mode is deliberately not used: its observed water spawn did not
-satisfy the authored fixture's grounding contract.
+`start()` requires an explicit fixture mapping and creates fresh private server
+userdata, a private authoring helper and an ordinary renderer-owned player.
+`fixture.map_asset` selects a concrete installed map; `world_seed`,
+`time_of_day`, `day_length` and `calendar: none` declare the world settings.
+The native map file hash and generated server-settings hash are recorded.
+Missing maps or detected native map/settings fallback fail initialization.
+
+[`initialize_fixture`](fixture.py) builds a Rock platform at the declared
+absolute origin and size, moves the player to the declared point, sets health
+and time, and validates a grounded, stationary opening with the requested
+inventory, equipment and view direction. There are no `movement`/`spawn`
+shortcuts or offsets inferred from a varying spawn point. Inventory differences
+are applied with native cleanup/gift operations; the existing cleanup drops
+unwanted supplies 100 m from its starting location and clears skills/buffs.
+Equipment is checked exactly against the pinned starter character, not silently
+replaced or treated as an arbitrary editable loadout. The currently admitted
+initial look is `[0, 1, 0]`; other orientations are rejected before launch.
+
+The built-in fixture declares the installed `world.map.veloren_0_18_0_0` map,
+seed 130626853, noon, a 30-minute day, no calendar events, a 12x12 Rock platform
+at `[18704, 10800, 401]` and a player at `[18706.5, 10806.5, 402]`.
+Task VM/ST files declare the same world and player conditions.
+These remain small integration tasks, not a long-horizon task distribution.
+
+**Map files are not complete snapshots.** Native `FileOpts::Load`/`LoadAsset`
+load world-map data; character DB, terrain modifications and RtSim state are
+separate and omit some live components. The current loader uses the composite
+configuration above, not a claimed full-engine checkpoint. Stable authored
+starting conditions do not imply identical ambient entities, setup ticks,
+session IDs or subsequent simulation trajectories. The prepared runtime and
+assets remain part of the game identity.
 
 VM observations are current XComposite PNG pixels and capture timestamps.
 Actions use the shared bounded atomic XTest keyboard/mouse vocabulary, with
@@ -132,6 +165,21 @@ Minecraft's tick-freeze protocol as if the timing conditions were identical.
 - horizontal displacement with positive final health;
 - inventory count and minimum count change for native item identifiers;
 - final health and minimum health change.
+
+Inventory thresholds `min_count` and `min_delta` are independently optional;
+provide at least one nonnegative integer. Health thresholds `min_health` and
+`min_delta` are also independently optional; provide at least one finite number,
+with a nonnegative `min_health`. A negative health delta explicitly permits a
+bounded loss. Supplied thresholds are combined with AND.
+
+Omitted thresholds impose no constraint (`None` in the Python API). In particular,
+`min_count` alone allows inventory consumption as long as the final count meets
+the goal, and `min_health` alone allows damage. Previously, both implicitly
+required a nonnegative delta; callers that need that condition must now specify
+`min_delta=0`. Empty threshold sets raise instead of succeeding unconditionally.
+Final-state checks still read and validate both endpoints for audit integrity.
+The displacement task keeps its explicit relative-distance and living-at-end
+conditions; no inventory or health-delta constraint is added.
 
 Simple inventory IDs use the native asset string. Composite IDs use sorted,
 compact JSON of the native definition ID; unrelated composite items are not

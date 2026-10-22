@@ -13,8 +13,12 @@ import traceback
 from uuid import uuid4
 
 from scripts.rpg_benchmark import runtime, setup
-from scripts.rpg_benchmark.native import Journal, NativeBridge, NativeConfig, NativeRefusal, private_server
+from scripts.rpg_benchmark.native import Journal, NativeBridge, NativeConfig, NativeRefusal
 from scripts.rpg_benchmark.renderer import RendererBridge
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
+from game.veloren.fixture import initialize_fixture, validate_fixture
+from game.veloren.runtime.server import fixture_server
 
 
 class LocalRenderer(RendererBridge):
@@ -55,8 +59,8 @@ class LocalRenderer(RendererBridge):
 
 
 class Session:
-    def __init__(self, config: dict, output: Path, track: str, fixture: str):
-        self.config, self.output, self.track, self.fixture = config, output, track, fixture
+    def __init__(self, config: dict, output: Path, track: str, fixture: dict):
+        self.config, self.output, self.track, self.fixture = config, output, track, validate_fixture(fixture)
         self.stack = AsyncExitStack()
         self.started = False
         self.running = False
@@ -76,11 +80,12 @@ class Session:
         paths = renderer["paths"]
         native = NativeConfig(
             server=Path(paths["server"]), bridge=Path(selected["renderer_fixture_helper"]["executable"]),
-            assets=Path(paths["assets"]), root=Path(paths["source_root"]), small_world=False,
+            assets=Path(paths["assets"]), root=Path(paths["source_root"]),
+            seed=self.fixture["world_seed"], small_world=False,
         )
         journal = Journal(self.output / "native.jsonl")
         self.stack.callback(journal.close)
-        port, userdata = await self.stack.enter_async_context(private_server(self.output, self.record, native))
+        port, userdata = await self.stack.enter_async_context(fixture_server(self.output, self.record, native, self.fixture))
         admin = NativeBridge(self.output, self.record["username"], port, userdata, journal, native)
         self.stack.push_async_callback(admin.close)
         await admin.start()
@@ -91,19 +96,10 @@ class Session:
         )
         self.stack.push_async_callback(self.actor.close)
         await self.actor.start()
-        opening = await setup.ready_observation(self.actor)
-        if self.fixture == "movement":
-            # A bounded, private setup platform, not a public movement shortcut.
-            here = setup.position(opening)
-            origin = [int(here[0]), int(here[1]), int(here[2]) + 20]
-            await setup.site(admin, self.actor, "flat", {"flat_origin": origin}, size=(12, 12))
-        elif self.fixture != "spawn":
-            raise ValueError("Unknown fixture")
-        opening = await setup.ready_observation(self.actor)
-        setup.require_living(opening)
+        initialized = await initialize_fixture(admin, self.actor, self.fixture)
         self.record["actor"] = self.actor.ready.result()
         (self.output / "fixture.json").write_text(json.dumps({
-            "fixture": self.fixture, "opening": opening,
+            **initialized, "world": self.record["world_fixture"],
         }, indent=2) + "\n")
         return {"renderer_pid": self.actor.process.pid, "actor": self.actor.ready.result(),
                 "runtime": cfg, "display": os.environ["DISPLAY"]}
@@ -174,7 +170,7 @@ class Session:
 
 async def main() -> None:
     config_path, output, track, fixture = sys.argv[1:]
-    session = Session(json.loads(Path(config_path).read_text()), Path(output), track, fixture)
+    session = Session(json.loads(Path(config_path).read_text()), Path(output), track, json.loads(Path(fixture).read_text()))
     output_stream = sys.stdout
     pending = set()
     stop = asyncio.Event()

@@ -4,7 +4,7 @@ import asyncio
 from pathlib import Path
 import shutil
 
-from core.backends.x11.capture import WindowCapture
+from game.backends.x11.capture import WindowCapture
 
 
 class WindowRecording:

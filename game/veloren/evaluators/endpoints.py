@@ -35,10 +35,15 @@ def load_pair(before: Path, after: Path) -> tuple[dict, dict]:
     return rows[0], rows[1]
 
 
-def evaluate_displacement(before: Path, after: Path, *, min_distance: float = 2) -> dict:
+def validate_displacement(*, min_distance: float = 2) -> float:
     threshold = finite(min_distance, "min_distance")
     if threshold <= 0:
         raise ValueError("min_distance must be positive")
+    return threshold
+
+
+def evaluate_displacement(before: Path, after: Path, *, min_distance: float = 2) -> dict:
+    threshold = validate_displacement(min_distance=min_distance)
     initial, final = load_pair(before, after)
     points = []
     for row in (initial, final):
@@ -71,20 +76,43 @@ def inventory(row: dict) -> dict[str, int]:
     return result
 
 
-def evaluate_inventory(before: Path, after: Path, *, item: str, min_count: int, min_delta: int = 0) -> dict:
-    if not isinstance(item, str) or not item or any(type(value) is not int or value < 0 for value in (min_count, min_delta)):
-        raise ValueError("Provide an item and nonnegative integer thresholds")
+def validate_inventory(*, item: str, min_count: int | None = None, min_delta: int | None = None) -> None:
+    thresholds = [value for value in (min_count, min_delta) if value is not None]
+    if not isinstance(item, str) or not item or not thresholds or any(
+        type(value) is not int or value < 0 for value in thresholds
+    ):
+        raise ValueError("Provide an item and at least one nonnegative integer threshold")
+
+
+def evaluate_inventory(
+    before: Path, after: Path, *, item: str, min_count: int | None = None, min_delta: int | None = None,
+) -> dict:
+    validate_inventory(item=item, min_count=min_count, min_delta=min_delta)
     initial, final = load_pair(before, after)
     first, last = inventory(initial).get(item, 0), inventory(final).get(item, 0)
-    return {"success": last >= min_count and last - first >= min_delta,
+    return {"success": (min_count is None or last >= min_count)
+            and (min_delta is None or last - first >= min_delta),
             "item": item, "count_before": first, "count_after": last, "delta": last - first}
 
 
-def evaluate_health(before: Path, after: Path, *, min_health: float, min_delta: float = 0) -> dict:
-    threshold, delta = finite(min_health, "min_health"), finite(min_delta, "min_delta")
-    if threshold < 0:
+def validate_health(
+    *, min_health: float | None = None, min_delta: float | None = None,
+) -> tuple[float | None, float | None]:
+    if min_health is None and min_delta is None:
+        raise ValueError("Provide at least one health threshold")
+    threshold = finite(min_health, "min_health") if min_health is not None else None
+    delta = finite(min_delta, "min_delta") if min_delta is not None else None
+    if threshold is not None and threshold < 0:
         raise ValueError("min_health must be nonnegative")
+    return threshold, delta
+
+
+def evaluate_health(
+    before: Path, after: Path, *, min_health: float | None = None, min_delta: float | None = None,
+) -> dict:
+    threshold, delta = validate_health(min_health=min_health, min_delta=min_delta)
     initial, final = load_pair(before, after)
     first, last = (finite(row["survival"]["health"]["current"], "health") for row in (initial, final))
-    return {"success": last >= threshold and last - first >= delta,
+    return {"success": (threshold is None or last >= threshold)
+            and (delta is None or last - first >= delta),
             "health_before": first, "health_after": last, "delta": last - first}

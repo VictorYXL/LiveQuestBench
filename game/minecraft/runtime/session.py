@@ -23,8 +23,8 @@ from uuid import UUID
 import nbtlib
 from Xlib import X, display
 
-from core.backends.x11.actions import WindowActions
-from core.backends.x11.capture import WindowCapture
+from game.backends.x11.actions import WindowActions
+from game.backends.x11.capture import WindowCapture
 from game.minecraft.runtime.install import (
     INSTANCE_ID, PRISM_APP_ID, check_instance, check_java, check_prism, data_root, prism_root, server_jar,
 )
@@ -67,7 +67,6 @@ class SessionConfig:
     authentication: str = "offline"
     account: str | None = None
     track: str = "visual_motor"
-    generated_world: bool = False
 
     @classmethod
     def from_dict(cls, values: dict) -> "SessionConfig":
@@ -104,20 +103,15 @@ class SessionConfig:
             stop_timeout=number(values.get("stop_timeout", 30), "stop_timeout", 1, 300),
             difficulty=difficulty,
             authentication=authentication, account=values.get("account"),
-            track=track, generated_world=values.get("generated_world", False),
+            track=track,
         )
 
 
-def copy_world(source: Path, destination: Path, state: PlayerState, player_uuid: UUID) -> None:
-    """Copy an offline 1.20.4 save, never following symlinks or copying player data."""
+def validate_world(source: Path) -> None:
+    """Require a self-contained, player-free native save; never generate missing worlds."""
     if source.is_symlink():
         raise ValueError("Source world cannot be a symlink")
     source = source.resolve(strict=True)
-    destination = destination.resolve()
-    if destination == source or source in destination.parents:
-        raise ValueError("Destination cannot be inside the source world")
-    if destination.exists():
-        raise FileExistsError(f"World destination must be new: {destination}")
     if not (source / "level.dat").is_file():
         raise ValueError("world must point to the native save containing level.dat")
     if any(path.is_symlink() for path in source.rglob("*")):
@@ -131,6 +125,18 @@ def copy_world(source: Path, destination: Path, state: PlayerState, player_uuid:
             for path in (source / folder).rglob("*")
         ):
             raise ValueError("Source world must not contain player data")
+
+
+def copy_world(source: Path, destination: Path, state: PlayerState, player_uuid: UUID) -> None:
+    """Copy an offline 1.20.4 save, never following symlinks or copying player data."""
+    validate_world(source)
+    source = source.resolve(strict=True)
+    destination = destination.resolve()
+    if destination == source or source in destination.parents:
+        raise ValueError("Destination cannot be inside the source world")
+    if destination.exists():
+        raise FileExistsError(f"World destination must be new: {destination}")
+    with WorldReadLock(source):
         shutil.copytree(source, destination, ignore=shutil.ignore_patterns("session.lock"))
     state.write(destination, player_uuid)
 
@@ -289,17 +295,6 @@ class MinecraftSession:
             "difficulty": self.config.difficulty, "spawn-protection": "0", "view-distance": "6",
             "simulation-distance": "6", "broadcast-console-to-ops": "false",
         }
-        if self.config.generated_world:
-            properties.update({
-                "level-seed": "0", "level-type": "minecraft:flat", "generate-structures": "false",
-                "generator-settings": json.dumps({
-                    "biome": "minecraft:plains", "features": False, "lakes": False,
-                    "layers": [{"block": "minecraft:bedrock", "height": 1},
-                               {"block": "minecraft:dirt", "height": 134},
-                               {"block": "minecraft:grass_block", "height": 1}],
-                    "structure_overrides": [],
-                }, separators=(",", ":")),
-            })
         (self.output / "server.properties").write_text(
             "".join(f"{key}={value}\n" for key, value in properties.items()), encoding="utf-8",
         )

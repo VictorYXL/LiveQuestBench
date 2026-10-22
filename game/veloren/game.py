@@ -10,26 +10,26 @@ import time
 
 from Xlib import X, display
 
-from core.backends.x11.actions import ActionResult, WindowActions
-from core.backends.x11.capture import CapturedFrame, WindowCapture
-from core.backends.x11.display import VirtualDisplay
-from core.backends.x11.interface import MotorInterface, execute_actions
-from core.backends.x11.recording import WindowRecording
+from game.backends.x11.actions import ActionResult, WindowActions
+from game.backends.x11.capture import CapturedFrame, WindowCapture
+from game.backends.x11.display import VirtualDisplay
+from game.backends.x11.interface import MotorInterface, execute_actions
+from game.backends.x11.recording import WindowRecording
 from game.base_game import AgentAccessClosed, BaseGame
 from game.veloren.runtime.session import VelorenSession
+from game.veloren.fixture import validate_fixture
 from game.veloren.structured_tools.interface import StructuredInterface, project, validate_tool
 
 
 class VelorenGame(BaseGame[MotorInterface | StructuredInterface]):
     def __init__(
-        self, *, output_dir: Path, track: str = "visual_motor", fixture: str = "movement",
+        self, *, output_dir: Path, fixture: dict, track: str = "visual_motor",
         headless: bool = True, display_name: str | None = None,
         recording: bool = False, recording_fps: int = 10,
     ) -> None:
         if track not in ("visual_motor", "structured_tool"):
             raise ValueError("track must be visual_motor or structured_tool")
-        if fixture not in ("movement", "spawn"):
-            raise ValueError("fixture must be movement or spawn")
+        fixture = validate_fixture(fixture)
         if type(headless) is not bool or type(recording) is not bool:
             raise ValueError("headless and recording must be booleans")
         if type(recording_fps) is not int or not 1 <= recording_fps <= 60:

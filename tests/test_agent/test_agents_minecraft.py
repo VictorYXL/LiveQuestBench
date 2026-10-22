@@ -69,7 +69,7 @@ def test_minecraft_collect_three_logs(
         "interrupt_after_first_game_tool": interrupt,
         "integration_status": "not_verified",
         "upstream": NATIVE_AGENTS[agent_name].source if agent_name in NATIVE_AGENTS else None,
-        "fixture_commands": ["fill 0 72 -2 0 74 -2 minecraft:oak_log"],
+        "world_path": str(Path(__file__).resolve().parents[2] / "config/minecraft/fixtures/collect_3_logs"),
         "task": "Collect at least 3 oak logs in your inventory. Keep them as logs, not planks. "
                 "Do not drop them. Finish with a text answer when you believe the task is complete.",
     }
@@ -102,6 +102,7 @@ def test_minecraft_collect_three_logs(
         )
         game = MinecraftGame(
             track=track, output_dir=output, headless=headless, recording=recording,
+            world_path=Path(str(report["world_path"])),
             difficulty="peaceful", player_state=PlayerState(position=(0.5, 72, 0.5), yaw=180),
         )
         def build_agent(
@@ -138,12 +139,9 @@ def test_minecraft_collect_three_logs(
                 raise RuntimeError("gpt-6-astra is unavailable; no replacement model is permitted")
             report["model_metadata"] = metadata
             await game.start()
-            # Private fixture setup happens before the initial evidence boundary.
-            assert game._session is not None and game._session.server is not None
-            feedback = await game._session.server.command("fill 0 72 -2 0 74 -2 minecraft:oak_log")
-            if not any("Successfully filled 3" in line for line in feedback):
-                raise RuntimeError("Could not verify the three-log fixture")
             before = await game.save_snapshot(output / "before")
+            from game.minecraft.evaluators.world import read_blocks
+            assert set(read_blocks(before, (0, 72, -2), (0, 74, -2), "minecraft:overworld").values()) == {"minecraft:oak_log"}
             interface = game.get_agent_interface()
             started = time.monotonic_ns()
             deadline = started + 180_000_000_000
@@ -161,7 +159,7 @@ def test_minecraft_collect_three_logs(
             report["agent_exit"] = asdict(outcome)
             assert game.player_uuid is not None
             score = evaluate_inventory(before, after, game.player_uuid, [
-                {"item": "oak_log", "min_count": 3, "min_delta": 3},
+                {"item": "oak_log", "min_count": 3},
             ])
             report["score"] = score
             report["response_models"] = sorted({

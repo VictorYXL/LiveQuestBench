@@ -20,7 +20,7 @@ from game.minecraft.visual_motor.interface import MotorInterface
 @pytest.mark.game
 @pytest.mark.skipif(os.environ.get("LIVEQUEST_MINECRAFT_TEST") != "1", reason="Opt-in VM check")
 def test_vm_observation_and_movement(
-    monkeypatch: pytest.MonkeyPatch, headless: bool, recording: bool,
+    monkeypatch: pytest.MonkeyPatch, headless: bool, recording: bool, minecraft_world_path: Path,
 ) -> None:
     monkeypatch.setenv("MINECRAFT_PRISM_ROOT", "/nonexistent-livequest-prism")
     root = Path(os.environ.get(
@@ -30,7 +30,7 @@ def test_vm_observation_and_movement(
     print(f"Minecraft VM artifacts: {output}")
     state = PlayerState(position=(0.5, 72, 0.5), yaw=180)
     game = MinecraftGame(
-        fixture=Path(os.environ["MINECRAFT_TEST_FIXTURE"]) if os.environ.get("MINECRAFT_TEST_FIXTURE") else None,
+        world_path=minecraft_world_path,
         output_dir=output,
         player_state=state,
         recording=recording, recording_fps=10,

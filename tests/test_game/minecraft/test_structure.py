@@ -112,7 +112,7 @@ def test_structure_scores_and_missing_evidence(tmp_path: Path) -> None:
 @pytest.mark.game
 @pytest.mark.skipif(os.environ.get("LIVEQUEST_MINECRAFT_TEST") != "1", reason="Opt-in native construction check")
 def test_native_structure_placement(
-    monkeypatch: pytest.MonkeyPatch, headless: bool, recording: bool,
+    monkeypatch: pytest.MonkeyPatch, headless: bool, recording: bool, minecraft_world_path: Path,
 ) -> None:
     from game.minecraft.game import MinecraftGame
     from game.minecraft.init_player_state import PlayerState
@@ -124,7 +124,7 @@ def test_native_structure_placement(
     monkeypatch.setenv("MINECRAFT_PRISM_ROOT", str(output / "no-prism-or-accounts"))
     game = MinecraftGame(
         track="structured_tool", output_dir=output, headless=headless, recording=recording,
-        fixture=Path(os.environ["MINECRAFT_TEST_FIXTURE"]) if os.environ.get("MINECRAFT_TEST_FIXTURE") else None,
+        world_path=minecraft_world_path,
         player_state=PlayerState(position=(0.5, 72, 0.5),
                                  inventory=[{"slot": 0, "item": "oak_planks", "count": 4}]),
     )

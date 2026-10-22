@@ -7,8 +7,8 @@ from io import BytesIO
 import json
 import time
 
-from core.backends.x11.actions import ActionError, ActionResult, BUTTONS, KEYS, WindowActions
-from core.backends.x11.capture import CapturedFrame
+from game.backends.x11.actions import ActionError, ActionResult, BUTTONS, KEYS, WindowActions
+from game.backends.x11.capture import CapturedFrame
 from agent_framework.utils.tools import Observation, Tool
 
 

@@ -35,7 +35,9 @@ InterfaceT = TypeVar("InterfaceT")
     pytest.param(name, "structured_tool", True, id=f"{name}-stop-structured_tool")
     for name in ("deepseek", "gamingagent")
 ])
-def test_veloren_move_and_stop(agent_name: str, track: str, interrupt: bool, headless: bool, recording: bool) -> None:
+def test_veloren_move_and_stop(
+    agent_name: str, track: str, interrupt: bool, headless: bool, recording: bool, veloren_fixture: dict,
+) -> None:
     if os.environ.get("LIVEQUEST_VELOREN_TEST") != "1" or os.environ.get("LIVEQUEST_LIVE_COPILOT") != "1":
         pytest.skip("Set LIVEQUEST_VELOREN_TEST=1 and LIVEQUEST_LIVE_COPILOT=1")
     pytest.importorskip("PIL")
@@ -96,7 +98,7 @@ def test_veloren_move_and_stop(agent_name: str, track: str, interrupt: bool, hea
             "gpt-6-astra", token_file=Path(token_file) if token_file else None, reasoning_effort="low",
             max_output_tokens=4096, timeout=180, on_request=events.append,
         )
-        game = VelorenGame(output_dir=output, track=track, headless=headless, recording=recording)
+        game = VelorenGame(output_dir=output, fixture=veloren_fixture, track=track, headless=headless, recording=recording)
 
         def build_agent(tools: Sequence[Tool[InterfaceT]], observe: Callable[[InterfaceT], Awaitable[Observation]]):
             tracked = []
