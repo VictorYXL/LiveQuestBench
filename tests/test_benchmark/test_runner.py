@@ -1,4 +1,4 @@
-"""Consequential offline checks; real-game acceptance uses the same production CLI."""
+"""Execution-only regressions for async retirement, output isolation and failure cleanup."""
 
 import asyncio
 from dataclasses import replace
@@ -7,91 +7,15 @@ from pathlib import Path
 import time
 
 import pytest
-import yaml
 
 from agent_framework.agents.base_agent import AgentContext, AgentExit, AgentExitReason, BaseAgent, StopReason
-from benchmark.config import ConfigError, load_experiment, load_task
-from benchmark.factory import validate_experiment
-from game.bindings import Controls, GameBinding, bind_controls
-from benchmark.results import EpisodeLog, summarize
+from benchmark.config import ConfigError, load_experiment
+from game.bindings import Controls, GameBinding
 from benchmark.runner import run_bounded, run_episode, run_experiment
 from game.base_game import BaseGame
-from agent_framework.llm_client.base_client import RequestEvent
-from agent_framework.utils.tools import Tool
 
 
-ROOT = Path(__file__).resolve().parents[1]
-
-
-def test_config_paths_and_rejection(tmp_path):
-    config = load_experiment(ROOT / "config/minecraft/experiments/visual_motor_all.yaml")
-    validate_experiment(config)
-    assert "base_url" not in config.resolved()["agents"][0]["model"]
-    assert {task.task_type for task in config.tasks} == {"visual_motor"}
-    assert all(Path(task.source.path).is_absolute() for task in config.tasks)
-    structured = load_task(ROOT / "config/minecraft/tasks/structured_tools/collect_3_logs.yaml")
-    invalid = replace(structured, tools=("AdministrationTool",))
-    with pytest.raises(ValueError, match="Unknown tools"):
-        validate_experiment(replace(config, tasks=(invalid,)))
-    invalid = replace(config.tasks[0], evaluator_parameters={"requirements": [{"item": "oak_log"}]})
-    with pytest.raises(ValueError, match="thresholds"):
-        validate_experiment(replace(config, tasks=(invalid,)))
-    path = tmp_path / "duplicate.yaml"
-    path.write_text("id: first\nid: second\n")
-    with pytest.raises(ConfigError, match="unique"):
-        load_experiment(path)
-    data = yaml.safe_load(config.source.content)
-    data["tasks"] = [{"path": task.source.path} for task in config.tasks]
-    path.write_text(yaml.safe_dump(data))
-    assert load_experiment(path).tasks == config.tasks
-    path.write_text(path.read_text().replace("max_attempts: 3", "max_attempts: true"))
-    with pytest.raises(ConfigError, match="positive integer"):
-        load_experiment(path)
-
-
-def test_tool_allowlist_is_enforced():
-    async def observe(interface: object) -> str:
-        return "public"
-
-    async def action(interface: object, arguments: dict[str, object]) -> str:
-        return "acted"
-
-    async def check():
-        controls, tools = bind_controls(object(), observe, [
-            Tool("allowed", "", {}, action), Tool("omitted", "", {}, action),
-        ], ("allowed",))
-        assert [tool.name for tool in tools] == ["allowed"]
-        assert await controls.observe() == "public"
-        assert await tools[0].execute(controls, {}) == "acted"
-        with pytest.raises(ValueError, match="not admitted"):
-            await controls.execute("omitted", {})
-
-    asyncio.run(check())
-
-
-@pytest.mark.parametrize("game,experiment_name", [
-    ("minecraft", "collect_3_logs"), ("veloren", "move_2_metres"),
-])
-def test_game_owned_admission_is_independent_of_benchmark_factory(game, experiment_name, tmp_path):
-    if game == "minecraft":
-        from game.minecraft.binding import create_binding
-    else:
-        from game.veloren.binding import create_binding
-    for mode in ("visual_motor", "structured_tools"):
-        task = load_task(ROOT / f"config/{game}/tasks/{mode}/{experiment_name}.yaml")
-        arguments = {
-            "fixture": task.fixture, "task_type": task.task_type, "evaluator": task.evaluator,
-            "parameters": task.evaluator_parameters, "tools": task.tools,
-            "output_dir": tmp_path / task.task_type, "headless": True, "recording": False, "recording_fps": 10,
-        }
-        binding = create_binding(**arguments)
-        assert binding.game.phase == "new"
-        assert not arguments["output_dir"].exists(), "Admission must not create runtime resources"
-        if task.task_type == "structured_tool":
-            with pytest.raises(ValueError, match="Unknown tools"):
-                create_binding(**{**arguments, "tools": ("AdministrationTool",)})
-        with pytest.raises(ValueError, match="evaluator"):
-            create_binding(**{**arguments, "evaluator": "missing"})
+ROOT = Path(__file__).resolve().parents[2]
 
 
 def test_bounded_retirement_on_deadline_cancel_and_gate_failure():
@@ -209,25 +133,6 @@ def test_agent_task_repetition_matrix_is_serial_and_separately_summarized(tmp_pa
     if fail_first:
         assert [row["status"] for row in summary["episodes"]] == ["error"] + ["not_run"] * 7
     assert json.loads((output / "summary.json").read_text()) == summary
-
-
-def test_unknown_usage_and_invalid_cases_are_not_zero_scores(tmp_path):
-    log = EpisodeLog(tmp_path)
-    log.request(RequestEvent(attempt=1, elapsed_seconds=1, success=False, error_type="TimeoutError", usage=None))
-    usage = log.accounting()["usage"]["total_tokens"]
-    assert usage == {"reported_sum": None, "unknown_attempts": 1}
-    log.request(RequestEvent(attempt=1, elapsed_seconds=1, success=True, error_type=None,
-                             usage={"prompt_tokens": 10, "completion_tokens": 2, "total_tokens": 12}))
-    assert log.accounting()["usage"]["input_tokens"] == {"reported_sum": 10, "unknown_attempts": 1}
-    summary = summarize([
-        {"agent_id": "baseline", "game": "minecraft", "task_id": "same", "task_type": "visual_motor",
-         "status": "error", "measurement": "unavailable", "task_outcome": "unknown"},
-        {"agent_id": "baseline", "game": "minecraft", "task_id": "same", "task_type": "structured_tool",
-         "status": "completed", "measurement": "valid", "task_outcome": "failure"},
-    ])
-    assert len(summary["groups"]) == 2
-    assert summary["groups"][0]["success_rate_valid_completed"] is None
-    assert summary["groups"][1]["success_rate_valid_completed"] == 0
 
 
 def test_episode_faults_preserve_evidence_and_cleanup(tmp_path, monkeypatch):

@@ -143,8 +143,10 @@ benchmark/                  Experiment orchestration and result persistence
   results.py                Evidence logging, provenance and mode-separated summaries
 tests/
   conftest.py               Shared display and recording options
-  test_benchmark.py         Consequential offline configuration/lifecycle checks
-  test_benchmark_live.py    Opt-in real CLI/native Agent/deadline/SIGINT checks
+  test_benchmark/
+    test_runner.py          Async retirement, serial outputs and failure cleanup
+    test_fixtures.py        World-copy isolation, server cleanup and native setup
+    test_live.py            Opt-in real CLI/native Agent/deadline/SIGINT checks
   test_agent/
     test_agents_minecraft.py  Real Minecraft/model acceptance and operator-stop cases
     test_agents_veloren.py    Real Veloren/model acceptance and operator-stop case
@@ -373,7 +375,7 @@ Agent implementations is claimed.
 After installing the `test` dependency group:
 
 ```bash
-.venv/bin/python -m pytest tests/test_benchmark.py -q
+.venv/bin/python -m pytest tests/test_benchmark -m "not game and not live" -q
 ```
 
 The opt-in CLI lifecycle checks require prepared Veloren, DeepSeek and Copilot
@@ -382,7 +384,7 @@ and exercise a native Agent, a scored deadline and a real SIGINT:
 
 ```bash
 LIVEQUEST_BENCHMARK_TEST=1 LIVEQUEST_LIVE_COPILOT=1 \
-  .venv/bin/python -m pytest tests/test_benchmark_live.py -q --headless --recording
+  .venv/bin/python -m pytest tests/test_benchmark/test_live.py -q --headless --recording
 ```
 
 Create directories when they contain actual implementation or resources; do not
