@@ -114,6 +114,8 @@ overlap these standing points or each other.
 initial knowledge booleans. Recipe verification requires consistent native
 `total`/`omitted` metadata: an omitted recipe in a truncated book is ambiguous,
 not proof that it is unknown. Explicitly listed recipes remain usable evidence.
+For omitted catalog recipes, private initialization/scoring evidence uses the
+native read-only `goal_recipes` query; this does not expand Agent observations.
 Dropped supplies retain the native 300-game-second expiry;
 they are not replenished during the Episode.
 

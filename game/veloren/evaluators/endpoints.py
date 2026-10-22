@@ -185,6 +185,16 @@ def known_recipes(row: dict, *, required: list[str] | None = None) -> set[str]:
             raise ValueError("Invalid native recipe knowledge")
         if known:
             result.add(name)
+    for name, query in row.get("private_recipe_evidence", {}).items():
+        matches = [entry for entry in query["items"] if entry["recipe"] == name]
+        if len(matches) != 1 or type(matches[0].get("character_known")) is not bool:
+            raise ValueError("Invalid private native recipe evidence")
+        known = matches[0]["character_known"]
+        if name in seen and (name in result) != known:
+            raise ValueError("Conflicting native recipe knowledge")
+        seen.add(name)
+        if known:
+            result.add(name)
     if value["omitted"] and (required is None or set(required) - seen):
         raise ValueError("Truncated native recipe evidence cannot establish missing recipe knowledge")
     return result

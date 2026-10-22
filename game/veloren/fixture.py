@@ -156,6 +156,31 @@ def inventory_counts(observation: dict) -> dict[str, int]:
     return counts
 
 
+async def recipe_observation(actor, fixture: dict, observation: dict | None = None) -> dict:
+    """Supplement truncated recipe lists with private native knowledge evidence."""
+    row = await actor.request("observe", origin="snapshot") if observation is None else observation
+    listed = {entry["recipe"] for entry in row["known_recipes"]["items"]}
+    outputs = {
+        "mushroom_stick": "common.items.food.mushroom_stick",
+        "simple_leather": "common.items.crafting_ing.leather.simple_leather",
+        "rawhide_chest": "common.items.armor.hide.rawhide.chest",
+    }
+    evidence = {}
+    for recipe in fixture.get("recipes", {}):
+        if recipe in listed or not row["known_recipes"]["omitted"]:
+            continue
+        if recipe not in outputs:
+            raise ValueError(f"No private native output mapping for omitted recipe: {recipe}")
+        query = await actor.request("goal_recipes", {
+            "output_item_id": outputs[recipe], "offset": 0, "page_size": 32,
+        }, origin="private-validation")
+        matches = [entry for entry in query["items"] if entry["recipe"] == recipe]
+        if len(matches) != 1 or type(matches[0].get("character_known")) is not bool:
+            raise RuntimeError(f"Native recipe query did not establish knowledge: {recipe}")
+        evidence[recipe] = query
+    return {**row, "private_recipe_evidence": evidence}
+
+
 def verify_player(fixture: dict, observation: dict) -> None:
     player = fixture["player_state"]
     if math.dist(observation["position"], player["position"]) > .2:
@@ -206,7 +231,7 @@ async def initialize_fixture(admin, actor, fixture: dict) -> dict:
     await setup.goto(admin, actor, fixture["player_state"]["position"])
     await setup.command(admin, "time", fixture["time_of_day"])
     await setup.command(admin, "sudo", actor.name, "health", fixture["player_state"]["health"])
-    opening = await setup.ready_observation(actor)
+    opening = await recipe_observation(actor, fixture, await setup.ready_observation(actor))
     verify_player(fixture, opening)
     return {"fixture": fixture, "construction": construction, "blocks": blocks,
             "stations": stations, "supplies": supplies, "opening": opening}

@@ -255,6 +255,9 @@ Start with `summary.json`, then open the relevant Episode:
 - Video helps diagnose interaction failures but does not replace private
   evaluator evidence. Check recording validity before claiming visual coverage.
 
+VM relative mouse motion is clipped to the game window; tool receipts report
+the applied displacement. Focus-loss checks still stop unsafe input.
+
 Results group Agent configurations, tasks and modes separately. Success rates
 use valid completed measurements and expose other statuses; always report the
 missing/error counts too. A task failure may be a valid engineering smoke

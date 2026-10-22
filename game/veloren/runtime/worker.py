@@ -17,7 +17,7 @@ from scripts.rpg_benchmark.native import Journal, NativeBridge, NativeConfig, Na
 from scripts.rpg_benchmark.renderer import RendererBridge
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
-from game.veloren.fixture import initialize_fixture, validate_fixture
+from game.veloren.fixture import initialize_fixture, recipe_observation, validate_fixture
 from game.veloren.runtime.server import fixture_server
 
 
@@ -131,7 +131,7 @@ class Session:
         if operation == "snapshot":
             if self.running:
                 raise RuntimeError("Snapshot requires a closed public gate")
-            return await self.actor.request("observe", origin="snapshot")
+            return await recipe_observation(self.actor, self.fixture)
         if operation == "inspect_frame":
             return await self.actor.request("frame", await self.frame_fence(), origin="private-validation")
         if not self.running:

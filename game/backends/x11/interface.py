@@ -87,7 +87,11 @@ def action_tool_schema() -> dict[str, object]:
     } for name, fields in _COMMAND_FIELDS.items()]
     return {
         "name": "action",
-        "description": "Execute bounded keyboard/mouse commands sequentially. Held controls persist.",
+        "description": (
+            "Execute bounded keyboard/mouse commands sequentially. Held controls persist. "
+            "Relative mouse movement is clipped to the window edges; applied_delta reports "
+            "the submitted (dx, dy). Use mouse_move_to to reposition a free UI cursor."
+        ),
         "parameters": {
             "type": "object", "properties": {
                 "commands": {"type": "array", "minItems": 1, "maxItems": MAX_COMMANDS,

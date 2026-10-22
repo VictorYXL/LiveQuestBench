@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import logging
 import threading
 import time
@@ -34,6 +34,7 @@ class ActionResult:
     operation: str
     started_at_ns: int
     finished_at_ns: int
+    applied_delta: tuple[int, int] | None = None
 
 
 def integer(value: int, name: str, low: int, high: int) -> int:
@@ -245,11 +246,20 @@ class WindowActions:
     def mouse_move_relative(self, dx: int, dy: int) -> ActionResult:
         integer(dx, "dx", -32768, 32767)
         integer(dy, "dy", -32768, 32767)
-        return self._perform(
-            "mouse_move_relative",
-            lambda: self._connection().xtest_fake_input(X.MotionNotify, detail=1, x=dx, y=dy),
-            pointer=True,
-        )
+        applied = (0, 0)
+
+        def submit():
+            nonlocal applied
+            position = self._window.query_pointer()
+            geometry = self._window.get_geometry()
+            applied = (
+                max(-position.win_x, min(dx, geometry.width - 1 - position.win_x)),
+                max(-position.win_y, min(dy, geometry.height - 1 - position.win_y)),
+            )
+            self._connection().xtest_fake_input(X.MotionNotify, detail=1, x=applied[0], y=applied[1])
+
+        result = self._perform("mouse_move_relative", submit, pointer=True)
+        return replace(result, applied_delta=applied)
 
     def mouse_move_to(self, x: int, y: int) -> ActionResult:
         def submit():
