@@ -1,7 +1,6 @@
 id: minecraft_visual_motor_all
 game: minecraft
 tasks:
-  - path: ../tasks/visual_motor/collect_3_logs.yaml
   - path: ../tasks/visual_motor/collect_logs.yaml
   - path: ../tasks/visual_motor/collect_dirt.yaml
   - path: ../tasks/visual_motor/collect_cobblestone.yaml

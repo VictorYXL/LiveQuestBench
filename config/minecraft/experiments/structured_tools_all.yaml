@@ -1,7 +1,6 @@
 id: minecraft_structured_tools_all
 game: minecraft
 tasks:
-  - path: ../tasks/structured_tools/collect_3_logs.yaml
   - path: ../tasks/structured_tools/collect_logs.yaml
   - path: ../tasks/structured_tools/collect_dirt.yaml
   - path: ../tasks/structured_tools/collect_cobblestone.yaml

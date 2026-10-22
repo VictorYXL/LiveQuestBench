@@ -7,8 +7,8 @@ Benchmark recordings live under each Episode's `recording/`: `video.mp4`
 and `chat/`. Standalone game tests retain their own output layout;
 `MinecraftGame(recording_path=...)` can select an explicit video destination.
 `MinecraftGame` requires an existing `world_path` and explicit `player_state`.
-The small integration fixture already contains the task's three logs; the
-separate resource-island fixture supports the full island progression catalog.
+The resource-island fixture supports the full task catalog. A separate small
+three-log fixture is retained only for integration tests.
 There is no default/generated world or benchmark-time scene-construction command.
 
 ## Migrated island tasks
@@ -35,9 +35,8 @@ Each source filename is preserved (`<source task name>.yaml`). Every task has a 
 budget and a survival start at `(0.5, 72, 0.5)`, full health/food, no experience,
 and normal difficulty. Inventory tasks start empty; structure tasks receive
 exactly 64 oak planks in slot 0. ST tasks expose the existing game-provided tool
-profile without an allowlist. The separate 180-second `collect_3_logs`
-integration task and its fixture remain unchanged; that small fixture is
-**not** used for island progression.
+profile without an allowlist. The small integration-test fixture is
+**not** included in the experiment task catalog.
 
 ### Evaluator mapping and deviations
 
@@ -541,7 +540,7 @@ threshold: `min_count` (final minimum), `max_count` (final maximum), or `min_del
 AND; omitted thresholds impose no constraint. Null thresholds are invalid in
 requirement mappings.
 
-For the fixed empty-inventory `collect_3_logs` task, use `min_count: 3` alone.
+For the empty-inventory `island.collect_logs` task, use `min_count: 3` alone.
 Use `min_delta: 3` when the objective is explicitly a net increase of three.
 Net increase is not cumulative collection: consumed or dropped items reduce it.
 The before inventory remains available for auditing even for final-state goals.

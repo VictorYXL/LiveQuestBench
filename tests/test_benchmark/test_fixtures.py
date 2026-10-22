@@ -26,9 +26,9 @@ def test_world_reset_copies_are_isolated(tmp_path):
     from game.minecraft.init_player_state import PlayerState
     from game.minecraft.runtime.session import copy_world
 
-    source_file = ROOT / "config/minecraft/tasks/structured_tools/collect_3_logs.yaml"
+    source_file = ROOT / "config/minecraft/tasks/structured_tools/collect_logs.yaml"
     relative = load_task(source_file)
-    source = Path(relative.fixture["world_path"])
+    source = ROOT / "config/minecraft/fixtures/collect_3_logs"
     hashes = {str(p.relative_to(source)): hashlib.sha256(p.read_bytes()).hexdigest()
               for p in source.rglob("*") if p.is_file()}
     state = PlayerState.from_dict(relative.fixture["player_state"])
