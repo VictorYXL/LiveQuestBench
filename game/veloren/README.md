@@ -127,9 +127,9 @@ undergone native VM/ST qualification.
 
 Each mode's experiment includes all 11 tasks below, with **10 repetitions per
 Agent**. The modes share fixtures, goals, budgets and private evaluators. These
-are development configurations, not native-qualified scores. Source revision,
-file hashes and task mapping are in
-[tasks.source.json](../../config/veloren/tasks.source.json).
+are development configurations, not native-qualified scores. They adapt
+[VelorenBench](https://github.com/wyaaaattwho/VelorenBench) revision
+`68b73269ffa54caefab9c5ab3d76ac671a38496f`; the source task mapping is below.
 
 | Task | Source | Final-state goal | Budget (s) |
 | --- | --- | --- | --- |

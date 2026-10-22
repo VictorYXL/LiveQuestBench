@@ -11,7 +11,7 @@ import pytest
 from agent_framework.agents.base_agent import AgentContext, AgentExit, AgentExitReason, BaseAgent, StopReason
 from benchmark.config import ConfigError, load_experiment
 from game.bindings import Controls, GameBinding
-from benchmark.runner import run_bounded, run_episode, run_experiment
+from benchmark.runner import output_lock, prepare_episode, run_bounded, run_episode, run_experiment
 from game.base_game import BaseGame
 
 
@@ -75,7 +75,7 @@ def test_bounded_retirement_on_deadline_cancel_and_gate_failure():
     asyncio.run(check())
 
 
-def test_failed_admission_persists_and_never_overwrites(tmp_path):
+def test_failed_admission_preserves_each_launch(tmp_path):
     config = tmp_path / "invalid.yaml"
     config.write_text("id: incomplete\n")
     output = tmp_path / "run"
@@ -83,9 +83,11 @@ def test_failed_admission_persists_and_never_overwrites(tmp_path):
         asyncio.run(run_experiment(config, output))
     summary = (output / "summary.json").read_bytes()
     assert json.loads(summary)["status"] == "admission_error"
-    with pytest.raises(FileExistsError):
+    with pytest.raises(ConfigError):
         asyncio.run(run_experiment(config, output))
-    assert (output / "summary.json").read_bytes() == summary
+    summaries = list((output / "runs").glob("*/summary.json"))
+    assert len(summaries) == 2
+    assert summary in [path.read_bytes() for path in summaries]
 
 
 @pytest.mark.parametrize("fail_first", [False, True])
@@ -116,7 +118,11 @@ def test_agent_task_repetition_matrix_is_serial_and_separately_summarized(tmp_pa
         await asyncio.sleep(0)
         row.update(status="error" if fail_first else "completed",
                    measurement="unavailable" if fail_first else "valid",
-                   task_outcome="unknown" if fail_first else "success")
+                   task_outcome="unknown" if fail_first else "failure",
+                   errors=[], finished_at_ns=1)
+        (root / "result.json").write_text(json.dumps(row))
+        if not fail_first:
+            (root / "evaluation.json").write_text('{"success": false}')
         active -= 1
 
     monkeypatch.setattr("benchmark.runner.run_episode", episode)
@@ -136,6 +142,40 @@ def test_agent_task_repetition_matrix_is_serial_and_separately_summarized(tmp_pa
     if fail_first:
         assert [row["status"] for row in summary["episodes"]] == ["error"] + ["not_run"] * 7
     assert json.loads((output / "summary.json").read_text()) == summary
+    calls.clear()
+    resumed = asyncio.run(run_experiment(Path(config.source.path), output))
+    assert calls == (expected[:1] if fail_first else [])
+    assert resumed["status"] == summary["status"]
+    assert len(list((output / "runs").glob("*/config.json"))) == 2
+    if not fail_first:
+        extra = replace(first, id="additional")
+        config = replace(config, id="another-experiment", agents=(extra,), tasks=(tasks[0],), repetitions=1)
+        added = asyncio.run(run_experiment(Path(config.source.path), output))
+        assert calls == [(extra.id, tasks[0].id, tasks[0].task_type, 1)]
+        assert added["experiment_id"] == "another-experiment"
+        assert len(list(output.glob("*/*/episode_*/result.json"))) == 9
+        assert len(list((output / "runs").glob("*/summary.json"))) == 3
+
+
+def test_resume_protects_conflicts_and_active_output(tmp_path):
+    row = {"output_path": "agent/task.visual_motor/episode_1", "episode_id": "one",
+           "configuration_sha256": "current"}
+    root = tmp_path / row["output_path"]
+    root.mkdir(parents=True)
+    (root / "unfinished.txt").write_text("interrupted before result")
+    assert prepare_episode(tmp_path, row) is False
+    assert not root.exists()
+    root.mkdir()
+    (root / "result.json").write_text(json.dumps({**row, "configuration_sha256": "other"}))
+    with pytest.raises(ValueError, match="configuration changed"):
+        prepare_episode(tmp_path, row)
+    assert root.exists()
+    with output_lock(tmp_path):
+        with pytest.raises(RuntimeError, match="Another benchmark"):
+            with output_lock(tmp_path):
+                pytest.fail("Concurrent output writer admitted")
+    with output_lock(tmp_path):
+        pass
 
 
 def test_episode_faults_preserve_evidence_and_cleanup(tmp_path, monkeypatch):

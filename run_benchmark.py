@@ -11,7 +11,7 @@ from benchmark.runner import run_experiment
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", required=True, type=Path)
-    parser.add_argument("--output", required=True, type=Path, help="New output directory; never overwritten")
+    parser.add_argument("--output", required=True, type=Path, help="Output root; reuse completed Episodes and retry incomplete ones")
     parser.add_argument("--headless", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--recording", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--recording-fps", type=int, default=10)

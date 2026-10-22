@@ -3,10 +3,16 @@
 import asyncio
 from collections.abc import Awaitable, Callable
 from dataclasses import asdict
+from contextlib import contextmanager
+import fcntl
+import hashlib
+import json
 from pathlib import Path
+import shutil
 import sys
 import time
 import traceback
+from uuid import uuid4
 from typing import TypeVar
 
 from agent_framework.agents.base_agent import AgentContext, AgentExit, AgentExitReason, BaseAgent, StopReason
@@ -228,27 +234,106 @@ async def run_episode(
     return result
 
 
+@contextmanager
+def output_lock(output: Path):
+    output.mkdir(parents=True, exist_ok=True)
+    for name in (".runner.lock", "runs"):
+        if (output / name).is_symlink():
+            raise ValueError(f"Output control path must not be a symlink: {output / name}")
+    with (output / ".runner.lock").open("a") as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as error:
+            raise RuntimeError(f"Another benchmark is using {output}") from error
+        try:
+            yield
+        finally:
+            fcntl.flock(lock, fcntl.LOCK_UN)
+
+
+def prepare_episode(output: Path, row: dict) -> bool:
+    """Reuse completed measurements; remove only the exact incomplete episode."""
+    root = output / row["output_path"]
+    if any(path.is_symlink() for path in (root, root.parent, root.parent.parent)):
+        raise ValueError(f"Episode paths must not contain symlinks: {root}")
+    if not root.exists():
+        return False
+    if not root.is_dir():
+        raise ValueError(f"Episode path is not a directory: {root}")
+    result_path = root / "result.json"
+    previous = None
+    if result_path.exists():
+        try:
+            previous = json.loads(result_path.read_text())
+        except (json.JSONDecodeError, UnicodeDecodeError) as error:
+            raise ValueError(f"Unreadable result; inspect before deleting {root}") from error
+        if not isinstance(previous, dict):
+            raise ValueError(f"Invalid result in {root}")
+        if previous.get("configuration_sha256") != row["configuration_sha256"]:
+            raise ValueError(f"Episode configuration changed or lacks a fingerprint; use a new output or Agent ID: {root}")
+        if previous.get("episode_id") != row["episode_id"]:
+            raise ValueError(f"Episode identity conflict: {root}")
+    evaluation_path = root / "evaluation.json"
+    if previous and previous.get("status") == "completed" and previous.get("measurement") == "valid":
+        if not evaluation_path.is_file():
+            raise ValueError(f"Completed result lacks evaluation.json: {root}")
+        evaluation = json.loads(evaluation_path.read_text())
+        if (not isinstance(evaluation, dict) or type(evaluation.get("success")) is not bool
+                or previous.get("task_outcome") != ("success" if evaluation["success"] else "failure")
+                or previous.get("errors") or not previous.get("finished_at_ns")):
+            raise ValueError(f"Inconsistent completed measurement: {root}")
+        print(f"Skipping completed {row['episode_id']}", flush=True)
+        row.update(previous)
+        return True
+    print(f"Removing incomplete Episode before retry: {root}", flush=True)
+    shutil.rmtree(root)
+    return False
+
+
 async def run_experiment(
+    config: Path, output: Path, *, headless: bool = True, recording: bool = False, recording_fps: int = 10,
+) -> dict:
+    output = output.resolve()
+    with output_lock(output):
+        return await _run_experiment(
+            config, output, headless=headless, recording=recording, recording_fps=recording_fps,
+        )
+
+
+async def _run_experiment(
     config: Path, output: Path, *, headless: bool = True, recording: bool = False, recording_fps: int = 10,
 ) -> dict:
     if type(recording_fps) is not int or not 1 <= recording_fps <= 60:
         raise ValueError("recording_fps must be an integer in [1, 60]")
     output = output.resolve()
-    output.mkdir(parents=True, exist_ok=False)
+    launch_id = uuid4().hex
+    launch_root = output / "runs" / launch_id
+    launch_root.mkdir(parents=True)
     rows: list[dict] = []
     summary: dict = {"status": "validating", "groups": [], "episodes": rows}
     admitted = False
-    write_json(output / "summary.json", summary)
+    def save_summary() -> None:
+        write_json(launch_root / "summary.json", summary)
+        write_json(output / "summary.json", summary)
+
+    summary["launch_id"] = launch_id
+    save_summary()
     try:
         experiment = load_experiment(config)
+        summary["experiment_id"] = experiment.id
         write_json(output / "config.json", experiment.resolved())
+        write_json(launch_root / "config.json", experiment.resolved())
         validate_experiment(experiment)
         admitted = True
-        write_json(output / "provenance.json", provenance())
-        write_json(output / "launch.json", {
+        source = provenance()
+        write_json(output / "provenance.json", source)
+        write_json(launch_root / "provenance.json", source)
+        launch = {
             "headless": headless, "recording": recording, "recording_fps": recording_fps,
             "config": str(config.resolve()), "output": str(output),
-        })
+        }
+        write_json(output / "launch.json", launch)
+        write_json(launch_root / "launch.json", launch)
         for agent_config in experiment.agents:
             for task in experiment.tasks:
                 for repetition in range(1, experiment.repetitions + 1):
@@ -256,21 +341,33 @@ async def run_experiment(
                         f"{agent_config.id}.{task.game}.{task.id}.{task.task_type}.{repetition:04d}"
                     )
                     episode_path = Path(agent_config.id) / f"{task.id}.{task.task_type}" / f"episode_{repetition}"
+                    task_settings = asdict(task)
+                    task_settings.pop("source")
+                    configuration = {
+                        "task": task_settings, "agent": agent_config.resolved(),
+                        "headless": headless, "recording": recording, "recording_fps": recording_fps,
+                    }
+                    fingerprint = hashlib.sha256(
+                        json.dumps(configuration, sort_keys=True, allow_nan=False).encode()
+                    ).hexdigest()
                     rows.append({
                         "episode_id": episode_id, "agent_id": agent_config.id, "agent": agent_config.resolved(),
                         "output_path": episode_path.as_posix(),
+                        "configuration_sha256": fingerprint, "launch_id": launch_id,
                         "game": task.game, "task_id": task.id, "task_type": task.task_type,
                         "repetition": repetition, "status": "not_run", "measurement": "unavailable",
                         "task_outcome": "unknown",
                     })
         for row in rows:
+            if prepare_episode(output, row):
+                continue
             agent_config = next(agent for agent in experiment.agents if agent.id == row["agent_id"])
             task = next(task for task in experiment.tasks
                         if task.id == row["task_id"] and task.task_type == row["task_type"])
             print(f"Running {row['episode_id']}", flush=True)
             row["status"] = "running"
-            summary = {"experiment_id": experiment.id, "status": "running", **summarize(rows)}
-            write_json(output / "summary.json", summary)
+            summary = {"launch_id": launch_id, "experiment_id": experiment.id, "status": "running", **summarize(rows)}
+            save_summary()
             await run_episode(agent_config, task, output / row["output_path"], row,
                               headless=headless, recording=recording, recording_fps=recording_fps)
             if row["status"] != "completed":
@@ -287,5 +384,5 @@ async def run_experiment(
         raise
     finally:
         summary.update(summarize(rows))
-        write_json(output / "summary.json", summary)
+        save_summary()
     return summary
