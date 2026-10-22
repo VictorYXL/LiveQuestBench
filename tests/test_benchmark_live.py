@@ -56,7 +56,7 @@ def test_cli_lifecycle(case, headless, recording):
             if case == "interrupt":
                 limit = time.monotonic() + 180
                 while time.monotonic() < limit and process.poll() is None:
-                    traces = list(output.glob("*/trace.jsonl"))
+                    traces = list(output.glob("*/*/episode_*/trace.jsonl"))
                     if traces and '"event": "observation"' in traces[0].read_text():
                         process.send_signal(signal.SIGINT)
                         break
@@ -76,10 +76,10 @@ def test_cli_lifecycle(case, headless, recording):
     summary = json.loads((output / "summary.json").read_text())
     assert code == (130 if case == "interrupt" else 0), (root / "cli.log").read_text()
     assert summary["status"] == ("cancelled" if case == "interrupt" else "completed")
-    result = json.loads(next(output.glob("*/result.json")).read_text())
+    result = json.loads((output / summary["episodes"][0]["output_path"] / "result.json").read_text())
     assert result["accounting"]["request_attempts"] >= 1
     assert [tool["name"] for tool in result["tools"]] == ["MoveTool"]
-    episode = output / result["episode_id"]
+    episode = output / result["output_path"]
     assert (episode / "before/observation.json").exists()
     assert (episode / "after/observation.json").exists()
     if case == "native":

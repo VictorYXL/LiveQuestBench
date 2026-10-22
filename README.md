@@ -329,13 +329,23 @@ including a previous admission failure. The output includes:
 - `provenance.json` and `launch.json`: repository revision/dirty state, implementation
   hashes, Python/package versions and operational settings. Native game/Agent
   receipts remain alongside their execution evidence.
-- One `<agent-id>--<game>--<task-id>--<task_type>--<repetition>` directory per started Episode,
+- One `<agent-id>/<task-id>--<task_type>/episode_<repetition>` directory per started Episode,
   containing `result.json`, before/after snapshots, `evaluation.json` when valid,
   `trace.jsonl`, deduplicated VM images, native logs and optional game video.
 - `summary.json`: every scheduled Episode, including errors and unstarted cases,
   plus separate groups for each Agent/game/task/mode. Every planned Episode
   records its Agent ID and resolved model settings. No combined VM/ST or
   cross-Agent score is emitted.
+
+For example, a result may be stored at
+`tool_calling_astra/move_2_metres--structured_tool/episode_1/result.json`.
+The Agent directory uses the unique configured `agents[].id`, not the shared
+implementation name, so different models using the same Agent cannot overwrite
+each other. The task directory includes its mode to support mixed VM/ST plans.
+Each Episode row records `output_path` relative to the experiment output root;
+`episode_id` remains a logical identity for logs, not a filesystem path.
+Only started Episodes create directories; unstarted rows still record their
+planned paths. Existing historical flat outputs are not moved.
 
 The private trace retains public observations, messages/provider state, tools
 and model request attempts, but is never supplied wholesale to the Agent.

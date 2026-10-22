@@ -118,7 +118,7 @@ async def run_episode(
     agent_config: AgentConfig, task: TaskConfig, root: Path, result: dict, *,
     headless: bool, recording: bool, recording_fps: int,
 ) -> dict:
-    root.mkdir()
+    root.mkdir(parents=True)
     log = EpisodeLog(root)
     binding = None
     agent: BaseAgent[Controls] | None = None
@@ -255,8 +255,10 @@ async def run_experiment(
                     episode_id = (
                         f"{agent_config.id}--{task.game}--{task.id}--{task.task_type}--{repetition:04d}"
                     )
+                    episode_path = Path(agent_config.id) / f"{task.id}--{task.task_type}" / f"episode_{repetition}"
                     rows.append({
                         "episode_id": episode_id, "agent_id": agent_config.id, "agent": agent_config.resolved(),
+                        "output_path": episode_path.as_posix(),
                         "game": task.game, "task_id": task.id, "task_type": task.task_type,
                         "repetition": repetition, "status": "not_run", "measurement": "unavailable",
                         "task_outcome": "unknown",
@@ -269,7 +271,7 @@ async def run_experiment(
             row["status"] = "running"
             summary = {"experiment_id": experiment.id, "status": "running", **summarize(rows)}
             write_json(output / "summary.json", summary)
-            await run_episode(agent_config, task, output / row["episode_id"], row,
+            await run_episode(agent_config, task, output / row["output_path"], row,
                               headless=headless, recording=recording, recording_fps=recording_fps)
             if row["status"] != "completed":
                 break

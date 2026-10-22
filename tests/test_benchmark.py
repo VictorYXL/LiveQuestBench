@@ -169,7 +169,7 @@ def test_agent_task_repetition_matrix_is_serial_and_separately_summarized(tmp_pa
     config = load_experiment(ROOT / "config/veloren/experiments/visual_motor_all.yaml")
     first = config.agents[0]
     second = replace(first, id="second", model=replace(first.model, name="another-model"))
-    tasks = (config.tasks[0], replace(config.tasks[0], id="second-task"))
+    tasks = (config.tasks[0], replace(config.tasks[0], task_type="structured_tool"))
     config = replace(config, tasks=tasks, repetitions=2, agents=(first, second))
     monkeypatch.setattr("benchmark.runner.load_experiment", lambda path: config)
     monkeypatch.setattr("benchmark.runner.validate_experiment", lambda config: None)
@@ -181,8 +181,10 @@ def test_agent_task_repetition_matrix_is_serial_and_separately_summarized(tmp_pa
         nonlocal active
         assert active == 0
         active += 1
-        root.mkdir()
-        calls.append((selected.id, task.id, row["repetition"]))
+        assert root == output / selected.id / f"{task.id}--{task.task_type}" / f"episode_{row['repetition']}"
+        assert root == output / row["output_path"]
+        root.mkdir(parents=True)
+        calls.append((selected.id, task.id, task.task_type, row["repetition"]))
         assert row["agent"]["model"]["name"] == selected.model.name
         await asyncio.sleep(0)
         row.update(status="error" if fail_first else "completed",
@@ -193,10 +195,13 @@ def test_agent_task_repetition_matrix_is_serial_and_separately_summarized(tmp_pa
     monkeypatch.setattr("benchmark.runner.run_episode", episode)
     output = tmp_path / "run"
     summary = asyncio.run(run_experiment(Path(config.source.path), output))
-    expected = [(agent.id, task.id, repetition)
+    expected = [(agent.id, task.id, task.task_type, repetition)
                 for agent in config.agents for task in tasks for repetition in (1, 2)]
     assert calls == (expected[:1] if fail_first else expected)
     assert len(summary["episodes"]) == len({row["episode_id"] for row in summary["episodes"]}) == 8
+    assert len({row["output_path"] for row in summary["episodes"]}) == 8
+    for row in summary["episodes"]:
+        assert (output / row["output_path"]).is_dir() == (row["status"] != "not_run")
     assert len(summary["groups"]) == 4
     assert {group["agent_id"] for group in summary["groups"]} == {first.id, second.id}
     assert all(group["scheduled"] == 2 for group in summary["groups"])
