@@ -28,16 +28,18 @@ def test_world_reset_copies_are_isolated(tmp_path):
 
     source_file = ROOT / "config/minecraft/tasks/structured_tools/collect_logs.yaml"
     relative = load_task(source_file)
-    source = ROOT / "config/minecraft/fixtures/collect_3_logs"
+    source = Path(relative.fixture["world_path"])
     hashes = {str(p.relative_to(source)): hashlib.sha256(p.read_bytes()).hexdigest()
               for p in source.rglob("*") if p.is_file()}
     state = PlayerState.from_dict(relative.fixture["player_state"])
     for name in ("first", "second"):
         destination = tmp_path / name
         copy_world(source, destination, state, UUID(int=1))
-        assert set(read_blocks(destination, (0, 72, -2), (0, 74, -2), state.dimension).values()) == {"minecraft:oak_log"}
+        assert read_blocks(destination, (0, 71, 0), (0, 72, 0), state.dimension) == {
+            (0, 71, 0): "minecraft:grass_block", (0, 72, 0): "minecraft:air",
+        }
         if name == "first":
-            (destination / "region/r.0.-1.mca").write_bytes(b"deliberately damaged disposable working copy")
+            (destination / "region/r.0.0.mca").write_bytes(b"deliberately damaged disposable working copy")
     assert hashes == {str(p.relative_to(source)): hashlib.sha256(p.read_bytes()).hexdigest()
                       for p in source.rglob("*") if p.is_file()}
     assert not (source / "playerdata").exists()

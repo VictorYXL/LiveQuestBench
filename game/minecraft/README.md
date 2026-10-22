@@ -7,8 +7,7 @@ Benchmark recordings live under each Episode's `recording/`: `video.mp4`
 and `chat/`. Standalone game tests retain their own output layout;
 `MinecraftGame(recording_path=...)` can select an explicit video destination.
 `MinecraftGame` requires an existing `world_path` and explicit `player_state`.
-The resource-island fixture supports the full task catalog. A separate small
-three-log fixture is retained only for integration tests.
+The resource-island fixture supports the full task catalog and integration tests.
 There is no default/generated world or benchmark-time scene-construction command.
 
 ## Migrated island tasks
@@ -35,8 +34,7 @@ Each source filename is preserved (`<source task name>.yaml`). Every task has a 
 budget and a survival start at `(0.5, 72, 0.5)`, full health/food, no experience,
 and normal difficulty. Inventory tasks start empty; structure tasks receive
 exactly 64 oak planks in slot 0. ST tasks expose the existing game-provided tool
-profile without an allowlist. The small integration-test fixture is
-**not** included in the experiment task catalog.
+profile without an allowlist.
 
 ### Evaluator mapping and deviations
 
@@ -232,9 +230,9 @@ initialization and scoring. Original account files and worlds are not modified.
 
 No additional map download, model, API key or Agent is needed. Live tests
 explicitly copy the repository's immutable
-[`collect_3_logs`](../../config/minecraft/fixtures/collect_3_logs/) save, with
-grass at Y=71 and player feet at Y=72. This small scene is for interface/task
-execution checks, not evidence of long-horizon task difficulty.
+[`island`](../../config/minecraft/fixtures/island/) save, with
+grass at Y=71 and player feet at Y=72 at the central spawn. Basic interface
+checks are not evidence of long-horizon task difficulty.
 VM and ST start from the same source world; previous Episode mutations are not reused.
 
 Run offline checks first:

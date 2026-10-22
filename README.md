@@ -14,7 +14,7 @@ evaluation. Earlier integration runs do not certify every new task.
 
 | Game | Current catalog per mode | Setup and task details |
 | --- | --- | --- |
-| Minecraft | 11 island tasks plus a three-log integration diagnostic | [Minecraft README](game/minecraft/README.md) |
+| Minecraft | 11 island tasks | [Minecraft README](game/minecraft/README.md) |
 | Veloren | 10 endpoint adaptations plus a movement diagnostic | [Veloren README](game/veloren/README.md) |
 
 - **VM (`visual_motor`)**: actual game pixels and bounded keyboard/mouse control.

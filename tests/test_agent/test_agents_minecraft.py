@@ -65,11 +65,11 @@ def test_minecraft_collect_three_logs(
         "provider": "github_copilot", "model": "gpt-6-astra",
         "reasoning_effort": "low", "max_output_tokens": 4096, "max_attempts": 1,
         "budget_seconds": 180, "recording": recording, "headless": headless,
-        "fixture": "three-oak-logs-v1",
+        "fixture": "island",
         "interrupt_after_first_game_tool": interrupt,
         "integration_status": "not_verified",
         "upstream": NATIVE_AGENTS[agent_name].source if agent_name in NATIVE_AGENTS else None,
-        "world_path": str(Path(__file__).resolve().parents[2] / "config/minecraft/fixtures/collect_3_logs"),
+        "world_path": str(Path(__file__).resolve().parents[2] / "config/minecraft/fixtures/island"),
         "task": "Collect at least 3 oak logs in your inventory. Keep them as logs, not planks. "
                 "Do not drop them. Finish with a text answer when you believe the task is complete.",
     }
