@@ -6,10 +6,14 @@ import json
 from pathlib import Path
 import time
 
+import httpx
 import pytest
 
 from agent_framework.agents.base_agent import AgentContext, AgentExit, AgentExitReason, BaseAgent, StopReason
+from agent_framework.agents.tool_calling_agent import ToolCallingAgent
 from agent_framework.llm_client.base_client import BaseLLMClient, LLMResponse, Message
+from agent_framework.llm_client.responses import ResponsesClient, serialize_messages
+from agent_framework.utils.tools import Tool
 from benchmark.config import ConfigError, load_experiment
 from benchmark.results import EpisodeLog
 from game.bindings import Controls, GameBinding
@@ -18,6 +22,63 @@ from game.base_game import BaseGame
 
 
 ROOT = Path(__file__).resolve().parents[2]
+
+
+@pytest.mark.parametrize("visual", [False, True])
+def test_baseline_long_history_preserves_actions_and_omits_old_observations(visual):
+    requests, recorded = [], []
+    observations = 0
+    payload = "terrain " * 3000
+    image = {"type": "image", "data": b"frame", "mime_type": "image/png"}
+
+    async def observe(interface):
+        nonlocal observations
+        observations += 1
+        return [image] if visual else f"frame-{observations}: {payload}"
+
+    async def execute(interface, arguments):
+        return "action result"
+
+    class Client(BaseLLMClient):
+        async def _request_impl(self, messages, **kwargs):
+            requests.append(messages)
+            if len(requests) > 120:
+                return LLMResponse(content="done", finish_reason="stop")
+            return LLMResponse(content="remember this action", finish_reason="tool_calls", tool_calls=[{
+                "id": str(len(requests)), "name": "act", "arguments": {},
+            }])
+
+        async def close(self):
+            pass
+
+    async def run():
+        client = Client()
+        agent = ToolCallingAgent(
+            client, tools=[Tool("act", "Act", {"type": "object"}, execute)],
+            observe=observe, on_message=recorded.append,
+        )
+        now = time.monotonic_ns()
+        outcome = await agent.run(AgentContext("history", "keep task", object(), now, now + 10**12, "rules"))
+        assert outcome.reason == AgentExitReason.RETURNED
+        await agent.close()
+        await client.close()
+        return agent
+
+    agent = asyncio.run(run())
+    final = requests[-1]
+    encoded = json.dumps(serialize_messages(final, "test", "test"))
+    assert len(encoded) < 100_000
+    assert "keep task" in encoded and "Wall-clock budget:" in encoded and "rules" in encoded
+    assert len([m for m in final if m.role == "tool"]) == 120
+    assert encoded.count("remember this action") == 120
+    assert recorded == agent.messages
+    if visual:
+        assert encoded.count("input_image") == 1
+        assert agent.messages[1].content[-1] is image
+    else:
+        assert encoded.count(payload) == 1 and "frame-121:" in encoded and "frame-1:" not in encoded
+        assert payload in agent.messages[1].content[-1]["text"]
+    assert requests[0][1] is agent.messages[1]
 
 
 @pytest.mark.parametrize("enabled", [True, False])
@@ -249,7 +310,7 @@ def test_resume_protects_conflicts_and_active_output(tmp_path):
 
 def test_episode_faults_preserve_evidence_and_cleanup(tmp_path, monkeypatch):
     config = load_experiment(ROOT / "config/veloren/experiments/visual_motor_all.yaml")
-    for fault in ("execution", "measurement", "cleanup"):
+    for fault in ("execution", "measurement", "cleanup", "context_success", "context_failure"):
         events = []
 
         async def observe() -> str:
@@ -300,28 +361,49 @@ def test_episode_faults_preserve_evidence_and_cleanup(tmp_path, monkeypatch):
             async def close(self):
                 events.append("agent_close")
 
-        class Client:
+        class Client(BaseLLMClient):
+            async def _request_impl(self, messages, **kwargs):
+                events.append("request")
+                ResponsesClient.check_status(httpx.Response(400, json={
+                    "error": {"code": "invalid_request_body",
+                              "message": "The request exceeds the context window."},
+                }))
+                raise AssertionError("Context rejection must raise")
+
             async def close(self):
                 events.append("client_close")
 
         def evaluate(before, after):
             if fault == "measurement":
                 raise ValueError("measurement probe")
-            return {"success": False}
+            return {"success": fault == "context_success"}
 
         game = Game()
         binding = GameBinding(game, lambda: (controls, []), evaluate, lambda before: None)
         monkeypatch.setattr("benchmark.runner.make_game", lambda *args, **kwargs: binding)
         monkeypatch.setattr("benchmark.runner.make_client", lambda *args: Client())
-        monkeypatch.setattr("benchmark.runner.make_agent", lambda *args: Agent())
+        monkeypatch.setattr("benchmark.runner.make_agent", lambda config, client, *args: (
+            ToolCallingAgent(
+                client, tools=[Tool("unused", "Unused", {"type": "object"}, execute)],
+                observe=lambda interface: observe(),
+            ) if fault.startswith("context_") else Agent()
+        ))
         output = tmp_path / fault
         result = asyncio.run(run_episode(
             config.agents[0], config.tasks[0], output, {"episode_id": fault},
             headless=True, recording=False, recording_fps=10,
         ))
-        assert result["status"] == "error"
         assert (output / "after").is_dir()
         assert events.index("end") < events.index("after") < events.index("game_close")
+        if fault.startswith("context_"):
+            assert result["status"] == "completed" and result["measurement"] == "valid"
+            assert result["task_outcome"] == ("success" if fault == "context_success" else "failure")
+            assert result["agent_exit"]["reason"] == "native_limit"
+            assert result["agent_exit"]["native_reason"] == "context_limit_exceeded"
+            assert events.count("request") == 1 and events[-1] == "client_close"
+            assert not result["errors"]
+            continue
+        assert result["status"] == "error"
         assert events[-1] == "client_close" and "agent_close" in events
         assert result["errors"] and json.loads((output / "results/result.json").read_text()) == result
         if fault == "measurement":

@@ -7,11 +7,48 @@ from dataclasses import asdict
 from pathlib import Path
 
 import pytest
+import httpx
 
-from agent_framework.llm_client.base_client import Message
+from agent_framework.llm_client.base_client import BaseLLMClient, ClientError, Message
 from agent_framework.llm_client.github_copilot_client import GitHubCopilotClient
 from agent_framework.llm_client.openai_client import OpenAIClient
 from agent_framework.llm_client.vllm_client import VLLMClient
+from agent_framework.llm_client.responses import ResponsesClient, parse_response
+
+
+@pytest.mark.parametrize("error,expected", [
+    ({"code": "context_length_exceeded"}, "context_length_exceeded"),
+    ({"code": "context_window_exceeded"}, "context_length_exceeded"),
+    ({"code": "invalid_request_body", "message": "Request exceeds the context window."}, "context_length_exceeded"),
+    ({"message": "Maximum context length is 100 tokens; the request exceeded it."}, "context_length_exceeded"),
+    ({"code": "invalid_request_body", "message": "Invalid context field."}, "http_400"),
+    ({"message": "Rate limit exceeded."}, "http_400"),
+    ({"code": "insufficient_quota"}, "insufficient_quota"),
+])
+def test_provider_errors_are_sanitized_and_not_retried(error, expected):
+    class Client(BaseLLMClient):
+        calls = 0
+
+        async def _request_impl(self, messages, **kwargs):
+            self.calls += 1
+            ResponsesClient.check_status(httpx.Response(400, json={"error": error}))
+
+        async def close(self):
+            pass
+
+    async def run():
+        client = Client(retry_backoff=0)
+        with pytest.raises(ClientError) as raised:
+            await client.chat([Message("user", "test")])
+        assert raised.value.code == expected and client.calls == 1
+        assert str(raised.value) == f"Model request failed: {expected} (HTTP status: 400)"
+        if expected == "context_length_exceeded":
+            with pytest.raises(ClientError) as streamed:
+                parse_response({"status": "failed", "error": error}, "test", "test")
+            assert streamed.value.code == expected
+        await client.close()
+
+    asyncio.run(run())
 
 
 @pytest.mark.live

@@ -122,7 +122,9 @@ class BaseLLMClient(ABC):
                     httpx.RemoteProtocolError, json.JSONDecodeError,
                 )) or (
                     isinstance(exc, ClientError)
-                    and exc.code not in {"insufficient_quota", "billing_hard_limit_reached"}
+                    and exc.code not in {
+                        "insufficient_quota", "billing_hard_limit_reached", "context_length_exceeded",
+                    }
                     and (exc.status in {408, 429, 500, 502, 503, 504}
                          or exc.code in {
                              "stream_ended_without_response", "incomplete_response", "invalid_json_response",

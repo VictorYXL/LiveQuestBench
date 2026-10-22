@@ -3,6 +3,7 @@
 import base64
 import copy
 import json
+import re
 from collections.abc import Callable, Sequence
 
 import httpx
@@ -130,6 +131,25 @@ def serialize_messages(
     return items
 
 
+def recognized_error_code(error: object, fallback: str) -> str:
+    """Normalize known failures without exposing arbitrary server text."""
+    if not isinstance(error, dict):
+        return fallback
+    code = error.get("code")
+    if code in ("insufficient_quota", "billing_hard_limit_reached", "context_length_exceeded"):
+        return str(code)
+    if code == "context_window_exceeded":
+        return "context_length_exceeded"
+    message = error.get("message")
+    if isinstance(message, str) and re.search(
+        r"\bexceed(?:s|ed)?\b[^.\n]{0,120}\bcontext (?:window|length|limit)\b"
+        r"|\bcontext (?:window|length|limit)\b[^.\n]{0,120}\bexceed(?:s|ed)?\b",
+        message, re.IGNORECASE,
+    ):
+        return "context_length_exceeded"
+    return fallback
+
+
 def parse_response(payload: dict[str, object], provider: str, model: str) -> LLMResponse:
     raw_usage = payload.get("usage")
     usage = obj(raw_usage) if raw_usage is not None else None
@@ -147,7 +167,8 @@ def _parse_output(
 ) -> LLMResponse:
     status = payload.get("status")
     if status != "completed":
-        raise ClientError("incomplete_response" if status == "incomplete" else "failed_response", usage=usage)
+        code = "incomplete_response" if status == "incomplete" else "failed_response"
+        raise ClientError(recognized_error_code(payload.get("error"), code), usage=usage)
     output = array(payload.get("output"))
     texts: list[str] = []
     calls: list[dict[str, object]] = []
@@ -253,10 +274,8 @@ class ResponsesClient(BaseLLMClient):
             return
         code = f"http_{response.status_code}"
         try:
-            error = obj(obj(response.json()).get("error"))
-            # Only expose recognized codes, not arbitrary server messages or secrets.
-            if error.get("code") in ("insufficient_quota", "billing_hard_limit_reached"):
-                code = text(error["code"])
+            error = obj(response.json()).get("error")
+            code = recognized_error_code(error, code)
         except (ValueError, TypeError):
             pass
         raise ClientError(code, status=response.status_code)
@@ -282,7 +301,7 @@ class ResponsesClient(BaseLLMClient):
                 if event.get("type") in ("response.completed", "response.incomplete", "response.failed"):
                     return parse_response(obj(event.get("response")), self.provider, self.model)
                 if event.get("type") == "error":
-                    raise ClientError("stream_error")
+                    raise ClientError(recognized_error_code(event, "stream_error"))
                 return None
 
             async for line in response.aiter_lines():

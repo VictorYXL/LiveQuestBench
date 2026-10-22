@@ -18,11 +18,25 @@ the caller; it does not import games or read prompt files.
 5. A nonempty text-only answer returns `AgentExitReason.RETURNED`, not a task
    success verdict. The runner scores independently.
 
-Text/tool history and provider continuation state are retained. Only the latest
-image is sent per model request; earlier images become explicit omission notices,
-not generated descriptions. Full image-bearing messages remain in `messages`
-and may be recorded with `on_message`. This accommodates a one-image limit.
-There is no automatic tool retry.
+The fixed history policy sends only the latest complete text observation (ST)
+or image (VM). Earlier text observations/images become explicit omission notices,
+not generated summaries. Task instructions and the wall-clock budget are always
+retained, as are assistant text, tool calls/results and provider continuation
+state. VM observation text accompanying images is retained. Full observations
+remain in `messages` and may be recorded with `on_message`; request recording
+captures the reduced input actually sent to the model.
+
+This deterministic policy does not plan, retrieve memories or summarize history.
+It can lose information visible only in older observations; action history can
+still exhaust the context. A recognized context-capacity error is not retried:
+the Agent returns `NATIVE_LIMIT` with `native_reason=context_limit_exceeded`.
+The runner ends game access and scores the final state normally, so this reason
+alone does not imply task failure. Unclassified provider errors still propagate
+as execution errors. There is no automatic tool retry.
+
+Results from the previous full-text-observation policy are a separate scaffold
+version, not interchangeable measurements. Re-run affected ST baseline episodes
+when comparing Agents; retain old trajectories as historical evidence.
 
 ## Construction
 

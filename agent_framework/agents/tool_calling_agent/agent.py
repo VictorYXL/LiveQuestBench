@@ -6,7 +6,7 @@ from dataclasses import replace
 from typing import TypeVar
 
 from agent_framework.agents.base_agent import AgentContext, AgentExit, AgentExitReason, BaseAgent, StopReason
-from agent_framework.llm_client.base_client import BaseLLMClient, LLMResponse, Message
+from agent_framework.llm_client.base_client import BaseLLMClient, ClientError, LLMResponse, Message
 from agent_framework.utils.tools import Observation, Tool
 
 
@@ -18,7 +18,7 @@ class ToolCallingAgent(BaseAgent[InterfaceT]):
 
     The caller owns the injected client and game resources. There is no planner,
     query Agent, automatic tool retry, or independent task-success detector.
-    Text/tool history is retained; model requests contain only the latest image.
+    Only the latest text observation/image is sent; action history is retained.
     Full messages remain available for inspection and on_message recording.
     The runner must gate game access at the deadline and on every exit path.
     """
@@ -38,6 +38,7 @@ class ToolCallingAgent(BaseAgent[InterfaceT]):
         self._observe = observe
         self._on_message = on_message
         self.messages: list[Message] = []
+        self._text_observation_offsets: dict[int, int] = {}
         self.stop_reason: StopReason | None = None
         self._task: asyncio.Task[AgentExit] | None = None
         self._used = False
@@ -86,11 +87,16 @@ class ToolCallingAgent(BaseAgent[InterfaceT]):
         for index, message in enumerate(self.messages):
             content = message.content
             if index < len(self.messages) - 1 and isinstance(content, list):
-                content = [
-                    {"type": "text", "text": "[Earlier image omitted; latest observation follows.]"}
-                    if block.get("type") == "image" else block
-                    for block in content
-                ]
+                if index in self._text_observation_offsets:
+                    content = content[:self._text_observation_offsets[index]] + [{
+                        "type": "text", "text": "[Earlier observation omitted; latest observation follows.]",
+                    }]
+                else:
+                    content = [
+                        {"type": "text", "text": "[Earlier image omitted; latest observation follows.]"}
+                        if block.get("type") == "image" else block
+                        for block in content
+                    ]
                 message = replace(message, content=content)
             result.append(message)
         return result
@@ -127,13 +133,23 @@ class ToolCallingAgent(BaseAgent[InterfaceT]):
                     f"Task: {context.task}\n"
                     f"Wall-clock budget: {(context.deadline_at_ns - context.started_at_ns) / 1e9:g} seconds."
                 )})
+            if isinstance(observed, str):
+                self._text_observation_offsets[len(self.messages)] = len(blocks)
             blocks.append({"type": "text", "text": "Current observation:"})
             blocks.extend([{"type": "text", "text": observed}] if isinstance(observed, str) else observed)
             self._append(Message("user", blocks))
-            response = await self.client.chat(
-                self._request_messages(), tools=[tool.schema() for tool in self.tools],
-                tool_choice="auto",
-            )
+            try:
+                response = await self.client.chat(
+                    self._request_messages(), tools=[tool.schema() for tool in self.tools],
+                    tool_choice="auto",
+                )
+            except ClientError as error:
+                if error.code != "context_length_exceeded":
+                    raise
+                return AgentExit(
+                    AgentExitReason.NATIVE_LIMIT, "Model context capacity exhausted.",
+                    native_reason="context_limit_exceeded",
+                )
             self._validate_response(response)
             self._append(Message(
                 "assistant", response.content, response.tool_calls, provider_data=response.provider_data,
