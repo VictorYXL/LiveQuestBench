@@ -30,7 +30,7 @@ class GitHubCopilotClient(ResponsesClient):
     def __init__(
         self, model: str, *, token_file: Path | None = None,
         max_output_tokens: int = 4096, reasoning_effort: str | None = None,
-        timeout: float = 120, max_attempts: int = 1, retry_backoff: float = 1,
+        timeout: float = 120, max_attempts: int = 3, retry_backoff: float = 1,
         on_request: Callable[[RequestEvent], None] | None = None,
         transport: httpx.AsyncBaseTransport | None = None,
     ) -> None:

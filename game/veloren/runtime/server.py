@@ -16,9 +16,9 @@ from scripts.rpg_benchmark.native import NativeConfig
 async def fixture_server(output: Path, record: dict, native: NativeConfig, fixture: dict):
     native.require_inputs()
     assert native.assets is not None and native.server is not None and native.root is not None
-    asset = native.assets / (fixture["map_asset"].replace(".", "/") + ".bin")
+    asset = Path(fixture["world_path"]).resolve()
     if not asset.is_file():
-        raise FileNotFoundError(f"Required Veloren map asset is missing: {asset}")
+        raise FileNotFoundError(f"Required Veloren map file is missing: {asset}")
     record["world_fixture"] = {
         "configuration": fixture, "map_path": str(asset),
         "map_sha256": hashlib.sha256(asset.read_bytes()).hexdigest(),
@@ -33,7 +33,7 @@ async def fixture_server(output: Path, record: dict, native: NativeConfig, fixtu
     settings.write_text(
         f'(gameserver_protocols:[Tcp(address:"127.0.0.1:{port}")],'
         f'query_address:None,auth_server_address:None,world_seed:{fixture["world_seed"]},'
-        f'map_file:Some(LoadAsset({json.dumps(fixture["map_asset"])})),'
+        f'map_file:Some(Load({json.dumps(str(asset))})),'
         f'day_length:{float(fixture["day_length"])},world:(start_time:{float(hour * 3600 + minute * 60)}),'
         'calendar_mode:None,experimental_terrain_persistence:false,server_name:"LiveQuestBench",)\n'
     )

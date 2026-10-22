@@ -33,7 +33,7 @@ InterfaceT = TypeVar("InterfaceT")
     for track in ("visual_motor", "structured_tool")
 ] + [
     pytest.param(name, "structured_tool", True, id=f"{name}-stop-structured_tool")
-    for name in ("deepseek", "gamingagent")
+    for name in ("deepseek_harness", "gamingagent")
 ])
 def test_veloren_move_and_stop(
     agent_name: str, track: str, interrupt: bool, headless: bool, recording: bool, veloren_fixture: dict,

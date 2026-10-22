@@ -1,0 +1,66 @@
+# Endpoint adaptation of VelorenBench C4, T04; see game/veloren/README.md.
+id: craft_equip
+game: veloren
+task_type: structured_tool
+task: Finish wearing rawhide chest armor (common.items.armor.hide.rawhide.chest) in your chest slot, while
+  keeping your replaced worker shirt (common.items.armor.misc.chest.worker_purple_brown) in your bag.
+  You start with five animal hides and no leather or chest armor in your bag. You know simple_leather
+  and rawhide_chest; a tanning rack and crafting bench are on the platform. Finish alive and release movement
+  controls before answering. Success is checked from your final state, not from a required action history.
+time_limit_seconds: 600
+fixture:
+  world_path: ../../fixtures/veloren_0_18_0_0.bin
+  world_seed: 130626853
+  time_of_day: '12:00'
+  day_length: 30
+  calendar: none
+  platform:
+    origin:
+    - 18700
+    - 10800
+    - 500
+    size:
+    - 24
+    - 18
+    block: Rock
+  player_state:
+    position:
+    - 18702.5
+    - 10809.5
+    - 501
+    look:
+    - 0
+    - 1
+    - 0
+    health: 100
+    inventory:
+      common.items.crafting_ing.hide.animal_hide: 5
+    equipment:
+      active_mainhand: common.items.weapons.sword.starter
+      chest: common.items.armor.misc.chest.worker_purple_brown
+      feet: common.items.armor.misc.foot.sandals
+      glider: common.items.glider.basic_white
+      lantern: common.items.lantern.black_0
+      legs: common.items.armor.misc.pants.worker_brown
+  recipes:
+    simple_leather: true
+    rawhide_chest: true
+  stations:
+  - position:
+    - 18707.5
+    - 10809.5
+    - 501
+    sprite: TanningRack
+  - position:
+    - 18715.5
+    - 10809.5
+    - 501
+    sprite: CraftingBench
+evaluator:
+  name: state
+  parameters:
+    equipment:
+      chest: common.items.armor.hide.rawhide.chest
+    inventory:
+    - item: common.items.armor.misc.chest.worker_purple_brown
+      min_count: 1

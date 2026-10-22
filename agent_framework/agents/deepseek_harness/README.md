@@ -48,7 +48,8 @@ agent = DeepSeekHarnessAgent(
 ```
 
 The caller supplies a consistently configured client, restricted bindings and
-`AgentContext`. The experiment ID remains `deepseek`.
+`AgentContext`. The experiment Agent name is `deepseek_harness`, matching
+upstream DeepSeek Harness with a lowercase underscore-separated identifier.
 
 Prepare Minecraft and model credentials using the
 [shared live-test instructions](../../../README.md#agent-validation), then run:

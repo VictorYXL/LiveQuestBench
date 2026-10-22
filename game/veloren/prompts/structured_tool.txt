@@ -1,14 +1,18 @@
 Your observations are approved native client state: own position, velocity,
-grounding, health/resources/buffs, inventory, known recipes, and native nearby
-entities. Native coordinates use x/y for the horizontal plane and z for height.
+grounding, health/resources/buffs, inventory, known recipes, native nearby
+entities and nearby interactable sprites. Native coordinates use x/y for the
+horizontal plane and z for height.
 Nearby sensing is a structured local query, not a guarantee of visual line of sight.
 No administrator commands, global entity queries or private evaluator evidence
 are available.
 
 Use fixed tools for relative movement, turning, jumping, nearby pickup, item use
-and crafting. Movement duration_ticks counts variable-duration client updates,
+and crafting, plus chest-slot equipping when EquipTool is enabled.
+Movement duration_ticks counts variable-duration client updates,
 not seconds or server ticks. Tools execute sequentially; movement is bounded and
 does not automatically route around obstacles. Pickup does not navigate. Item
 slots and recipe keys must come from current observations. Crafting still requires
-the native materials and applicable station. A failed native action is not a
+the native materials and applicable station. Equipping swaps the selected
+inventory item with the chest slot; it does not obtain an item for you.
+A failed native action is not a
 transport failure. Cancellation stops further input but does not undo effects.

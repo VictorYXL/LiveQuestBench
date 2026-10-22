@@ -12,7 +12,7 @@ from typing import TypeVar
 from agent_framework.agents.base_agent import AgentContext, AgentExit, AgentExitReason, BaseAgent, StopReason
 from agent_framework.agents.process_agent import ProcessAgent
 from agent_framework.llm_client.base_client import BaseLLMClient
-from benchmark.config import ExperimentConfig, TaskConfig, load_experiment
+from benchmark.config import AgentConfig, TaskConfig, load_experiment
 from benchmark.factory import make_agent, make_client, make_game, validate_experiment
 from benchmark.results import EpisodeLog, provenance, summarize, write_json
 from game.base_game import AgentAccessClosed
@@ -115,7 +115,7 @@ def logged_controls(public: Controls, log: EpisodeLog) -> Controls:
 
 
 async def run_episode(
-    experiment: ExperimentConfig, task: TaskConfig, root: Path, result: dict, *,
+    agent_config: AgentConfig, task: TaskConfig, root: Path, result: dict, *,
     headless: bool, recording: bool, recording_fps: int,
 ) -> dict:
     root.mkdir()
@@ -138,14 +138,14 @@ async def run_episode(
 
     try:
         binding = make_game(task, root / "game", headless=headless, recording=recording, recording_fps=recording_fps)
-        client = make_client(experiment.model, log.request)
+        client = make_client(agent_config.model, log.request)
         await binding.game.start()
         before = await binding.game.save_snapshot(root / "before")
         binding.verify_initial(before)
         public, tools = binding.controls()
         public = logged_controls(public, log)
         result["tools"] = [tool.schema() for tool in tools]
-        agent = make_agent(experiment, client, tools, root / "agent", log.message)
+        agent = make_agent(agent_config, client, tools, root / "agent", log.message)
         if isinstance(agent, ProcessAgent):
             result["agent_source"] = agent.source
         stage = "execution"
@@ -249,22 +249,27 @@ async def run_experiment(
             "headless": headless, "recording": recording, "recording_fps": recording_fps,
             "config": str(config.resolve()), "output": str(output),
         })
-        for task in experiment.tasks:
-            for repetition in range(1, experiment.repetitions + 1):
-                episode_id = f"{task.game}--{task.id}--{task.task_type}--{repetition:04d}"
-                rows.append({
-                    "episode_id": episode_id, "game": task.game, "task_id": task.id, "task_type": task.task_type,
-                    "repetition": repetition, "status": "not_run", "measurement": "unavailable",
-                    "task_outcome": "unknown",
-                })
+        for agent_config in experiment.agents:
+            for task in experiment.tasks:
+                for repetition in range(1, experiment.repetitions + 1):
+                    episode_id = (
+                        f"{agent_config.id}--{task.game}--{task.id}--{task.task_type}--{repetition:04d}"
+                    )
+                    rows.append({
+                        "episode_id": episode_id, "agent_id": agent_config.id, "agent": agent_config.resolved(),
+                        "game": task.game, "task_id": task.id, "task_type": task.task_type,
+                        "repetition": repetition, "status": "not_run", "measurement": "unavailable",
+                        "task_outcome": "unknown",
+                    })
         for row in rows:
+            agent_config = next(agent for agent in experiment.agents if agent.id == row["agent_id"])
             task = next(task for task in experiment.tasks
                         if task.id == row["task_id"] and task.task_type == row["task_type"])
             print(f"Running {row['episode_id']}", flush=True)
             row["status"] = "running"
             summary = {"experiment_id": experiment.id, "status": "running", **summarize(rows)}
             write_json(output / "summary.json", summary)
-            await run_episode(experiment, task, output / row["episode_id"], row,
+            await run_episode(agent_config, task, output / row["episode_id"], row,
                               headless=headless, recording=recording, recording_fps=recording_fps)
             if row["status"] != "completed":
                 break

@@ -1,0 +1,30 @@
+id: island.collect_logs
+game: minecraft
+task_type: structured_tool
+task: Collect 3 oak logs (oak_log). Keep the requested items in your inventory. Finish with a text answer
+  when you believe the task is complete.
+time_limit_seconds: 2100
+fixture:
+  world_path: ../../fixtures/island
+  instance: 1.20.4
+  difficulty: normal
+  player_state:
+    position:
+    - 0.5
+    - 72
+    - 0.5
+    dimension: minecraft:overworld
+    yaw: 180
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory: []
+evaluator:
+  name: inventory
+  parameters:
+    requirements:
+    - item: minecraft:oak_log
+      min_count: 3

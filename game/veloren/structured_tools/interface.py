@@ -8,8 +8,11 @@ import math
 from agent_framework.utils.tools import Tool
 
 
-PROFILE_ID = "veloren-native-fixed-tools-v1"
-FIELDS = ("session_id", "tick", "position", "velocity", "on_ground", "survival", "inventory", "nearby_entities")
+PROFILE_ID = "veloren-native-fixed-tools-v2"
+FIELDS = (
+    "session_id", "tick", "position", "velocity", "on_ground", "survival", "inventory",
+    "nearby_entities", "known_recipes", "nearby_interactable_sprites",
+)
 SPECS = {
     "MoveTool": ("Move in a camera-relative direction for bounded native client updates, not fixed seconds.",
                  "move", {"direction": {"type": "string", "enum": ["forward", "backward", "left", "right"]},
@@ -23,6 +26,9 @@ SPECS = {
     "CraftTool": ("Attempt a known native recipe; materials and station requirements still apply.", "craft",
                   {"recipe": {"type": "string", "minLength": 1, "maxLength": 128},
                    "amount": {"type": "integer", "minimum": 1, "maximum": 10}}),
+    "EquipTool": ("Equip an observed inventory item into a native equipment slot.", "equip",
+                  {"slot": {"type": "integer", "minimum": 0, "maximum": 4294967295},
+                   "equip_slot": {"type": "string", "enum": ["chest"], "maxLength": 32}}),
 }
 
 
@@ -37,8 +43,7 @@ def project(observation: dict) -> dict:
     if missing:
         raise ValueError(f"Native observation lacks required fields: {sorted(missing)}")
     return {"profile": PROFILE_ID, "coordinate_frame": "native x/y horizontal, z up",
-            **{name: observation[name] for name in FIELDS},
-            "known_recipes": observation["known_recipes"]}
+            **{name: observation[name] for name in FIELDS}}
 
 
 def validate_tool(name: str, arguments: dict) -> tuple[str, dict]:

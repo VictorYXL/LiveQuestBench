@@ -8,6 +8,7 @@ from agent_framework.utils.tools import Tool
 from game.bindings import Controls, GameBinding, bind_controls, validate_tools
 from game.veloren.evaluators.endpoints import evaluate_displacement, evaluate_health, evaluate_inventory
 from game.veloren.evaluators.endpoints import validate_displacement, validate_health, validate_inventory
+from game.veloren.evaluators.endpoints import evaluate_state, validate_state
 from game.veloren.game import VelorenGame
 from game.veloren.structured_tools import interface as st
 from game.veloren.visual_motor import interface as vm
@@ -27,9 +28,11 @@ def create_binding(
         raise ValueError("Tool allowlists are only supported for structured_tool tasks")
     evaluators: dict[str, Callable[..., dict]] = {
         "displacement": evaluate_displacement, "inventory": evaluate_inventory, "health": evaluate_health,
+        "state": evaluate_state,
     }
     validators: dict[str, Callable[..., object]] = {
         "displacement": validate_displacement, "inventory": validate_inventory, "health": validate_health,
+        "state": validate_state,
     }
     if evaluator not in evaluators:
         raise ValueError(f"Unknown Veloren evaluator: {evaluator}")

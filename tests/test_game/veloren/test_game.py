@@ -15,7 +15,7 @@ pytest.importorskip("PIL", reason="Install the veloren extra to run game checks"
 from game.backends.x11.actions import ActionError
 from game.backends.x11.interface import MotorInterface
 from game.base_game import AgentAccessClosed
-from game.veloren.evaluators.endpoints import evaluate_displacement, evaluate_health, evaluate_inventory, inventory
+from game.veloren.evaluators.endpoints import evaluate_displacement, evaluate_health, evaluate_inventory, inventory_counts
 from game.veloren.game import VelorenGame
 from game.veloren.structured_tools.interface import StructuredInterface
 
@@ -80,7 +80,7 @@ def test_native_movement_and_cutoff(track: str, headless: bool, recording: bool,
             else:
                 assert isinstance(public, StructuredInterface)
                 observation = await public.observe()
-                assert observation["profile"] == "veloren-native-fixed-tools-v1"
+                assert observation["profile"] == "veloren-native-fixed-tools-v2"
                 assert (await public.call_tool("TurnTool", {"degrees": 20}))["status"] == "completed"
                 assert (await public.call_tool("JumpTool", {}))["status"] == "completed"
                 assert (await public.call_tool("PickupTool", {}))["status"] == "refused"
@@ -117,8 +117,8 @@ def test_native_movement_and_cutoff(track: str, headless: bool, recording: bool,
             assert abs(last["look"][0] - first["look"][0]) > .01, "View input did not turn the native actor"
             assert evaluate_inventory(before, after, item="common.items.consumable.potion_minor", min_count=1)["success"]
             if track == "structured_tool":
-                assert inventory(first)["common.items.food.cheese"] == 1
-                assert inventory(last).get("common.items.food.cheese", 0) == 0
+                assert inventory_counts(first)["common.items.food.cheese"] == 1
+                assert inventory_counts(last).get("common.items.food.cheese", 0) == 0
             (output / "result.json").write_text(json.dumps({
                 "integration_status": "passed", "score": score,
                 "client_updates_advanced": last["tick"] - first["tick"],

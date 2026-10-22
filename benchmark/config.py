@@ -114,7 +114,7 @@ class ModelConfig:
     name: str
     reasoning_effort: str | None = None
     max_output_tokens: int = 4096
-    max_attempts: int = 1
+    max_attempts: int = 3
     timeout_seconds: float = 120
     base_url: str = "http://127.0.0.1:8001/v1"
     temperature: float = 0
@@ -122,14 +122,10 @@ class ModelConfig:
 
 
 @dataclass(frozen=True)
-class ExperimentConfig:
+class AgentConfig:
     id: str
-    game: str
-    tasks: tuple[TaskConfig, ...]
-    repetitions: int
-    agent: str
+    name: str
     model: ModelConfig
-    source: Source
 
     def resolved(self) -> dict:
         result = asdict(self)
@@ -138,6 +134,21 @@ class ExperimentConfig:
         )
         for name in inactive:
             result["model"].pop(name)
+        return result
+
+
+@dataclass(frozen=True)
+class ExperimentConfig:
+    id: str
+    game: str
+    tasks: tuple[TaskConfig, ...]
+    repetitions: int
+    agents: tuple[AgentConfig, ...]
+    source: Source
+
+    def resolved(self) -> dict:
+        result = asdict(self)
+        result["agents"] = [agent.resolved() for agent in self.agents]
         return result
 
 
@@ -165,13 +176,8 @@ def load_task(path: Path) -> TaskConfig:
     )
 
 
-def load_experiment(path: Path) -> ExperimentConfig:
-    data, source = read(path)
-    required = {"id", "game", "tasks", "repetitions", "agent", "model"}
-    fields(data, required, required, "experiment")
-    agent = mapping(data["agent"], "agent")
-    fields(agent, {"name"}, {"name"}, "agent")
-    model = mapping(data["model"], "model")
+def load_model(value: object) -> ModelConfig:
+    model = mapping(value, "model")
     fields(model, set(ModelConfig.__dataclass_fields__), {"provider", "name"}, "model")
     provider = text(model["provider"], "provider")
     if provider not in ("github_copilot", "openai", "vllm"):
@@ -188,13 +194,31 @@ def load_experiment(path: Path) -> ExperimentConfig:
     thinking = model.get("enable_thinking", False)
     if type(thinking) is not bool:
         raise ConfigError("enable_thinking must be boolean")
-    selected = ModelConfig(
+    return ModelConfig(
         provider, text(model["name"], "model name"), reasoning,
         integer(model.get("max_output_tokens", 4096), "max_output_tokens"),
-        integer(model.get("max_attempts", 1), "max_attempts"),
+        integer(model.get("max_attempts", 3), "max_attempts"),
         positive(model.get("timeout_seconds", 120), "timeout_seconds"),
         text(model.get("base_url", "http://127.0.0.1:8001/v1"), "base_url"), float(temperature), thinking,
     )
+
+
+def load_experiment(path: Path) -> ExperimentConfig:
+    data, source = read(path)
+    required = {"id", "game", "tasks", "repetitions", "agents"}
+    fields(data, required, required, "experiment")
+    if not isinstance(data["agents"], list) or not data["agents"]:
+        raise ConfigError("agents must be a nonempty list")
+    agents = []
+    agent_ids = set()
+    for value in data["agents"]:
+        agent = mapping(value, "agent")
+        fields(agent, {"id", "name", "model"}, {"id", "name", "model"}, "agent")
+        agent_id = identifier(agent["id"], "agent id")
+        if agent_id in agent_ids:
+            raise ConfigError(f"Duplicate agent id: {agent_id}")
+        agent_ids.add(agent_id)
+        agents.append(AgentConfig(agent_id, text(agent["name"], "agent name"), load_model(agent["model"])))
     raw_tasks = data["tasks"]
     if not isinstance(raw_tasks, list) or not raw_tasks:
         raise ConfigError("tasks must be a nonempty list of explicit file references")
@@ -212,5 +236,5 @@ def load_experiment(path: Path) -> ExperimentConfig:
         tasks.append(task)
     return ExperimentConfig(
         identifier(data["id"], "experiment id"), game, tuple(tasks),
-        integer(data["repetitions"], "repetitions"), text(agent["name"], "agent name"), selected, source,
+        integer(data["repetitions"], "repetitions"), tuple(agents), source,
     )

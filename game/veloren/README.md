@@ -17,7 +17,10 @@ The current installer reuses an **already prepared and validated VelorenBench
 installation and its matching native build cache**. It is not a fresh game
 downloader. Obtain/build those using the upstream project's installation workflow
 first. The integration preserves the original repository, installation, assets,
-server, helper and Python environment. No game binary or asset is vendored here.
+server, helper and Python environment. No game binary is vendored here. The
+unmodified native map is bundled separately under
+[`config/veloren/fixtures`](../../config/veloren/fixtures/) with its upstream
+license and provenance; other game assets still come from the installation.
 
 Host requirements are Linux/X11, Xvfb for headless mode, a Vulkan driver usable by
 the renderer, FFmpeg for recording, `patch`, `uv`, and the upstream pinned Rust
@@ -48,7 +51,8 @@ harness and bound native source manifest, **not** whatever happens to be checked
 out. Preserve that original installation and the generated runtime receipt.
 The native source is GPLv3; the patch retains the [native license](patches/LICENSE).
 Harness, assets and all other upstream components retain their own licenses.
-This source-only integration does not grant asset redistribution rights.
+The bundled map retains its upstream GPLv3 terms; this does not grant blanket
+redistribution rights for other game assets.
 
 ## Modes and ownership
 
@@ -57,7 +61,7 @@ from pathlib import Path
 from benchmark.config import load_task
 from game.veloren.game import VelorenGame
 
-task = load_task(Path("config/veloren/tasks/vm/move_2_metres.yaml"))
+task = load_task(Path("config/veloren/tasks/visual_motor/move_2_metres.yaml"))
 game = VelorenGame(
     output_dir=Path("output/my-unique-veloren-episode"),
     fixture=task.fixture,
@@ -79,7 +83,9 @@ finally:
 
 `start()` requires an explicit fixture mapping and creates fresh private server
 userdata, a private authoring helper and an ordinary renderer-owned player.
-`fixture.map_asset` selects a concrete installed map; `world_seed`,
+`fixture.world_path` selects a native map file, resolved relative to the Task
+YAML (or supplied as an absolute path), just like Minecraft's world reference.
+The server uses native `Load(path)`, not installed asset-name lookup. `world_seed`,
 `time_of_day`, `day_length` and `calendar: none` declare the world settings.
 The native map file hash and generated server-settings hash are recorded.
 Missing maps or detected native map/settings fallback fail initialization.
@@ -95,11 +101,75 @@ Equipment is checked exactly against the pinned starter character, not silently
 replaced or treated as an arbitrary editable loadout. The currently admitted
 initial look is `[0, 1, 0]`; other orientations are rejected before launch.
 
-The built-in fixture declares the installed `world.map.veloren_0_18_0_0` map,
+Optional `blocks` add Rock cuboids (`origin`/`size`), with at most 8192 total
+authored solid voxels. `stations` declare `position` and `sprite` (CraftingBench
+or TanningRack); `supplies` declare `position`, native `item` and `amount`.
+Admission checks the helper's intermediate platform start and station approach
+2 m west, as well as player/supply support and clearance. Stations must not
+overlap these standing points or each other.
+`recipe_groups` are learned during setup; `recipes` maps recipe keys to expected
+initial knowledge booleans. Recipe verification requires consistent native
+`total`/`omitted` metadata: an omitted recipe in a truncated book is ambiguous,
+not proof that it is unknown. Explicitly listed recipes remain usable evidence.
+Dropped supplies retain the native 300-game-second expiry;
+they are not replenished during the Episode.
+
+The built-in fixture references the bundled `veloren_0_18_0_0.bin` map,
 seed 130626853, noon, a 30-minute day, no calendar events, a 12x12 Rock platform
 at `[18704, 10800, 401]` and a player at `[18706.5, 10806.5, 402]`.
 Task VM/ST files declare the same world and player conditions.
-These remain small integration tasks, not a long-horizon task distribution.
+This remains a small integration diagnostic. The additional endpoint-compatible
+task catalog, source mapping, intentional redesigns and exclusions are documented
+[below](#task-catalog). New tasks have not yet
+undergone native VM/ST qualification.
+
+## Task catalog
+
+Each mode's experiment includes all 11 tasks below, with **10 repetitions per
+Agent**. The modes share fixtures, goals, budgets and private evaluators. These
+are development configurations, not native-qualified scores. Source revision,
+file hashes and task mapping are in
+[tasks.source.json](../../config/veloren/tasks.source.json).
+
+| Task | Source | Final-state goal | Budget (s) |
+| --- | --- | --- | --- |
+| `move_2_metres` | Existing integration diagnostic | Displacement, alive at end | 180 |
+| `known_food` | C1/C3 merged | Newly obtained mushroom stick retained | 300 |
+| `gather_food` | C2 | Same product, one ingredient initially missing | 300 |
+| `learn_food` | C3U | Recipe learned and product retained | 300 |
+| `food_reserve` | T03 | Product/knowledge plus mushroom, twig and apple reserves | 300 |
+| `craft_equip` | T04, incorporating C4's chain | Rawhide chest equipped, old shirt retained | 600 |
+| `recover_health` | T05 | Health >=80 from 35, at least two of three potions retained | 300 |
+| `wall_detour` | N1 | Settled arrival past a wall | 300 |
+| `staggered_detour` | N2 | Settled arrival past staggered walls | 300 |
+| `elevation_steps` | N3 | Raised destination reached using side steps | 300 |
+| `long_detour` | N4 | Settled arrival 220 m away, past staggered walls | 900 |
+
+Craft/recovery tasks use an explicit elevated 24x18 Rock platform instead of
+source natural-site qualification. Navigation N1-N4 retain the source solid
+geometry and start/goal coordinates, remapped from y-up to native z-up.
+Arrival now uses **one endpoint**, not the source's two-sample sustained
+arrival: horizontal error <=1 m, vertical error <=0.5 m, speed <=0.1 m/s,
+grounded and positive health. Budgets are uncalibrated engineering choices.
+The integration diagnostic and overlapping variants should not be counted as
+independent long-horizon capabilities in an unweighted catalog average.
+
+No endpoint predicate proves crafting, exact pickup provenance, consumption
+attribution or continuous survival. Loose-item expiry is disclosed in prompts.
+VM receives only pixels, static controls and the public task (including fixed
+navigation targets), never a hidden coordinate feed.
+
+Not migrated: B1-B3, X1-X2 and T06-T12 need combat/support/contract attribution
+or ordered history; T01 needs dialogue evidence; T02 mutates topology during
+play. N5 needs natural-route qualification and exact pickup provenance; N6
+needs a distinct displacement/recovery initialization; N7 needs named-town
+map/localization and site evidence absent from the current public profile.
+C1/C3 are merged, and C4 is folded into T04 rather than duplicated.
+
+Before scientific evaluation, qualify native reset/readback, geometry/chunk
+loading, recipe visibility, VM crafting/equipping, supply presence and expiry,
+physical reachability, tool completion and budgets in both modes. Static
+connectivity does not certify a feasible physical trajectory or model success.
 
 **Map files are not complete snapshots.** Native `FileOpts::Load`/`LoadAsset`
 load world-map data; character DB, terrain modifications and RtSim state are
@@ -108,6 +178,10 @@ configuration above, not a claimed full-engine checkpoint. Stable authored
 starting conditions do not imply identical ambient entities, setup ticks,
 session IDs or subsequent simulation trajectories. The prepared runtime and
 assets remain part of the game identity.
+Bundling fixes the input map bytes, not cross-version world-generation behavior.
+The native loader reads the map without saving back to it; mutable server state
+remains in fresh per-Episode userdata. The map's checksum and origin are in
+[`veloren_0_18_0_0.source.json`](../../config/veloren/fixtures/veloren_0_18_0_0.source.json).
 
 VM observations are current XComposite PNG pixels and capture timestamps.
 Actions use the shared bounded atomic XTest keyboard/mouse vocabulary, with
@@ -124,9 +198,9 @@ are not currently exposed. In particular, the default Alt block binding and
 comma cursor toggle are unavailable; inventory (`I`) supplies the ordinary
 cursor-bearing UI. No hidden skill substitutes for these unsupported bindings.
 
-ST's `veloren-native-fixed-tools-v1` projects explicit actor state: session/update
+ST's `veloren-native-fixed-tools-v2` projects explicit actor state: session/update
 identity, position, velocity, grounding, survival/resources/equipment, inventory,
-native nearby entities and known recipes. This is local native sensing, not a
+native nearby entities, known recipes and nearby interactable sprites. This is local native sensing, not a
 visual line-of-sight guarantee. The native observation's global map, terrain
 queries, administrator control state and private fixture/scoring records are not
 forwarded. Coordinates are native x/y horizontal and z up.
@@ -139,6 +213,7 @@ forwarded. Coordinates are native x/y horizontal and z up.
 | `PickupTool` | Nearest in-range item | Does not navigate or choose a route |
 | `UseItemTool` | Observed integer inventory slot | Native item effect, not a scripted reward |
 | `CraftTool` | Known recipe | Amount 1-10; native material/station requirements |
+| `EquipTool` | Observed inventory slot to chest slot | Native equip/swap; no navigation or item creation |
 
 Tools are serialized and native failures remain explicit receipts. Malformed
 requests and communication failures raise errors. There is no generic server
@@ -164,7 +239,16 @@ Minecraft's tick-freeze protocol as if the timing conditions were identical.
 
 - horizontal displacement with positive final health;
 - inventory count and minimum count change for native item identifiers;
-- final health and minimum health change.
+- final health and minimum health change;
+- `state`: simultaneous final inventory bounds/deltas, equipment, learned
+  recipes, minimum health, and a grounded target position with a speed bound.
+
+The `state` evaluator defaults to final health of at least 1 and combines all
+supplied predicates with AND. Position checks use separate horizontal/vertical
+tolerances, not path history. Recipe checks reject ambiguous truncated evidence. These
+checks do not prove crafting/consumption attribution, continuous survival, or
+sustained arrival across multiple observations. The extended fixtures and v2
+tools still require native qualification before a task suite is certified.
 
 Inventory thresholds `min_count` and `min_delta` are independently optional;
 provide at least one nonnegative integer. Health thresholds `min_health` and

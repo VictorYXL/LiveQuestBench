@@ -10,6 +10,9 @@ in a replacement decision loop.
 [`source.json`](source.json) pins MIT-licensed `lmgame-org/GamingAgent` at
 `996d848ae5e3bf68433d663f38ef4da5bdfe5332`.
 
+The upstream project is spelled **GamingAgent**, without a space or underscore;
+the experiment Agent name is therefore `gamingagent`, not `gaming_agent`.
+
 ## Installation
 
 ```bash

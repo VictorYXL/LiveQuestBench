@@ -143,7 +143,7 @@ class Session:
                 raise PermissionError("VM cannot invoke native skills")
             if args.get("action_type") not in (
                 "move_forward", "move_backward", "move_left", "move_right",
-                "turn", "jump", "pickup", "use_item", "craft",
+                "turn", "jump", "pickup", "use_item", "craft", "equip",
             ):
                 raise PermissionError("Native action is not in the fixed public skill set")
             try:
@@ -154,6 +154,7 @@ class Session:
                     ("pickup", "pickup_send_rejected",
                      "local client does not send pickup while dead; not a server refusal"),
                     ("use_item", "invalid_action", "inventory slot is empty or unavailable"),
+                    ("equip", "invalid_action", "inventory slot is empty"),
                 }
                 refusal = error.native_error
                 if (args["action_type"], refusal.get("code"), refusal.get("message")) not in expected:

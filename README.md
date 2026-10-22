@@ -81,12 +81,13 @@ one environment.
 config/
   minecraft/
     fixtures/               Immutable native worlds shared by VM/ST
-    tasks/vm/               Visual-motor task definitions
-    tasks/st/               Structured-tool task definitions
+    tasks/visual_motor/     Visual-motor task definitions
+    tasks/structured_tools/ Structured-tool task definitions
     experiments/            Task/Agent/settings selections
   veloren/
-    tasks/vm/
-    tasks/st/
+    fixtures/               Immutable native map and upstream license
+    tasks/visual_motor/
+    tasks/structured_tools/
     experiments/
 game/
   base_game.py              Minimal administrative game contract
@@ -167,11 +168,14 @@ README.md
 
 ## Running an experiment
 
-The six YAML files under [`config/`](config/) define Minecraft
-`collect_3_logs` and Veloren `move_2_metres`, each with separate VM/ST tasks and
-one shared `gpt-6-astra` experiment per game. Each experiment runs both tasks once,
-as two independently initialized and scored Episodes. Prepare the game runtime
-and provider credentials first using the game/client setup instructions below.
+The four experiments under [`config/`](config/) separate Minecraft/Veloren and
+VM/ST. Each explicitly lists all tasks for its game and mode, with **10
+repetitions per task per Agent configuration**. Minecraft has 11 migrated island
+tasks plus `collect_3_logs`; Veloren has 10 endpoint adaptations plus
+`move_2_metres`. See the [Minecraft README](game/minecraft/README.md) and
+[Veloren README](game/veloren/README.md#task-catalog) for provenance and scope.
+These new tasks are statically checked development configurations, **not
+native-qualified results**. Prepare runtimes and credentials before execution.
 
 Task references accept absolute paths or paths relative to the declaring
 experiment file, with no implicit name lookup. Each task declares `task_type`;
@@ -180,23 +184,46 @@ omitting the list means all supported public ST Agent tools, not administrative
 operations. VM observations remain on demand, without a task-level capture
 interval. Recording cadence is independent.
 
-An experiment is a task execution plan with shared Agent/model settings, not a
-single-mode condition. Results identify tasks by game, task ID and `task_type`;
-VM/ST scores remain separate. Unsupported Agent/task combinations must be
+An experiment is a task execution plan shared by an explicit `agents` list.
+Every entry has a unique `id`, an Agent implementation `name`, and its own
+`model` settings. Results identify the Agent configuration as well as game,
+task ID and `task_type`; VM/ST and different Agent scores remain separate.
+Unsupported Agent/task combinations must be
 rejected before execution, not silently skipped.
+
+```yaml
+agents:
+  - id: tool_calling_astra
+    name: tool_calling
+    model:
+      provider: github_copilot
+      name: gpt-6-astra
+      reasoning_effort: low
+      max_output_tokens: 4096
+      max_attempts: 3
+```
+
+To compare another model or Agent, add another complete entry with a distinct
+ID. Entries run serially, not concurrently. Scheduled Episodes equal
+`len(agents) * len(tasks) * repetitions`; request `max_attempts` does not add
+Episodes. Currently each entry uses one model. Model settings belong to the
+Agent so future role-specific multi-model implementations can extend this
+boundary without a global model or an implicit Agent/model Cartesian product.
+Legacy top-level `agent`/`model` keys are rejected; move them into an entry and
+give it an explicit ID.
 
 From the repository root:
 
 ```bash
 uv sync --locked --extra minecraft --extra veloren
 uv run --locked --extra minecraft --extra veloren python run_benchmark.py \
-  --config config/minecraft/experiments/collect_3_logs.yaml \
-  --output output/runs/minecraft_collect_3_logs \
+  --config config/minecraft/experiments/visual_motor_all.yaml \
+  --output output/runs/minecraft_visual_motor_all \
   --headless --recording
 ```
 
-For Veloren, use `config/veloren/experiments/move_2_metres.yaml` and a separate
-output directory. Remove a task entry to select only one mode in a custom experiment.
+For Veloren, use `config/veloren/experiments/visual_motor_all.yaml` and a separate
+output directory. Select explicit task paths to create a custom experiment.
 Provider credentials and prepared game runtime locations remain external to the
 task configuration. Copilot accepts `COPILOT_GITHUB_TOKEN` or the explicit
 `LIVEQUEST_COPILOT_TOKEN_FILE`; OpenAI uses `OPENAI_API_KEY`. Veloren requires
@@ -212,18 +239,25 @@ settings.
 
 ### Configuration and admission
 
-- Tasks run in explicit list order, with all repetitions of each task in order.
+- Agents run in explicit list order; within each Agent, tasks run in list order,
+  with all repetitions of each task in order.
   Every Episode gets a fresh game session and Agent. There is no task discovery,
   task registry, inheritance, automatic Episode retry, concurrency or resume.
 - YAML duplicate/unknown keys, invalid types, conflicting task identities,
   unsupported tools/evaluators and invalid scorer thresholds are rejected.
   Paths are absolute or relative to the declaring file, including Minecraft
   fixture directories relative to their Task YAML.
-- `agent.name` is `tool_calling`, `deepseek`, `hermes`, `orak`, `smolagents` or
+- `agents[].name` is `tool_calling`, `deepseek_harness`, `hermes_agent`, `orak`, `smolagents` or
   `gamingagent`. Native process profiles currently require a Responses provider
   and explicit `reasoning_effort`; vLLM is supported with `tool_calling`.
-- Model settings: `provider`, `name`, optional `reasoning_effort`,
-  `max_output_tokens` (4096), `max_attempts` (1), `timeout_seconds` (120).
+  Names follow upstream project spelling, lowercased with spaces/hyphens changed
+  to underscores: **GamingAgent** is `gamingagent` (no separator upstream),
+  **Hermes Agent** is `hermes_agent`, and **DeepSeek Harness** is
+  `deepseek_harness`. The former short names `hermes` and `deepseek` are no
+  longer configuration identifiers. Runtime environment variable names stay
+  unchanged.
+- Per-Agent `model` settings: `provider`, `name`, optional `reasoning_effort`,
+  `max_output_tokens` (4096), `max_attempts` (3), `timeout_seconds` (120).
   Only vLLM additionally accepts `base_url`, `temperature`, `enable_thinking`;
   it rejects `reasoning_effort`. Inapplicable settings are not silently dropped.
 - Every Task requires an explicit top-level `fixture` mapping. There is no
@@ -234,18 +268,21 @@ settings.
   absolute or relative to the Task YAML. The save must exist, contain
   `level.dat`, have no saved players and no symlinks. The loader copies it
   into a fresh Episode directory, then installs and verifies the declared player.
-  Both built-in tasks share [`config/minecraft/fixtures/collect_3_logs`](config/minecraft/fixtures/collect_3_logs/).
+  Both integration tasks share [`config/minecraft/fixtures/collect_3_logs`](config/minecraft/fixtures/collect_3_logs/).
   This approximately 2.2 MB template already contains the three logs; no
   runtime `fill` is needed. It is a generated superflat task scene, not the
   upstream island map. Its export provenance and native-file checksums are in
   [`collect_3_logs.source.json`](config/minecraft/fixtures/collect_3_logs.source.json).
-- Veloren fixtures combine explicit `map_asset`, `world_seed`, `time_of_day`,
+- Veloren fixtures combine explicit `world_path`, `world_seed`, `time_of_day`,
   `day_length`, `calendar`, absolute `platform` geometry and `player_state`.
   The game-side [`initialize_fixture`](game/veloren/fixture.py) authors the
   declared platform, establishes position/health/inventory, verifies equipment
   and initial look, and rejects a mismatched native readback.
-  The map is an explicitly named asset in the verified game installation, not
-  a hidden world-generation preset; its actual file hash is recorded.
+  The map is a bundled native file in
+  [`config/veloren/fixtures`](config/veloren/fixtures/), not an installed asset
+  lookup or hidden world-generation preset. Paths resolve relative to the Task
+  YAML or may be absolute; its actual file hash is recorded. The unmodified map
+  retains its upstream GPLv3 license and includes source/checksum provenance.
   Calendar-driven holidays are disabled explicitly with `calendar: none`.
   There is no relative-to-spawn platform placement.
 - Veloren's current loader supports Rock platforms, initial look `[0, 1, 0]`,
@@ -292,11 +329,13 @@ including a previous admission failure. The output includes:
 - `provenance.json` and `launch.json`: repository revision/dirty state, implementation
   hashes, Python/package versions and operational settings. Native game/Agent
   receipts remain alongside their execution evidence.
-- One `<game>--<task-id>--<task_type>--<repetition>` directory per started Episode,
+- One `<agent-id>--<game>--<task-id>--<task_type>--<repetition>` directory per started Episode,
   containing `result.json`, before/after snapshots, `evaluation.json` when valid,
   `trace.jsonl`, deduplicated VM images, native logs and optional game video.
 - `summary.json`: every scheduled Episode, including errors and unstarted cases,
-  plus separate groups for each game/task/mode. No combined VM/ST score is emitted.
+  plus separate groups for each Agent/game/task/mode. Every planned Episode
+  records its Agent ID and resolved model settings. No combined VM/ST or
+  cross-Agent score is emitted.
 
 The private trace retains public observations, messages/provider state, tools
 and model request attempts, but is never supplied wholesale to the Agent.
@@ -631,7 +670,7 @@ explicit skips, not evidence of successful integration. The former `external`
 marker and `LIVEQUEST_EXTERNAL_TEST` flag have been removed along with the
 simulated/native-offline Agent checks.
 
-The twelve-case Minecraft matrix combines `tool_calling`, `deepseek`, `hermes`,
+The twelve-case Minecraft matrix combines `tool_calling`, `deepseek_harness`, `hermes_agent`,
 `orak`, `smolagents` and `gamingagent`
 with VM/ST, using `gpt-6-astra`, reasoning `low`, output limit 4096 and one request
 attempt. Each case has a 180-second wall-clock budget beginning just before
@@ -806,11 +845,21 @@ function output; that mapping can affect interpretation.
 
 - `timeout` bounds a whole attempt, including authentication/body reading, not
   the entire Episode. Wrap the call for a separate overall deadline.
-- `max_attempts=1` by default. Additional attempts retry connection-establishment
-  errors and HTTP 429 with exponential backoff, not known quota/billing limits.
-- Timeouts, interrupted streams, HTTP 5xx, incomplete/malformed responses are
-  not replayed automatically: remote completion/cost may be uncertain.
-  Cancellation propagates but cannot guarantee remote inference/billing stops.
+- `max_attempts=3` means at most three total attempts per model request, with
+  exponential backoff. Retries cover network/timeouts, remote protocol errors,
+  streams ending without a terminal response, incomplete/token-truncated output,
+  JSON decoding failures (including tool arguments), and HTTP 408/429/500/502/503/504,
+  except known quota/billing limits. Set one to disable retries.
+- Following GameAgentVisual's request-resend policy, other model-output failures
+  (empty responses, valid JSON with the wrong shape, invalid tool calls) are not
+  retried. Authentication/configuration failures and cancellation are
+  not retried either. This policy applies to the shared client, not automatically
+  to external Agents' own transports.
+- The world and Episode deadline continue during retries; only the model request
+  is repeated, never an executed game action or an entire Episode. Every attempt
+  is recorded. Remote completion/cost after a timeout or disconnect may be
+  unknown, and retrying may incur duplicate inference/billing. Cancellation
+  propagates but cannot guarantee remote inference/billing stops.
 - Copilot refreshes once on rejected authentication within an attempt, without
   replaying a successful generation.
 - HTTP failures expose sanitized `ClientError`, not arbitrary server text or

@@ -31,7 +31,7 @@ InterfaceT = TypeVar("InterfaceT")
     for track in ("visual_motor", "structured_tool")
 ] + [
     pytest.param(name, "structured_tool", True, id=f"{name}-stop-structured_tool")
-    for name in ("deepseek", "orak", "smolagents", "gamingagent")
+    for name in ("deepseek_harness", "orak", "smolagents", "gamingagent")
 ])
 def test_minecraft_collect_three_logs(
     track: str, agent_name: str, interrupt: bool, headless: bool, recording: bool,
@@ -205,7 +205,7 @@ def test_minecraft_collect_three_logs(
             assert agent.admitted, "Native tool set was not admitted"
             assert not agent.forced_termination, "Native worker required forced termination"
             assert agent._process is not None and agent._process.returncode is not None, "Native worker leaked"
-            if agent_name == "deepseek":
+            if agent_name == "deepseek_harness":
                 assert agent._process.returncode == 0, "DeepSeek worker must exit cleanly, including benchmark stop"
         if recording:
             subprocess.run(

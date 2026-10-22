@@ -1,0 +1,25 @@
+id: veloren_structured_tools_all
+game: veloren
+tasks:
+  - path: ../tasks/structured_tools/move_2_metres.yaml
+  - path: ../tasks/structured_tools/known_food.yaml
+  - path: ../tasks/structured_tools/gather_food.yaml
+  - path: ../tasks/structured_tools/learn_food.yaml
+  - path: ../tasks/structured_tools/food_reserve.yaml
+  - path: ../tasks/structured_tools/craft_equip.yaml
+  - path: ../tasks/structured_tools/recover_health.yaml
+  - path: ../tasks/structured_tools/wall_detour.yaml
+  - path: ../tasks/structured_tools/staggered_detour.yaml
+  - path: ../tasks/structured_tools/elevation_steps.yaml
+  - path: ../tasks/structured_tools/long_detour.yaml
+repetitions: 10
+
+agents:
+  - id: tool_calling_astra
+    name: tool_calling
+    model:
+      provider: github_copilot
+      name: gpt-6-astra
+      reasoning_effort: low
+      max_output_tokens: 4096
+      max_attempts: 3

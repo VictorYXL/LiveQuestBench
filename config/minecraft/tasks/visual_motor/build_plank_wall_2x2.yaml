@@ -1,0 +1,56 @@
+id: island.build_plank_wall_2x2
+game: minecraft
+task_type: visual_motor
+task: 'Build a 2x2 wooden plank wall on a flat patch of ground and leave it standing. Use the clear central
+  flat area: every block of the structure must be inside x=-8..8, z=-8..8, y=72..73 (inclusive). Use oak
+  planks. Leave no extra oak planks placed in this area. Finish with a text answer when you believe the
+  task is complete.'
+time_limit_seconds: 2100
+fixture:
+  world_path: ../../fixtures/island
+  instance: 1.20.4
+  difficulty: normal
+  player_state:
+    position:
+    - 0.5
+    - 72
+    - 0.5
+    dimension: minecraft:overworld
+    yaw: 180
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+    - slot: 0
+      item: minecraft:oak_planks
+      count: 64
+evaluator:
+  name: structure
+  parameters:
+    config:
+      target:
+        structure:
+        - - - oak_planks
+            - oak_planks
+        - - - oak_planks
+            - oak_planks
+      dimension: minecraft:overworld
+      region:
+        min:
+        - -8
+        - 72
+        - -8
+        max:
+        - 8
+        - 73
+        - 8
+      match:
+        rotation_invariant: true
+        require_empty: true
+        require_new_blocks: true
+        min_recall: 1.0
+        min_precision: 1.0
+        min_iou: 1.0

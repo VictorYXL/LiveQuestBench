@@ -1,0 +1,26 @@
+id: minecraft_visual_motor_all
+game: minecraft
+tasks:
+  - path: ../tasks/visual_motor/collect_3_logs.yaml
+  - path: ../tasks/visual_motor/collect_logs.yaml
+  - path: ../tasks/visual_motor/collect_dirt.yaml
+  - path: ../tasks/visual_motor/collect_cobblestone.yaml
+  - path: ../tasks/visual_motor/collect_diamond.yaml
+  - path: ../tasks/visual_motor/craft_wooden_pickaxe.yaml
+  - path: ../tasks/visual_motor/craft_stone_pickaxe.yaml
+  - path: ../tasks/visual_motor/craft_iron_pickaxe.yaml
+  - path: ../tasks/visual_motor/smelt_iron_ingot.yaml
+  - path: ../tasks/visual_motor/build_plank_wall_2x2.yaml
+  - path: ../tasks/visual_motor/build_plank_cube_2x2x2.yaml
+  - path: ../tasks/visual_motor/build_plank_enclosure_5x5x2.yaml
+repetitions: 10
+
+agents:
+  - id: tool_calling_astra
+    name: tool_calling
+    model:
+      provider: github_copilot
+      name: gpt-6-astra
+      reasoning_effort: low
+      max_output_tokens: 4096
+      max_attempts: 3

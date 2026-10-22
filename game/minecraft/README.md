@@ -4,8 +4,128 @@ The production launcher runs the explicit VM/ST examples in
 [`config/minecraft/`](../../config/minecraft/); see the
 [experiment usage and result semantics](../../README.md#running-an-experiment).
 `MinecraftGame` requires an existing `world_path` and explicit `player_state`.
-The shared native world template already contains the task's three logs.
+The small integration fixture already contains the task's three logs; the
+separate resource-island fixture supports the full island progression catalog.
 There is no default/generated world or benchmark-time scene-construction command.
+
+## Migrated island tasks
+
+All eleven tasks from `GameAgentResearch/benchmark/tasks/island/` are migrated to
+**both** `config/minecraft/tasks/visual_motor/` and
+`config/minecraft/tasks/structured_tools/`, retaining these IDs:
+
+| Task ID | Endpoint requirement |
+| --- | --- |
+| `island.collect_logs` | 3 oak logs |
+| `island.collect_dirt` | 3 dirt |
+| `island.collect_cobblestone` | 3 cobblestone |
+| `island.craft_wooden_pickaxe` | 1 wooden pickaxe |
+| `island.craft_stone_pickaxe` | 1 stone pickaxe |
+| `island.smelt_iron_ingot` | 1 iron ingot |
+| `island.craft_iron_pickaxe` | 1 iron pickaxe |
+| `island.collect_diamond` | 1 diamond |
+| `island.build_plank_wall_2x2` | New 2×2 oak-plank wall |
+| `island.build_plank_cube_2x2x2` | New solid 2×2×2 oak-plank cube |
+| `island.build_plank_enclosure_5x5x2` | New 5×5 perimeter, height 2, empty interior |
+
+Each source filename is preserved (`<source task name>.yaml`). Every task has a 2,100-second
+budget and a survival start at `(0.5, 72, 0.5)`, full health/food, no experience,
+and normal difficulty. Inventory tasks start empty; structure tasks receive
+exactly 64 oak planks in slot 0. ST tasks expose the existing game-provided tool
+profile without an allowlist. The separate 180-second `collect_3_logs`
+integration task and its fixture remain unchanged; that small fixture is
+**not** used for island progression.
+
+### Evaluator mapping and deviations
+
+- The eight source `InventoryEvaluator` tasks use the existing native inventory
+  evaluator with the original minimum endpoint counts. Craft/smelt verbs do not
+  imply recipe-event or causal verification; the scorer reads saved inventory.
+- The three `StructureEvaluator` blueprints are preserved in `[y][z][x]` order.
+  The native scorer compares saved before/after worlds, requires newly placed
+  oak planks, allows quarter-turn rotations, and requires exact recall,
+  precision and IoU plus empty enclosure interiors.
+- Unlike the source's implicit search scope, construction is explicitly bounded
+  to the clear central area: **x/z −8 through 8, y 72 through 73**, inclusive.
+  This restriction and the prohibition on extra placed oak planks in that area
+  appear in each public construction prompt. The 578-cell scoring region fits
+  within the generator's flat central square.
+- The source single worker becomes the single benchmark agent. Source
+  five-second warmup/settle settings are not extra agent time; the benchmark
+  owns the ready/before/after lifecycle. No source task is excluded.
+
+### Immutable native resource-island fixture
+
+[`config/minecraft/fixtures/island/`](../../config/minecraft/fixtures/island/)
+is a player-free native snapshot, not a completed gameplay world or runtime
+generation recipe. Each episode copies it before writing player state. Do not
+run Minecraft directly against the fixture or edit it in place.
+
+Its source was
+`GameAgentResearch/output/temp/island_native_validation_v2/world`, alongside
+`island_manifest.json`, `island_checkpoints.json` and the compiled generation
+datapack. That validation recorded zero bots/models and had no player files.
+Migration did **not** rely on that claim alone: all **658 full native chunks /
+64,684,032 block cells** were compared with the flat ocean base plus every
+checksum-verified `fill`/`setblock` command from the recorded generator pack.
+There were **zero block-name mismatches** and no block entities. All 316
+resource-generation chunks were present.
+
+The export contains 651 oak logs (1,822 logs across all species), 91,416 dirt,
+19,134,109 stone, 421,913 coal ore, 283,758 iron ore and 91,530 diamond ore.
+Ore and tree-log totals match the generation manifest. Native terrain
+palettes/properties, lighting, heightmaps and biomes are preserved. Verification
+compares block names, not leaf-distance properties.
+
+The export omits incomplete/protochunks, entities, players, history, datapacks,
+command storage/scoreboards, POI, extra-dimension saves and locks. Chunk
+timestamps/tick queues and world time are reset. Frozen noon, clear weather,
+disabled mob spawning/fire/random ticks and the 768-block world border are
+retained. Unsaved chunks use the original vanilla flat-ocean generator (bedrock
+at −64, stone through 54, sand through 56, water through 63), not a missing
+island bootstrap datapack.
+
+### Provenance and offline reproduction
+
+[`island.source.json`](../../config/minecraft/fixtures/island.source.json)
+records per-file fixture hashes, source region/level/task hashes, the complete
+original generation manifest, compiled-pack/checkpoint digests, validation
+coverage and material counts. The aggregate fixture SHA-256 is:
+
+```text
+048b6c7e39ee4de64dced31ecdf0ee89335c7c0297ec2616a001ea9deb5bb9bb
+```
+
+This hashes the sorted, compact JSON mapping of relative fixture paths to
+SHA-256 values, followed by a newline. The source manifest file SHA-256 is
+`d6618c65db10cd21a637ee1755004e3b4d2436b0ae21a608026cdd9d0b7d3f1a`.
+The generator changed since generation: the source manifest records
+`c22aa93a430cebdfa12f5ed81a3f1ba8c2bda3fda7583ecf533c3a7d51f317d2`,
+while migration observed
+`a552181ae67843dae82b543dadf467dcf1ee5fb7be4997be5509ee4857cff553`.
+Both are recorded without claiming identity; pristine verification uses the
+manifest-verified compiled commands, not the later source file.
+
+To reproduce the bounded export offline into a **new** directory:
+
+```bash
+.venv/bin/python game/minecraft/fixtures/export_island.py \
+  /path/to/GameAgentResearch output/island-reexport
+```
+
+The exporter needs the Minecraft Python dependencies, refuses an existing
+destination, and rejects missing resource chunks, changed generation commands,
+unexpected blocks or non-pristine terrain. It never starts a game or model.
+
+### Migration qualification limits
+
+Migration checks native NBT/Anvil integrity, all fixture hashes, terrain/resource
+coverage, the clear scoring area and offline admission of both task catalogs.
+It reuses the existing inventory and structure scorers without modifying their
+runtime behavior. **No server/client, model, gameplay acceptance or large test
+suite was run for this migration.** Resource-valid tasks do not establish that
+an agent can finish within 2,100 seconds; native reset/load and end-to-end
+success still require a separately authorized gameplay run.
 
 ## Public instructions and developer documentation
 

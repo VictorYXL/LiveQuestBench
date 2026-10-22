@@ -16,7 +16,7 @@ def minecraft_world_path() -> Path:
 
 @pytest.fixture
 def veloren_fixture() -> dict:
-    return load_task(Path(__file__).resolve().parents[1] / "config/veloren/tasks/st/move_2_metres.yaml").fixture
+    return load_task(Path(__file__).resolve().parents[1] / "config/veloren/tasks/structured_tools/move_2_metres.yaml").fixture
 
 
 def pytest_addoption(parser: pytest.Parser) -> None:

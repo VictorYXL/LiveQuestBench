@@ -1,0 +1,25 @@
+id: veloren_visual_motor_all
+game: veloren
+tasks:
+  - path: ../tasks/visual_motor/move_2_metres.yaml
+  - path: ../tasks/visual_motor/known_food.yaml
+  - path: ../tasks/visual_motor/gather_food.yaml
+  - path: ../tasks/visual_motor/learn_food.yaml
+  - path: ../tasks/visual_motor/food_reserve.yaml
+  - path: ../tasks/visual_motor/craft_equip.yaml
+  - path: ../tasks/visual_motor/recover_health.yaml
+  - path: ../tasks/visual_motor/wall_detour.yaml
+  - path: ../tasks/visual_motor/staggered_detour.yaml
+  - path: ../tasks/visual_motor/elevation_steps.yaml
+  - path: ../tasks/visual_motor/long_detour.yaml
+repetitions: 10
+
+agents:
+  - id: tool_calling_astra
+    name: tool_calling
+    model:
+      provider: github_copilot
+      name: gpt-6-astra
+      reasoning_effort: low
+      max_output_tokens: 4096
+      max_attempts: 3

@@ -135,6 +135,8 @@ def parse_response(payload: dict[str, object], provider: str, model: str) -> LLM
     usage = obj(raw_usage) if raw_usage is not None else None
     try:
         return _parse_output(payload, provider, model, usage)
+    except json.JSONDecodeError as exc:
+        raise ClientError("invalid_json_response", usage=usage) from exc
     except (ValueError, TypeError) as exc:
         raise ClientError("invalid_response", usage=usage) from exc
 
@@ -191,7 +193,7 @@ class ResponsesClient(BaseLLMClient):
     def __init__(
         self, model: str, *, max_output_tokens: int = 4096,
         reasoning_effort: str | None = None, timeout: float = 120,
-        max_attempts: int = 1, retry_backoff: float = 1,
+        max_attempts: int = 3, retry_backoff: float = 1,
         on_request: Callable[[RequestEvent], None] | None = None,
         transport: httpx.AsyncBaseTransport | None = None,
     ) -> None:

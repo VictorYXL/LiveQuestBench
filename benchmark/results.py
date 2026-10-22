@@ -103,15 +103,15 @@ def provenance() -> dict:
 
 
 def summarize(episodes: list[dict]) -> dict:
-    groups: dict[tuple[str, str, str], list[dict]] = {}
+    groups: dict[tuple[str, str, str, str], list[dict]] = {}
     for row in episodes:
-        groups.setdefault((row["game"], row["task_id"], row["task_type"]), []).append(row)
+        groups.setdefault((row["agent_id"], row["game"], row["task_id"], row["task_type"]), []).append(row)
     summaries = []
-    for (game, task, mode), rows in groups.items():
+    for (agent_id, game, task, mode), rows in groups.items():
         valid = [row for row in rows if row["status"] == "completed" and row.get("measurement") == "valid"]
         successes = sum(row.get("task_outcome") == "success" for row in valid)
         summaries.append({
-            "game": game, "task_id": task, "task_type": mode, "scheduled": len(rows),
+            "agent_id": agent_id, "game": game, "task_id": task, "task_type": mode, "scheduled": len(rows),
             "statuses": dict(Counter(row["status"] for row in rows)),
             "valid_completed": len(valid), "successes": successes,
             "success_rate_valid_completed": successes / len(valid) if valid else None,

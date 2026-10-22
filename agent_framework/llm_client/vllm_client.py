@@ -20,7 +20,7 @@ class VLLMClient(BaseLLMClient):
         self, model: str, *, base_url: str = "http://127.0.0.1:8001/v1",
         max_output_tokens: int = 1024, temperature: float = 0,
         enable_thinking: bool = False, timeout: float = 120,
-        max_attempts: int = 1, retry_backoff: float = 1,
+        max_attempts: int = 3, retry_backoff: float = 1,
         on_request: Callable[[RequestEvent], None] | None = None,
     ) -> None:
         super().__init__(timeout=timeout, max_attempts=max_attempts,
@@ -177,7 +177,7 @@ class VLLMClient(BaseLLMClient):
             choice = obj(choices[0])
             finish = choice.get("finish_reason")
             if finish not in ("stop", "tool_calls", "content_filter"):
-                raise ClientError("incomplete_response", usage=usage)
+                raise ClientError("incomplete_response" if finish == "length" else "invalid_finish_reason", usage=usage)
             message = obj(choice.get("message"))
             if message.get("role") != "assistant":
                 raise ValueError("Expected an assistant response")
@@ -192,6 +192,8 @@ class VLLMClient(BaseLLMClient):
                 provider_data={"provider": "vllm", "model": self.model, "base_url": self.base_url,
                                "chat_message": copy.deepcopy(message)},
             )
+        except json.JSONDecodeError as exc:
+            raise ClientError("invalid_json_response", usage=usage) from exc
         except (ValueError, TypeError) as exc:
             raise ClientError("invalid_response", usage=usage) from exc
 

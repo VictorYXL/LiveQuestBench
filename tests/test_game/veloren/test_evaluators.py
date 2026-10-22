@@ -2,11 +2,60 @@
 
 import hashlib
 import json
+from copy import deepcopy
 from pathlib import Path
 
 import pytest
 
 from game.veloren.evaluators.endpoints import evaluate_displacement, evaluate_health, evaluate_inventory
+from game.veloren.evaluators.endpoints import known_recipes, state_checks, validate_state
+
+
+@pytest.mark.parametrize("book", [
+    {"total": 2, "omitted": 1, "items": [{"recipe": "a"}]},
+    {"total": 2, "omitted": 0, "items": [{"recipe": "a"}]},
+    {"total": 2, "omitted": 0, "items": [{"recipe": "a"}, {"recipe": "a"}]},
+    {"total": True, "omitted": 0, "items": [{"recipe": "a"}]},
+    {"items": [{"recipe": "a"}]},
+])
+def test_recipe_checks_reject_incomplete_or_inconsistent_evidence(book):
+    with pytest.raises(ValueError, match="recipe"):
+        known_recipes({"known_recipes": book})
+
+
+def test_state_checks_require_simultaneous_endpoint_conditions():
+    row = {
+        "survival": {"health": {"current": 50}},
+        "inventory": {"items": [{"item": {"id": {"Simple": "apple"}, "amount": 2}}],
+                      "equipment": {"chest": {"id": {"Simple": "shirt"}}}},
+        "known_recipes": {"total": 1, "omitted": 0, "items": [{"recipe": "a"}]},
+        "position": [3, 4, 10], "velocity": [0, 0, 0], "on_ground": True,
+    }
+    requirements = {
+        "inventory": [{"item": "apple", "min_count": 2, "max_count": 2, "min_delta": 0}],
+        "equipment": {"chest": "shirt"}, "recipes": ["a"], "min_health": 50,
+        "position": {"target": [0, 0, 10], "horizontal_tolerance": 5,
+                     "vertical_tolerance": 0, "max_speed": 0},
+    }
+    validate_state(**requirements)
+    assert known_recipes(row) == {"a"}  # Native known-recipe rows do not carry character_known.
+    assert state_checks(row, row, **requirements)["success"]
+    for key, value in (
+        ("survival", {"health": {"current": 49}}),
+        ("inventory", {**row["inventory"], "equipment": {"chest": None}}),
+        ("known_recipes", {"total": 0, "omitted": 0, "items": []}),
+        ("position", [3, 4, 10.01]), ("velocity", [.01, 0, 0]), ("on_ground", False),
+    ):
+        final = deepcopy(row)
+        final[key] = value
+        assert not state_checks(row, final, **requirements)["success"]
+
+
+def test_truncated_recipe_book_can_only_prove_explicit_entries():
+    row = {"known_recipes": {"total": 2, "omitted": 1, "items": [{"recipe": "a"}]}}
+    assert known_recipes(row, required=["a"]) == {"a"}
+    with pytest.raises(ValueError, match="Truncated"):
+        known_recipes(row, required=["b"])
 
 
 def test_endpoint_thresholds_and_integrity(tmp_path: Path) -> None:

@@ -12,7 +12,7 @@ InterfaceT = TypeVar("InterfaceT")
 
 
 class HermesAgent(ProcessAgent[InterfaceT]):
-    name = "hermes"
+    name = "hermes_agent"
     directory = Path(__file__).parent
     source = load_source(directory)
     required_runtime = ".venv/bin/python"

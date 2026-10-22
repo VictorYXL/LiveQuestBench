@@ -49,7 +49,9 @@ agent = HermesAgent(
 ```
 
 The caller supplies a consistently configured client, restricted bindings and
-`AgentContext`. The experiment ID remains `hermes`.
+`AgentContext`. The experiment Agent name is `hermes_agent`, matching upstream
+Hermes Agent with a lowercase underscore-separated identifier. The Python
+package path and `LIVEQUEST_HERMES_ROOT` environment variable are unchanged.
 
 Prepare Minecraft and model credentials using the
 [shared live-test instructions](../../../README.md#agent-validation), then run:

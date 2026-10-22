@@ -12,7 +12,7 @@ InterfaceT = TypeVar("InterfaceT")
 
 
 class DeepSeekHarnessAgent(ProcessAgent[InterfaceT]):
-    name = "deepseek"
+    name = "deepseek_harness"
     directory = Path(__file__).parent
     source = load_source(directory)
     required_runtime = "packages/core/agent-loop/lib/index.js"

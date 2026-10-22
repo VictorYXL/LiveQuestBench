@@ -24,12 +24,16 @@ def test_cli_lifecycle(case, headless, recording):
         pytest.skip("Set LIVEQUEST_BENCHMARK_TEST=1 and LIVEQUEST_LIVE_COPILOT=1")
     root = ROOT / "output/test" / f"benchmark-{case}-{uuid4().hex}"
     root.mkdir(parents=True)
-    task = yaml.safe_load((ROOT / "config/veloren/tasks/st/move_2_metres.yaml").read_text())
+    task = yaml.safe_load((ROOT / "config/veloren/tasks/structured_tools/move_2_metres.yaml").read_text())
+    task["fixture"]["world_path"] = str(
+        (ROOT / "config/veloren/tasks/structured_tools" / task["fixture"]["world_path"]).resolve()
+    )
     task["tools"] = ["MoveTool"]
-    experiment = yaml.safe_load((ROOT / "config/veloren/experiments/move_2_metres.yaml").read_text())
+    experiment = yaml.safe_load((ROOT / "config/veloren/experiments/visual_motor_all.yaml").read_text())
     experiment["tasks"] = [{"path": "task.yaml"}]
+    experiment["repetitions"] = 1
     if case == "native":
-        experiment["agent"]["name"] = "deepseek"
+        experiment["agents"][0]["name"] = "deepseek_harness"
     else:
         task["task"] = (
             "Keep taking short movement bursts until the benchmark stops you. "

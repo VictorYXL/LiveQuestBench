@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import asyncio
+import json
 import logging
 import math
 import time
@@ -67,12 +68,12 @@ class RequestEvent:
 class BaseLLMClient(ABC):
     """Model calls only; Agents own messages, tools and memory.
 
-    External Agents are not required to use this client. Timeouts, interrupted
-    streams and incomplete generations are never automatically replayed.
+    External Agents are not required to use this client. Transport retries may
+    duplicate remote inference/cost, but never replay executed game actions.
     """
 
     def __init__(
-        self, *, timeout: float = 120, max_attempts: int = 1,
+        self, *, timeout: float = 120, max_attempts: int = 3,
         retry_backoff: float = 1,
         on_request: Callable[[RequestEvent], None] | None = None,
     ) -> None:
@@ -94,7 +95,7 @@ class BaseLLMClient(ABC):
         tools: Sequence[dict[str, object]] | None = None,
         tool_choice: str | None = None,
     ) -> LLMResponse:
-        """Return a complete response; retry only connection failures or rate limits."""
+        """Retry transport failures, incomplete generations and invalid JSON only."""
         for attempt in range(1, self.max_attempts + 1):
             started = time.monotonic()
             response = None
@@ -107,9 +108,16 @@ class BaseLLMClient(ABC):
                 return response
             except BaseException as exc:
                 error = exc
-                retryable = isinstance(exc, httpx.ConnectError) or (
-                    isinstance(exc, ClientError) and exc.status == 429
+                retryable = isinstance(exc, (
+                    TimeoutError, httpx.TimeoutException, httpx.NetworkError,
+                    httpx.RemoteProtocolError, json.JSONDecodeError,
+                )) or (
+                    isinstance(exc, ClientError)
                     and exc.code not in {"insufficient_quota", "billing_hard_limit_reached"}
+                    and (exc.status in {408, 429, 500, 502, 503, 504}
+                         or exc.code in {
+                             "stream_ended_without_response", "incomplete_response", "invalid_json_response",
+                         })
                 )
                 if not retryable or attempt == self.max_attempts:
                     raise

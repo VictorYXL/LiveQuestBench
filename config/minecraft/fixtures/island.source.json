@@ -1,0 +1,264 @@
+{
+  "source": "/home/msra/GameAgent/GameAgentResearch/output/temp/island_native_validation_v2",
+  "source_world_version": "minecraft-island-v2",
+  "source_level_sha256": "7118d58cbdbd196411bafc8ba6187640a094b9339d794c173275d4b68838e0e3",
+  "source_manifest_sha256": "d6618c65db10cd21a637ee1755004e3b4d2436b0ae21a608026cdd9d0b7d3f1a",
+  "source_generator_sha256_at_generation": "c22aa93a430cebdfa12f5ed81a3f1ba8c2bda3fda7583ecf533c3a7d51f317d2",
+  "source_generator_sha256_at_migration": "a552181ae67843dae82b543dadf467dcf1ee5fb7be4997be5509ee4857cff553",
+  "source_pack_sha256": "180310a966cecb1fee91d91f7654ba5dee33d42039752574b47f9e7bfbf95e39",
+  "source_checkpoints_sha256": "3c9d4089e1814b6abb9424fdb5cebe9c826954fcf76bdcb5c75984a4973c47b5",
+  "source_region_sha256": {
+    "r.-1.-1.mca": "40f3508eeaaa26b38a4a98477df6ffd17a6c7c9bf834603e1c9cb49eeea2d176",
+    "r.-1.-2.mca": "db652f2a3758008e0a00e4336e355ede666fa59f57d0644dda3b45681574175b",
+    "r.-1.0.mca": "00a328f43d06ee995898072b36696fb089fb211aaa18d69af05947303a9adf62",
+    "r.-2.-1.mca": "a0ab731e66a3b79542454eade3f08215cbf20471eb547753622b1609237ebffd",
+    "r.-2.-2.mca": "55dc5df3bda7ab50afc38c9835a026df3a476b42467fbe818615b7a0051ff371",
+    "r.0.-1.mca": "4c3629df712a7820bb69109e5c44440c624fb7eb60f87bf7611ddcd52646dd19",
+    "r.0.0.mca": "6c486f5a8f0d4713aacfca023df34bcfe11f53337d553c01874045852db35c0e",
+    "r.0.1.mca": "5d1e6dadc126f99199646217baf448399c4004ab601682e2abb3bab558523daf",
+    "r.1.0.mca": "69a9fff06bf689bafe5e6886c3de7c3456dc56e31c4d53e0ace42073055c09b1",
+    "r.1.1.mca": "0f01d02963119329c4d6b7a781953d4f48911b7b4691e85e1739b3693d061a7f"
+  },
+  "source_task_sha256": {
+    "build_plank_cube_2x2x2.yaml": "4ef62bbde63f9cbbe81e3ee336bb93cfee2a572bbba8b83dba0a7da80186eeb5",
+    "build_plank_enclosure_5x5x2.yaml": "a54c48caf5b2e60878d14dec8a1f6e61e2a96f02be25115d0271e80ef7c9ff82",
+    "build_plank_wall_2x2.yaml": "3e5e49eb6dd840a231aecd56cf02e457a010fc2e640209342920ef6dc6ba33be",
+    "collect_cobblestone.yaml": "f35af395a91afe83353d51dca24431dfcd2dc3d2488207be584845e9622672fd",
+    "collect_diamond.yaml": "3894531e8ab77fd54510df0f35f3429411c4180b5d9d8ae70291c5bff0751500",
+    "collect_dirt.yaml": "d3a282bb7eecdb90ebcc1b84581fa9aee76277962cc54cd3570e33110b2b1a62",
+    "collect_logs.yaml": "a1cbc8aa86ea61c4ab0c49689ee55d2818c38e96694419f3659fd6f321254732",
+    "craft_iron_pickaxe.yaml": "e69a69d68e0109f495647bb5355e7cf57e17e5a57b91fe7484c5d714178eb500",
+    "craft_stone_pickaxe.yaml": "1b393cacc4b6786e160c5dce1e626a3aa4c47e19c5af9a4d04b827891ce483bd",
+    "craft_wooden_pickaxe.yaml": "881a90f622867b419b74c9433e71c86d7dd1de02df5c1be258986625cfa8eafe",
+    "smelt_iron_ingot.yaml": "f014730bd9df81c01e4b9a2de8de9f5ada8c5d8f8f4fd1b8663cb7a8a109e620"
+  },
+  "source_manifest": {
+    "backend": "minecraft",
+    "bottom_bedrock_y": -64,
+    "checkpoints_sha256": "3c9d4089e1814b6abb9424fdb5cebe9c826954fcf76bdcb5c75984a4973c47b5",
+    "completion_marker": "ISLAND_READY_98238aee87a78fff",
+    "config": {
+      "beach_height": 3,
+      "bottom_y": -64,
+      "center_flat_blend_width": 6,
+      "center_flat_half_size": 8,
+      "center_x": 0,
+      "center_z": 0,
+      "coast_width": 30,
+      "commands_per_tick": 1024,
+      "mapgen_limit": 384,
+      "minecraft_version": "1.20.4",
+      "noise_scale": 15.0,
+      "ocean_floor_y_legacy": -8,
+      "peak_height": 5,
+      "radius": 120,
+      "schema": 1,
+      "sea_level_legacy": 1,
+      "seed": 12345,
+      "tree_density": 120,
+      "vertical_offset": 62,
+      "world_version": "minecraft-island-v2"
+    },
+    "config_sha256": "98238aee87a78fff392c69d5ceb93dfe8324e214c29217d0d985fca6b4a1519f",
+    "counts": {
+      "coal_ore": 421913,
+      "diamond_ore": 91530,
+      "dry_land_columns": 35393,
+      "gold_ore": 157710,
+      "iron_ore": 283758,
+      "island_columns": 70681,
+      "lapis_ore": 49912,
+      "leaf_blocks": 18284,
+      "log_blocks": 1822,
+      "redstone_ore": 83857,
+      "submerged_columns": 35288,
+      "tree_acacia": 24,
+      "tree_balloon_oak": 3,
+      "tree_birch": 56,
+      "tree_cherry": 7,
+      "tree_jungle": 20,
+      "tree_oak": 111,
+      "tree_spruce": 35,
+      "trees": 256
+    },
+    "generation_chunks": 316,
+    "generator_sha256": "c22aa93a430cebdfa12f5ed81a3f1ba8c2bda3fda7583ecf533c3a7d51f317d2",
+    "legacy_sha256": {
+      "custom_map.json": "77b4f4d868cf0ebccf98cf34d9640759584293b5b8d4cefeab5943b9769e18af",
+      "map_meta.txt": "b1bdd271b844ce439cfff4572768b9fb232a7ea8909bb41c89698008f10d3500",
+      "world.mt": "d2704e5002397c31267a4cc188bbe750598067d2d1c236bf135e96b07e0b4358",
+      "worldmods/custom_map/generators/island.lua": "fd05f76d22aae92bee6a2d869d8505820299d6fb5dd1d06a62bf068d8e7f2037",
+      "worldmods/custom_map/init.lua": "c15c9e0149ece33c0f57647b8b8a5806ce5986612a01c24762876fbabc73b63c",
+      "worldmods/custom_map/mod.conf": "a29e704d9afacf210d551be2cee26b313f56b4cba3182ecdb8f60350b74c4b58"
+    },
+    "max_function_lines": 1025,
+    "mutation_commands": 350943,
+    "observation_checks": [
+      {
+        "block": "grass_block",
+        "position": [
+          0,
+          71,
+          0
+        ]
+      },
+      {
+        "block": "dirt",
+        "position": [
+          0,
+          70,
+          0
+        ]
+      },
+      {
+        "block": "air",
+        "position": [
+          0,
+          72,
+          0
+        ]
+      },
+      {
+        "block": "air",
+        "position": [
+          0,
+          73,
+          0
+        ]
+      }
+    ],
+    "ocean_sand_top_y": 56,
+    "ocean_stone_top_y": 54,
+    "pack_sha256": "180310a966cecb1fee91d91f7654ba5dee33d42039752574b47f9e7bfbf95e39",
+    "playable_bounds": {
+      "max_xz_exclusive": 384,
+      "min_xz": -384
+    },
+    "resource_samples_admin_only": {
+      "coal_ore": {
+        "block": "coal_ore",
+        "depth": 67,
+        "position": [
+          -34,
+          -11,
+          -146
+        ]
+      },
+      "diamond_ore": {
+        "block": "diamond_ore",
+        "depth": 116,
+        "position": [
+          -1,
+          -60,
+          -145
+        ]
+      },
+      "gold_ore": {
+        "block": "gold_ore",
+        "depth": 34,
+        "position": [
+          -34,
+          22,
+          -146
+        ]
+      },
+      "iron_ore": {
+        "block": "iron_ore",
+        "depth": 90,
+        "position": [
+          -33,
+          -34,
+          -146
+        ]
+      },
+      "lapis_ore": {
+        "block": "lapis_ore",
+        "depth": 35,
+        "position": [
+          -34,
+          21,
+          -146
+        ]
+      },
+      "redstone_ore": {
+        "block": "redstone_ore",
+        "depth": 116,
+        "position": [
+          -1,
+          -60,
+          -146
+        ]
+      }
+    },
+    "sea_y": 63,
+    "seed": 12345,
+    "spawn": [
+      0.5,
+      72,
+      0.5
+    ],
+    "tree_sample_admin_only": {
+      "base": [
+        -9,
+        72,
+        0
+      ],
+      "species": "spruce"
+    },
+    "version": "1.20.4",
+    "world_version": "minecraft-island-v2"
+  },
+  "validation": {
+    "method": "Every full chunk block name equals the flat ocean base plus all checksum-verified generator fill/setblock commands.",
+    "full_chunks": 658,
+    "checked_blocks": 64684032,
+    "generated_chunks": 316,
+    "mismatched_blocks": 0,
+    "source_chunk_statuses": {
+      "minecraft:structure_starts": 2257,
+      "minecraft:biomes": 220,
+      "minecraft:carvers": 196,
+      "minecraft:initialize_light": 172,
+      "minecraft:full": 658,
+      "minecraft:spawn": 1
+    },
+    "block_counts": {
+      "acacia_leaves": 2324,
+      "acacia_log": 250,
+      "air": 42959029,
+      "bedrock": 168448,
+      "birch_leaves": 2981,
+      "birch_log": 363,
+      "cherry_leaves": 705,
+      "cherry_log": 72,
+      "coal_ore": 421913,
+      "diamond_ore": 91530,
+      "dirt": 91416,
+      "gold_ore": 157710,
+      "grass_block": 30472,
+      "iron_ore": 283758,
+      "jungle_leaves": 1093,
+      "jungle_log": 192,
+      "lapis_ore": 49912,
+      "oak_leaves": 6515,
+      "oak_log": 651,
+      "redstone_ore": 83857,
+      "sand": 356370,
+      "spruce_leaves": 4666,
+      "spruce_log": 294,
+      "stone": 19134109,
+      "water": 835402
+    },
+    "game_started": false,
+    "model_called": false
+  },
+  "export": "Full native chunks only; preserve palettes/properties, heights, biomes and light. Reset chunk times/ticks and world time. Omit protochunks, entities, players, history, dimensions, POI, data/scoreboards, locks and generator datapack. Vanilla flat ocean fills unsaved chunks.",
+  "sha256": {
+    "level.dat": "5e9e5889a2f51717c1d925cce4a1fd03f9b7d5dd24663ec1f11ce67d100c2bbc",
+    "region/r.-1.-1.mca": "44627559533186034fe0a754436816b875e25549af1bb2d0a05258669e76c100",
+    "region/r.-1.0.mca": "877ac9a734286c06655b906c922756f9276811181ca4a2502488d1e07e3e15ad",
+    "region/r.0.-1.mca": "65c904965ca622ff77403db78593a7ddd460145ca5376087b85ebcd3f0d415fe",
+    "region/r.0.0.mca": "da083a70a480df55a1000012e58c427bc874738787bc8ed1bcb0af68fd534040"
+  },
+  "fixture_sha256": "048b6c7e39ee4de64dced31ecdf0ee89335c7c0297ec2616a001ea9deb5bb9bb"
+}

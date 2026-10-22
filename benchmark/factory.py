@@ -16,12 +16,12 @@ from agent_framework.llm_client.github_copilot_client import GitHubCopilotClient
 from agent_framework.llm_client.openai_client import OpenAIClient
 from agent_framework.llm_client.vllm_client import VLLMClient
 from agent_framework.utils.tools import Observation, Tool
-from benchmark.config import ConfigError, ExperimentConfig, ModelConfig, TaskConfig
+from benchmark.config import AgentConfig, ConfigError, ExperimentConfig, ModelConfig, TaskConfig
 from game.bindings import Controls, GameBinding
 
 
 NATIVE_AGENTS = {
-    "deepseek": DeepSeekHarnessAgent, "hermes": HermesAgent, "orak": OrakAgent,
+    "deepseek_harness": DeepSeekHarnessAgent, "hermes_agent": HermesAgent, "orak": OrakAgent,
     "smolagents": SmolagentsAgent, "gamingagent": GamingAgent,
 }
 
@@ -41,14 +41,15 @@ def make_game(task: TaskConfig, output: Path, *, headless: bool, recording: bool
 
 
 def validate_experiment(experiment: ExperimentConfig) -> None:
-    if experiment.agent not in ("tool_calling", *NATIVE_AGENTS):
-        raise ConfigError(f"Unknown Agent: {experiment.agent}")
-    if experiment.agent in NATIVE_AGENTS and (
-        experiment.model.provider == "vllm" or experiment.model.reasoning_effort is None
-    ):
-        raise ConfigError("Native process profiles currently require a Responses provider and explicit reasoning_effort")
-    if experiment.agent in NATIVE_AGENTS:
-        NATIVE_AGENTS[experiment.agent].source_root()
+    for agent in experiment.agents:
+        if agent.name not in ("tool_calling", *NATIVE_AGENTS):
+            raise ConfigError(f"Unknown Agent: {agent.name}")
+        if agent.name in NATIVE_AGENTS and (
+            agent.model.provider == "vllm" or agent.model.reasoning_effort is None
+        ):
+            raise ConfigError("Native process profiles currently require a Responses provider and explicit reasoning_effort")
+        if agent.name in NATIVE_AGENTS:
+            NATIVE_AGENTS[agent.name].source_root()
     for task in experiment.tasks:
         make_game(task, Path("unused-preflight"), headless=True, recording=False, recording_fps=10)
 
@@ -80,14 +81,14 @@ async def observation(controls: Controls) -> Observation:
 
 
 def make_agent(
-    experiment: ExperimentConfig, client: BaseLLMClient, tools: Sequence[Tool[Controls]],
+    config: AgentConfig, client: BaseLLMClient, tools: Sequence[Tool[Controls]],
     output: Path, on_message: Callable[[Message], None],
 ) -> BaseAgent[Controls]:
-    if experiment.agent == "tool_calling":
+    if config.name == "tool_calling":
         return ToolCallingAgent(client, tools=tools, observe=observation, on_message=on_message)
-    assert experiment.model.reasoning_effort is not None
-    return NATIVE_AGENTS[experiment.agent](
+    assert config.model.reasoning_effort is not None
+    return NATIVE_AGENTS[config.name](
         client, output_dir=output, tools=tools, observe=observation, on_message=on_message,
-        model=experiment.model.name, reasoning_effort=experiment.model.reasoning_effort,
-        max_output_tokens=experiment.model.max_output_tokens,
+        model=config.model.name, reasoning_effort=config.model.reasoning_effort,
+        max_output_tokens=config.model.max_output_tokens,
     )

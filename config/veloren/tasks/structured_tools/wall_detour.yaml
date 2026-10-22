@@ -1,0 +1,63 @@
+# Endpoint adaptation of VelorenBench N1; see game/veloren/README.md.
+id: wall_detour
+game: veloren
+task_type: structured_tool
+task: Reach the fixed destination [18714.5, 10806.5, 411] in native coordinates (x/y horizontal, z up).
+  You start at [18701.5, 10806.5, 411] facing positive y; east is positive x. A four-metre wall blocks
+  the direct route; pass around an end. End grounded, within 1 horizontal metre and 0.5 vertical metres
+  of the target, at a speed no greater than 0.1 metres/second. Finish alive and release movement controls
+  before answering. Success is checked from your final state, not from a required action history.
+time_limit_seconds: 300
+fixture:
+  world_path: ../../fixtures/veloren_0_18_0_0.bin
+  world_seed: 130626853
+  time_of_day: '12:00'
+  day_length: 30
+  calendar: none
+  platform:
+    origin:
+    - 18700
+    - 10800
+    - 410
+    size:
+    - 17
+    - 13
+    block: Rock
+  player_state:
+    position:
+    - 18701.5
+    - 10806.5
+    - 411
+    look:
+    - 0
+    - 1
+    - 0
+    health: 100
+    inventory: {}
+    equipment:
+      active_mainhand: common.items.weapons.sword.starter
+      chest: common.items.armor.misc.chest.worker_purple_brown
+      feet: common.items.armor.misc.foot.sandals
+      glider: common.items.glider.basic_white
+      lantern: common.items.lantern.black_0
+      legs: common.items.armor.misc.pants.worker_brown
+  blocks:
+  - origin:
+    - 18708
+    - 10802
+    - 411
+    size:
+    - 1
+    - 7
+    - 4
+evaluator:
+  name: state
+  parameters:
+    position:
+      target:
+      - 18714.5
+      - 10806.5
+      - 411
+      horizontal_tolerance: 1
+      vertical_tolerance: 0.5
+      max_speed: 0.1

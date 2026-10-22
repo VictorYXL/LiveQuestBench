@@ -9,7 +9,7 @@ task: >-
 time_limit_seconds: 180
 
 fixture:
-  map_asset: world.map.veloren_0_18_0_0
+  world_path: ../../fixtures/veloren_0_18_0_0.bin
   world_seed: 130626853
   time_of_day: "12:00"
   day_length: 30

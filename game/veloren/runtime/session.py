@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import time
 from uuid import uuid4
+from game.veloren.fixture import solid_voxels
 
 
 class VelorenSession:
@@ -37,7 +38,7 @@ class VelorenSession:
             stderr=self.log, limit=16 * 1024 * 1024,
         )
         self.reader = asyncio.create_task(self._read())
-        return await self.request("start", timeout=240)
+        return await self.request("start", timeout=240 + 2 * len(solid_voxels(self.fixture)))
 
     async def _read(self) -> None:
         assert self.process is not None and self.process.stdout is not None

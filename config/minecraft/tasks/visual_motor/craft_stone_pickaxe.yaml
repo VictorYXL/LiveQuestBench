@@ -1,0 +1,30 @@
+id: island.craft_stone_pickaxe
+game: minecraft
+task_type: visual_motor
+task: Craft 1 stone pickaxe (stone_pickaxe). Keep the requested items in your inventory. Finish with a
+  text answer when you believe the task is complete.
+time_limit_seconds: 2100
+fixture:
+  world_path: ../../fixtures/island
+  instance: 1.20.4
+  difficulty: normal
+  player_state:
+    position:
+    - 0.5
+    - 72
+    - 0.5
+    dimension: minecraft:overworld
+    yaw: 180
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory: []
+evaluator:
+  name: inventory
+  parameters:
+    requirements:
+    - item: minecraft:stone_pickaxe
+      min_count: 1
