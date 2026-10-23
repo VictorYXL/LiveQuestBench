@@ -206,6 +206,9 @@ It restores normal camera, keyboard/mouse and HUD processing; original semantic
 Native focus events still update cursor capture while the actor-input gate is
 closed. Disabling the physical gate also releases native queued ability inputs;
 OS release events alone are not treated as proof of that cutoff.
+VM batches interrupted by game shutdown raise `AgentAccessClosed`, including
+during explicit waits, and release held controls. At an intentional benchmark
+cutoff this is a normal stop, not an invalid-input or infrastructure error.
 The shared key whitelist is bounded: Alt/Super/Meta, function keys and punctuation
 are not currently exposed. In particular, the default Alt block binding and
 comma cursor toggle are unavailable; inventory (`I`) supplies the ordinary

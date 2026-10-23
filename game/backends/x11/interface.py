@@ -10,6 +10,7 @@ import time
 
 from game.backends.x11.actions import ActionError, ActionResult, BUTTONS, KEYS, WindowActions
 from game.backends.x11.capture import CapturedFrame
+from game.base_game import AgentAccessClosed
 from agent_framework.utils.tools import Observation, Tool
 
 
@@ -159,7 +160,7 @@ async def execute_actions(
         sequence = validate_actions(commands)
         for name, arguments in sequence:
             if stopped.is_set():
-                raise ActionError("Game has ended; motor execution stopped")
+                raise AgentAccessClosed("Game has ended; motor execution stopped")
             session.check_ready()
             if name == "wait":
                 started = time.monotonic_ns()
@@ -170,7 +171,7 @@ async def execute_actions(
                 except TimeoutError:
                     pass
                 if stopped.is_set():
-                    raise ActionError("Game ended during wait")
+                    raise AgentAccessClosed("Game ended during wait")
                 session.check_ready()
                 results.append(ActionResult(name, started, time.monotonic_ns()))
             else:

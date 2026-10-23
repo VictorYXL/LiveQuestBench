@@ -5,6 +5,7 @@ from dataclasses import replace
 import json
 from pathlib import Path
 import time
+from unittest.mock import Mock
 
 import httpx
 import pytest
@@ -236,6 +237,58 @@ def test_bounded_retirement_on_deadline_cancel_and_gate_failure():
             assert agent.stopped.is_set()
         pending = [task for task in asyncio.all_tasks() if task is not asyncio.current_task()]
         assert not pending
+
+    asyncio.run(check())
+
+
+@pytest.mark.parametrize("during_wait", [False, True])
+def test_motor_cutoff_uses_the_benchmark_gate(during_wait):
+    from game.backends.x11.actions import WindowActions
+    from game.backends.x11.interface import execute_actions
+    from game.base_game import AgentAccessClosed
+
+    async def check():
+        stopped = asyncio.Event()
+        entered = asyncio.Event()
+        retired = asyncio.Event()
+        session = Mock(spec=WindowActions)
+        session.check_ready.side_effect = entered.set
+
+        class MotorAgent(BaseAgent[object]):
+            async def run(self, context):
+                try:
+                    if not during_wait:
+                        entered.set()
+                        await stopped.wait()
+                    await execute_actions(session, [
+                        {"name": "wait", "arguments": {"milliseconds": 10000}},
+                    ], stopped)
+                    raise AssertionError("Motor execution must stop at the game gate")
+                finally:
+                    retired.set()
+
+            async def stop(self, reason):
+                assert reason == StopReason.DEADLINE
+
+            async def close(self):
+                pass
+
+        async def end():
+            assert entered.is_set()
+            stopped.set()
+            await retired.wait()
+
+        now = time.monotonic_ns()
+        outcome, timed_out = await run_bounded(
+            MotorAgent(), AgentContext("test", "wait", object(), now, now + 50_000_000), end,
+        )
+        assert timed_out and outcome.reason == AgentExitReason.STOPPED
+        assert outcome.native_reason == "benchmark_game_gate_closed"
+        session.release_all.assert_called_once()
+        with pytest.raises(AgentAccessClosed):
+            await execute_actions(session, [
+                {"name": "wait", "arguments": {"milliseconds": 1}},
+            ], stopped)
 
     asyncio.run(check())
 

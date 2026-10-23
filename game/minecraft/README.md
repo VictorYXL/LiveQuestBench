@@ -526,6 +526,8 @@ Public observation/action access outside running play raises `AgentAccessClosed`
 Agent may encounter this gate before its stop request arrives. The runner may
 classify that specific denial as stopped after successfully ending the game;
 it must not suppress arbitrary runtime/infrastructure exceptions.
+VM batches interrupted before a command or during an explicit wait use the
+same gate exception and release held controls; they are not invalid-input errors.
 
 Normal ST action refusal returns `success=false`; bridge errors/timeouts raise.
 Broken blocks, spent ingredients, in-flight packets and furnace contents are

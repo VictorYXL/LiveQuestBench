@@ -17,6 +17,7 @@ from game.minecraft.game import MinecraftGame
 from game.minecraft.init_player_state import PlayerState
 from game.minecraft.visual_motor.interface import MotorInterface, agent_tools
 from game.backends.x11.actions import ActionError, ActionResult
+from game.base_game import AgentAccessClosed
 
 
 def test_motor_argument_rejection_and_execution_failures(caplog):
@@ -133,8 +134,14 @@ def test_vm_observation_and_movement(
             ])
             second = await interface.observe()
             assert second.frame_id > first.frame_id and second.captured_at_ns > first.captured_at_ns
-            await asyncio.sleep(1)
+            pending = asyncio.create_task(interface.act([
+                {"name": "wait", "arguments": {"milliseconds": 10000}},
+            ]))
+            await asyncio.sleep(0.1)
+            assert not pending.done()
             await game.end()
+            with pytest.raises(AgentAccessClosed, match="during wait"):
+                await pending
             with pytest.raises(RuntimeError):
                 await interface.observe()
             with pytest.raises(RuntimeError):
