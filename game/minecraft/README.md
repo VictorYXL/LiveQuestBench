@@ -460,6 +460,12 @@ human mouse travel. Recording is for human inspection, not ST input.
 - `interface.tool_schemas()` returns fixed name/description/JSON-schema definitions.
 - `await interface.call_tool(name, arguments)` validates and executes one tool.
 
+Agent-facing ST tools validate arguments before calling the native interface.
+Invalid arguments return `success=false`, `error=invalid_tool_arguments`,
+`message` and `executed=false`, allowing the Agent to correct its next call.
+No game command is submitted or automatically retried. Direct interface
+validation and runtime/communication failures still raise exceptions.
+
 State includes player identity, feet position, health/hunger, inventory, held
 item/slot, look direction, aimed/supporting block, nearby entities and a block
 palette cube. The radius-15 cube (31 cubed cells) is centered one block above

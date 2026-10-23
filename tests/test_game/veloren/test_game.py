@@ -17,7 +17,7 @@ from game.backends.x11.interface import MotorInterface
 from game.base_game import AgentAccessClosed
 from game.veloren.evaluators.endpoints import evaluate_displacement, evaluate_health, evaluate_inventory, inventory_counts
 from game.veloren.game import VelorenGame
-from game.veloren.structured_tools.interface import StructuredInterface
+from game.veloren.structured_tools.interface import StructuredInterface, agent_tools
 
 
 @pytest.mark.game
@@ -79,6 +79,11 @@ def test_native_movement_and_cutoff(track: str, headless: bool, recording: bool,
                 ]))
             else:
                 assert isinstance(public, StructuredInterface)
+                move_tool = next(tool for tool in agent_tools() if tool.name == "MoveTool")
+                rejected = json.loads(await move_tool.execute(
+                    public, {"direction": "forward", "duration_ticks": 121},
+                ))
+                assert rejected["error"] == "invalid_tool_arguments" and rejected["executed"] is False
                 observation = await public.observe()
                 assert observation["profile"] == "veloren-native-fixed-tools-v2"
                 assert (await public.call_tool("TurnTool", {"degrees": 20}))["status"] == "completed"
@@ -88,7 +93,7 @@ def test_native_movement_and_cutoff(track: str, headless: bool, recording: bool,
                 assert (await public.call_tool("UseItemTool", {"slot": 1}))["status"] == "completed"
                 recipe = observation["known_recipes"]["items"][0]["recipe"]
                 assert (await public.call_tool("CraftTool", {"recipe": recipe, "amount": 1}))["status"] == "failed"
-                receipt = await public.call_tool("MoveTool", {"direction": "forward", "duration_ticks": 20})
+                receipt = json.loads(await move_tool.execute(public, {"direction": "forward", "duration_ticks": 20}))
                 assert receipt["status"] == "completed"
                 active = asyncio.create_task(public.call_tool(
                     "MoveTool", {"direction": "forward", "duration_ticks": 120},

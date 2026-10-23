@@ -5,6 +5,7 @@ from copy import deepcopy
 from dataclasses import dataclass
 from itertools import groupby
 import json
+import logging
 import math
 import time
 
@@ -13,6 +14,7 @@ from agent_framework.utils.tools import Tool
 
 
 PROFILE_ID = "minecraft-1.20.4-st-native-v2"
+logger = logging.getLogger(__name__)
 NUMBER = {"type": "number", "minimum": -30000000, "maximum": 30000000}
 POSITION = {"x": NUMBER, "y": {"type": "number", "minimum": -2048, "maximum": 2048}, "z": NUMBER}
 ITEM = {"type": "string", "minLength": 1}
@@ -84,6 +86,14 @@ def agent_tools() -> list[Tool[StructuredInterface]]:
         async def execute(
             interface: StructuredInterface, arguments: dict[str, object], tool_name: str = name,
         ) -> str:
+            try:
+                validate_tool(tool_name, arguments)
+            except ValueError as error:
+                logger.warning("ST tool %s rejected before execution: %s", tool_name, error)
+                return json.dumps({
+                    "success": False, "error": "invalid_tool_arguments",
+                    "message": str(error), "executed": False,
+                })
             return json.dumps(await interface.call_tool(tool_name, arguments), separators=(",", ":"))
 
         result.append(Tool(name, schema["description"], schema["parameters"], execute))

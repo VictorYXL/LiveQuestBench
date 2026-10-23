@@ -3,12 +3,14 @@
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
 import json
+import logging
 import math
 
 from agent_framework.utils.tools import Tool
 
 
 PROFILE_ID = "veloren-native-fixed-tools-v2"
+logger = logging.getLogger(__name__)
 FIELDS = (
     "session_id", "tick", "position", "velocity", "on_ground", "survival", "inventory",
     "nearby_entities", "known_recipes", "nearby_interactable_sprites",
@@ -77,7 +79,14 @@ def agent_tools() -> list[Tool[StructuredInterface]]:
     tools = []
     for name, (description, _, fields) in SPECS.items():
         async def execute(interface: StructuredInterface, arguments: dict[str, object], tool_name=name) -> str:
-            validate_tool(tool_name, arguments)
+            try:
+                validate_tool(tool_name, arguments)
+            except ValueError as error:
+                logger.warning("ST tool %s rejected before execution: %s", tool_name, error)
+                return json.dumps({
+                    "success": False, "error": "invalid_tool_arguments",
+                    "message": str(error), "executed": False,
+                })
             return json.dumps(await interface.call_tool(tool_name, arguments), allow_nan=False)
         tools.append(Tool(name, description, {
             "type": "object", "properties": fields, "required": list(fields), "additionalProperties": False,

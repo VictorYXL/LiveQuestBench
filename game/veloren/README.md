@@ -228,8 +228,11 @@ forwarded. Coordinates are native x/y horizontal and z up.
 | `CraftTool` | Known recipe | Amount 1-10; native material/station requirements |
 | `EquipTool` | Observed inventory slot to chest slot | Native equip/swap; no navigation or item creation |
 
-Tools are serialized and native failures remain explicit receipts. Malformed
-requests and communication failures raise errors. There is no generic server
+Tools are serialized and native failures remain explicit receipts. The
+Agent-facing tools reject malformed arguments before native execution with
+`success=false`, `error=invalid_tool_arguments`, `message` and `executed=false`;
+the Agent can correct its next call without an automatic retry. Direct interface
+validation and runtime/communication failures still raise errors. There is no generic server
 command, administrator operation, arbitrary native RPC or whole-task skill.
 Observe remains available while a native action runs; it does not issue an action.
 

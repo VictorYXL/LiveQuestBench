@@ -1,6 +1,7 @@
 """ST state, ordinary player tools and cancellation without an online account."""
 
 import asyncio
+import json
 import os
 from pathlib import Path
 import subprocess
@@ -15,7 +16,7 @@ pytest.importorskip("PIL", reason="Install the minecraft extra")
 from game.minecraft.evaluators.inventory import evaluate_inventory
 from game.minecraft.game import MinecraftGame
 from game.minecraft.init_player_state import PlayerState
-from game.minecraft.structured_tools.interface import StructuredInterface
+from game.minecraft.structured_tools.interface import StructuredInterface, agent_tools
 
 
 @pytest.mark.game
@@ -48,6 +49,9 @@ def test_st_observation_and_tools(
             before = await game.save_snapshot(output / "before")
             await game.begin()
             await asyncio.sleep(1)
+            move_tool = next(tool for tool in agent_tools() if tool.name == "MoveTool")
+            rejected = json.loads(await move_tool.execute(interface, {"direction": "forward", "duration": 11}))
+            assert rejected["error"] == "invalid_tool_arguments" and rejected["executed"] is False
             initial = await interface.observe()
             assert initial["health"] == 20 and initial["position"] is not None
             assert initial["profile"] == "minecraft-1.20.4-st-native-v2"
@@ -61,7 +65,7 @@ def test_st_observation_and_tools(
             dig = await interface.call_tool("DigTool", {"x": 1, "y": 71, "z": 0})
             assert dig["success"], dig
             assert dig["payload"]["after_name"] == "air"
-            move = await interface.call_tool("MoveTool", {"direction": "backward", "duration": 0.5})
+            move = json.loads(await move_tool.execute(interface, {"direction": "backward", "duration": 0.5}))
             assert move["success"], move
             current = await interface.observe()
             assert current["captured_at_ns"] > initial["captured_at_ns"]

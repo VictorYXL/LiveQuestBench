@@ -24,6 +24,48 @@ from game.base_game import BaseGame
 ROOT = Path(__file__).resolve().parents[2]
 
 
+@pytest.mark.parametrize("game_name", ["minecraft", "veloren"])
+def test_structured_tool_invalid_arguments_can_be_corrected(game_name):
+    if game_name == "minecraft":
+        from game.minecraft.structured_tools import interface as api
+        valid = {"direction": "forward", "duration": 0.1}
+        invalid = {"direction": "forward", "duration": 11}
+    else:
+        from game.veloren.structured_tools import interface as api
+        valid = {"direction": "forward", "duration_ticks": 1}
+        invalid = {"direction": "forward", "duration_ticks": 121}
+    calls = []
+
+    async def observe():
+        raise AssertionError("Argument validation must not observe the game")
+
+    async def call_tool(name, arguments):
+        api.validate_tool(name, arguments)
+        calls.append(arguments)
+        return {"success": True}
+
+    async def broken_tool(name, arguments):
+        raise RuntimeError("Native connection failed")
+
+    async def run():
+        if game_name == "minecraft":
+            interface = api.StructuredInterface(observe, call_tool, api.tool_schemas)
+            broken = api.StructuredInterface(observe, broken_tool, api.tool_schemas)
+        else:
+            interface = api.StructuredInterface(observe, call_tool)
+            broken = api.StructuredInterface(observe, broken_tool)
+        tool = next(tool for tool in api.agent_tools() if tool.name == "MoveTool")
+        result = json.loads(await tool.execute(interface, invalid))
+        assert result["success"] is False and result["error"] == "invalid_tool_arguments"
+        assert result["executed"] is False and not calls
+        assert json.loads(await tool.execute(interface, valid)) == {"success": True}
+        assert calls == [valid]
+        with pytest.raises(RuntimeError, match="Native connection failed"):
+            await tool.execute(broken, valid)
+
+    asyncio.run(run())
+
+
 @pytest.mark.parametrize("visual", [False, True])
 def test_baseline_long_history_preserves_actions_and_omits_old_observations(visual):
     requests, recorded = [], []
