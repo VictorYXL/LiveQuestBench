@@ -190,7 +190,15 @@ remains in fresh per-Episode userdata. The map's checksum and origin are in
 
 VM observations are current XComposite PNG pixels and capture timestamps.
 Actions use the shared bounded atomic XTest keyboard/mouse vocabulary, with
-stateful down/up events and bounded waits. The renderer window is matched by
+stateful down/up events and bounded waits. Each call permits at most 10000 ms
+of explicit waits in total; held inputs can persist across calls and reasoning.
+The shared Agent-facing `action` tool rejects invalid arguments before executing
+any command and returns `success=false`, `error=invalid_action_arguments`,
+`message`, `executed_commands=0` and `held_controls`. Previously held inputs are
+unchanged, so the Agent may need to release them explicitly. No actions are
+automatically retried or modified. Runtime execution failures still propagate;
+valid calls still return the action-result array.
+The renderer window is matched by
 title and native process ID. The native patch permits physical input only after
 an explicit launch opt-in and a privately fenced lifecycle request.
 It restores normal camera, keyboard/mouse and HUD processing; original semantic

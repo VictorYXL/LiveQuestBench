@@ -1,6 +1,7 @@
 """VM pixels and basic motor control, without LLM calls or screenshot dumps."""
 
 import asyncio
+import json
 import os
 from pathlib import Path
 import subprocess
@@ -14,7 +15,54 @@ pytest.importorskip("PIL", reason="Install the minecraft extra")
 
 from game.minecraft.game import MinecraftGame
 from game.minecraft.init_player_state import PlayerState
-from game.minecraft.visual_motor.interface import MotorInterface
+from game.minecraft.visual_motor.interface import MotorInterface, agent_tools
+from game.backends.x11.actions import ActionError, ActionResult
+
+
+def test_motor_argument_rejection_and_execution_failures(caplog):
+    async def run():
+        calls = []
+
+        async def observe():
+            raise AssertionError("No observation required for argument validation")
+
+        async def act(commands):
+            calls.append(commands)
+            return [ActionResult("wait", 1, 2)]
+
+        tool = agent_tools()[0]
+        interface = MotorInterface(observe, act)
+        invalid = [
+            {}, {"commands": "bad"}, {"commands": []}, {"commands": [None]},
+            {"commands": [{"name": "wait", "arguments": {"milliseconds": True}}]},
+            {"commands": [{"name": "key_down", "arguments": {"key": "unsupported"}}]},
+            {"commands": [
+                {"name": "key_down", "arguments": {"key": "w"}},
+                *[{"name": "wait", "arguments": {"milliseconds": ms}} for ms in (100, 200, 700, 10000)],
+            ]},
+        ]
+        for arguments in invalid:
+            result = json.loads(await tool.execute(interface, arguments))
+            assert result["success"] is False and result["error"] == "invalid_action_arguments"
+            assert result["executed_commands"] == 0 and "unchanged" in result["held_controls"]
+            assert not calls
+        assert "11000" in result["message"] and "10000" in result["message"]
+        assert "Motor batch rejected before execution" in caplog.text
+        valid = {"commands": [
+            {"name": "wait", "arguments": {"milliseconds": 3000}},
+            {"name": "wait", "arguments": {"milliseconds": 7000}},
+        ]}
+        result = json.loads(await tool.execute(interface, valid))
+        assert result == [{"operation": "wait", "started_at_ns": 1, "finished_at_ns": 2, "applied_delta": None}]
+        assert calls == [valid["commands"]]
+
+        async def broken_act(commands):
+            raise ActionError("Target window lost keyboard focus; input stopped.")
+
+        with pytest.raises(ActionError, match="lost keyboard focus"):
+            await tool.execute(MotorInterface(observe, broken_act), valid)
+
+    asyncio.run(run())
 
 
 @pytest.mark.game
@@ -48,11 +96,18 @@ def test_vm_observation_and_movement(
             await game.save_snapshot(output / "before")
             await game.begin()
             await asyncio.sleep(1)
+            tool = agent_tools()[0]
+            rejected = json.loads(await tool.execute(interface, {"commands": [
+                {"name": "key_down", "arguments": {"key": "3"}},
+                {"name": "wait", "arguments": {"milliseconds": 1000}},
+                {"name": "wait", "arguments": {"milliseconds": 10000}},
+            ]}))
+            assert rejected["executed_commands"] == 0 and rejected["success"] is False
             first = await interface.observe()
             assert first.image.mode == "RGB" and first.image.width > 0 and first.image.height > 0
             extrema = [first.image.getchannel(channel).getextrema() for channel in ("R", "G", "B")]
             assert any(low != high for low, high in extrema)
-            await interface.act([
+            accepted = json.loads(await tool.execute(interface, {"commands": [
                 {"name": "key_down", "arguments": {"key": "2"}},
                 {"name": "wait", "arguments": {"milliseconds": 150}},
                 {"name": "key_up", "arguments": {"key": "2"}},
@@ -61,7 +116,8 @@ def test_vm_observation_and_movement(
                 {"name": "key_up", "arguments": {"key": "w"}},
                 {"name": "wait", "arguments": {"milliseconds": 500}},
                 {"name": "mouse_move_relative", "arguments": {"dx": 60, "dy": 0}},
-            ])
+            ]}))
+            assert isinstance(accepted, list) and len(accepted) == 8
             # Let Minecraft recenter the pointer between bounded downward motions.
             for _ in range(6):
                 await interface.act([

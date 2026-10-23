@@ -257,8 +257,8 @@ uv run --locked --extra minecraft --group test python -m pytest \
 | `test_st.py` | Local state, crafting, digging, movement, cancellation, final inventory and first-person recording |
 | `test_structure.py` | Native block placement scored from before/after saves, plus structure counterexamples and corrupt/missing evidence |
 
-There are three focused non-game checks for inventory/structure evidence and explicit
-startup consent, plus four actual game checks. The removed VM/ST schema and
+There are focused non-game checks for inventory/structure evidence, explicit
+startup consent and motor rejection/recovery, plus four actual game checks. The removed VM/ST schema and
 profile-literal checks are not replaced by additional test scaffolding.
 Without live opt-in, the four game checks skip; this does not establish that
 the real game works.
@@ -404,10 +404,20 @@ backend does not infer which game's window to control.
 | `wait` | Integer `milliseconds`, 0 through 10000 |
 | `release_all` | Empty object |
 
-Batches contain 1-64 commands and at most 10000 ms of explicit waits. Structure
+Batches contain 1-64 commands and at most 10000 ms of explicit waits **in total
+per call**, not per wait. This is not a limit on continuous key-hold duration. Structure
 is validated before execution; geometry, focus and pointer ownership are
 checked during execution. Concurrent calls are serialized; calls waiting for
 the interface are rejected after `end`.
+
+The Agent-facing `action` tool returns an explicit JSON error for invalid
+arguments: `success=false`, `error=invalid_action_arguments`, `message`,
+`executed_commands=0` and `held_controls`. The entire batch is rejected before
+execution; previously held inputs remain unchanged and may still be active.
+The Agent can correct its next call; no automatic splitting, shortening or retry
+occurs. Valid calls retain the action-result array format. Runtime execution
+failures still propagate, and direct `interface.act` calls retain exception
+semantics.
 
 Keys include `a`-`z`, `0`-`9`, `space`, `enter`, `escape`, `tab`, `backspace`,
 `delete`, `insert`, arrows, `home`, `end`, `page_up`, `page_down`,

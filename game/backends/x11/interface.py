@@ -5,6 +5,7 @@ from collections.abc import Awaitable, Callable
 from dataclasses import asdict, dataclass
 from io import BytesIO
 import json
+import logging
 import time
 
 from game.backends.x11.actions import ActionError, ActionResult, BUTTONS, KEYS, WindowActions
@@ -14,6 +15,7 @@ from agent_framework.utils.tools import Observation, Tool
 
 MAX_COMMANDS = 64
 MAX_WAIT_MS = 10000
+logger = logging.getLogger(__name__)
 _COMMAND_FIELDS = {
     "key_down": ("key",), "key_up": ("key",),
     "mouse_down": ("button",), "mouse_up": ("button",),
@@ -48,14 +50,22 @@ async def agent_observation(interface: MotorInterface) -> Observation:
 
 
 async def _agent_action(interface: MotorInterface, arguments: dict[str, object]) -> str:
-    if set(arguments) != {"commands"} or not isinstance(arguments["commands"], list):
-        raise ValueError("action requires a commands array")
-    commands: list[dict[str, object]] = []
-    for command in arguments["commands"]:
-        if not isinstance(command, dict):
-            raise ValueError("Each motor command must be an object")
-        commands.append(command)
-    validate_actions(commands)
+    try:
+        if set(arguments) != {"commands"} or not isinstance(arguments["commands"], list):
+            raise ActionError("action requires a commands array")
+        commands: list[dict[str, object]] = []
+        for command in arguments["commands"]:
+            if not isinstance(command, dict):
+                raise ActionError("Each motor command must be an object")
+            commands.append(command)
+        validate_actions(commands)
+    except ActionError as error:
+        logger.warning("Motor batch rejected before execution: %s", error)
+        return json.dumps({
+            "success": False, "error": "invalid_action_arguments", "message": str(error),
+            "executed_commands": 0,
+            "held_controls": "unchanged; previously held controls may still be active",
+        })
     return json.dumps([asdict(result) for result in await interface.act(commands)])
 
 
@@ -88,7 +98,13 @@ def action_tool_schema() -> dict[str, object]:
     return {
         "name": "action",
         "description": (
-            "Execute bounded keyboard/mouse commands sequentially. Held controls persist. "
+            "Execute bounded keyboard/mouse commands sequentially. "
+            f"The sum of ALL wait milliseconds in this call must be <= {MAX_WAIT_MS}, "
+            "not just each individual wait. This bounds explicit waits, not total key-hold time. "
+            "Held controls persist across calls and model reasoning until explicitly released "
+            "or stopped by the environment. Invalid arguments reject the entire batch before "
+            "execution and return invalid_action_arguments with executed_commands=0; previously "
+            "held controls are unchanged. Correct the arguments before submitting another call. "
             "Relative mouse movement is clipped to the window edges; applied_delta reports "
             "the submitted (dx, dy). Use mouse_move_to to reposition a free UI cursor."
         ),
@@ -128,7 +144,10 @@ def validate_actions(commands: list[dict[str, object]]) -> list[tuple[str, dict[
                     wait_total += value
         result.append((name, dict(arguments)))
     if wait_total > MAX_WAIT_MS:
-        raise ActionError(f"A motor batch may wait for at most {MAX_WAIT_MS} milliseconds")
+        raise ActionError(
+            f"Total wait is {wait_total} milliseconds; a motor batch may wait for at most "
+            f"{MAX_WAIT_MS} milliseconds"
+        )
     return result
 
 
