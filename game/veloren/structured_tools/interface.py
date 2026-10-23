@@ -32,6 +32,23 @@ SPECS = {
                   {"slot": {"type": "integer", "minimum": 0, "maximum": 4294967295},
                    "equip_slot": {"type": "string", "enum": ["chest"], "maxLength": 32}}),
 }
+BASE_TOOLS = tuple(SPECS)
+SPECS.update({
+    "LookTool": ("Aim once at an observed native XYZ point. Does not track a target or navigate.",
+                 "look_at", {axis: {"type": "number", "minimum": -1000000, "maximum": 1000000}
+                             for axis in ("x", "y", "z")}),
+    "AttackTool": ("Hold primary or secondary attack for bounded client updates, then release. "
+                   "Uses current aim: no target selection, auto-aim, approach, healing or combat loop.",
+                   "attack", {"channel": {"type": "string", "enum": ["primary", "secondary"]},
+                              "duration_ticks": {"type": "integer", "minimum": 1, "maximum": 60}}),
+    "WieldTool": ("Draw or sheathe your equipped weapon; does not equip or obtain a weapon.",
+                  "toggle_wield", {"wield": {"type": "boolean"}}),
+    "BlockTool": ("Hold the native block input for bounded updates, then release; costs and weapon rules apply.",
+                  "block", {"duration_ticks": {"type": "integer", "minimum": 1, "maximum": 60}}),
+    "RollTool": ("Request a native dodge roll for bounded updates; energy and terrain constrain it.",
+                 "roll", {"duration_ticks": {"type": "integer", "minimum": 1, "maximum": 30}}),
+    "StopTool": ("Release native movement and ability inputs without undoing effects.", "stop", {}),
+})
 
 
 @dataclass(frozen=True)
@@ -61,6 +78,9 @@ def validate_tool(name: str, arguments: dict) -> tuple[str, dict]:
                 raise ValueError(f"Invalid {field}")
             if "enum" in spec and value not in spec["enum"]:
                 raise ValueError(f"Unsupported {field}")
+        elif spec["type"] == "boolean":
+            if type(value) is not bool:
+                raise ValueError(f"Invalid {field}")
         else:
             valid_type = type(value) is int if spec["type"] == "integer" else type(value) in (int, float)
             if not valid_type or not math.isfinite(value) or not spec["minimum"] <= value <= spec["maximum"]:
@@ -68,6 +88,10 @@ def validate_tool(name: str, arguments: dict) -> tuple[str, dict]:
     converted = dict(arguments)
     if native == "move":
         native = "move_" + converted.pop("direction")
+    elif native == "attack":
+        native = "attack_" + converted.pop("channel")
+    elif native == "look_at":
+        converted = {"position": [converted[axis] for axis in ("x", "y", "z")]}
     return native, converted
 
 

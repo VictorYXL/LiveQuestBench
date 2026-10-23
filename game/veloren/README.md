@@ -14,6 +14,69 @@ Benchmark recordings live under each Episode's `recording/`: `video.mp4`
 and `chat/`. Standalone game tests retain their own output layout;
 `VelorenGame(recording_path=...)` can select an explicit video destination.
 
+## Native encounter tasks
+
+The paired [ST encounter experiment](../../config/veloren/experiments/structured_tools_encounters.yaml)
+and [VM encounter experiment](../../config/veloren/experiments/visual_motor_encounters.yaml)
+add four goals: defeat a Green Legoom, defeat a Wolf, defeat two simultaneous
+Green Legooms, and collect expiring simple leather while resolving combat, retaining a
+potion and returning to the starting point. These are development tasks, not
+calibrated difficulty tiers or a claim of complete long-horizon coverage.
+
+`fixture.encounters` explicitly declares unique roles, exact-body native assets
+and supported spawn positions. The asset/loadout reuse follows VelorenBench
+B1/B2; independent native UID/entity-generation, health-application and actual
+death evidence follows its later T06/T08 implementation rather than treating
+disappearance or random loot as success. Native enemy AI remains autonomous.
+Setup verifies living enemies and an uninjured, stationary player; no damage,
+quest completion or action during setup counts toward success.
+
+The private `encounter` evaluator requires all declared targets to die, actual
+player damage to each before its death, no native player death, and all declared
+terminal inventory/health/position requirements. It does not require a last blow.
+The checksum-protected endpoint stores the private run/nonce, immutable opening
+registry and bounded native events. Public ST projection and VM screenshots
+never include this registry or event journal. Final evidence is captured after
+the public gate, while the world continues; it is not an atomic server pause.
+
+Combat ST uses `veloren-native-fixed-tools-v3-combat`: `LookTool` aims once at a
+point, `AttackTool` holds primary/secondary for at most 60 client updates,
+`WieldTool` controls weapon readiness, and bounded `BlockTool`, `RollTool` and
+`StopTool` expose ordinary native controls. None selects a target, auto-aims,
+approaches an enemy or runs a combat policy. Old fixtures retain their v2
+observation profile and original default tool set. Explicit task allowlists can
+select any supported tools. VM retains actual OS input; R toggles wield and
+middle mouse rolls. The default Alt block binding remains unavailable.
+
+The leather is a real native dropped item, expiring after approximately 300 game
+seconds; the task budget is not a promise of that item's continued availability.
+Collecting it early can preserve availability, but combat and recovery still
+consume time and finite supplies. This is one resource/time-sensitive composite,
+not proof of a calibrated latency effect. The non-food supply is deliberate:
+native non-humanoid enemies can loot consumables, and the initial apple prototype
+could disappear into the enemy's inventory before public control opened.
+NPC dialogue, merchant exchange and
+Message/Slay contract migration remain separate qualification work: success
+must join real offered responses, native participant identities and actual
+reward insertion, not just proximity or inventory deltas.
+
+### Development validation (2026-10-24)
+
+The final administrator-free, protection-disabled cohort completed eight
+Baseline task/track episodes before admitting four representative Hermes and
+GamingAgent episodes (one Legoom in each track per Agent). All twelve had valid
+engineering results, independently replayed scores, journal-matched native
+evidence, decoded videos, transcript/accounting checks and native cleanup.
+There were three task successes and nine task failures; failed goals are not
+reported as integration errors.
+
+The offline suite passed 100 tests. Both legacy VM/ST movement, item, gate and
+cutoff checks passed with verified helper retirement. Public-control scripted
+references passed the full supply/return composite and simultaneous two-enemy
+goal. The temporary Wolf controllers failed; successful reference behavior and
+difficulty calibration are still open. This is development acceptance, not a
+frozen ranking, complete external-Agent matrix or long-horizon validation.
+
 ## Setup
 
 The current installer reuses an **already prepared and validated VelorenBench
@@ -41,12 +104,26 @@ export LIVEQUEST_VELOREN_RUNTIME=/absolute/path/to/new-livequest-veloren-build/r
 
 The independent output root needs space for the source/compiler cache and binary.
 The installer verifies the source against the bound native source manifest,
-applies the declared patch, builds the renderer offline using the original
-toolchain settings, and hashes the resulting executable and patch. Reusing this
-output root is supported only if its source is exactly the declared patched tree.
+applies the declared physical-input and native-protection patches, builds the
+renderer offline using the original toolchain settings, and hashes the resulting
+executable and both patches. Reusing this output root requires the exact declared
+patched tree; the installer also supports upgrading the verified physical-input-only
+tree by applying the protection patch.
 The upstream runtime is still validated by its original loader on every launch;
 the replacement renderer is separately and explicitly hashed. There is no
 fallback to the unpatched renderer.
+
+The launcher sets `LIVEQUEST_DISABLE_NATIVE_PROTECTION=1` for both tracks.
+The upstream native protection controller otherwise reacts to damage or threats
+without an Agent action, takes ownership of the avatar and can reject subsequent
+ST actions as busy. The declared protection patch disables that controller under
+this launch flag; native enemy AI and ordinary damage, blocking and interruption
+mechanics remain active. The runtime receipt must identify this patch and launch
+policy; older receipts are rejected with instructions to rebuild. Development
+results collected before this change belong to an assisted-runtime cohort and
+must not be silently combined with the new runtime's results.
+This does not remove the game's normal death-protection/downed mechanics;
+those are distinct from the hidden automatic control policy.
 
 The inspected upstream checkout was VelorenBench `68b7326`, with uncommitted
 upstream changes left untouched. The actual runtime uses its validated installed
@@ -86,6 +163,9 @@ finally:
 
 `start()` requires an explicit fixture mapping and creates fresh private server
 userdata, a private authoring helper and an ordinary renderer-owned player.
+After authoring, the helper disconnects and its absence is verified before the
+public gate can open. Its UID and cleanup receipt are recorded privately.
+It cannot remain in the arena as an undeclared enemy distraction or defender.
 `fixture.world_path` selects a native map file, resolved relative to the Task
 YAML (or supplied as an absolute path), just like Minecraft's world reference.
 The server uses native `Load(path)`, not installed asset-name lookup. `world_seed`,
@@ -125,12 +205,12 @@ at `[18704, 10800, 401]` and a player at `[18706.5, 10806.5, 402]`.
 Task VM/ST files declare the same world and player conditions.
 This remains a small integration diagnostic. The additional endpoint-compatible
 task catalog, source mapping, intentional redesigns and exclusions are documented
-[below](#task-catalog). New tasks have not yet
-undergone native VM/ST qualification.
+[below](#task-catalog). Qualification is recorded separately from task success;
+budgets and difficulty are not calibrated scientific release settings.
 
 ## Task catalog
 
-Each mode's experiment includes all 11 tasks below, with **10 repetitions per
+Each mode's full-catalog experiment includes all 15 tasks below, with **10 repetitions per
 Agent**. The modes share fixtures, goals, budgets and private evaluators. These
 are development configurations, not native-qualified scores. They adapt
 [VelorenBench](https://github.com/wyaaaattwho/VelorenBench) revision
@@ -149,6 +229,10 @@ are development configurations, not native-qualified scores. They adapt
 | `staggered_detour` | N2 | Settled arrival past staggered walls | 300 |
 | `elevation_steps` | N3 | Raised destination reached using side steps | 300 |
 | `long_detour` | N4 | Settled arrival 220 m away, past staggered walls | 900 |
+| `defeat_legoom` | B1 asset/setup, T06 death/contribution evidence | Designated Green Legoom dead after player damage; player survives | 300 |
+| `defeat_wolf` | B2 asset/setup, T06 death/contribution evidence | Designated Wolf dead after player damage; player survives | 300 |
+| `dual_legoom` | New flat encounter, T08 multi-target evidence pattern | Both simultaneous enemies dead after player damage; player survives | 300 |
+| `combat_supply_return` | New composite using native combat and item expiry | Resolve combat, collect expiring leather, retain potion and return grounded | 420 |
 
 Craft/recovery tasks use an explicit elevated 24x18 Rock platform instead of
 source natural-site qualification. Navigation N1-N4 retain the source solid
@@ -159,8 +243,10 @@ grounded and positive health. Budgets are uncalibrated engineering choices.
 The integration diagnostic and overlapping variants should not be counted as
 independent long-horizon capabilities in an unweighted catalog average.
 
-No endpoint predicate proves crafting, exact pickup provenance, consumption
+The state-only endpoint predicates do not prove crafting, exact pickup provenance, consumption
 attribution or continuous survival. Loose-item expiry is disclosed in prompts.
+The encounter evaluator separately requires native player/target death and
+damaging-contribution events as described [above](#native-encounter-tasks).
 VM receives only pixels, static controls and the public task (including fixed
 navigation targets), never a hidden coordinate feed.
 
@@ -235,6 +321,17 @@ forwarded. Coordinates are native x/y horizontal and z up.
 | `CraftTool` | Known recipe | Amount 1-10; native material/station requirements |
 | `EquipTool` | Observed inventory slot to chest slot | Native equip/swap; no navigation or item creation |
 
+Encounter fixtures additionally expose these v3-combat tools by default:
+
+| Tool | Native operation | Bound / semantics |
+| --- | --- | --- |
+| `LookTool` | Aim once at a native x/y/z point | No target UID or tracking |
+| `AttackTool` | Hold primary/secondary ability | 1-60 client updates, no auto-aim or approach |
+| `WieldTool` | Draw or sheathe weapon | Explicit boolean, ordinary native readiness |
+| `BlockTool` | Hold native block | 1-60 client updates, ordinary energy/weapon rules |
+| `RollTool` | Request native roll | 1-30 client updates, ordinary energy constraints |
+| `StopTool` | Release native continuous controls | Does not roll back partial effects |
+
 Tools are serialized and native failures remain explicit receipts. The
 Agent-facing tools reject malformed arguments before native execution with
 `success=false`, `error=invalid_tool_arguments`, `message` and `executed=false`;
@@ -266,6 +363,9 @@ Minecraft's tick-freeze protocol as if the timing conditions were identical.
 - `state`: simultaneous final inventory bounds/deltas, equipment, learned
   recipes, minimum health, and a grounded target position with a speed bound.
 
+The separate [encounter evaluator](evaluators/encounter.py) combines those state
+predicates with the identity-bound native damage/death evidence described above.
+
 The `state` evaluator defaults to final health of at least 1 and combines all
 supplied predicates with AND. Position checks use separate horizontal/vertical
 tolerances, not path history. Recipe checks reject ambiguous truncated evidence. These
@@ -294,7 +394,7 @@ discarded or miscounted.
 
 Evidence must have correct endpoint phases, matching session and actor identity, ordered
 capture windows and matching checksums. Missing or corrupted evidence is an
-error, not a task failure or score of zero. Endpoints do not prove path length,
+error, not a task failure or score of zero. Primitive endpoint checks do not prove path length,
 intermediate survival, exact event ordering, crafting provenance or sustained
 resource ownership; those need trajectory/event evaluators.
 These initial evaluators require the same native actor identity at both

@@ -9,6 +9,7 @@ from game.bindings import Controls, GameBinding, bind_controls, validate_tools
 from game.veloren.evaluators.endpoints import evaluate_displacement, evaluate_health, evaluate_inventory
 from game.veloren.evaluators.endpoints import validate_displacement, validate_health, validate_inventory
 from game.veloren.evaluators.endpoints import evaluate_state, validate_state
+from game.veloren.evaluators.encounter import evaluate_encounter, validate_encounter
 from game.veloren.game import VelorenGame
 from game.veloren.structured_tools import interface as st
 from game.veloren.visual_motor import interface as vm
@@ -24,22 +25,28 @@ def create_binding(
         headless=headless, recording=recording, recording_fps=recording_fps, recording_path=recording_path,
     )
     if task_type == "structured_tool":
+        if tools is None:
+            tools = tuple(st.SPECS) if fixture.get("encounters") else st.BASE_TOOLS
         validate_tools(st.agent_tools(), tools)
     elif tools is not None:
         raise ValueError("Tool allowlists are only supported for structured_tool tasks")
     evaluators: dict[str, Callable[..., dict]] = {
         "displacement": evaluate_displacement, "inventory": evaluate_inventory, "health": evaluate_health,
-        "state": evaluate_state,
+        "state": evaluate_state, "encounter": evaluate_encounter,
     }
     validators: dict[str, Callable[..., object]] = {
         "displacement": validate_displacement, "inventory": validate_inventory, "health": validate_health,
-        "state": validate_state,
+        "state": validate_state, "encounter": validate_encounter,
     }
     if evaluator not in evaluators:
         raise ValueError(f"Unknown Veloren evaluator: {evaluator}")
     score = evaluators[evaluator]
     inspect.signature(score).bind(Path(), Path(), **parameters)
     validators[evaluator](**parameters)
+    if evaluator == "encounter" and set(parameters["roles"]) != {
+        row["role"] for row in game.fixture.get("encounters", [])
+    }:
+        raise ValueError("Scored encounter roles must match the fixture's designated targets")
 
     def controls() -> tuple[Controls, list[Tool[Controls]]]:
         public = game.get_agent_interface()

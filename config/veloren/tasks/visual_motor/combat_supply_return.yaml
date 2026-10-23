@@ -1,0 +1,79 @@
+id: combat_supply_return
+game: veloren
+task_type: visual_motor
+task: Collect the loose simple leather on the far side of the platform before it expires (about 300 game seconds),
+  defeat the hostile Green Legoom, then return alive to [18708.5,10806.5,501] with the leather and at least
+  one unused minor potion. Choose the order of collection, combat and recovery yourself. Settle grounded
+  within 1 metre horizontally and 0.5 metres vertically at speed <= 0.1 m/s. Enemies use autonomous native
+  AI and unchanged stock loadouts on an authored elevated rock platform. The world continues during model
+  reasoning. You have a starter sword and two minor potions. Each designated enemy must actually die after
+  you damage it, and you must not die. No particular attack, last blow or loot pickup is required. Finish
+  with a text answer and release movement and ability inputs.
+time_limit_seconds: 420
+fixture:
+  world_path: ../../fixtures/veloren_0_18_0_0.bin
+  world_seed: 130626853
+  time_of_day: '12:00'
+  day_length: 30
+  calendar: none
+  platform:
+    origin:
+    - 18700
+    - 10800
+    - 500
+    size:
+    - 28
+    - 28
+    block: Rock
+  player_state:
+    position:
+    - 18708.5
+    - 10806.5
+    - 501
+    look:
+    - 0
+    - 1
+    - 0
+    health: 100
+    inventory:
+      common.items.consumable.potion_minor: 2
+    equipment:
+      active_mainhand: common.items.weapons.sword.starter
+      chest: common.items.armor.misc.chest.worker_purple_brown
+      feet: common.items.armor.misc.foot.sandals
+      glider: common.items.glider.basic_white
+      lantern: common.items.lantern.black_0
+      legs: common.items.armor.misc.pants.worker_brown
+  encounters:
+  - role: green_legoom
+    asset: common.entity.benchmark.male_green_legoom
+    position:
+    - 18708.5
+    - 10820.5
+    - 501
+  supplies:
+  - position:
+    - 18720.5
+    - 10823.5
+    - 501
+    item: common.items.crafting_ing.leather.simple_leather
+    amount: 1
+evaluator:
+  name: encounter
+  parameters:
+    roles:
+    - green_legoom
+    inventory:
+    - item: common.items.crafting_ing.leather.simple_leather
+      min_count: 1
+      min_delta: 1
+    - item: common.items.consumable.potion_minor
+      min_count: 1
+    position:
+      target:
+      - 18708.5
+      - 10806.5
+      - 501
+      horizontal_tolerance: 1
+      vertical_tolerance: 0.5
+      max_speed: 0.1

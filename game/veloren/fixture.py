@@ -53,7 +53,7 @@ def vector(value: object, label: str, *, integer: bool = False) -> list:
 
 def validate_fixture(value: object) -> dict:
     required = {"world_path", "world_seed", "time_of_day", "day_length", "calendar", "platform", "player_state"}
-    optional = {"blocks", "stations", "supplies", "recipe_groups", "recipes"}
+    optional = {"blocks", "stations", "supplies", "recipe_groups", "recipes", "encounters"}
     if not isinstance(value, dict) or required - value.keys() or value.keys() - required - optional:
         raise ValueError(f"Veloren fixture requires exactly {sorted(required)} plus optional {sorted(optional)}")
     fixture = value
@@ -104,6 +104,24 @@ def validate_fixture(value: object) -> dict:
         require_standing_point([x - 2, y, z], occupied, "Station approach")
     require_standing_point(point, occupied, "Player")
     require_standing_point(setup_start, occupied, "Native setup start")
+    encounters = fixture.get("encounters", [])
+    if not isinstance(encounters, list) or len(encounters) > 4:
+        raise ValueError("encounters must contain at most four designated native enemies")
+    roles, positions = set(), set()
+    for encounter in encounters:
+        fields(encounter, {"role", "asset", "position"}, "encounter")
+        role, asset = encounter["role"], encounter["asset"]
+        if (not isinstance(role, str) or not re.fullmatch(r"[a-z][a-z0-9_]{0,63}", role)
+                or role in roles or asset not in (
+                    "common.entity.benchmark.male_green_legoom", "common.entity.benchmark.male_wolf",
+                )):
+            raise ValueError("Encounter requires a unique role and a supported exact-body enemy asset")
+        spawn = vector(encounter["position"], "encounter.position")
+        require_standing_point(spawn, occupied, "Encounter")
+        if not 10 <= math.dist(spawn, point) <= 24 or tuple(spawn) in positions:
+            raise ValueError("Enemies must have distinct spawn points 10-24 metres from the player")
+        roles.add(role)
+        positions.add(tuple(spawn))
     for supply in fixture.get("supplies", []):
         fields(supply, {"position", "item", "amount"}, "supply")
         require_standing_point(vector(supply["position"], "supply.position"), occupied, "Supply")
@@ -233,5 +251,27 @@ async def initialize_fixture(admin, actor, fixture: dict) -> dict:
     await setup.command(admin, "sudo", actor.name, "health", fixture["player_state"]["health"])
     opening = await recipe_observation(actor, fixture, await setup.ready_observation(actor))
     verify_player(fixture, opening)
+    encounters = []
+    source = None
+    if fixture.get("encounters"):
+        from scripts.rpg_benchmark.combat_support import native_binding, spawn
+        for enemy in fixture["encounters"]:
+            target = await spawn(admin, actor, {
+                **enemy, "stock_loadout": "Unchanged native asset loadout; exact-body benchmark derivative.",
+            }, enemy["position"])
+            expected = (
+                {"BipedSmall": {"species": "GreenLegoom", "body_type": "Male"}}
+                if enemy["asset"].endswith("male_green_legoom")
+                else {"QuadrupedMedium": {"species": "Wolf", "body_type": "Male"}}
+            )
+            if target["public"].get("body_identity") != expected or target["binding"]["body"] != expected:
+                raise RuntimeError("Encounter target body differs from the exact declared native asset")
+            encounters.append(target)
+        opening = await actor.request("observe", origin="private-validation")
+        verify_player(fixture, opening)
+        source = await native_binding(actor, opening["self_identity"]["uid"])
+        if source["health"] <= 0 or source["dead"]:
+            raise RuntimeError("Encounter player is not alive at initialization")
     return {"fixture": fixture, "construction": construction, "blocks": blocks,
-            "stations": stations, "supplies": supplies, "opening": opening}
+            "stations": stations, "supplies": supplies, "opening": opening,
+            "encounters": encounters, "source_binding": source}

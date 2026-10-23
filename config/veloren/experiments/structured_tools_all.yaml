@@ -12,6 +12,10 @@ tasks:
   - path: ../tasks/structured_tools/staggered_detour.yaml
   - path: ../tasks/structured_tools/elevation_steps.yaml
   - path: ../tasks/structured_tools/long_detour.yaml
+  - path: ../tasks/structured_tools/defeat_legoom.yaml
+  - path: ../tasks/structured_tools/defeat_wolf.yaml
+  - path: ../tasks/structured_tools/dual_legoom.yaml
+  - path: ../tasks/structured_tools/combat_supply_return.yaml
 repetitions: 10
 
 agents:

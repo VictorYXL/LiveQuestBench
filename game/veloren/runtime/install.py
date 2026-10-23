@@ -36,7 +36,9 @@ def main() -> None:
     original_source = upstream.parent / bindings["renderer"]["source_root"]
     hashes = json.loads(source_manifest.read_text())["files_sha256"]
     patch = Path(__file__).parents[1] / "patches/0001-physical-input.patch"
-    changed = ("voxygen/src/native_agent.rs", "voxygen/src/session/mod.rs")
+    protection_patch = patch.with_name("0002-disable-native-protection.patch")
+    changed = ("voxygen/src/native_agent.rs", "voxygen/src/session/mod.rs",
+               "client/src/agent_protocol/continuous_control.rs")
     with tempfile.TemporaryDirectory(prefix="veloren-patch-", dir=root.parent) as temporary:
         expected = Path(temporary)
         for name in changed:
@@ -46,6 +48,8 @@ def main() -> None:
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(original_source / name, target)
         subprocess.run(["patch", "--batch", "-p1", "-i", str(patch.resolve())], cwd=expected, check=True)
+        physical_only = hashes | {name: digest(expected / name) for name in changed}
+        subprocess.run(["patch", "--batch", "-p1", "-i", str(protection_patch.resolve())], cwd=expected, check=True)
         patched = hashes | {name: digest(expected / name) for name in changed}
     if not root.exists():
         shutil.copytree(cache, root, symlinks=False)
@@ -54,6 +58,10 @@ def main() -> None:
     current = {name: digest(root / "source" / name) for name in hashes}
     if current == hashes:
         subprocess.run(["patch", "--batch", "-p1", "-i", str(patch.resolve())], cwd=root / "source", check=True)
+        current = physical_only
+    if current == physical_only:
+        subprocess.run(["patch", "--batch", "-p1", "-i", str(protection_patch.resolve())],
+                       cwd=root / "source", check=True)
     elif current != patched:
         raise ValueError("Build source differs from the selected source plus declared patch")
     if {name: digest(root / "source" / name) for name in hashes} != patched:
@@ -76,8 +84,11 @@ def main() -> None:
         "upstream_runtime": str(upstream), "upstream_sha256": digest(upstream),
         "renderer": str(executable), "source": str(root / "source"),
         "source_manifest_sha256": digest(source_manifest), "patch_sha256": digest(patch),
+        "protection_patch_sha256": digest(protection_patch),
+        "native_protection": "disabled by explicit renderer launch environment",
         "compiler_cache": str(cache), "qualification": "requires LiveQuestBench real-game checks",
-        "sha256": {str(path.resolve()): digest(path) for path in (executable, patch, source_manifest)},
+        "sha256": {str(path.resolve()): digest(path)
+                   for path in (executable, patch, protection_patch, source_manifest)},
     }
     pending = root / ".runtime.json.tmp"
     pending.write_text(json.dumps(record, indent=2) + "\n")

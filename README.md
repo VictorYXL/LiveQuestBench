@@ -6,16 +6,17 @@ plans when thinking takes time and resources spent now may be needed later?
 
 **Status: an executable development benchmark, not a frozen research release.**
 Minecraft and Veloren, six Agent implementations, and three model providers
-are integrated. The expanded task catalogs have been checked offline; they
-still require native qualification and budget calibration before scientific
-evaluation. Earlier integration runs do not certify every new task.
+are integrated. Engineering checks include recorded native runs and offline
+regressions. Coverage is configuration/runtime-specific: earlier integration runs
+do not certify every new task, and reference-behavior qualification and budget
+calibration remain necessary before scientific evaluation.
 
 ## Games and evaluation modes
 
 | Game | Current catalog per mode | Setup and task details |
 | --- | --- | --- |
 | Minecraft | 11 island tasks | [Minecraft README](game/minecraft/README.md) |
-| Veloren | 10 endpoint adaptations plus a movement diagnostic | [Veloren README](game/veloren/README.md) |
+| Veloren | 10 endpoint adaptations, a movement diagnostic and 4 combat/resource goals | [Veloren README](game/veloren/README.md) |
 
 - **VM (`visual_motor`)**: actual game pixels and bounded keyboard/mouse control.
   No hidden inventory transcription or object coordinates are supplied.
@@ -25,7 +26,7 @@ evaluation. Earlier integration runs do not certify every new task.
 Report VM and ST separately: they change both observations and action
 capabilities. Scores are not a pure comparison of visual reasoning.
 The current catalog includes crafting, resource retention, construction,
-navigation and recovery. Small diagnostics and overlapping variants are not
+navigation, recovery and native combat. Small diagnostics and overlapping variants are not
 independent long-horizon capabilities; a raw catalog average is not a balanced
 research leaderboard.
 

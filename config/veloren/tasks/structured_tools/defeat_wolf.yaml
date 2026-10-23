@@ -1,0 +1,55 @@
+id: defeat_wolf
+game: veloren
+task_type: structured_tool
+task: Defeat the hostile Wolf and survive. Enemies use autonomous native AI and unchanged stock loadouts
+  on an authored elevated rock platform. The world continues during model reasoning. You have a starter
+  sword and two minor potions. Each designated enemy must actually die after you damage it, and you must
+  not die. No particular attack, last blow or loot pickup is required. Finish with a text answer and release
+  movement and ability inputs.
+time_limit_seconds: 300
+fixture:
+  world_path: ../../fixtures/veloren_0_18_0_0.bin
+  world_seed: 130626853
+  time_of_day: '12:00'
+  day_length: 30
+  calendar: none
+  platform:
+    origin:
+    - 18700
+    - 10800
+    - 500
+    size:
+    - 28
+    - 28
+    block: Rock
+  player_state:
+    position:
+    - 18708.5
+    - 10806.5
+    - 501
+    look:
+    - 0
+    - 1
+    - 0
+    health: 100
+    inventory:
+      common.items.consumable.potion_minor: 2
+    equipment:
+      active_mainhand: common.items.weapons.sword.starter
+      chest: common.items.armor.misc.chest.worker_purple_brown
+      feet: common.items.armor.misc.foot.sandals
+      glider: common.items.glider.basic_white
+      lantern: common.items.lantern.black_0
+      legs: common.items.armor.misc.pants.worker_brown
+  encounters:
+  - role: wolf
+    asset: common.entity.benchmark.male_wolf
+    position:
+    - 18708.5
+    - 10820.5
+    - 501
+evaluator:
+  name: encounter
+  parameters:
+    roles:
+    - wolf

@@ -17,7 +17,7 @@ from scripts.rpg_benchmark.native import Journal, NativeBridge, NativeConfig, Na
 from scripts.rpg_benchmark.renderer import RendererBridge
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
-from game.veloren.fixture import initialize_fixture, recipe_observation, validate_fixture
+from game.veloren.fixture import initialize_fixture, recipe_observation, validate_fixture, verify_player
 from game.veloren.runtime.server import fixture_server
 
 
@@ -39,6 +39,7 @@ class LocalRenderer(RendererBridge):
             "VELOREN_SESSION_ID": self.name, "VOXYGEN_CONFIG": str(settings),
             "VELOREN_USERDATA": str(self.out / "renderer-userdata"), "WGPU_BACKEND": "vulkan",
             "NO_PROXY": "127.0.0.1,localhost", "no_proxy": "127.0.0.1,localhost",
+            "LIVEQUEST_DISABLE_NATIVE_PROTECTION": "1",
         }
         Path(env["HOME"]).mkdir(exist_ok=True)
         self.process = await asyncio.create_subprocess_exec(
@@ -71,6 +72,8 @@ class Session:
             raise RuntimeError("Session is single-use")
         self.started = True
         cfg = self.config
+        if cfg.get("native_protection") != "disabled by explicit renderer launch environment":
+            raise ValueError("Prepared runtime lacks the native-protection opt-out patch; rerun Veloren setup")
         for path, digest in cfg["sha256"].items():
             if hashlib.sha256(Path(path).read_bytes()).hexdigest() != digest:
                 raise ValueError(f"Prepared runtime changed: {path}")
@@ -87,8 +90,10 @@ class Session:
         self.stack.callback(journal.close)
         port, userdata = await self.stack.enter_async_context(fixture_server(self.output, self.record, native, self.fixture))
         admin = NativeBridge(self.output, self.record["username"], port, userdata, journal, native)
-        self.stack.push_async_callback(admin.close)
+        administrator = await self.stack.enter_async_context(AsyncExitStack())
+        administrator.push_async_callback(admin.close)
         await admin.start()
+        administrator_uid = (await admin.request("observe"))["self_identity"]["uid"]
         os.environ["LIVEQUEST_PHYSICAL_INPUT"] = "1" if self.track == "visual_motor" else "0"
         self.actor = LocalRenderer(
             self.output, "Player" + uuid4().hex[:10], port, userdata, journal, native,
@@ -97,6 +102,20 @@ class Session:
         self.stack.push_async_callback(self.actor.close)
         await self.actor.start()
         initialized = await initialize_fixture(admin, self.actor, self.fixture)
+        await administrator.aclose()
+        opening = await setup.wait_observation(
+            self.actor,
+            lambda row: all(entry["uid"] != administrator_uid for entry in row["nearby_entities"]),
+            "fixture administrator disconnected and absent",
+        )
+        verify_player(self.fixture, opening)
+        initialized["opening"] = await recipe_observation(self.actor, self.fixture, opening)
+        initialized["administrator_retirement"] = {
+            "uid": administrator_uid, "confirmed_absent": True,
+            "returncode": admin.process.returncode, "cleanup": admin.cleanup,
+        }
+        self.record["administrator_retirement"] = initialized["administrator_retirement"]
+        self.initialized = initialized
         self.record["actor"] = self.actor.ready.result()
         (self.output / "fixture.json").write_text(json.dumps({
             **initialized, "world": self.record["world_fixture"],
@@ -131,7 +150,33 @@ class Session:
         if operation == "snapshot":
             if self.running:
                 raise RuntimeError("Snapshot requires a closed public gate")
-            return await recipe_observation(self.actor, self.fixture)
+            observation = await recipe_observation(self.actor, self.fixture)
+            if self.fixture.get("encounters"):
+                from scripts.rpg_benchmark import native_outcomes
+                rows = native_outcomes.read(self.output / "private-native-oracle.ndjson", self.output.name)
+                targets = self.initialized["encounters"]
+                if not hasattr(self, "encounter_registry"):
+                    verify_player(self.fixture, observation)
+                    current = {entry["uid"]: entry for entry in observation["nearby_entities"]}
+                    for target in targets:
+                        entry = current.get(target["binding"]["uid"])
+                        if (entry is None or entry["health"]["current"] <= 0 or entry["health"]["dead"]
+                                or entry["health"]["current"] != target["binding"]["health"]):
+                            raise RuntimeError("Designated target unavailable or dead before measured play")
+                    self.encounter_registry = {
+                        "run_id": self.output.name, "nonce": rows[0]["data"]["nonce"],
+                        "opening_sequence": rows[-1]["sequence"],
+                        "source": self.initialized["source_binding"],
+                        "targets": [{"role": target["role"], "asset": target["asset"],
+                                     "binding": target["binding"]} for target in targets],
+                    }
+                observation["private_encounter_evidence"] = {
+                    "schema": "livequest-encounter/1", "registry": self.encounter_registry,
+                    "through_sequence": rows[-1]["sequence"],
+                    "events": [row for row in rows if row["sequence"] > self.encounter_registry["opening_sequence"]
+                               and row["event"] in ("health_effect_applied", "native_entity_death")],
+                }
+            return observation
         if operation == "inspect_frame":
             return await self.actor.request("frame", await self.frame_fence(), origin="private-validation")
         if not self.running:
@@ -144,6 +189,7 @@ class Session:
             if args.get("action_type") not in (
                 "move_forward", "move_backward", "move_left", "move_right",
                 "turn", "jump", "pickup", "use_item", "craft", "equip",
+                "look_at", "attack_primary", "attack_secondary", "toggle_wield", "block", "roll", "stop",
             ):
                 raise PermissionError("Native action is not in the fixed public skill set")
             try:

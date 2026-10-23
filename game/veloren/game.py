@@ -144,7 +144,10 @@ class VelorenGame(BaseGame[MotorInterface | StructuredInterface]):
 
     async def _observe_structured(self) -> dict:
         session = self._check_running()
-        return project(await session.request("observe"))
+        observation = project(await session.request("observe"))
+        if self.fixture.get("encounters"):
+            observation["profile"] = "veloren-native-fixed-tools-v3-combat"
+        return observation
 
     async def _call_tool(self, name: str, arguments: dict) -> dict:
         native, converted = validate_tool(name, arguments)

@@ -1,0 +1,12 @@
+--- a/client/src/agent_protocol/continuous_control.rs
++++ b/client/src/agent_protocol/continuous_control.rs
+@@ -958,6 +958,9 @@
+ 
+ pub(super) fn protection_tick(client: &mut Client, state: &mut BridgeState) {
++    if std::env::var("LIVEQUEST_DISABLE_NATIVE_PROTECTION").as_deref() == Ok("1") {
++        return;
++    }
+     if state.continuous.shutdown { return; }
+     let actor = actor_ref(client, state);
+     let health = client.current::<comp::Health>();
+     let character = client.current::<comp::CharacterState>();

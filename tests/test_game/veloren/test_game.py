@@ -12,7 +12,6 @@ import pytest
 pytest.importorskip("Xlib", reason="Install the veloren extra to run game checks")
 pytest.importorskip("PIL", reason="Install the veloren extra to run game checks")
 
-from game.backends.x11.actions import ActionError
 from game.backends.x11.interface import MotorInterface
 from game.base_game import AgentAccessClosed
 from game.veloren.evaluators.endpoints import evaluate_displacement, evaluate_health, evaluate_inventory, inventory_counts
@@ -105,7 +104,7 @@ def test_native_movement_and_cutoff(track: str, headless: bool, recording: bool,
             await asyncio.wait_for(game.end(), 10)
             try:
                 await active
-            except (asyncio.CancelledError, ActionError):
+            except (asyncio.CancelledError, AgentAccessClosed):
                 pass
             with pytest.raises(AgentAccessClosed):
                 await public.observe()
@@ -118,6 +117,11 @@ def test_native_movement_and_cutoff(track: str, headless: bool, recording: bool,
             assert evaluate_health(before, after, min_health=1)["success"]
             first = json.loads((before / "observation.json").read_text())
             last = json.loads((after / "observation.json").read_text())
+            retired = json.loads((output / "fixture.json").read_text())["administrator_retirement"]
+            assert retired["confirmed_absent"]
+            assert retired["uid"] != first["self_identity"]["uid"]
+            assert all(entity["uid"] != retired["uid"]
+                       for observation in (first, last) for entity in observation["nearby_entities"])
             assert last["tick"] > first["tick"]
             assert abs(last["look"][0] - first["look"][0]) > .01, "View input did not turn the native actor"
             assert evaluate_inventory(before, after, item="common.items.consumable.potion_minor", min_count=1)["success"]

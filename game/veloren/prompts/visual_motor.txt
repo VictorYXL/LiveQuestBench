@@ -7,6 +7,8 @@ Default controls: W/A/S/D move; mouse motion rotates the camera; Space jumps;
 left mouse uses the primary ability, right mouse the secondary ability;
 I opens the inventory and E interacts.
 Number keys activate their normal hotbar slots. Mouse wheel changes camera zoom.
+R draws or sheathes the weapon; middle mouse requests a dodge roll.
+The stock Alt block binding is intentionally unavailable in this keyboard profile.
 Key and mouse down persist until explicitly released. Batch waits are bounded;
 use key_up/mouse_up or release_all to stop held controls.
 X11 input acceptance is not proof that the desired game effect occurred.
