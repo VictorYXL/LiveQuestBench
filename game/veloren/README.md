@@ -16,9 +16,9 @@ and `chat/`. Standalone game tests retain their own output layout;
 
 ## Native encounter tasks
 
-The paired [ST encounter experiment](../../config/veloren/experiments/structured_tools_encounters.yaml)
-and [VM encounter experiment](../../config/veloren/experiments/visual_motor_encounters.yaml)
-add four goals: defeat a Green Legoom, defeat a Wolf, defeat two simultaneous
+The [full ST experiment](../../config/veloren/experiments/structured_tools_all.yaml)
+and [full VM experiment](../../config/veloren/experiments/visual_motor_all.yaml)
+include four encounter goals: defeat a Green Legoom, defeat a Wolf, defeat two simultaneous
 Green Legooms, and collect expiring simple leather while resolving combat, retaining a
 potion and returning to the starting point. These are development tasks, not
 calibrated difficulty tiers or a claim of complete long-horizon coverage.
