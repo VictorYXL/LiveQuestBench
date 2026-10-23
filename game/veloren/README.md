@@ -198,6 +198,10 @@ any command and returns `success=false`, `error=invalid_action_arguments`,
 unchanged, so the Agent may need to release them explicitly. No actions are
 automatically retried or modified. Runtime execution failures still propagate;
 valid calls still return the action-result array.
+Absolute mouse coordinates use window-local screenshot pixels. All absolute
+positions are checked against the current window dimensions before executing
+any command; out-of-window coordinates reject the batch with valid bounds and
+unchanged held controls. Window/focus/connection failures still propagate.
 The renderer window is matched by
 title and native process ID. The native patch permits physical input only after
 an explicit launch opt-in and a privately fenced lifecycle request.

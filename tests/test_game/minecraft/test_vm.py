@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import subprocess
+from unittest.mock import Mock
 from uuid import uuid4
 
 import pytest
@@ -16,7 +17,8 @@ pytest.importorskip("PIL", reason="Install the minecraft extra")
 from game.minecraft.game import MinecraftGame
 from game.minecraft.init_player_state import PlayerState
 from game.minecraft.visual_motor.interface import MotorInterface, agent_tools
-from game.backends.x11.actions import ActionError, ActionResult
+from game.backends.x11.actions import ActionError, ActionResult, WindowActions
+from game.backends.x11.interface import execute_actions
 from game.base_game import AgentAccessClosed
 
 
@@ -66,6 +68,53 @@ def test_motor_argument_rejection_and_execution_failures(caplog):
     asyncio.run(run())
 
 
+def test_motor_absolute_coordinates_reject_whole_batch_before_input():
+    async def run():
+        session = Mock(spec=WindowActions)
+        session.window_size = Mock(return_value=(854, 480))
+        session.key_down.return_value = ActionResult("key_down", 1, 2)
+
+        def move(x, y):
+            if not 0 <= x < 854 or not 0 <= y < 480:
+                raise ActionError("Absolute pointer coordinates outside the window")
+            return ActionResult("mouse_move_to", 1, 2)
+
+        session.mouse_move_to.side_effect = move
+
+        async def observe():
+            raise AssertionError("Validation must not capture an extra observation")
+
+        async def act(commands):
+            return await execute_actions(session, commands, asyncio.Event())
+
+        tool = agent_tools()[0]
+        interface = MotorInterface(observe, act)
+        for x, y in ((495, 655), (854, 0), (0, 480)):
+            result = json.loads(await tool.execute(interface, {"commands": [
+                {"name": "key_down", "arguments": {"key": "w"}},
+                {"name": "mouse_move_to", "arguments": {"x": x, "y": y}},
+            ]}))
+            assert result["error"] == "invalid_action_arguments"
+            assert result["executed_commands"] == 0
+            assert "854" in result["message"] and "480" in result["message"]
+            session.key_down.assert_not_called()
+            session.mouse_move_to.assert_not_called()
+            session.release_all.assert_not_called()
+        for x, y in ((0, 0), (853, 479)):
+            result = json.loads(await tool.execute(interface, {"commands": [
+                {"name": "mouse_move_to", "arguments": {"x": x, "y": y}},
+            ]}))
+            assert result[0]["operation"] == "mouse_move_to"
+        session.window_size.side_effect = ActionError("Window geometry unavailable")
+        with pytest.raises(ActionError, match="geometry unavailable"):
+            await tool.execute(interface, {"commands": [
+                {"name": "mouse_move_to", "arguments": {"x": 1, "y": 1}},
+            ]})
+        session.release_all.assert_called_once()
+
+    asyncio.run(run())
+
+
 @pytest.mark.game
 @pytest.mark.skipif(os.environ.get("LIVEQUEST_MINECRAFT_TEST") != "1", reason="Opt-in VM check")
 def test_vm_observation_and_movement(
@@ -106,6 +155,17 @@ def test_vm_observation_and_movement(
             assert rejected["executed_commands"] == 0 and rejected["success"] is False
             first = await interface.observe()
             assert first.image.mode == "RGB" and first.image.width > 0 and first.image.height > 0
+            rejected = json.loads(await tool.execute(interface, {"commands": [
+                {"name": "key_down", "arguments": {"key": "3"}},
+                {"name": "mouse_move_to", "arguments": {"x": 0, "y": first.image.height}},
+            ]}))
+            assert rejected["executed_commands"] == 0 and rejected["success"] is False
+            corrected = json.loads(await tool.execute(interface, {"commands": [
+                {"name": "mouse_move_to", "arguments": {
+                    "x": first.image.width // 2, "y": first.image.height // 2,
+                }},
+            ]}))
+            assert corrected[0]["operation"] == "mouse_move_to"
             extrema = [first.image.getchannel(channel).getextrema() for channel in ("R", "G", "B")]
             assert any(low != high for low, high in extrema)
             accepted = json.loads(await tool.execute(interface, {"commands": [

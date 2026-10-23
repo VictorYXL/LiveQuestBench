@@ -414,6 +414,10 @@ The Agent-facing `action` tool returns an explicit JSON error for invalid
 arguments: `success=false`, `error=invalid_action_arguments`, `message`,
 `executed_commands=0` and `held_controls`. The entire batch is rejected before
 execution; previously held inputs remain unchanged and may still be active.
+Absolute mouse coordinates use window-local screenshot pixels. The entire batch
+is checked against the current window dimensions before any command executes;
+out-of-window coordinates return the same recoverable error with valid bounds.
+Window/focus/connection failures still propagate as execution failures.
 The Agent can correct its next call; no automatic splitting, shortening or retry
 occurs. Valid calls retain the action-result array format. Runtime execution
 failures still propagate, and direct `interface.act` calls retain exception

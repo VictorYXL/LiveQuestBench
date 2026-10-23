@@ -31,6 +31,10 @@ _RANGES = {
 }
 
 
+class InvalidMotorArguments(ActionError):
+    """A batch rejected before any input was executed or held state changed."""
+
+
 @dataclass(frozen=True)
 class MotorInterface:
     observe: Callable[[], Awaitable[CapturedFrame]]
@@ -52,22 +56,26 @@ async def agent_observation(interface: MotorInterface) -> Observation:
 
 async def _agent_action(interface: MotorInterface, arguments: dict[str, object]) -> str:
     try:
-        if set(arguments) != {"commands"} or not isinstance(arguments["commands"], list):
-            raise ActionError("action requires a commands array")
-        commands: list[dict[str, object]] = []
-        for command in arguments["commands"]:
-            if not isinstance(command, dict):
-                raise ActionError("Each motor command must be an object")
-            commands.append(command)
-        validate_actions(commands)
-    except ActionError as error:
+        try:
+            if set(arguments) != {"commands"} or not isinstance(arguments["commands"], list):
+                raise ActionError("action requires a commands array")
+            commands: list[dict[str, object]] = []
+            for command in arguments["commands"]:
+                if not isinstance(command, dict):
+                    raise ActionError("Each motor command must be an object")
+                commands.append(command)
+            validate_actions(commands)
+        except ActionError as error:
+            raise InvalidMotorArguments(str(error)) from error
+        results = await interface.act(commands)
+    except InvalidMotorArguments as error:
         logger.warning("Motor batch rejected before execution: %s", error)
         return json.dumps({
             "success": False, "error": "invalid_action_arguments", "message": str(error),
             "executed_commands": 0,
             "held_controls": "unchanged; previously held controls may still be active",
         })
-    return json.dumps([asdict(result) for result in await interface.act(commands)])
+    return json.dumps([asdict(result) for result in results])
 
 
 def agent_tools() -> list[Tool[MotorInterface]]:
@@ -107,7 +115,10 @@ def action_tool_schema() -> dict[str, object]:
             "execution and return invalid_action_arguments with executed_commands=0; previously "
             "held controls are unchanged. Correct the arguments before submitting another call. "
             "Relative mouse movement is clipped to the window edges; applied_delta reports "
-            "the submitted (dx, dy). Use mouse_move_to to reposition a free UI cursor."
+            "the applied (dx, dy). Use mouse_move_to to reposition a free UI cursor. "
+            "Absolute coordinates are window-local screenshot pixels: "
+            "0 <= x < image width and 0 <= y < image height. Out-of-window coordinates "
+            "reject the entire batch before execution; do not assume a different resolution."
         ),
         "parameters": {
             "type": "object", "properties": {
@@ -158,6 +169,19 @@ async def execute_actions(
     results = []
     try:
         sequence = validate_actions(commands)
+        if stopped.is_set():
+            raise AgentAccessClosed("Game has ended; motor execution stopped")
+        absolute_moves = [arguments for name, arguments in sequence if name == "mouse_move_to"]
+        if absolute_moves:
+            width, height = session.window_size()
+            for arguments in absolute_moves:
+                x, y = arguments["x"], arguments["y"]
+                assert isinstance(x, int) and isinstance(y, int)
+                if not 0 <= x < width or not 0 <= y < height:
+                    raise InvalidMotorArguments(
+                        f"mouse_move_to ({x}, {y}) is outside the {width}x{height} window; "
+                        f"use x in [0, {width - 1}] and y in [0, {height - 1}]"
+                    )
         for name, arguments in sequence:
             if stopped.is_set():
                 raise AgentAccessClosed("Game has ended; motor execution stopped")
@@ -178,6 +202,8 @@ async def execute_actions(
                 operation = getattr(session, name)
                 results.append(operation(**arguments))
         return results
+    except InvalidMotorArguments:
+        raise
     except BaseException:
         session.release_all()
         raise

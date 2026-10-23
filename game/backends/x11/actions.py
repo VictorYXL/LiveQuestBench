@@ -143,6 +143,16 @@ class WindowActions:
                 self._abort(str(exc))
                 raise ActionError(self._failure) from exc
 
+    def window_size(self) -> tuple[int, int]:
+        with self._lock:
+            self.check_ready()
+            try:
+                geometry = self._window.get_geometry()
+                return geometry.width, geometry.height
+            except X_FAILURES as exc:
+                self._abort(str(exc))
+                raise ActionError(self._failure) from exc
+
     def _release(self) -> list[str]:
         connection = self._connection()
         failures = []
