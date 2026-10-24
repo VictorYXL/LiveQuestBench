@@ -8,15 +8,27 @@ from uuid import UUID
 import nbtlib
 
 from game.minecraft.evaluators.inventory import evaluate_inventory, validate_requirements
+from game.minecraft.evaluators.structure import evaluate_structure, validate_config
+from game.minecraft.fixtures.forge_hunt import uuid_parts
+from game.minecraft.fixtures.workshop import ACTION_SCHEMA, action_hashes
 
 
 def validate_state(
     *, inventory: list[dict] | None = None, position: dict | None = None,
     held_item: str | None = None, min_food: int | None = None,
     statistics: dict[str, int] | None = None, min_health: float = 1,
+    structure: dict | None = None, action_sequence: list[str] | None = None, no_death: bool = False,
 ) -> None:
-    if not any(value is not None for value in (inventory, position, held_item, min_food, statistics)):
+    if not any(value is not None for value in (
+        inventory, position, held_item, min_food, statistics, structure, action_sequence,
+    )):
         raise ValueError("State evaluation requires a goal predicate")
+    if type(no_death) is not bool:
+        raise ValueError("no_death must be boolean")
+    if structure is not None:
+        validate_config(structure)
+    if action_sequence is not None and action_sequence != ["block", "damage"]:
+        raise ValueError("The supported native action sequence is block then damage")
     if type(min_health) not in (int, float) or not math.isfinite(min_health) or not 0 < min_health <= 20:
         raise ValueError("min_health must be finite and in (0, 20]")
     if inventory is not None:
@@ -60,14 +72,33 @@ def custom_statistics(world: Path, player: UUID) -> dict:
     return result
 
 
+def action_events(world: Path) -> list[dict]:
+    manifest = json.loads((world / "livequest-action-evidence.json").read_text())
+    if manifest != {"schema": ACTION_SCHEMA, "pack_sha256": action_hashes(world)}:
+        raise ValueError("Native action evidence registry or datapack hashes changed")
+    stored = nbtlib.load(world / "data/command_storage_livequest.dat")
+    if int(stored["DataVersion"]) != 3700:
+        raise ValueError("Native action storage requires Minecraft 1.20.4")
+    record = stored["data"]["contents"]["actions"]
+    if str(record["schema"]) != ACTION_SCHEMA:
+        raise ValueError("Native action storage identity changed")
+    events = record["events"]
+    if not isinstance(events, nbtlib.List):
+        raise ValueError("Native action events must be a list")
+    return [{"kind": str(row["kind"]), "player": list(map(int, row["player"])), "tick": int(row["tick"])}
+            for row in events]
+
+
 def evaluate_state(
     before: Path, after: Path, player: UUID, *, inventory: list[dict] | None = None,
     position: dict | None = None, held_item: str | None = None,
     min_food: int | None = None, statistics: dict[str, int] | None = None,
     min_health: float = 1,
+    structure: dict | None = None, action_sequence: list[str] | None = None, no_death: bool = False,
 ) -> dict:
     validate_state(inventory=inventory, position=position, held_item=held_item,
-                   min_food=min_food, statistics=statistics, min_health=min_health)
+                   min_food=min_food, statistics=statistics, min_health=min_health,
+                   structure=structure, action_sequence=action_sequence, no_death=no_death)
     native = nbtlib.load(after / "playerdata" / f"{player}.dat")
     if int(native["DataVersion"]) != 3700:
         raise ValueError("State evaluation requires Minecraft 1.20.4 player data")
@@ -75,6 +106,12 @@ def evaluate_state(
     if not math.isfinite(health):
         raise ValueError("Invalid native health")
     checks = [{"kind": "health", "actual": health, "minimum": min_health, "passed": health >= min_health}]
+    if no_death:
+        first = custom_statistics(before, player).get("minecraft:deaths", 0)
+        last = custom_statistics(after, player).get("minecraft:deaths", 0)
+        if last < first:
+            raise ValueError("Native death count moved backwards")
+        checks.append({"kind": "no_death", "delta": last - first, "passed": first == last})
     if inventory is not None:
         checks.extend({"kind": "inventory", **check} for check in
                       evaluate_inventory(before, after, player, inventory)["checks"])
@@ -116,7 +153,39 @@ def evaluate_state(
                 raise ValueError("Native statistic moved backwards")
             checks.append({"kind": "statistic", "name": name, "delta": delta,
                            "minimum": minimum, "passed": delta >= minimum})
+    if structure is not None:
+        result = evaluate_structure(before, after, structure)
+        checks.append({"kind": "structure", "passed": result["success"], "result": result})
+    if action_sequence is not None:
+        if action_events(before):
+            raise ValueError("Native action sequence must start empty")
+        if (before / "livequest-action-evidence.json").read_bytes() != (
+            after / "livequest-action-evidence.json"
+        ).read_bytes():
+            raise ValueError("Native action manifest changed during play")
+        events = action_events(after)
+        opening_tick = int(nbtlib.load(before / "level.dat")["Data"]["Time"])
+        closing_tick = int(nbtlib.load(after / "level.dat")["Data"]["Time"])
+        previous = opening_tick
+        matched = []
+        for index, event in enumerate(events):
+            if (event["kind"] not in ("block", "damage") or event["player"] != uuid_parts(player)
+                    or not previous <= event["tick"] <= closing_tick):
+                raise ValueError("Invalid native action identity or event ordering")
+            previous = event["tick"]
+            if len(matched) < len(action_sequence) and event["kind"] == action_sequence[len(matched)]:
+                matched.append(index)
+        checks.append({"kind": "action_sequence", "expected": action_sequence, "events": events,
+                       "matched_indices": matched, "passed": len(matched) == len(action_sequence)})
+    semantics = ("Simultaneous native player endpoints and requested vanilla statistic deltas. "
+                 "Damage and chest statistics do not identify a particular target or container. "
+                 "No hidden route, recipe, continuous survival or exact action sequence is required.")
+    if structure is not None or action_sequence is not None or no_death:
+        semantics = (
+            "Simultaneous native player/structure predicates and any explicitly requested statistic, "
+            "no-death and ordered-effect conditions. Native action records bind the player UUID and "
+            "Husk damage source/target type, not an exact enemy UUID. Crop state does not prove a "
+            "particular harvest/replant history. No hidden route or recipe is required."
+        )
     return {"success": all(check["passed"] for check in checks), "checks": checks,
-            "semantics": "Simultaneous native player endpoints and requested vanilla statistic deltas. "
-                         "Damage and chest statistics do not identify a particular target or container. "
-                         "No hidden route, recipe, continuous survival or exact action sequence is required."}
+            "semantics": semantics}

@@ -1,0 +1,40 @@
+id: follow_quarry_note
+game: minecraft
+task_type: visual_motor
+task: 'Your initial position is [-51.5,73,46.2], facing south (+Z).
+  Read the ordinary notes in the white field-station chest ahead and travel to
+  the surface red quarry they identify. Finish alive and grounded within two horizontal
+  blocks of the quarry chest, within half a block of its ground standing height, at
+  speed no more than 0.1 blocks/tick. Reading is not separately scored: reaching the
+  described site is the goal. You may dig, build and use the bread in the chest. Release
+  controls and finish with a text answer.'
+time_limit_seconds: 600
+fixture:
+  world_path: ../../fixtures/lost_expedition
+  instance: 1.20.4
+  difficulty: easy
+  player_state:
+    position:
+    - -51.5
+    - 73
+    - 46.2
+    dimension: minecraft:overworld
+    yaw: 0
+    pitch: 36
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory: []
+evaluator:
+  name: state
+  parameters:
+    position:
+      target:
+      - 64.5
+      - 72
+      - 40.5
+      horizontal_tolerance: 2
+      vertical_tolerance: 0.5
+      max_speed: 0.1

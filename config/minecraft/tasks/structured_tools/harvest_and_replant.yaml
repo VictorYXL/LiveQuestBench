@@ -1,0 +1,90 @@
+id: harvest_and_replant
+game: minecraft
+task_type: structured_tool
+task: Finish alive with at least four wheat and the entire 5-by-5 field still planted
+  with wheat. The field occupies X=-8 through -4 and Z=3 through 7 at crop height
+  Y=72. All 25 plants start ripe. You face the field from its near side and have a
+  wooden hoe and four spare seeds. Crops may have any growth stage at the end. The
+  final crop state and inventory are checked, not a particular harvest history. Release
+  controls and finish with a text answer.
+time_limit_seconds: 360
+fixture:
+  world_path: ../../fixtures/workshop
+  instance: 1.20.4
+  difficulty: easy
+  player_state:
+    position:
+    - -6.5
+    - 72
+    - 0.5
+    dimension: minecraft:overworld
+    yaw: 0
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+    - slot: 0
+      item: wooden_hoe
+      count: 1
+    - slot: 1
+      item: wheat_seeds
+      count: 4
+evaluator:
+  name: state
+  parameters:
+    inventory:
+    - item: wheat
+      min_count: 4
+      min_delta: 4
+    structure:
+      target:
+        structure:
+        - - - wheat
+            - wheat
+            - wheat
+            - wheat
+            - wheat
+          - - wheat
+            - wheat
+            - wheat
+            - wheat
+            - wheat
+          - - wheat
+            - wheat
+            - wheat
+            - wheat
+            - wheat
+          - - wheat
+            - wheat
+            - wheat
+            - wheat
+            - wheat
+          - - wheat
+            - wheat
+            - wheat
+            - wheat
+            - wheat
+      region:
+        min:
+        - -8
+        - 72
+        - 3
+        max:
+        - -4
+        - 72
+        - 7
+      match:
+        require_new_blocks: false
+        rotation_invariant: false
+tools:
+- MoveTool
+- LookAtPositionTool
+- SelectTool
+- StopTool
+- JumpTool
+- DigTool
+- PlaceTool
+- UseHeldItemTool

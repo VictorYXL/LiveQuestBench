@@ -1,0 +1,43 @@
+id: cook_supplied_food
+game: minecraft
+task_type: visual_motor
+task: Obtain and retain four cooked beef. You have four raw beef, one coal and a portable
+  furnace, with no cooked beef. You start on the flat central island at [0.5,72,0.5]
+  facing north (-Z). Place/use the supplied furnace as needed. Any legal acquisition
+  counts; the goal checks inventory rather than a mandatory recipe history. Release
+  controls and finish with a text answer.
+time_limit_seconds: 240
+fixture:
+  world_path: ../../fixtures/island
+  instance: 1.20.4
+  difficulty: easy
+  player_state:
+    position:
+    - 0.5
+    - 72
+    - 0.5
+    dimension: minecraft:overworld
+    yaw: 180
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+    - slot: 0
+      item: furnace
+      count: 1
+    - slot: 1
+      item: beef
+      count: 4
+    - slot: 2
+      item: coal
+      count: 1
+evaluator:
+  name: inventory
+  parameters:
+    requirements:
+    - item: cooked_beef
+      min_count: 4
+      min_delta: 4

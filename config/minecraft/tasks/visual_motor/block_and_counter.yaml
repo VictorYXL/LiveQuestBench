@@ -1,0 +1,40 @@
+id: block_and_counter
+game: minecraft
+task_type: visual_motor
+task: Block an actual incoming Husk strike with your shield, then deal actual damage
+  to a Husk, in that order, without dying. You start in the sentinel yard with an
+  iron sword in your main hand and a shield in your offhand. Ordinary use raises the
+  shield. A kill is not required. The native effect order is checked, not merely submitted
+  controls. Release controls and finish with a text answer.
+time_limit_seconds: 240
+fixture:
+  world_path: ../../fixtures/workshop
+  instance: 1.20.4
+  difficulty: easy
+  player_state:
+    position:
+    - 26.5
+    - 72
+    - 0.5
+    dimension: minecraft:overworld
+    yaw: -90
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+    - slot: 0
+      item: iron_sword
+      count: 1
+    - slot: -106
+      item: shield
+      count: 1
+evaluator:
+  name: state
+  parameters:
+    action_sequence:
+    - block
+    - damage
+    no_death: true

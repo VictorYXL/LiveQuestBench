@@ -1,0 +1,588 @@
+{
+  "schema": "livequest-workshop-source/1",
+  "minecraft_version": "1.20.4",
+  "source": "config/minecraft/fixtures/forge_hunt",
+  "source_sha256": {
+    "DIM-1/data/raids.dat": "d67faf5e1dc4f5c7b4da09aaf04f6b596efef409e19232102bf47bc3d63ad7b6",
+    "DIM1/data/raids_end.dat": "d67faf5e1dc4f5c7b4da09aaf04f6b596efef409e19232102bf47bc3d63ad7b6",
+    "data/chunks.dat": "8950b862ddc2af70da3894f6b485ffbacf94b6355bb15c0cdb4ca2e4af143946",
+    "data/command_storage_gameagent.dat": "d044eb58ae4b61860c952087beead237ad59cf3af90ae381b55c2a1d2f1a83ed",
+    "data/command_storage_livequest.dat": "15ce2bb24993de64190e17f69ea21932646021116807fc393943ef695cb78af7",
+    "data/raids.dat": "d67faf5e1dc4f5c7b4da09aaf04f6b596efef409e19232102bf47bc3d63ad7b6",
+    "data/scoreboard.dat": "3295d99d5ffeba0a202c5fe5af5ff3b293a96e885ef974900b7d0f446848a661",
+    "datapacks/livequest_forge/data/livequest/advancements/sentinel.json": "5112fcdd8775eac10a8893d0688989f69bb2c09a705f2aab94ccf24ffb118a6f",
+    "datapacks/livequest_forge/data/livequest/functions/sentinel.mcfunction": "f9a15293f4cb1d51add63169cf1203f6eb71a4dfbd750791418b5e10383bee6c",
+    "datapacks/livequest_forge/pack.mcmeta": "f8278c827211eff0ff8298b468a8c74587562f86c391730f4381d53d0af69c24",
+    "entities/r.-1.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "entities/r.-1.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "entities/r.0.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "entities/r.0.0.mca": "0681018d91fca238d4b62a00a16b9e88332782de2fba2227721b04f063370c9b",
+    "level.dat": "56cbdde2688cc23bddf344d53f11bad0303c7ffed68da18edd2dcfb4c70a0787",
+    "livequest-expedition.json": "6c86e88394806bd62fc7a82d4ff22184f8d9cac2a5762ac256bcc9e1ff5c7fbd",
+    "poi/r.-1.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "poi/r.-1.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "poi/r.0.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "poi/r.0.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "region/r.-1.-1.mca": "1574237459ac8e62331506818730b3d0c6a37910be61072520ff50cd60024dd0",
+    "region/r.-1.0.mca": "ecb79ce0f0de67bdaa00a26150d3c66da4f2c2e4a4e85c7b2ac4af7ed148ba5e",
+    "region/r.0.-1.mca": "75ab6ef94a4dfea94e9f6714909701066e587c03a0267205b086d105bdacb804",
+    "region/r.0.0.mca": "4d645a1eccf8d51731388f231c4f5ee34c01571fb7dc9b8631d36919bfaa9ebd"
+  },
+  "author": "game/minecraft/fixtures/workshop.py",
+  "author_sha256": "ffa1c55503369ed6d639847170c1a66bb9863b39c2b8da51b33696d82e1cd425",
+  "commands": [
+    {
+      "command": "tick freeze",
+      "feedback": [
+        "[23:35:57] [Server thread/INFO]: The game is frozen",
+        "[23:35:57] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "forceload add -16 -16 47 31",
+      "feedback": [
+        "[23:35:57] [Server thread/INFO]: Marked [-1, 1] chunks in minecraft:overworld from [-1, -1] to [2, 1] to be force loaded",
+        "[23:35:57] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "fill -12 64 14 14 71 26 stone",
+      "feedback": [
+        "[23:35:57] [Server thread/INFO]: Successfully filled 2689 block(s)",
+        "[23:35:57] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "fill -12 72 14 14 82 26 air",
+      "feedback": [
+        "[23:35:57] [Server thread/INFO]: Successfully filled 30 block(s)",
+        "[23:35:57] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "fill -12 71 14 14 71 26 grass_block",
+      "feedback": [
+        "[23:35:57] [Server thread/INFO]: Successfully filled 351 block(s)",
+        "[23:35:57] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "fill 2 68 16 5 71 22 air",
+      "feedback": [
+        "[23:35:57] [Server thread/INFO]: Successfully filled 112 block(s)",
+        "[23:35:57] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "fill 24 72 -4 32 74 -4 stone_bricks",
+      "feedback": [
+        "[23:35:57] [Server thread/INFO]: Successfully filled 27 block(s)",
+        "[23:35:57] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "fill 24 72 4 32 74 4 stone_bricks",
+      "feedback": [
+        "[23:35:57] [Server thread/INFO]: Successfully filled 27 block(s)",
+        "[23:35:57] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "fill 24 72 -3 24 74 3 stone_bricks",
+      "feedback": [
+        "[23:35:57] [Server thread/INFO]: Successfully filled 21 block(s)",
+        "[23:35:57] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "fill 32 72 -3 32 74 3 stone_bricks",
+      "feedback": [
+        "[23:35:57] [Server thread/INFO]: Successfully filled 21 block(s)",
+        "[23:35:57] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock 0 71 19 yellow_wool",
+      "feedback": [
+        "[23:35:57] [Server thread/INFO]: Changed the block at 0, 71, 19",
+        "[23:35:57] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock 7 71 19 white_wool",
+      "feedback": [
+        "[23:35:57] [Server thread/INFO]: Changed the block at 7, 71, 19",
+        "[23:35:57] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -9 71 5 water",
+      "feedback": [
+        "[23:35:57] [Server thread/INFO]: Changed the block at -9, 71, 5",
+        "[23:35:57] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -3 71 5 water",
+      "feedback": [
+        "[23:35:57] [Server thread/INFO]: Changed the block at -3, 71, 5",
+        "[23:35:57] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -9 71 2 white_wool",
+      "feedback": [
+        "[23:35:57] [Server thread/INFO]: Changed the block at -9, 71, 2",
+        "[23:35:57] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -3 71 2 white_wool",
+      "feedback": [
+        "[23:35:58] [Server thread/INFO]: Changed the block at -3, 71, 2",
+        "[23:35:58] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -9 71 8 white_wool",
+      "feedback": [
+        "[23:35:58] [Server thread/INFO]: Changed the block at -9, 71, 8",
+        "[23:35:58] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -3 71 8 white_wool",
+      "feedback": [
+        "[23:35:58] [Server thread/INFO]: Changed the block at -3, 71, 8",
+        "[23:35:58] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "data modify storage livequest:actions schema set value \"minecraft-action-sequence/1\"",
+      "feedback": [
+        "[23:35:58] [Server thread/INFO]: Modified storage livequest:actions",
+        "[23:35:58] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "data modify storage livequest:actions events set value []",
+      "feedback": [
+        "[23:35:58] [Server thread/INFO]: Modified storage livequest:actions",
+        "[23:35:58] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -8 71 3 farmland[moisture=7]",
+      "feedback": [
+        "[23:35:58] [Server thread/INFO]: Changed the block at -8, 71, 3",
+        "[23:35:58] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -8 72 3 wheat[age=7]",
+      "feedback": [
+        "[23:35:58] [Server thread/INFO]: Changed the block at -8, 72, 3",
+        "[23:35:58] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -8 71 4 farmland[moisture=7]",
+      "feedback": [
+        "[23:35:58] [Server thread/INFO]: Changed the block at -8, 71, 4",
+        "[23:35:58] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -8 72 4 wheat[age=7]",
+      "feedback": [
+        "[23:35:58] [Server thread/INFO]: Changed the block at -8, 72, 4",
+        "[23:35:58] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -8 71 5 farmland[moisture=7]",
+      "feedback": [
+        "[23:35:58] [Server thread/INFO]: Changed the block at -8, 71, 5",
+        "[23:35:58] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -8 72 5 wheat[age=7]",
+      "feedback": [
+        "[23:35:58] [Server thread/INFO]: Changed the block at -8, 72, 5",
+        "[23:35:58] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -8 71 6 farmland[moisture=7]",
+      "feedback": [
+        "[23:35:58] [Server thread/INFO]: Changed the block at -8, 71, 6",
+        "[23:35:58] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -8 72 6 wheat[age=7]",
+      "feedback": [
+        "[23:35:58] [Server thread/INFO]: Changed the block at -8, 72, 6",
+        "[23:35:58] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -8 71 7 farmland[moisture=7]",
+      "feedback": [
+        "[23:35:58] [Server thread/INFO]: Changed the block at -8, 71, 7",
+        "[23:35:58] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -8 72 7 wheat[age=7]",
+      "feedback": [
+        "[23:35:58] [Server thread/INFO]: Changed the block at -8, 72, 7",
+        "[23:35:58] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -7 71 3 farmland[moisture=7]",
+      "feedback": [
+        "[23:35:58] [Server thread/INFO]: Changed the block at -7, 71, 3",
+        "[23:35:58] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -7 72 3 wheat[age=7]",
+      "feedback": [
+        "[23:35:58] [Server thread/INFO]: Changed the block at -7, 72, 3",
+        "[23:35:58] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -7 71 4 farmland[moisture=7]",
+      "feedback": [
+        "[23:35:58] [Server thread/INFO]: Changed the block at -7, 71, 4",
+        "[23:35:58] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -7 72 4 wheat[age=7]",
+      "feedback": [
+        "[23:35:58] [Server thread/INFO]: Changed the block at -7, 72, 4",
+        "[23:35:58] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -7 71 5 farmland[moisture=7]",
+      "feedback": [
+        "[23:35:58] [Server thread/INFO]: Changed the block at -7, 71, 5",
+        "[23:35:58] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -7 72 5 wheat[age=7]",
+      "feedback": [
+        "[23:35:58] [Server thread/INFO]: Changed the block at -7, 72, 5",
+        "[23:35:58] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -7 71 6 farmland[moisture=7]",
+      "feedback": [
+        "[23:35:59] [Server thread/INFO]: Changed the block at -7, 71, 6",
+        "[23:35:59] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -7 72 6 wheat[age=7]",
+      "feedback": [
+        "[23:35:59] [Server thread/INFO]: Changed the block at -7, 72, 6",
+        "[23:35:59] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -7 71 7 farmland[moisture=7]",
+      "feedback": [
+        "[23:35:59] [Server thread/INFO]: Changed the block at -7, 71, 7",
+        "[23:35:59] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -7 72 7 wheat[age=7]",
+      "feedback": [
+        "[23:35:59] [Server thread/INFO]: Changed the block at -7, 72, 7",
+        "[23:35:59] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -6 71 3 farmland[moisture=7]",
+      "feedback": [
+        "[23:35:59] [Server thread/INFO]: Changed the block at -6, 71, 3",
+        "[23:35:59] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -6 72 3 wheat[age=7]",
+      "feedback": [
+        "[23:35:59] [Server thread/INFO]: Changed the block at -6, 72, 3",
+        "[23:35:59] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -6 71 4 farmland[moisture=7]",
+      "feedback": [
+        "[23:35:59] [Server thread/INFO]: Changed the block at -6, 71, 4",
+        "[23:35:59] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -6 72 4 wheat[age=7]",
+      "feedback": [
+        "[23:35:59] [Server thread/INFO]: Changed the block at -6, 72, 4",
+        "[23:35:59] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -6 71 5 farmland[moisture=7]",
+      "feedback": [
+        "[23:35:59] [Server thread/INFO]: Changed the block at -6, 71, 5",
+        "[23:35:59] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -6 72 5 wheat[age=7]",
+      "feedback": [
+        "[23:35:59] [Server thread/INFO]: Changed the block at -6, 72, 5",
+        "[23:35:59] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -6 71 6 farmland[moisture=7]",
+      "feedback": [
+        "[23:35:59] [Server thread/INFO]: Changed the block at -6, 71, 6",
+        "[23:35:59] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -6 72 6 wheat[age=7]",
+      "feedback": [
+        "[23:35:59] [Server thread/INFO]: Changed the block at -6, 72, 6",
+        "[23:35:59] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -6 71 7 farmland[moisture=7]",
+      "feedback": [
+        "[23:35:59] [Server thread/INFO]: Changed the block at -6, 71, 7",
+        "[23:35:59] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -6 72 7 wheat[age=7]",
+      "feedback": [
+        "[23:35:59] [Server thread/INFO]: Changed the block at -6, 72, 7",
+        "[23:35:59] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -5 71 3 farmland[moisture=7]",
+      "feedback": [
+        "[23:35:59] [Server thread/INFO]: Changed the block at -5, 71, 3",
+        "[23:35:59] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -5 72 3 wheat[age=7]",
+      "feedback": [
+        "[23:35:59] [Server thread/INFO]: Changed the block at -5, 72, 3",
+        "[23:35:59] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -5 71 4 farmland[moisture=7]",
+      "feedback": [
+        "[23:35:59] [Server thread/INFO]: Changed the block at -5, 71, 4",
+        "[23:35:59] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -5 72 4 wheat[age=7]",
+      "feedback": [
+        "[23:35:59] [Server thread/INFO]: Changed the block at -5, 72, 4",
+        "[23:35:59] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -5 71 5 farmland[moisture=7]",
+      "feedback": [
+        "[23:35:59] [Server thread/INFO]: Changed the block at -5, 71, 5",
+        "[23:35:59] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -5 72 5 wheat[age=7]",
+      "feedback": [
+        "[23:35:59] [Server thread/INFO]: Changed the block at -5, 72, 5",
+        "[23:35:59] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -5 71 6 farmland[moisture=7]",
+      "feedback": [
+        "[23:36:00] [Server thread/INFO]: Changed the block at -5, 71, 6",
+        "[23:36:00] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -5 72 6 wheat[age=7]",
+      "feedback": [
+        "[23:36:00] [Server thread/INFO]: Changed the block at -5, 72, 6",
+        "[23:36:00] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -5 71 7 farmland[moisture=7]",
+      "feedback": [
+        "[23:36:00] [Server thread/INFO]: Changed the block at -5, 71, 7",
+        "[23:36:00] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -5 72 7 wheat[age=7]",
+      "feedback": [
+        "[23:36:00] [Server thread/INFO]: Changed the block at -5, 72, 7",
+        "[23:36:00] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -4 71 3 farmland[moisture=7]",
+      "feedback": [
+        "[23:36:00] [Server thread/INFO]: Changed the block at -4, 71, 3",
+        "[23:36:00] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -4 72 3 wheat[age=7]",
+      "feedback": [
+        "[23:36:00] [Server thread/INFO]: Changed the block at -4, 72, 3",
+        "[23:36:00] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -4 71 4 farmland[moisture=7]",
+      "feedback": [
+        "[23:36:00] [Server thread/INFO]: Changed the block at -4, 71, 4",
+        "[23:36:00] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -4 72 4 wheat[age=7]",
+      "feedback": [
+        "[23:36:00] [Server thread/INFO]: Changed the block at -4, 72, 4",
+        "[23:36:00] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -4 71 5 farmland[moisture=7]",
+      "feedback": [
+        "[23:36:00] [Server thread/INFO]: Changed the block at -4, 71, 5",
+        "[23:36:00] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -4 72 5 wheat[age=7]",
+      "feedback": [
+        "[23:36:00] [Server thread/INFO]: Changed the block at -4, 72, 5",
+        "[23:36:00] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -4 71 6 farmland[moisture=7]",
+      "feedback": [
+        "[23:36:00] [Server thread/INFO]: Changed the block at -4, 71, 6",
+        "[23:36:00] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -4 72 6 wheat[age=7]",
+      "feedback": [
+        "[23:36:00] [Server thread/INFO]: Changed the block at -4, 72, 6",
+        "[23:36:00] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -4 71 7 farmland[moisture=7]",
+      "feedback": [
+        "[23:36:00] [Server thread/INFO]: Changed the block at -4, 71, 7",
+        "[23:36:00] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -4 72 7 wheat[age=7]",
+      "feedback": [
+        "[23:36:00] [Server thread/INFO]: Changed the block at -4, 72, 7",
+        "[23:36:00] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock 10 72 19 chest",
+      "feedback": [
+        "[23:36:00] [Server thread/INFO]: Changed the block at 10, 72, 19",
+        "[23:36:00] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "data merge block 10 72 19 {Items: [{Slot: 0b, id: \"minecraft:gold_nugget\", Count: 1b, tag: {display: {Name: '{\"text\": \"Delivery token\", \"italic\": false}'}}}]}",
+      "feedback": [
+        "[23:36:00] [Server thread/INFO]: Modified block data of 10, 72, 19",
+        "[23:36:00] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "save-all flush",
+      "feedback": [
+        "[23:36:00] [Server thread/INFO]: Saving the game (this may take a moment!)",
+        "[23:36:00] [Server thread/INFO]: ThreadedAnvilChunkStorage (world): All chunks are saved",
+        "[23:36:00] [Server thread/INFO]: ThreadedAnvilChunkStorage (DIM-1): All chunks are saved",
+        "[23:36:00] [Server thread/INFO]: ThreadedAnvilChunkStorage (DIM1): All chunks are saved",
+        "[23:36:00] [Server thread/INFO]: ThreadedAnvilChunkStorage: All dimensions are saved",
+        "[23:36:00] [Server thread/INFO]: Saved the game",
+        "[23:36:00] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    }
+  ],
+  "scope": "Initial native farm/crossing/chest and sentinel-yard overlay, with passive action ordering. Original target identity, AI, health and ordinary gameplay rules are unchanged.",
+  "fixture_sha256": {
+    "DIM-1/data/raids.dat": "5d70af1e31fa1d09727363dbe4097cafd41b818ca7ee98100866a2ae291809a1",
+    "DIM1/data/raids_end.dat": "5d70af1e31fa1d09727363dbe4097cafd41b818ca7ee98100866a2ae291809a1",
+    "data/chunks.dat": "05cd1dd6c68630e758e0d5fa6a51c11119eaf3fc748b1ad543e14ce26bdba468",
+    "data/command_storage_gameagent.dat": "4e6b98d97f6c6c304a5702fcf37e485950184bd6f78fc6450a1ef910f2ff8cd9",
+    "data/command_storage_livequest.dat": "7160feeb581186f6040a57c587a0ad4d8433e903f776ae0e06adbea15ff2b71b",
+    "data/raids.dat": "5d70af1e31fa1d09727363dbe4097cafd41b818ca7ee98100866a2ae291809a1",
+    "data/scoreboard.dat": "3295d99d5ffeba0a202c5fe5af5ff3b293a96e885ef974900b7d0f446848a661",
+    "datapacks/livequest_actions/data/livequest_actions/advancements/block.json": "5ebed8d1460765ba215c73168411c2d44dd61d0c55e4fa9528b7275354ec4889",
+    "datapacks/livequest_actions/data/livequest_actions/advancements/damage.json": "5a5199eba0609401d271c94894a05f0ddea9b852690371a978d6915d0b2c84e1",
+    "datapacks/livequest_actions/data/livequest_actions/functions/block.mcfunction": "d50599665a5dcbc9348f5336fc5374ac568741f251387bb8d7147e908a0ed7f1",
+    "datapacks/livequest_actions/data/livequest_actions/functions/damage.mcfunction": "0cabc5faec6086d4a103fe4d04fa7f539e8e7c9277b6297a0d86fb230bc277da",
+    "datapacks/livequest_actions/pack.mcmeta": "e4625ad09c54beddf9ac5312bcb36499e302b208084421bc63fca75bab3951de",
+    "datapacks/livequest_forge/data/livequest/advancements/sentinel.json": "5112fcdd8775eac10a8893d0688989f69bb2c09a705f2aab94ccf24ffb118a6f",
+    "datapacks/livequest_forge/data/livequest/functions/sentinel.mcfunction": "f9a15293f4cb1d51add63169cf1203f6eb71a4dfbd750791418b5e10383bee6c",
+    "datapacks/livequest_forge/pack.mcmeta": "f8278c827211eff0ff8298b468a8c74587562f86c391730f4381d53d0af69c24",
+    "entities/r.-1.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "entities/r.-1.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "entities/r.0.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "entities/r.0.0.mca": "b6d4589c47e05dfb7def7fd02bbbc2649aeedfea38f5f83b7dc54419004d3c1f",
+    "level.dat": "55e0740abc15a97eefdc044a23799411942d31aafac952b7da7667332a13e314",
+    "livequest-action-evidence.json": "de1a8ea6774576a311438080ffc7c8d4491476dfcb23ff41dc8d6b7ab89f4ffd",
+    "livequest-expedition.json": "6c86e88394806bd62fc7a82d4ff22184f8d9cac2a5762ac256bcc9e1ff5c7fbd",
+    "poi/r.-1.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "poi/r.-1.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "poi/r.0.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "poi/r.0.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "region/r.-1.-1.mca": "6c35c54b28ca00c7625651eb994080ff98426f8722f71748bb5d1cd2edb7f47b",
+    "region/r.-1.0.mca": "139fb0c3fda3bfc3574c0b946df216fa164f4a9634d1538d1daa48516039cfa0",
+    "region/r.0.-1.mca": "868edee9475a08af70b2cf6f2455b4eaed55341b8188703f6ca96c58b0130f40",
+    "region/r.0.0.mca": "e9f49a85abcc04737fd3c42fb298133ad2bd5ac17263507fc26b6d3affb56f5d"
+  },
+  "export_exclusions": [
+    "session.lock",
+    "level.dat_old"
+  ]
+}

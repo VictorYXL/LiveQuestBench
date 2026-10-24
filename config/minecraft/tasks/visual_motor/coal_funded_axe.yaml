@@ -1,0 +1,36 @@
+id: coal_funded_axe
+game: minecraft
+task_type: visual_motor
+task: Obtain and retain one iron axe. You start with 45 coal and no emeralds. The
+  weaponsmith ahead at [8.5,72,4.5] buys 15 coal for one emerald and sells an iron
+  axe for three. Use the ordinary trade screen; any legal acquisition counts, without
+  a required transaction history. Release controls and finish with a text answer.
+time_limit_seconds: 300
+fixture:
+  world_path: ../../fixtures/trade_outposts_courtyard
+  instance: 1.20.4
+  difficulty: easy
+  player_state:
+    position:
+    - 8.5
+    - 72
+    - 2.5
+    dimension: minecraft:overworld
+    yaw: 0
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+    - slot: 0
+      item: coal
+      count: 45
+evaluator:
+  name: inventory
+  parameters:
+    requirements:
+    - item: iron_axe
+      min_count: 1
+      min_delta: 1

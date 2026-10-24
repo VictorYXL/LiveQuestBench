@@ -127,6 +127,56 @@ def test_native_state_distinguishes_selection_effects_and_history(tmp_path):
             validate_state(**params)
 
 
+def test_native_block_then_damage_requires_identity_order_and_same_life(tmp_path):
+    from game.minecraft.evaluators.state import evaluate_state
+    from game.minecraft.fixtures.forge_hunt import uuid_parts
+    from game.minecraft.fixtures.workshop import ACTION_SCHEMA, action_hashes, action_pack
+
+    player = UUID(int=1)
+    before, after = tmp_path / "before", tmp_path / "after"
+    for world, tick in ((before, 20), (after, 100)):
+        world.mkdir()
+        PlayerState(position=(0.5,72,0.5)).write(world, player)
+        nbtlib.File({"Data": nbtlib.Compound({"DataVersion": nbtlib.Int(3700),
+                                            "Time": nbtlib.Long(tick)})}, gzipped=True).save(world / "level.dat")
+        for name, value in action_pack().items():
+            path = world / "datapacks/livequest_actions" / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(value if isinstance(value, str) else json.dumps(value))
+        (world / "livequest-action-evidence.json").write_text(json.dumps({
+            "schema": ACTION_SCHEMA, "pack_sha256": action_hashes(world),
+        }))
+        (world / "data").mkdir()
+
+    def write(world, kinds, actor=player):
+        events = [nbtlib.Compound({"kind": nbtlib.String(kind), "player": nbtlib.IntArray(uuid_parts(actor)),
+                                  "tick": nbtlib.Long(21)}) for kind in kinds]
+        nbtlib.File({"DataVersion": nbtlib.Int(3700), "data": nbtlib.Compound({
+            "contents": nbtlib.Compound({"actions": nbtlib.Compound({
+                "schema": nbtlib.String(ACTION_SCHEMA), "events": nbtlib.List[nbtlib.Compound](events),
+            })}),
+        })}, gzipped=True).save(world / "data/command_storage_livequest.dat")
+
+    write(before, [])
+    parameters = {"action_sequence": ["block", "damage"], "no_death": True}
+    write(after, ["damage", "block"])
+    assert not evaluate_state(before, after, player, **parameters)["success"]
+    write(after, ["block", "damage"])
+    assert evaluate_state(before, after, player, **parameters)["success"]
+    write(after, ["block", "damage"], UUID(int=2))
+    with pytest.raises(ValueError, match="identity"):
+        evaluate_state(before, after, player, **parameters)
+    write(after, ["block", "damage"])
+    (after / "stats").mkdir()
+    (after / "stats" / f"{player}.json").write_text(json.dumps({
+        "DataVersion": 3700, "stats": {"minecraft:custom": {"minecraft:deaths": 1}},
+    }))
+    assert not evaluate_state(before, after, player, **parameters)["success"]
+    write(before, ["block"])
+    with pytest.raises(ValueError, match="start empty"):
+        evaluate_state(before, after, player, **parameters)
+
+
 @pytest.mark.game
 @pytest.mark.skipif(os.environ.get("LIVEQUEST_MINECRAFT_TEST") != "1", reason="Opt-in installed-game check")
 def test_installation_world_and_recording(

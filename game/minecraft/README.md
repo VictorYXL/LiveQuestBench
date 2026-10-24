@@ -27,7 +27,8 @@ Six representative tasks from the migrated island catalog remain in
 | `island.build_plank_enclosure_5x5x2` | New 5×5 perimeter, height 2, empty interior |
 
 Each source filename is preserved (`<source task name>.yaml`). Log collection has a
-300-second budget; the other migrated tasks retain 2,100 seconds. They use a survival
+300-second budget; wooden and iron pickaxes use 600 and 1,200 seconds, the small
+wall uses 300 seconds, and the remaining migrated tasks retain 2,100 seconds. They use a survival
 start at `(0.5, 72, 0.5)`, full health/food, no experience,
 and normal difficulty. Inventory tasks start empty; structure tasks receive
 exactly 64 oak planks in slot 0. ST tasks expose the existing game-provided tool
@@ -50,6 +51,32 @@ Those statistics identify neither a particular chest nor an enemy; the goals
 deliberately require no such attribution. Possession goals likewise do not prove
 a particular crafting recipe, transfer or trade. VM receives only native pixels
 and physical input feedback, never the private scoring evidence.
+
+## L2 workflows
+
+The paired L2 selection covers wooden/iron pickaxe production, a small wall,
+coal-funded axe acquisition, multi-site supplies, farming, cooking, a quarry
+note, block/counterattack ordering and a small bridge. Exact supplies and budgets
+are declared in each task. The shared state evaluator composes existing
+inventory, structure and arrival checks; planted crops may have any growth stage.
+The bridge goal explicitly requires the four-plank crossing and far-bank arrival,
+not a particular traversal history.
+
+The [workshop save](../../config/minecraft/fixtures/workshop/) and
+[source manifest](../../config/minecraft/fixtures/workshop.source.json) reuse the
+forge world with a crop field, trench and walled sentinel yard. Reproduce the
+player-free overlay in a fresh output directory:
+
+```bash
+MINECRAFT_EULA_ACCEPTED=true .venv/bin/python -m game.minecraft.fixtures.workshop \
+  config/minecraft/fixtures/forge_hunt output/temp/workshop-authoring
+```
+
+Passive vanilla advancements record actual shield blocks and damaging hits,
+bound to the player UUID and Husk source/target type. The ordered-effect goal
+also forbids player death; submitted inputs alone do not qualify. No exact enemy
+UUID, harvest history or crafting history is inferred beyond the declared checks.
+The original saves, enemy AI, damage and ordinary mechanics are not modified.
 
 ## Coupled expeditions and native evidence
 

@@ -20,6 +20,13 @@ tasks:
 - path: ../tasks/visual_motor/obtain_sticks.yaml
 - path: ../tasks/visual_motor/obtain_emerald.yaml
 - path: ../tasks/visual_motor/deal_damage.yaml
+- path: ../tasks/visual_motor/coal_funded_axe.yaml
+- path: ../tasks/visual_motor/supply_loadout.yaml
+- path: ../tasks/visual_motor/harvest_and_replant.yaml
+- path: ../tasks/visual_motor/cook_supplied_food.yaml
+- path: ../tasks/visual_motor/follow_quarry_note.yaml
+- path: ../tasks/visual_motor/block_and_counter.yaml
+- path: ../tasks/visual_motor/bridge_small_gap.yaml
 repetitions: 10
 agents:
 - id: tool_calling_astra

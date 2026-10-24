@@ -8,7 +8,7 @@ from agent_framework.utils.tools import Tool
 from game.bindings import Controls, GameBinding, bind_controls, validate_tools
 from game.minecraft.evaluators.inventory import evaluate_inventory, inventory, validate_requirements
 from game.minecraft.evaluators.structure import evaluate_structure, validate_config
-from game.minecraft.evaluators.state import evaluate_state, validate_state
+from game.minecraft.evaluators.state import action_events, evaluate_state, validate_state
 from game.minecraft.evaluators.expedition import evaluate_expedition, registry, verify_initial as verify_expedition
 from game.minecraft.game import MinecraftGame
 from game.minecraft.init_player_state import PlayerState
@@ -81,6 +81,8 @@ def create_binding(
             raise RuntimeError("Initial native inventory differs from task initialization")
         if evaluator == "expedition":
             verify_expedition(before, game.player_uuid)
+        if evaluator == "state" and parameters.get("action_sequence") is not None and action_events(before):
+            raise RuntimeError("Native action evidence was not empty before measured play")
 
     def controls() -> tuple[Controls, list[Tool[Controls]]]:
         public = game.get_agent_interface()

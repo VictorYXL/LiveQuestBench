@@ -1,0 +1,49 @@
+id: supply_loadout
+game: minecraft
+task_type: structured_tool
+task: Your initial position is [-51.5,73,46.2], facing south (+Z).
+  Finish alive carrying at least four bread and twelve torches. You start inside
+  the white field station beside its floor chest at [-52,72,48], which holds four
+  bread. Twelve torches are in the surface green-mine chest at [-60,72,-47]. You may
+  travel, dig or build normally. Any legal acquisition counts; no exact transfer history
+  is required. Release controls and finish with a text answer.
+time_limit_seconds: 600
+fixture:
+  world_path: ../../fixtures/lost_expedition
+  instance: 1.20.4
+  difficulty: easy
+  player_state:
+    position:
+    - -51.5
+    - 73
+    - 46.2
+    dimension: minecraft:overworld
+    yaw: 0
+    pitch: 36
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory: []
+evaluator:
+  name: state
+  parameters:
+    inventory:
+    - item: bread
+      min_count: 4
+      min_delta: 4
+    - item: torch
+      min_count: 12
+      min_delta: 12
+tools:
+- MoveTool
+- LookAtPositionTool
+- SelectTool
+- StopTool
+- JumpTool
+- DigTool
+- InspectContainerTool
+- TakeContainerItemTool
+- UseHeldItemTool
+- PlaceTool
