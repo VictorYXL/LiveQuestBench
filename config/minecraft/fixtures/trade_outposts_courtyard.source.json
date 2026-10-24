@@ -1,0 +1,164 @@
+{
+  "schema": "livequest-trade-hunt-source/1",
+  "minecraft_version": "1.20.4",
+  "source": "config/minecraft/fixtures/two_outposts_courtyard",
+  "source_sha256": {
+    "DIM-1/data/raids.dat": "d67faf5e1dc4f5c7b4da09aaf04f6b596efef409e19232102bf47bc3d63ad7b6",
+    "DIM1/data/raids_end.dat": "d67faf5e1dc4f5c7b4da09aaf04f6b596efef409e19232102bf47bc3d63ad7b6",
+    "data/chunks.dat": "3e4ca68cfbf45918226a1cf3f3ec93f9fa09101cff45f571d89b9be2ac4779ba",
+    "data/command_storage_gameagent.dat": "e35f61f9e4e2e4b658af255467b7745ef248340ec0f6e0ab219eebb9d84c3ea9",
+    "data/command_storage_livequest.dat": "5ad595845292c99c9d46a390bea658da168a56e983cb6f77230c6a5f549fbdc0",
+    "data/raids.dat": "d67faf5e1dc4f5c7b4da09aaf04f6b596efef409e19232102bf47bc3d63ad7b6",
+    "data/scoreboard.dat": "3295d99d5ffeba0a202c5fe5af5ff3b293a96e885ef974900b7d0f446848a661",
+    "datapacks/livequest_forge/data/livequest/advancements/sentinel.json": "5112fcdd8775eac10a8893d0688989f69bb2c09a705f2aab94ccf24ffb118a6f",
+    "datapacks/livequest_forge/data/livequest/advancements/spider.json": "4954f1d77d52b8f75fd63563289b59a3911eb97582f2edf5467a952a0f2c1143",
+    "datapacks/livequest_forge/data/livequest/functions/sentinel.mcfunction": "f9a15293f4cb1d51add63169cf1203f6eb71a4dfbd750791418b5e10383bee6c",
+    "datapacks/livequest_forge/data/livequest/functions/spider.mcfunction": "087d162f3dc92abe9de2721a20f913839507a0ce250afc96b26f0a6c5548a78a",
+    "datapacks/livequest_forge/pack.mcmeta": "f8278c827211eff0ff8298b468a8c74587562f86c391730f4381d53d0af69c24",
+    "entities/r.-1.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "entities/r.-1.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "entities/r.0.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "entities/r.0.0.mca": "24885685d1f44eb8db32c3a657b2f6cb4683b712f6936a417d36a84cfce149fe",
+    "level.dat": "248f6139b730c3e627bb399597d28ff8b8110e88af1ece894ef00e017c1fa165",
+    "livequest-expedition.json": "3cb71ef07bad8434fc47404cdeebdb06cf28f9c81cf58b24b48407b223f24f9d",
+    "poi/r.-1.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "poi/r.-1.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "poi/r.0.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "poi/r.0.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "region/r.-1.-1.mca": "9c7cb061c4132c4f3a7d9d6b880402e85a957366ebce1d1a5ce2f6bd105bd656",
+    "region/r.-1.0.mca": "b578b9c8237cc9ddefe6eae81914d2cb871b6ec19e05572767a01f0fe6d4a496",
+    "region/r.0.-1.mca": "8e6e065ad013d30c18a751efd8ddcb0a599ae12c65cd1e1c3fa2c41e16e04d2b",
+    "region/r.0.0.mca": "af96074e8ab4a98c68f5418c60e6daf3d9232c46a89dc6cdd14643000b7b8f9f"
+  },
+  "author": "game/minecraft/fixtures/trade_hunt.py",
+  "author_sha256": "af83f0714eca213b6f523bffa3d605f1b5ffeb15d3fa2a41973a9d5fb30a4b54",
+  "commands": [
+    "tick freeze",
+    "scoreboard objectives add lq_event dummy",
+    "scoreboard players set #sequence lq_event 0",
+    "data modify storage livequest:expedition state.schema set value \"minecraft-trade-hunt/1\"",
+    "data modify storage livequest:expedition purchases set value []",
+    "setblock 50 72 5 air",
+    "fill 7 72 3 9 74 5 stone_bricks hollow",
+    "setblock 8 72 4 air",
+    "setblock 8 73 4 air",
+    "setblock 8 73 3 air",
+    "summon minecraft:villager 8.5 72 4.5 {UUID: [I; 1649400380, -1403828589, -1680070478, -485429880], PersistenceRequired: 1b, Xp: 1, VillagerData: {profession: \"minecraft:weaponsmith\", type: \"minecraft:plains\", level: 1}, CustomName: '{\"text\": \"Weaponsmith\"}', CustomNameVisible: 1b, Offers: {Recipes: [{buy: {id: \"minecraft:coal\", Count: 15b}, sell: {id: \"minecraft:emerald\", Count: 1b}, uses: 0, maxUses: 16, xp: 2, priceMultiplier: 0.05f, rewardExp: 1b, demand: 0, specialPrice: 0}, {buy: {id: \"minecraft:emerald\", Count: 3b}, sell: {id: \"minecraft:iron_axe\", Count: 1b, tag: {Damage: 0}}, uses: 0, maxUses: 12, xp: 1, priceMultiplier: 0.2f, rewardExp: 1b, demand: 0, specialPrice: 0}]}}",
+    "fill 3 72 3 5 74 5 stone_bricks hollow",
+    "setblock 4 72 4 air",
+    "setblock 4 73 4 air",
+    "setblock 4 73 3 air",
+    "summon minecraft:villager 4.5 72 4.5 {UUID: [I; 621167100, 163529538, -1464646977, 1837072081], PersistenceRequired: 1b, Xp: 1, VillagerData: {profession: \"minecraft:farmer\", type: \"minecraft:plains\", level: 1}, CustomName: '{\"text\": \"Farmer\"}', CustomNameVisible: 1b, Offers: {Recipes: [{buy: {id: \"minecraft:wheat\", Count: 20b}, sell: {id: \"minecraft:emerald\", Count: 1b}, uses: 0, maxUses: 16, xp: 2, priceMultiplier: 0.05f, rewardExp: 1b, demand: 0, specialPrice: 0}, {buy: {id: \"minecraft:emerald\", Count: 1b}, sell: {id: \"minecraft:bread\", Count: 6b}, uses: 0, maxUses: 16, xp: 1, priceMultiplier: 0.05f, rewardExp: 1b, demand: 0, specialPrice: 0}]}}",
+    "save-all flush"
+  ],
+  "registry": {
+    "schema": "minecraft-trade-hunt/1",
+    "target_uuid": "744c20a7-27b3-4f66-a269-65bfe6479bd1",
+    "target_type": "minecraft:husk",
+    "target_position": [
+      28.5,
+      72,
+      0.5
+    ],
+    "return_position": [
+      0.5,
+      72,
+      0.5
+    ],
+    "pack_sha256": {
+      "pack.mcmeta": "f8278c827211eff0ff8298b468a8c74587562f86c391730f4381d53d0af69c24",
+      "data/livequest/advancements/sentinel.json": "5112fcdd8775eac10a8893d0688989f69bb2c09a705f2aab94ccf24ffb118a6f",
+      "data/livequest/functions/sentinel.mcfunction": "47f42119d09e545a4b1361c29226c0290875c3fb8f3879627a4252ec5271be53",
+      "data/livequest/advancements/spider.json": "4954f1d77d52b8f75fd63563289b59a3911eb97582f2edf5467a952a0f2c1143",
+      "data/livequest/functions/spider.mcfunction": "eb4cd5c7806b08c4148b8cd982bfd92cfe58fd1aa9506130e3ef4a16a19ac7ca",
+      "data/livequest/advancements/weapon_purchase.json": "45b04b78f12263bf361496dc057cc18c8c68fea9330f45495b6b12c3b90dc656",
+      "data/livequest/functions/weapon_purchase.mcfunction": "e5912c773acc8100896b0324ff862d00c9b4d679e9c58a998e20d59ebafac120"
+    },
+    "targets": [
+      {
+        "role": "sentinel",
+        "uuid": "744c20a7-27b3-4f66-a269-65bfe6479bd1",
+        "type": "minecraft:husk",
+        "position": [
+          28.5,
+          72,
+          0.5
+        ],
+        "health": 20
+      },
+      {
+        "role": "spider",
+        "uuid": "b2520b61-8001-4e04-a777-e01a71e881fa",
+        "type": "minecraft:spider",
+        "position": [
+          62.5,
+          72,
+          0.5
+        ],
+        "health": 16
+      }
+    ],
+    "cargo": "outpost_records",
+    "merchants": [
+      {
+        "role": "weaponsmith",
+        "uuid": "624fda3c-ac53-4693-9bdc-28b2e310ed88",
+        "type": "minecraft:villager",
+        "position": [
+          8.5,
+          72,
+          4.5
+        ],
+        "health": 20
+      },
+      {
+        "role": "farmer",
+        "uuid": "250641fc-09bf-4342-a8b3-42bf6d7f7ed1",
+        "type": "minecraft:villager",
+        "position": [
+          4.5,
+          72,
+          4.5
+        ],
+        "health": 20
+      }
+    ]
+  },
+  "scope": "Selected vanilla novice offers, native transactions, physical stalls; no AI disabling or invulnerability.",
+  "restocking": "No reachable job sites; initial stock and funding are finite. Xp=1 retains professions.",
+  "offer_basis": "Pinned 1.20.4 TradeOffers factories: weaponsmith coal 15:1 and axe 3:1; farmer wheat 20:1 and bread 1:6.",
+  "fixture_sha256": {
+    "DIM-1/data/raids.dat": "bec563aa76ffb60a69c0b1f3e86c5ccf7d3112de475f0f9c6586593e11af9602",
+    "DIM1/data/raids_end.dat": "bec563aa76ffb60a69c0b1f3e86c5ccf7d3112de475f0f9c6586593e11af9602",
+    "data/chunks.dat": "3e4ca68cfbf45918226a1cf3f3ec93f9fa09101cff45f571d89b9be2ac4779ba",
+    "data/command_storage_gameagent.dat": "6d3cd1c68c674275ba85a082a451b2db6a2a11d9397e8944ea43b6d45384b03d",
+    "data/command_storage_livequest.dat": "99989ae568d83040dd7c0680ec7b5fbc6220f96852ad1ea5dd6f138ddb8855e1",
+    "data/raids.dat": "bec563aa76ffb60a69c0b1f3e86c5ccf7d3112de475f0f9c6586593e11af9602",
+    "data/scoreboard.dat": "64739252b6ad357fa9b0e7e8aea457bb60c7afce600286f4818fdc5181cc0316",
+    "datapacks/livequest_forge/data/livequest/advancements/sentinel.json": "5112fcdd8775eac10a8893d0688989f69bb2c09a705f2aab94ccf24ffb118a6f",
+    "datapacks/livequest_forge/data/livequest/advancements/spider.json": "4954f1d77d52b8f75fd63563289b59a3911eb97582f2edf5467a952a0f2c1143",
+    "datapacks/livequest_forge/data/livequest/advancements/weapon_purchase.json": "45b04b78f12263bf361496dc057cc18c8c68fea9330f45495b6b12c3b90dc656",
+    "datapacks/livequest_forge/data/livequest/functions/sentinel.mcfunction": "47f42119d09e545a4b1361c29226c0290875c3fb8f3879627a4252ec5271be53",
+    "datapacks/livequest_forge/data/livequest/functions/spider.mcfunction": "eb4cd5c7806b08c4148b8cd982bfd92cfe58fd1aa9506130e3ef4a16a19ac7ca",
+    "datapacks/livequest_forge/data/livequest/functions/weapon_purchase.mcfunction": "e5912c773acc8100896b0324ff862d00c9b4d679e9c58a998e20d59ebafac120",
+    "datapacks/livequest_forge/pack.mcmeta": "f8278c827211eff0ff8298b468a8c74587562f86c391730f4381d53d0af69c24",
+    "entities/r.-1.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "entities/r.-1.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "entities/r.0.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "entities/r.0.0.mca": "9b75e34a068c87dfd11b71d5ed4f0fd0beeba69fdd75abc2db97895927914562",
+    "level.dat": "1e03d26ec977400b49659c80b43398fe347022253c8b2262df3fa0b776d41f1b",
+    "livequest-expedition.json": "bdde1b6f35ff0c43378762b4ffd9947e012d3bdec6cf7204b3c3a512d57c7894",
+    "poi/r.-1.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "poi/r.-1.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "poi/r.0.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "poi/r.0.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "region/r.-1.-1.mca": "9fad0e621aab0429c2f19cbd6f263dcbbf1dc3aa3c6a104e5025e9bd48d6188e",
+    "region/r.-1.0.mca": "261667e711a0728d88d924a296ebcb0b61abe74487f31d216cc01534f7db6f45",
+    "region/r.0.-1.mca": "afcb6d9228c9d542a5e285a3925c62e13f565ce6e7d69ae1f9a50ae841db827b",
+    "region/r.0.0.mca": "601f2a17232a4cffb8042a429216ddd6404e5fa0127f006640b7fa0dddd4aa52"
+  },
+  "export_exclusions": [
+    "session.lock",
+    "level.dat_old"
+  ]
+}

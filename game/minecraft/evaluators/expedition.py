@@ -8,13 +8,17 @@ from uuid import UUID
 import nbtlib
 
 from game.minecraft.fixtures.forge_hunt import OUTPOST_SCHEMA, SCHEMA, TARGET, pack_hashes, targets_for, uuid_parts
+from game.minecraft.fixtures.trade_hunt import MERCHANTS, SCHEMA as TRADE_SCHEMA, SMITH, pack_hashes as trade_hashes
 
 
 def registry(world: Path) -> dict:
     value = json.loads((world / "livequest-expedition.json").read_text())
-    encounters = 2 if value["schema"] == OUTPOST_SCHEMA else 1
-    if value["schema"] not in (SCHEMA, OUTPOST_SCHEMA) or pack_hashes(world, encounters) != value["pack_sha256"]:
+    encounters = 2 if value["schema"] in (OUTPOST_SCHEMA, TRADE_SCHEMA) else 1
+    hashes = trade_hashes(world) if value["schema"] == TRADE_SCHEMA else pack_hashes(world, encounters)
+    if value["schema"] not in (SCHEMA, OUTPOST_SCHEMA, TRADE_SCHEMA) or hashes != value["pack_sha256"]:
         raise ValueError("Expedition fixture or passive evidence datapack changed")
+    if value["schema"] == TRADE_SCHEMA and value["merchants"] != MERCHANTS:
+        raise ValueError("Merchant identities differ from the native purchase predicate")
     if encounters == 2 and (value["targets"] != targets_for(2) or value["cargo"] != "outpost_records"):
         raise ValueError("Outpost targets or cargo differ from the native evidence predicates")
     if UUID(value["target_uuid"]) != TARGET or value["target_type"] != "minecraft:husk":
@@ -42,9 +46,12 @@ def verify_initial(world: Path, player: UUID) -> None:
             or type(opening["health"]) not in (int, float) or not math.isfinite(opening["health"])
             or opening["health"] <= 0 or opening["player_uuid"] != str(player)):
         raise ValueError("Expedition requires a fresh living target and empty native kill evidence")
-    if expected["schema"] == OUTPOST_SCHEMA:
+    if expected["schema"] in (OUTPOST_SCHEMA, TRADE_SCHEMA):
         if opening["targets"] != expected["targets"] or cargo_count(world, player):
             raise ValueError("Outpost targets must start alive at full health, with cargo absent from the player")
+    if expected["schema"] == TRADE_SCHEMA:
+        if record["purchases"] or opening["merchants"] != expected["merchants"]:
+            raise ValueError("Trade expedition requires fresh merchants and no previous purchase receipt")
 
 
 def cargo_count(world: Path, player: UUID) -> int:
@@ -82,13 +89,35 @@ def evaluate_expedition(before: Path, after: Path, player: UUID) -> dict:
         raise ValueError("Ambiguous native designated-target kill evidence")
     qualified = set()
     seen = set()
+    trading = expected["schema"] == TRADE_SCHEMA
+    purchase = None
+    sequences = set()
+    if trading:
+        if len(record["purchases"]) > 1:
+            raise ValueError("Ambiguous first native weapon purchase")
+        for receipt in record["purchases"]:
+            if (list(receipt["player"]) != uuid_parts(player) or str(receipt["merchant"]) != SMITH
+                    or str(receipt["item"]) != "minecraft:iron_axe"
+                    or int(receipt["tick"]) < 0 or int(receipt["sequence"]) <= 0):
+                raise ValueError("Native purchase receipt has wrong identity, item or event sequence")
+            purchase = receipt
+            sequences.add(int(receipt["sequence"]))
     for kill in kills:
         role = str(kill["role"])
         if (role not in roles or role in seen or list(kill["player"]) != uuid_parts(player)
                 or int(kill["tick"]) < 0 or min(int(kill["stone"]), int(kill["iron"])) < 0):
             raise ValueError("Native kill receipt has wrong actor, role or counters")
         seen.add(role)
-        if ((str(kill["hand"]) == "minecraft:stone_sword" and int(kill["stone"]) > 0)
+        if trading:
+            sequence = int(kill["sequence"])
+            if sequence <= 0 or sequence in sequences:
+                raise ValueError("Native trade/kill event sequence is invalid or duplicated")
+            sequences.add(sequence)
+            if (purchase is not None and sequence > int(purchase["sequence"])
+                    and int(kill["tick"]) >= int(purchase["tick"])
+                    and str(kill["hand"]) == str(purchase["item"])):
+                qualified.add(role)
+        elif ((str(kill["hand"]) == "minecraft:stone_sword" and int(kill["stone"]) > 0)
                 or (str(kill["hand"]) == "minecraft:iron_sword" and int(kill["iron"]) > 0)):
             qualified.add(role)
     native = nbtlib.load(after / "playerdata" / f"{player}.dat")
@@ -107,17 +136,24 @@ def evaluate_expedition(before: Path, after: Path, player: UUID) -> dict:
     if death_delta < 0:
         raise ValueError("Native death counter moved backwards")
     checks = [
-        {"kind": "crafted_weapon_native_kill", "passed": qualified == roles},
+        {"kind": "traded_weapon_native_kill" if trading else "crafted_weapon_native_kill", "passed": qualified == roles},
         {"kind": "survival", "health": health, "deaths": death_delta, "passed": health > 0 and death_delta == 0},
         {"kind": "return", "horizontal_error": horizontal, "vertical_error": vertical,
          "motion_blocks_per_tick": speed, "passed": str(native["Dimension"]) == "minecraft:overworld"
          and bool(native["OnGround"]) and horizontal <= 2 and vertical <= .5 and speed <= .1},
     ]
-    if expected["schema"] == OUTPOST_SCHEMA:
+    if expected["schema"] in (OUTPOST_SCHEMA, TRADE_SCHEMA):
         checks.insert(1, {"kind": "outpost_kills", "required": sorted(roles), "qualified": sorted(qualified),
                           "passed": qualified == roles})
         amount = cargo_count(after, player)
         checks.append({"kind": "cargo_return", "count": amount, "passed": amount == 1})
+    if trading:
+        checks.append({"kind": "native_weapon_purchase", "passed": purchase is not None})
+        return {"success": all(check["passed"] for check in checks), "checks": checks,
+                "semantics": "Native villager_trade for an iron axe from the exact authored weaponsmith, "
+                "followed in native event order by both designated player_killed_entity receipts holding that "
+                "weapon type. This is purchase/type provenance, not unique-item tracking or last-damage proof. "
+                "Same-player death-free grounded cargo return; coal sales and food purchases are not mandatory score steps."}
     return {"success": all(check["passed"] for check in checks), "checks": checks,
             "semantics": "Native player_killed_entity for the exact authored UUID, with a held stone/iron "
             "sword and a positive native crafted counter for that sword type at the kill. "

@@ -60,7 +60,7 @@ final class NativeInventory {
         return count;
     }
 
-    private static void click(int slot, int button, SlotActionType action) {
+    static void click(int slot, int button, SlotActionType action) {
         var mc = NativeBridge.client();
         mc.interactionManager.clickSlot(mc.player.currentScreenHandler.syncId, slot, button, action, mc.player);
     }

@@ -13,7 +13,7 @@ from game.minecraft.runtime.bridge import BridgeError, NativeBridge
 from agent_framework.utils.tools import Tool
 
 
-PROFILE_ID = "minecraft-1.20.4-st-native-v4"
+PROFILE_ID = "minecraft-1.20.4-st-native-v5"
 logger = logging.getLogger(__name__)
 NUMBER = {"type": "number", "minimum": -30000000, "maximum": 30000000}
 POSITION = {"x": NUMBER, "y": {"type": "number", "minimum": -2048, "maximum": 2048}, "z": NUMBER}
@@ -71,6 +71,21 @@ SCHEMAS.extend([
          "Native food, shield or bow rules apply; does not select items or choose when to heal.", {
              "duration": {"type": "number", "minimum": 0.05, "maximum": 5},
          }, ["duration"]),
+])
+
+
+EXPEDITION_TOOLS = tuple(schema["name"] for schema in SCHEMAS if schema["name"] != "GetObservationTool")
+SCHEMAS.extend([
+    tool("InspectMerchantTool", "Open the living merchant under your aim within three blocks, or refresh "
+         "the already open native merchant screen. Return current offers, payment slots, cursor and session-bound quotes; "
+         "no navigation, remote stock lookup or exchange.", {}, []),
+    tool("TradeTool", "Select an observed offer and commit exactly one native exchange. "
+         "Requires its current quote and an empty hotbar destination slot 1-9. "
+         "Native UI fills payment slots; no price negotiation, repeated buying, movement or auto-equipping. "
+         "Stale quotes are refused; partial effects remain if interrupted.", {
+             "offer_index": {"type": "integer", "minimum": 0},
+             "quote": ITEM, "slot": SLOT,
+         }, ["offer_index", "quote", "slot"]),
 ])
 
 
@@ -167,6 +182,7 @@ async def execute_tool(bridge: NativeBridge, name: str, arguments: dict) -> dict
         "JumpTool": "jump", "GoToPositionTool": "go_to_position",
         "StrikeTool": "strike",
         "InspectContainerTool": "container_inspect", "TakeContainerItemTool": "container_take",
+        "InspectMerchantTool": "merchant_inspect", "TradeTool": "merchant_trade",
         "DigTool": "dig_block", "PlaceTool": "place",
         "CraftItemTool": "craft", "SmeltItemTool": "smelt",
         "AttackTool": "attack", "UseHeldItemTool": "use_held",

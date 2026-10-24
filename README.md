@@ -15,7 +15,7 @@ calibration remain necessary before scientific evaluation.
 
 | Game | Current catalog per mode | Setup and task details |
 | --- | --- | --- |
-| Minecraft | 11 island tasks and 2 coupled preparation/combat/return tasks | [Minecraft README](game/minecraft/README.md) |
+| Minecraft | 11 island tasks and 3 coupled preparation/trading/combat/return tasks | [Minecraft README](game/minecraft/README.md) |
 | Veloren | 10 endpoint adaptations, a movement diagnostic, 4 combat/resource goals and 2 coupled preparation/hunt/return tasks | [Veloren README](game/veloren/README.md) |
 
 - **VM (`visual_motor`)**: actual game pixels and bounded keyboard/mouse control.
@@ -37,7 +37,7 @@ run succeeded. These checks do
 not establish stable difficulty or complete the proposed NPC/Boss ladder.
 Temporary qualification subsets belong under
 `output/temp/`; production experiments retain only each mode's `all` catalog.
-The current catalog includes crafting, resource retention, construction,
+The current catalog includes native villager trading, crafting, resource retention, construction,
 navigation, recovery and native combat. Small diagnostics and overlapping variants are not
 independent long-horizon capabilities; a raw catalog average is not a balanced
 research leaderboard.

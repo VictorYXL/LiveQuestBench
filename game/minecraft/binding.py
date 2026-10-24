@@ -33,6 +33,7 @@ def create_binding(
         raise ValueError("world_path must be nonempty text")
     world_path = Path(path)
     validate_world(world_path)
+    expedition = registry(world_path) if evaluator == "expedition" else None
     instance, difficulty = fixture["instance"], fixture["difficulty"]
     if instance != "1.20.4" or difficulty not in ("peaceful", "easy", "normal", "hard"):
         raise ValueError("Unsupported Minecraft instance or difficulty")
@@ -43,8 +44,11 @@ def create_binding(
         headless=headless, recording=recording, recording_fps=recording_fps, recording_path=recording_path,
     )
     if task_type == "structured_tool":
-        if tools is None and evaluator != "expedition":
-            tools = st.BASE_TOOLS
+        if tools is None:
+            if expedition is None:
+                tools = st.BASE_TOOLS
+            elif "merchants" not in expedition:
+                tools = st.EXPEDITION_TOOLS
         validate_tools(st.agent_tools(), tools)
     elif tools is not None:
         raise ValueError("Tool allowlists are only supported for structured_tool tasks")
@@ -58,7 +62,6 @@ def create_binding(
         score = evaluate_structure
     elif evaluator == "expedition":
         inspect.signature(evaluate_expedition).bind(Path(), Path(), None, **parameters)
-        registry(world_path)
         score = evaluate_expedition
     else:
         raise ValueError(f"Unknown Minecraft evaluator: {evaluator}")

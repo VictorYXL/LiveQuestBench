@@ -111,6 +111,42 @@ videos. A public ST reference also completed both native kills, chest transfers
 and cargo return without dying. Together with the entry results above, these
 are development feasibility checks, not a calibrated cross-mode difficulty curve.
 
+### Barter-funded outposts
+
+[`trade_outposts_return`](../../config/minecraft/tasks/structured_tools/trade_outposts_return.yaml)
+and its [VM counterpart](../../config/minecraft/tasks/visual_motor/trade_outposts_return.yaml)
+replace crafting with a real villager economy: start with two emeralds,
+30 coal and one bread, buy an iron axe, clear both outposts and return their
+records in the same life. The weaponsmith buys 15 coal for one emerald and
+sells an axe for three; the farmer sells six bread for one emerald. Spending
+too much on food can leave the weapon purchase unfunded. Selling more coal
+and buying food cost interaction time; recovery and kill order remain choices.
+
+These are selected ordinary Java 1.20.4 novice offers, checked against the
+pinned native factories and server readback, not invented barter recipes.
+Stone trading stalls, fixed stock, no reachable restocking job sites, and the
+initial budget are authored fixture conditions. Neither enemy health/AI nor
+trade settlement is replaced. The passive datapack joins an exact-villager
+`villager_trade` receipt to subsequent exact-target kill receipts, using native
+event order and the held purchased weapon type. It does not give items or
+prove uniquely tracked individual-axe provenance. The 900-second task is a
+provisional harder expedition, not a built-in vanilla quest, a resident-defense
+qualification, or a completed MC-C3 family.
+
+Recorded Baseline ST completed this chain successfully; VM completed the native
+weapon purchase but failed later in combat. Both admitted episodes have valid
+measurements, replayed scores and decoded videos. An earlier ST attempt failed
+before play during renderer initialization and is retained separately, not
+counted as an Agent failure. The public ST reference also succeeds. These are
+small development samples, not stable success rates or a calibrated tier.
+
+The separate [world](../../config/minecraft/fixtures/trade_outposts_courtyard/)
+and [provenance](../../config/minecraft/fixtures/trade_outposts_courtyard.source.json)
+are authored by [the trade overlay utility](fixtures/trade_hunt.py) from the
+unchanged two-outpost fixture. The server binary and vanilla mechanics remain
+unchanged; the Fabric control bridge, passive evidence datapack and authored
+save mean this is **not an unmodified, mod-free evaluation environment**.
+
 ### Evaluator mapping and deviations
 
 - The eight source `InventoryEvaluator` tasks use the existing native inventory
@@ -406,7 +442,7 @@ approximation. Tool operations are programmatic native interactions, not a
 human-like animation of every mouse click. Video remains human-only and is not
 added to the structured Agent input.
 
-Display/recording settings and the `minecraft-1.20.4-st-native-v4` tool profile
+Display/recording settings and the `minecraft-1.20.4-st-native-v5` tool profile
 are saved in `environment.json`. Do not compare previous Mineflayer-profile
 results as identical conditions. Both modes use the same snapshot/evaluator path.
 Snapshots are saved-state boundaries, not exact atomic native-tick cutoffs.
@@ -524,7 +560,7 @@ location; existing displays are not reconfigured.
 
 ## ST interface
 
-Profile: **`minecraft-1.20.4-st-native-v4`**, extending v2 with optional
+Profile: **`minecraft-1.20.4-st-native-v5`**, extending v2 with optional
 `AttackTool` and `UseHeldItemTool`. The former submits one current-crosshair
 entity attack within three-block survival reach without auto-aim, navigation
 or cooldown waiting; the latter holds native item use for 0.05-5 seconds and
@@ -534,7 +570,13 @@ native attack), `InspectContainerTool` (open/read an aimed-at reachable chest)
 and `TakeContainerItemTool` (one native shift-click of an observed chest slot).
 None tracks enemies, navigates, chooses supplies or repeats a combat policy.
 Existing non-expedition task defaults retain the original tool set; explicit
-allowlists may opt into the new tools. V2 replaced
+allowlists may opt into the new tools. V5 adds opt-in `InspectMerchantTool`
+(reachable native offers, payment slots and cursor) and `TradeTool` (one
+quoted exchange into a chosen empty hotbar slot). Quotes bind the open screen
+and current offer; price/stock changes require reinspection. Exact native
+stack matching includes item tags. The skill selects no offer, never repeats
+purchases or equips the output, and retains partial effects on interruption.
+Non-trading expeditions retain their previous default tool set. V2 replaced
 `minecraft-1.20.4-st-basic-v1`. Tool names are familiar, but backend, navigation,
 recipe ordering and observation details changed; do not pool scores as the
 same condition.

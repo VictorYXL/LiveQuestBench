@@ -54,7 +54,7 @@ def test_st_observation_and_tools(
             assert rejected["error"] == "invalid_tool_arguments" and rejected["executed"] is False
             initial = await interface.observe()
             assert initial["health"] == 20 and initial["position"] is not None
-            assert initial["profile"] == "minecraft-1.20.4-st-native-v4"
+            assert initial["profile"] == "minecraft-1.20.4-st-native-v5"
             assert initial["nearby_blocks"]["dims"] == {"x": 31, "y": 31, "z": 31}
             assert len(initial["nearby_blocks"]["data"]) == 31 ** 3
             assert any(item["name"] == "oak_log" and item["count"] == 1 for item in initial["inventory"])
@@ -95,6 +95,61 @@ def test_st_observation_and_tools(
                  "-map", "0:v:0", "-f", "null", "-"],
                 check=True, capture_output=True, timeout=30,
             )
+
+    asyncio.run(run())
+
+
+@pytest.mark.game
+@pytest.mark.skipif(os.environ.get("LIVEQUEST_MINECRAFT_TEST") != "1", reason="Opt-in native trading check")
+def test_native_trade_refusal_and_cutoff(headless: bool, recording: bool) -> None:
+    from benchmark.config import load_task
+
+    repository = Path(__file__).resolve().parents[3]
+    task = load_task(repository / "config/minecraft/tasks/structured_tools/trade_outposts_return.yaml")
+    root = Path(os.environ.get("MINECRAFT_TEST_OUTPUT", "output/test"))
+    game = MinecraftGame(
+        track="structured_tool", output_dir=root / f"minecraft-trade-{uuid4().hex}",
+        world_path=Path(task.fixture["world_path"]), headless=headless, recording=recording,
+        player_state=PlayerState.from_dict(task.fixture["player_state"]),
+    )
+
+    async def run() -> None:
+        try:
+            await game.start()
+            await game.begin()
+            public = game.get_agent_interface()
+            assert (await public.call_tool("GoToPositionTool", {"x": 8, "y": 72, "z": 2}))["success"]
+            await public.call_tool("LookAtPositionTool", {"x": 8.5, "y": 73.4, "z": 4.5})
+            shop = await public.call_tool("InspectMerchantTool", {})
+            assert shop["success"], shop
+            axe = next(o for o in shop["payload"]["offers"] if o["sell"]["name"] == "iron_axe")
+            refused = await public.call_tool("TradeTool", {
+                "offer_index": axe["offer_index"], "quote": axe["quote"], "slot": 6,
+            })
+            assert not refused["success"]
+            shop = await public.call_tool("InspectMerchantTool", {})
+            assert shop["payload"]["cursor"] is None
+            assert sum(i["count"] for i in shop["payload"]["payment_slots"]
+                       if i is not None and i["name"] == "emerald") == 2
+            await public.call_tool("StopTool", {})
+            observed = await public.observe()
+            assert sum(i["count"] for i in observed["inventory"] if i["name"] == "emerald") == 2
+            await public.call_tool("LookAtPositionTool", {"x": 8.5, "y": 73.4, "z": 4.5})
+            shop = await public.call_tool("InspectMerchantTool", {})
+            old_screen = await public.call_tool("TradeTool", {
+                "offer_index": axe["offer_index"], "quote": axe["quote"], "slot": 6,
+            })
+            assert not old_screen["success"]
+            sale = next(o for o in shop["payload"]["offers"] if o["buy"]["name"] == "coal")
+            active = asyncio.create_task(public.call_tool("TradeTool", {
+                "offer_index": sale["offer_index"], "quote": sale["quote"], "slot": 4,
+            }))
+            await asyncio.sleep(.1)
+            assert not active.done()
+            await asyncio.wait_for(game.end(), timeout=5)
+            assert active.cancelled()
+        finally:
+            await game.close()
 
     asyncio.run(run())
 

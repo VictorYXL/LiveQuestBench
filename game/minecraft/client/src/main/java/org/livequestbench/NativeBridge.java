@@ -244,6 +244,7 @@ public class NativeBridge implements ClientModInitializer {
     private static Job action(String name, JsonObject params) {
         MinecraftClient mc = client();
         if (!name.equals("craft") && !name.equals("smelt") && !name.equals("container_take")
+                && !name.equals("merchant_inspect") && !name.equals("merchant_trade")
                 && mc.currentScreen != null) mc.player.closeHandledScreen();
         switch (name) {
             case "stop": release(); return () -> ok();
@@ -344,6 +345,8 @@ public class NativeBridge implements ClientModInitializer {
             case "smelt": return NativeInventory.smelt(params);
             case "container_inspect": return NativeInventory.inspectContainer();
             case "container_take": return NativeInventory.takeContainerItem(params);
+            case "merchant_inspect": return NativeTrading.inspect();
+            case "merchant_trade": return NativeTrading.trade(params);
             default: return () -> fail("Unknown native action: " + name);
         }
     }

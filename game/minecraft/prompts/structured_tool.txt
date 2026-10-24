@@ -9,3 +9,10 @@ When exposed by the task, AttackTool submits one native melee attack at the curr
 StrikeTool combines one turn toward a supplied XYZ point with one melee attack along that ray. It observes no new enemy position, tracks nothing and does not approach or repeat attacks. The point may be stale after reasoning; native reach and blocks constrain the strike. Tool calls in the same response execute in order without a model wait between them.
 
 When available, InspectContainerTool opens the chest under your aim and reports its native contents. TakeContainerItemTool shift-clicks one observed chest slot (numbered from 0), with no item selection policy. Inspect again after moving, turning or performing another action that closes the chest screen. Ordinary inventory slots still use their separately documented 1-based numbering.
+When supplied, InspectMerchantTool opens the aimed-at native villager within
+three blocks or refreshes an already open merchant screen. TradeTool uses one
+current offer quote, commits one exchange and places its output in your chosen
+empty hotbar slot (1-9). Read offers again after trading; quotes are screen- and
+stock-specific. It never negotiates, navigates, equips or repeats exchanges.
+Closing the native screen returns unspent payment inputs. An interrupted action
+can leave items on the cursor or in payment slots: inspect before retrying.

@@ -1,0 +1,56 @@
+id: trade_outposts_return
+game: minecraft
+task_type: visual_motor
+task: >-
+  Finance an expedition through real villager trading, clear two outposts,
+  recover their records and return alive. Buy an iron axe from the Weaponsmith
+  in the stone stall centered at [8.5,72,4.5]. After that purchase, obtain
+  native kill credit for the Husk Sentinel (initially [28.5,72,0.5]) and
+  Outpost Spider (initially [62.5,72,0.5]), holding an iron axe at each kill.
+  Bring the Outpost Records from the chest at [68,72,0] to the yellow camp
+  marker [0.5,72,0.5]. Finish grounded within 2 blocks horizontally and 0.5
+  vertically, at saved motion <=0.1 blocks/tick. You must not die.
+  You start in iron armor with 2 emeralds, 30 coal and 1 bread, but no weapon.
+  The Weaponsmith buys 15 coal for 1 emerald and sells an iron axe for 3.
+  The Farmer at [4.5,72,4.5] sells 6 bread for 1 emerald and buys 20 wheat
+  for 1 emerald. These are selected vanilla novice offers, not free rewards.
+  Neither merchant has a reachable job site for restocking. Their stone
+  stalls have south-facing trading windows; approach near z=2.5 and aim
+  through the upper opening. Read actual current prices and stock before
+  committing. Decide how much coal to sell and when, if ever, to buy food.
+  There is no food in the old supply chest location [50,72,5].
+  Right-click a villager to open the ordinary trade UI, select an offer and
+  take its output after paying; opening a screen alone is not a purchase.
+  Shift-clicking an output can repeat a trade, so watch your finite budget.
+  Stone dividers at x=12 and x=45 span z=-8 to 8, with walkable ends.
+  Enemies roam inside the walled courtyard. Native difficulty is Easy and
+  time is fixed at noon; the spider may remain neutral until attacked.
+  Health, hunger, equipment and inventory persist between trades and fights.
+  There is no stage reset, free healing or required kill order. The world
+  continues during reasoning and trading. Release controls before finishing.
+time_limit_seconds: 900
+fixture:
+  world_path: ../../fixtures/trade_outposts_courtyard
+  instance: 1.20.4
+  difficulty: easy
+  player_state:
+    position: [0.5, 72, 0.5]
+    dimension: minecraft:overworld
+    yaw: 0
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+      - {slot: 0, item: emerald, count: 2}
+      - {slot: 1, item: coal, count: 30}
+      - {slot: 2, item: bread, count: 1}
+      - {slot: 100, item: iron_boots, count: 1}
+      - {slot: 101, item: iron_leggings, count: 1}
+      - {slot: 102, item: iron_chestplate, count: 1}
+      - {slot: 103, item: iron_helmet, count: 1}
+evaluator:
+  name: expedition
+  parameters: {}

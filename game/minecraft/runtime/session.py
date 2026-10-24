@@ -340,7 +340,7 @@ class MinecraftSession:
             from game.minecraft.fixtures.forge_hunt import targets_for, uuid_parts
             expected = registry(self.world)
             targets = expected.get("targets", targets_for())
-            for enemy in targets:
+            for enemy in targets + expected.get("merchants", []):
                 target = UUID(enemy["uuid"])
                 native_uuid = "[I;" + ",".join(map(str, uuid_parts(target))) + "]"
                 lines = await self.server.command(
@@ -351,10 +351,21 @@ class MinecraftSession:
                 if (len(values) != 1 or list(values[0]["UUID"]) != uuid_parts(target)
                         or float(values[0]["Health"]) != enemy["health"]):
                     raise RuntimeError(f"Expedition target missing, injured or changed: {enemy['role']}")
+                if enemy in expected.get("merchants", []):
+                    from game.minecraft.fixtures.trade_hunt import offers
+                    actual = values[0]["Offers"]["Recipes"]
+                    required = offers(enemy["role"])
+                    if len(actual) != len(required) or any(
+                        any(row[key] != value for key, value in wanted.items())
+                        for row, wanted in zip(actual, required)
+                    ):
+                        raise RuntimeError("Initial native merchant stock or price differs from the fixture")
             opening = {"target_uuid": expected["target_uuid"], "health": targets[0]["health"],
                        "player_uuid": str(self.config.player_uuid)}
             if "targets" in expected:
                 opening["targets"] = targets
+            if "merchants" in expected:
+                opening["merchants"] = expected["merchants"]
             (self.world / "livequest-opening.json").write_text(json.dumps(opening, indent=2) + "\n")
 
     async def _verify_input_ready(self) -> None:

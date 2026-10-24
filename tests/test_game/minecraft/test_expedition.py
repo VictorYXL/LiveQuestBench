@@ -8,17 +8,20 @@ import pytest
 
 from game.minecraft.evaluators.expedition import evaluate_expedition, verify_initial
 from game.minecraft.fixtures.forge_hunt import OUTPOST_SCHEMA, SCHEMA, TARGET, pack_files, pack_hashes, targets_for, uuid_parts
-from game.minecraft.structured_tools.interface import BASE_TOOLS, validate_tool
+from game.minecraft.fixtures import trade_hunt
+from game.minecraft.structured_tools.interface import BASE_TOOLS, EXPEDITION_TOOLS, validate_tool
 
 
 PLAYER = UUID("00000000-0000-0000-0000-000000000001")
 
 
-def write_evidence(world, kills, schema=SCHEMA):
+def write_evidence(world, kills, schema=SCHEMA, purchases=None):
     record = nbtlib.Compound({
         "state": nbtlib.Compound({"schema": nbtlib.String(schema), "target": nbtlib.String(str(TARGET))}),
         "kills": nbtlib.List[nbtlib.Compound](kills),
     })
+    if purchases is not None:
+        record["purchases"] = nbtlib.List[nbtlib.Compound](purchases)
     (world / "data").mkdir(exist_ok=True)
     nbtlib.File({
         "DataVersion": nbtlib.Int(3700),
@@ -156,7 +159,8 @@ def test_invalid_opening_health_is_an_evidence_error(pair, value):
         verify_initial(before, PLAYER)
 
 
-def test_two_outposts_require_both_native_kills_and_authored_cargo(pair):
+@pytest.fixture
+def outpost_pair(pair):
     before, after = pair
     for world in pair:
         for name, value in pack_files(2).items():
@@ -180,6 +184,13 @@ def test_two_outposts_require_both_native_kills_and_authored_cargo(pair):
     player = nbtlib.load(player_file)
     player["Inventory"] = nbtlib.List[nbtlib.Compound]([])
     player.save(player_file)
+    return pair
+
+
+def test_two_outposts_require_both_native_kills_and_authored_cargo(outpost_pair):
+    before, after = outpost_pair
+    player_file = after / "playerdata" / f"{PLAYER}.dat"
+    player = nbtlib.load(player_file)
     kills = [kill(), kill(role=nbtlib.String("spider"))]
     write_evidence(after, kills, OUTPOST_SCHEMA)
     result = evaluate_expedition(before, after, PLAYER)
@@ -194,5 +205,63 @@ def test_two_outposts_require_both_native_kills_and_authored_cargo(pair):
     write_evidence(after, kills[:1], OUTPOST_SCHEMA)
     assert not evaluate_expedition(before, after, PLAYER)["success"]
     write_evidence(after, [kill(), kill()], OUTPOST_SCHEMA)
+    with pytest.raises(ValueError):
+        evaluate_expedition(before, after, PLAYER)
+
+
+def test_trade_tools_are_opt_in_and_require_an_observed_quote():
+    assert "TradeTool" not in BASE_TOOLS and "TradeTool" not in EXPEDITION_TOOLS
+    validate_tool("InspectMerchantTool", {})
+    validate_tool("TradeTool", {"offer_index": 0, "quote": "observed-quote", "slot": 3})
+    for changes in ({"slot": 10}, {"slot": True}, {"quote": ""}, {"offer_index": -1}, {"count": 2}):
+        with pytest.raises(ValueError):
+            validate_tool("TradeTool", {"offer_index": 0, "quote": "observed-quote", "slot": 3} | changes)
+
+
+def test_native_purchase_identity_and_order_gate_the_combat_chain(outpost_pair):
+    before, after = outpost_pair
+    for world in outpost_pair:
+        for name, value in trade_hunt.pack_files().items():
+            path = world / "datapacks/livequest_forge" / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(value if isinstance(value, str) else json.dumps(value))
+        path = world / "livequest-expedition.json"
+        value = json.loads(path.read_text())
+        value.update(schema=trade_hunt.SCHEMA, merchants=trade_hunt.MERCHANTS,
+                     pack_sha256=trade_hunt.pack_hashes(world))
+        path.write_text(json.dumps(value))
+        path = world / "livequest-opening.json"
+        value = json.loads(path.read_text())
+        value["merchants"] = trade_hunt.MERCHANTS
+        path.write_text(json.dumps(value))
+        write_evidence(world, [], trade_hunt.SCHEMA, [])
+    path = after / "playerdata" / f"{PLAYER}.dat"
+    player = nbtlib.load(path)
+    player["Inventory"].append(nbtlib.Compound({
+        "id": nbtlib.String("minecraft:paper"), "Count": nbtlib.Byte(1),
+        "tag": nbtlib.Compound({"livequest_cargo": nbtlib.String("outpost_records")}),
+    }))
+    player.save(path)
+    purchase = nbtlib.Compound({
+        "item": nbtlib.String("minecraft:iron_axe"), "merchant": nbtlib.String(trade_hunt.SMITH),
+        "player": nbtlib.IntArray(uuid_parts(PLAYER)), "tick": nbtlib.Long(100), "sequence": nbtlib.Int(1),
+    })
+    kills = [kill(hand=nbtlib.String("minecraft:iron_axe"), sequence=nbtlib.Int(2)),
+             kill(role=nbtlib.String("spider"), hand=nbtlib.String("minecraft:iron_axe"), sequence=nbtlib.Int(3))]
+    write_evidence(after, kills, trade_hunt.SCHEMA, [purchase])
+    assert evaluate_expedition(before, after, PLAYER)["success"]
+    write_evidence(after, kills, trade_hunt.SCHEMA, [])
+    assert not evaluate_expedition(before, after, PLAYER)["success"]
+    purchase["sequence"] = nbtlib.Int(4)
+    write_evidence(after, kills, trade_hunt.SCHEMA, [purchase])
+    assert not evaluate_expedition(before, after, PLAYER)["success"]
+    purchase["sequence"] = nbtlib.Int(1)
+    purchase["merchant"] = nbtlib.String(trade_hunt.FARMER)
+    write_evidence(after, kills, trade_hunt.SCHEMA, [purchase])
+    with pytest.raises(ValueError):
+        evaluate_expedition(before, after, PLAYER)
+    purchase["merchant"] = nbtlib.String(trade_hunt.SMITH)
+    kills[1]["sequence"] = kills[0]["sequence"]
+    write_evidence(after, kills, trade_hunt.SCHEMA, [purchase])
     with pytest.raises(ValueError):
         evaluate_expedition(before, after, PLAYER)
