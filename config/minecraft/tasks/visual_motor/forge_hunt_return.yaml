@@ -1,0 +1,40 @@
+id: forge_hunt_return
+game: minecraft
+task_type: visual_motor
+task: >-
+  Forge a stone or iron sword from your supplied materials, then find and defeat
+  the named Husk Sentinel on the far side of the stone divider. Obtain native
+  player kill credit while holding a sword of a type you crafted during this
+  episode. Then return alive to the yellow camp marker at [0.5,72,0.5], within
+  2 blocks horizontally and 0.5 vertically, grounded and stationary. You must
+  not die. The crafting table is at [-1,72,2] and the furnace at [1,72,2].
+  The sentinel starts near [28.5,72,0.5]. The divider at x=12 spans z=-8 to 8;
+  you can walk around either end. You have eight planks, four cobblestone,
+  two iron ingots and six bread, but no finished weapon. Choose your preparation
+  and approach. Health, food and equipment persist throughout; recovery is
+  optional and there is no free resupply. The world continues while you think.
+  Select your crafted sword before attacking; manage aim and attack cooldown.
+  Finish with a text answer and release held controls.
+time_limit_seconds: 600
+fixture:
+  world_path: ../../fixtures/forge_hunt
+  instance: 1.20.4
+  difficulty: normal
+  player_state:
+    position: [0.5, 72, 0.5]
+    dimension: minecraft:overworld
+    yaw: 0
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+      - {slot: 0, item: oak_planks, count: 8}
+      - {slot: 1, item: cobblestone, count: 4}
+      - {slot: 2, item: iron_ingot, count: 2}
+      - {slot: 3, item: bread, count: 6}
+evaluator:
+  name: expedition
+  parameters: {}

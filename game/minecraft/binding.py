@@ -8,6 +8,7 @@ from agent_framework.utils.tools import Tool
 from game.bindings import Controls, GameBinding, bind_controls, validate_tools
 from game.minecraft.evaluators.inventory import evaluate_inventory, inventory, validate_requirements
 from game.minecraft.evaluators.structure import evaluate_structure, validate_config
+from game.minecraft.evaluators.expedition import evaluate_expedition, registry, verify_initial as verify_expedition
 from game.minecraft.game import MinecraftGame
 from game.minecraft.init_player_state import PlayerState
 from game.minecraft.runtime.session import validate_world
@@ -42,6 +43,8 @@ def create_binding(
         headless=headless, recording=recording, recording_fps=recording_fps, recording_path=recording_path,
     )
     if task_type == "structured_tool":
+        if tools is None and evaluator != "expedition":
+            tools = st.BASE_TOOLS
         validate_tools(st.agent_tools(), tools)
     elif tools is not None:
         raise ValueError("Tool allowlists are only supported for structured_tool tasks")
@@ -53,6 +56,10 @@ def create_binding(
         inspect.signature(evaluate_structure).bind(Path(), Path(), **parameters)
         validate_config(parameters["config"])
         score = evaluate_structure
+    elif evaluator == "expedition":
+        inspect.signature(evaluate_expedition).bind(Path(), Path(), None, **parameters)
+        registry(world_path)
+        score = evaluate_expedition
     else:
         raise ValueError(f"Unknown Minecraft evaluator: {evaluator}")
 
@@ -64,6 +71,8 @@ def create_binding(
             expected[name] = expected.get(name, 0) + item["count"]
         if inventory(before, game.player_uuid) != expected:
             raise RuntimeError("Initial native inventory differs from task initialization")
+        if evaluator == "expedition":
+            verify_expedition(before, game.player_uuid)
 
     def controls() -> tuple[Controls, list[Tool[Controls]]]:
         public = game.get_agent_interface()

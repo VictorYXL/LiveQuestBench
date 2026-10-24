@@ -7,7 +7,8 @@ Benchmark recordings live under each Episode's `recording/`: `video.mp4`
 and `chat/`. Standalone game tests retain their own output layout;
 `MinecraftGame(recording_path=...)` can select an explicit video destination.
 `MinecraftGame` requires an existing `world_path` and explicit `player_state`.
-The resource-island fixture supports the full task catalog and integration tests.
+The resource-island fixture supports the migrated island catalog and integration tests.
+The coupled forge/hunt task uses a separate authored native fixture.
 There is no default/generated world or benchmark-time scene-construction command.
 
 ## Migrated island tasks
@@ -34,7 +35,57 @@ Each source filename is preserved (`<source task name>.yaml`). Every task has a 
 budget and a survival start at `(0.5, 72, 0.5)`, full health/food, no experience,
 and normal difficulty. Inventory tasks start empty; structure tasks receive
 exactly 64 oak planks in slot 0. ST tasks expose the existing game-provided tool
-profile without an allowlist.
+profile's original tool set by default; the later combat additions are not
+silently granted to these migrated tasks.
+
+## Entry coupled task: forge, hunt and return
+
+[`forge_hunt_return`](../../config/minecraft/tasks/structured_tools/forge_hunt_return.yaml)
+has paired ST/VM definitions with a 600-second developmental budget. Craft a
+stone or iron sword, defeat a named native Husk using a crafted sword type,
+then return alive and settled to camp. Materials and food are finite; health,
+inventory and the same world carry across stages. A physical divider protects
+the initial workshop from direct line of sight, but is not an invulnerability
+zone. The enemy has ordinary native AI, health and damage. Recovery is optional.
+
+The private [expedition evaluator](evaluators/expedition.py) checks a passive
+vanilla `player_killed_entity` advancement bound to the exact authored enemy
+UUID. Its function records the credited player's UUID, held item, native
+crafted-sword counters and game time at the kill. Success requires positive
+craft count for the held sword type, no native player deaths, positive final
+health and a grounded overworld return within 2 horizontal / 0.5 vertical
+blocks, at saved motion <=0.1 blocks/tick. This establishes crafted-type
+preparation before native kill credit, not a uniquely tracked individual
+sword or exclusive last-damage attribution. The datapack gives no rewards,
+equipment, healing, aim assistance or combat commands.
+
+The separate [fixture](../../config/minecraft/fixtures/forge_hunt/) is copied
+per episode; its datapack hashes and target registry are checked, and the
+target must be loaded at full health before the public gate opens. Neither
+the registry, startup query nor native evidence files are Agent observations.
+The [source manifest](../../config/minecraft/fixtures/forge_hunt.source.json)
+records source/export hashes, author identity and every authoring command.
+It was authored from the unchanged resource island with
+[the native fixture author](fixtures/forge_hunt.py):
+
+```bash
+MINECRAFT_EULA_ACCEPTED=true .venv/bin/python -m game.minecraft.fixtures.forge_hunt \
+  config/minecraft/fixtures/island output/temp/forge-hunt-new-authoring
+```
+
+The author refuses an existing destination and requires an installed native
+server plus explicit EULA acceptance. Export only its validated player-free
+`world/`, not the temporary server directory or logs. No game binaries or
+assets are included. This is an entry-level coupling diagnostic, not yet an
+NPC, boss, multi-outpost or difficulty-calibrated long-horizon task.
+
+Qualification on 2026-10-24: one recorded Baseline run per mode completed with
+valid measurements, readable videos and replayable scores; both task outcomes
+were failures. A public ST reference completed crafting, the native kill and
+return (health 13.3333, zero deaths, horizontal error 0.2263 blocks). Native
+ST regressions also exercised food consumption, no-target attack refusal and
+held-use cutoff. The `all` catalogs now contain 12 tasks per mode. These are
+engineering checks, not statistical difficulty or Agent-ranking evidence.
 
 ### Evaluator mapping and deviations
 
@@ -331,7 +382,7 @@ approximation. Tool operations are programmatic native interactions, not a
 human-like animation of every mouse click. Video remains human-only and is not
 added to the structured Agent input.
 
-Display/recording settings and the new `minecraft-1.20.4-st-native-v2` tool profile
+Display/recording settings and the `minecraft-1.20.4-st-native-v3` tool profile
 are saved in `environment.json`. Do not compare previous Mineflayer-profile
 results as identical conditions. Both modes use the same snapshot/evaluator path.
 Snapshots are saved-state boundaries, not exact atomic native-tick cutoffs.
@@ -449,7 +500,13 @@ location; existing displays are not reconfigured.
 
 ## ST interface
 
-Profile: **`minecraft-1.20.4-st-native-v2`**, replacing
+Profile: **`minecraft-1.20.4-st-native-v3`**, extending v2 with optional
+`AttackTool` and `UseHeldItemTool`. The former submits one current-crosshair
+entity attack within three-block survival reach without auto-aim, navigation
+or cooldown waiting; the latter holds native item use for 0.05-5 seconds and
+then releases it. Native item rules apply. Cancellation releases held input.
+Existing non-expedition task defaults retain the original tool set; explicit
+allowlists may opt into the new tools. V2 replaced
 `minecraft-1.20.4-st-basic-v1`. Tool names are familiar, but backend, navigation,
 recipe ordering and observation details changed; do not pool scores as the
 same condition.

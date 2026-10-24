@@ -5,6 +5,20 @@ from pathlib import Path
 from game.veloren.evaluators.endpoints import load_pair, state_checks, validate_state
 
 
+def player_damage(event: dict, source: dict, target: dict) -> bool:
+    if event["event"] != "health_effect_applied":
+        return False
+    data = event["data"]
+    contributor = data["contributor"]
+    uid = (contributor.get("Solo", (contributor.get("Group") or {}).get("entity_uid"))
+           if isinstance(contributor, dict) else None)
+    return (data["changed"] is True and data["requested_amount"] < 0
+            and data["after"] < data["before"] and uid == source["uid"]
+            and data["contributor_entity"] == source["server_entity"]
+            and data["target_uid"] == target["uid"]
+            and data["target_entity"] == target["server_entity"])
+
+
 def validate_encounter(*, roles: list[str], **state) -> None:
     if (not isinstance(roles, list) or not roles
             or any(not isinstance(role, str) or not role for role in roles)
@@ -54,17 +68,7 @@ def encounter_checks(initial: dict, final: dict, *, roles: list[str], **state) -
         killed = deaths(binding)
         damage = []
         for event in events:
-            if event["event"] != "health_effect_applied":
-                continue
-            data = event["data"]
-            contributor = data["contributor"]
-            uid = (contributor.get("Solo", (contributor.get("Group") or {}).get("entity_uid"))
-                   if isinstance(contributor, dict) else None)
-            if (data["changed"] is True and data["requested_amount"] < 0
-                    and data["after"] < data["before"] and uid == source["uid"]
-                    and data["contributor_entity"] == source["server_entity"]
-                    and data["target_uid"] == binding["uid"]
-                    and data["target_entity"] == binding["server_entity"]
+            if (player_damage(event, source, binding)
                     and (not killed or event["sequence"] < killed[0]["sequence"])):
                 damage.append(event)
         checks.append({"kind": "encounter", "role": target["role"], "uid": binding["uid"],

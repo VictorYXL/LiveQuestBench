@@ -13,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.*;
 import org.slf4j.Logger;
@@ -244,6 +245,23 @@ public class NativeBridge implements ClientModInitializer {
         if (!name.equals("craft") && !name.equals("smelt") && mc.currentScreen != null) mc.player.closeHandledScreen();
         switch (name) {
             case "stop": release(); return () -> ok();
+            case "attack":
+                if (!(mc.crosshairTarget instanceof EntityHitResult target))
+                    return () -> fail("No entity under the current crosshair within native reach");
+                if (!target.getEntity().isAlive())
+                    return () -> fail("The aimed entity is not alive");
+                if (mc.player.getEyePos().squaredDistanceTo(target.getPos()) > 9)
+                    return () -> fail("The aimed entity is outside ordinary survival attack reach");
+                mc.interactionManager.attackEntity(mc.player, target.getEntity());
+                mc.player.swingHand(Hand.MAIN_HAND);
+                return () -> ok("submitted", true, "target_id", target.getEntity().getId());
+            case "use_held":
+                long useUntil = System.nanoTime() + (long) (number(params, "duration", 1) * 1e9);
+                return () -> {
+                    if (System.nanoTime() >= useUntil) return ok("input_released", true);
+                    mc.options.useKey.setPressed(true);
+                    return null;
+                };
             case "select":
                 mc.player.getInventory().selectedSlot = params.get("slot").getAsInt() - 1;
                 return () -> ok("slot", mc.player.getInventory().selectedSlot + 1);

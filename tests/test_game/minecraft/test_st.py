@@ -54,7 +54,7 @@ def test_st_observation_and_tools(
             assert rejected["error"] == "invalid_tool_arguments" and rejected["executed"] is False
             initial = await interface.observe()
             assert initial["health"] == 20 and initial["position"] is not None
-            assert initial["profile"] == "minecraft-1.20.4-st-native-v2"
+            assert initial["profile"] == "minecraft-1.20.4-st-native-v3"
             assert initial["nearby_blocks"]["dims"] == {"x": 31, "y": 31, "z": 31}
             assert len(initial["nearby_blocks"]["data"]) == 31 ** 3
             assert any(item["name"] == "oak_log" and item["count"] == 1 for item in initial["inventory"])
@@ -95,5 +95,41 @@ def test_st_observation_and_tools(
                  "-map", "0:v:0", "-f", "null", "-"],
                 check=True, capture_output=True, timeout=30,
             )
+
+    asyncio.run(run())
+
+
+@pytest.mark.game
+@pytest.mark.skipif(os.environ.get("LIVEQUEST_MINECRAFT_TEST") != "1", reason="Opt-in held-item check")
+def test_native_food_use_and_cutoff(headless: bool, minecraft_world_path: Path) -> None:
+    root = Path(os.environ.get("MINECRAFT_TEST_OUTPUT", "output/test"))
+    game = MinecraftGame(
+        track="structured_tool", output_dir=root / f"minecraft-use-{uuid4().hex}",
+        world_path=minecraft_world_path, headless=headless,
+        player_state=PlayerState(position=(.5, 72, .5), food=10, saturation=0,
+                                 inventory=[{"slot": 0, "item": "bread", "count": 3}]),
+    )
+
+    async def run() -> None:
+        try:
+            await game.start()
+            await game.begin()
+            public = game.get_agent_interface()
+            rejected = await public.call_tool("AttackTool", {})
+            assert not rejected["success"]
+            before = await public.observe()
+            used = await public.call_tool("UseHeldItemTool", {"duration": 2})
+            assert used["success"], used
+            after = await public.observe()
+            assert after["hunger"] > before["hunger"]
+            assert next(item["count"] for item in after["inventory"] if item["name"] == "bread") == 2
+            active = asyncio.create_task(public.call_tool("UseHeldItemTool", {"duration": 5}))
+            await asyncio.sleep(.2)
+            await asyncio.wait_for(game.end(), timeout=5)
+            assert active.cancelled()
+            with pytest.raises(RuntimeError):
+                await public.call_tool("UseHeldItemTool", {"duration": .1})
+        finally:
+            await game.close()
 
     asyncio.run(run())

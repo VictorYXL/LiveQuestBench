@@ -170,9 +170,24 @@ class Session:
                         "targets": [{"role": target["role"], "asset": target["asset"],
                                      "binding": target["binding"]} for target in targets],
                     }
+                equipment_samples = []
+                previous_equipment = self.encounter_registry["source"]["equipment"]
+                for row in rows:
+                    if (row["sequence"] <= self.encounter_registry["opening_sequence"]
+                            or row["event"] != "combat_entity_bindings"):
+                        continue
+                    for binding in row["data"]["bindings"]:
+                        if (binding["uid"] == self.encounter_registry["source"]["uid"]
+                                and binding["equipment"] != previous_equipment):
+                            equipment_samples.append({
+                                "sequence": row["sequence"], "uid": binding["uid"],
+                                "server_entity": binding["server_entity"], "equipment": binding["equipment"],
+                            })
+                            previous_equipment = binding["equipment"]
                 observation["private_encounter_evidence"] = {
                     "schema": "livequest-encounter/1", "registry": self.encounter_registry,
                     "through_sequence": rows[-1]["sequence"],
+                    "equipment_samples": equipment_samples,
                     "events": [row for row in rows if row["sequence"] > self.encounter_registry["opening_sequence"]
                                and row["event"] in ("health_effect_applied", "native_entity_death")],
                 }

@@ -16,6 +16,7 @@ tasks:
   - path: ../tasks/structured_tools/defeat_wolf.yaml
   - path: ../tasks/structured_tools/dual_legoom.yaml
   - path: ../tasks/structured_tools/combat_supply_return.yaml
+  - path: ../tasks/structured_tools/prepare_hunt_return.yaml
 repetitions: 10
 
 agents:

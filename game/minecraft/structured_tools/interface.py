@@ -13,7 +13,7 @@ from game.minecraft.runtime.bridge import BridgeError, NativeBridge
 from agent_framework.utils.tools import Tool
 
 
-PROFILE_ID = "minecraft-1.20.4-st-native-v2"
+PROFILE_ID = "minecraft-1.20.4-st-native-v3"
 logger = logging.getLogger(__name__)
 NUMBER = {"type": "number", "minimum": -30000000, "maximum": 30000000}
 POSITION = {"x": NUMBER, "y": {"type": "number", "minimum": -2048, "maximum": 2048}, "z": NUMBER}
@@ -55,6 +55,15 @@ SCHEMAS = [
         "output_item": ITEM, "count": COUNT, "recipe_index": {"type": "integer", "minimum": 0},
     }, ["output_item"]),
 ]
+BASE_TOOLS = tuple(schema["name"] for schema in SCHEMAS if schema["name"] != "GetObservationTool")
+SCHEMAS.extend([
+    tool("AttackTool", "Submit one ordinary attack at the current crosshair, then release. "
+         "No auto-aim, movement, cooldown wait or kill guarantee.", {}, []),
+    tool("UseHeldItemTool", "Hold ordinary use on the selected item, then release. "
+         "Native food, shield or bow rules apply; does not select items or choose when to heal.", {
+             "duration": {"type": "number", "minimum": 0.05, "maximum": 5},
+         }, ["duration"]),
+])
 
 
 @dataclass(frozen=True)
@@ -150,6 +159,7 @@ async def execute_tool(bridge: NativeBridge, name: str, arguments: dict) -> dict
         "JumpTool": "jump", "GoToPositionTool": "go_to_position",
         "DigTool": "dig_block", "PlaceTool": "place",
         "CraftItemTool": "craft", "SmeltItemTool": "smelt",
+        "AttackTool": "attack", "UseHeldItemTool": "use_held",
     }[name]
     params = {key: value for key, value in arguments.items() if key != "direction"}
     if name == "DigTool":

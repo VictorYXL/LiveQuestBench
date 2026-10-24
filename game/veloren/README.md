@@ -210,7 +210,43 @@ budgets and difficulty are not calibrated scientific release settings.
 
 ## Task catalog
 
-Each mode's full-catalog experiment includes all 15 tasks below, with **10 repetitions per
+### Entry coupled task
+
+[`prepare_hunt_return`](../../config/veloren/tasks/structured_tools/prepare_hunt_return.yaml)
+and its [VM counterpart](../../config/veloren/tasks/visual_motor/prepare_hunt_return.yaml)
+combine the rawhide preparation chain with an ordinary Green Legoom encounter
+and a return to camp, in one persistent episode. A physical wall separates
+the workshop and enemy, with a walkable end. Start with five hides, the known
+leather/armor recipes, a starter sword and two minor potions; there is no
+stage reset, healing controller or resupply. Recovery remains optional.
+
+The [expedition evaluator](evaluators/expedition.py) extends the native
+encounter evidence with compact private equipment-change samples. The native
+server must observe newly equipped rawhide chest armor before the player's
+first damaging contribution to a designated enemy. Final requirements retain
+the armor, replaced worker shirt, own combat contribution, native target
+death, same-life survival and settled camp return. Equipment samples are
+bound to the original actor generation and native oracle sequence. They are
+not public observations, recipe-event proof, or continuous gear-at-every-hit
+proof. The sampling requirement is explicit in both public prompts.
+
+This 600-second entry variant adds preparation-to-combat ordering, not a
+claim that one weak enemy establishes calibrated long-horizon difficulty.
+Multi-site supply allocation and native NPC/contract dependencies remain
+later tiers. One recorded Baseline episode per mode completed with valid
+measurements, decoded videos and independently replayed scores on 2026-10-24;
+both were task failures. Both prepared and wore the armor, but neither
+recorded own damaging contribution to the designated enemy. A public ST
+reference passed the full chain: native preparation sequence 6172 preceded
+first damage 6661, with 10 damaging events totaling 25, final health 76.6953
+and return error 0.2195 m. Private equipment samples were matched to the
+native oracle, and no measured automatic-protection events were found in
+the Baseline runs. This task is included in both `all` catalogs.
+
+### Previously implemented catalog
+
+Each mode's full-catalog experiment includes the 15 tasks below plus the new
+entry coupled task (16 total), with **10 repetitions per
 Agent**. The modes share fixtures, goals, budgets and private evaluators. These
 are development configurations, not native-qualified scores. They adapt
 [VelorenBench](https://github.com/wyaaaattwho/VelorenBench) revision

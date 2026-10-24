@@ -5,6 +5,7 @@ from copy import deepcopy
 import pytest
 
 from game.veloren.evaluators.encounter import encounter_checks
+from game.veloren.evaluators.expedition import expedition_checks
 from game.veloren.fixture import validate_fixture
 from game.veloren.structured_tools.interface import FIELDS, validate_tool, project
 from benchmark.config import load_task
@@ -49,6 +50,8 @@ def test_actual_death_and_own_damage_are_both_required():
         changed = deepcopy(final)
         changed["private_encounter_evidence"]["events"][0]["data"][field] = value
         assert not encounter_checks(initial, changed, roles=["enemy"])["success"]
+
+
     for index in (0, 1):
         changed = deepcopy(final)
         changed["private_encounter_evidence"]["events"].pop(index)
@@ -60,6 +63,46 @@ def test_actual_death_and_own_damage_are_both_required():
     changed = deepcopy(final)
     changed["survival"]["health"]["current"] = 0
     assert not encounter_checks(initial, changed, roles=["enemy"])["success"]
+
+
+def test_expedition_requires_native_preparation_before_first_damage():
+    initial, final = evidence()
+    chest = "common.items.armor.hide.rawhide.chest"
+    equipment = [{"slot": {"Armor": "Chest"}, "item": {"Simple": chest}}]
+    for row in (initial, final):
+        row.update(position=[0, 0, 0], velocity=[0, 0, 0], on_ground=True,
+                   inventory={"equipment": {"chest": {"id": {"Simple": chest}}}})
+        row["private_encounter_evidence"]["registry"]["source"]["equipment"] = []
+        row["private_encounter_evidence"]["equipment_samples"] = []
+    final["private_encounter_evidence"]["equipment_samples"] = [{
+        "uid": 1, "server_entity": "player-generation-1", "sequence": 11, "equipment": equipment,
+    }]
+    for event in final["private_encounter_evidence"]["events"]:
+        event["sequence"] += 1
+    final["private_encounter_evidence"]["through_sequence"] = 13
+    parameters = {"roles": ["enemy"], "chest_item": chest, "equipment": {"chest": chest},
+                  "position": {"target": [0, 0, 0], "horizontal_tolerance": 1,
+                               "vertical_tolerance": .5, "max_speed": .1}}
+    assert expedition_checks(initial, final, **parameters)["success"]
+    for samples in ([], [dict(final["private_encounter_evidence"]["equipment_samples"][0], sequence=12)]):
+        changed = deepcopy(final)
+        changed["private_encounter_evidence"]["equipment_samples"] = samples
+        assert not expedition_checks(initial, changed, **parameters)["success"]
+    for update in ({"server_entity": "other-generation"}, {"sequence": 10}, {"sequence": 14}):
+        changed = deepcopy(final)
+        changed["private_encounter_evidence"]["equipment_samples"][0].update(update)
+        with pytest.raises(ValueError):
+            expedition_checks(initial, changed, **parameters)
+    final["position"][0] = 2
+    assert not expedition_checks(initial, final, **parameters)["success"]
+
+
+def test_entry_expedition_catalog_admits_paired_native_fixtures():
+    root = Path(__file__).resolve().parents[3] / "config/veloren/tasks"
+    st = load_task(root / "structured_tools/prepare_hunt_return.yaml")
+    vm = load_task(root / "visual_motor/prepare_hunt_return.yaml")
+    assert validate_fixture(st.fixture) == validate_fixture(vm.fixture)
+    assert st.evaluator_parameters == vm.evaluator_parameters
 
 
 def test_registry_events_and_multiple_targets_are_not_silently_accepted():
