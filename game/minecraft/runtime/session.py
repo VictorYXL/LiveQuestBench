@@ -337,22 +337,25 @@ class MinecraftSession:
         await self._verify_player()
         if (self.world / "livequest-expedition.json").is_file():
             from game.minecraft.evaluators.expedition import registry
-            from game.minecraft.fixtures.forge_hunt import uuid_parts
+            from game.minecraft.fixtures.forge_hunt import targets_for, uuid_parts
             expected = registry(self.world)
-            target = UUID(expected["target_uuid"])
-            native_uuid = "[I;" + ",".join(map(str, uuid_parts(target))) + "]"
-            lines = await self.server.command(
-                f"execute as @e[type=minecraft:husk,nbt={{UUID:{native_uuid}}},limit=1] run data get entity @s"
-            )
-            values = [nbtlib.parse_nbt(line.split("has the following entity data: ", 1)[1])
-                      for line in lines if "has the following entity data: " in line]
-            if (len(values) != 1 or list(values[0]["UUID"]) != uuid_parts(target)
-                    or float(values[0]["Health"]) != 20):
-                raise RuntimeError("Expedition target is missing, injured or has changed identity")
-            (self.world / "livequest-opening.json").write_text(json.dumps({
-                "target_uuid": str(target), "health": float(values[0]["Health"]),
-                "player_uuid": str(self.config.player_uuid),
-            }, indent=2) + "\n")
+            targets = expected.get("targets", targets_for())
+            for enemy in targets:
+                target = UUID(enemy["uuid"])
+                native_uuid = "[I;" + ",".join(map(str, uuid_parts(target))) + "]"
+                lines = await self.server.command(
+                    f"execute as @e[type={enemy['type']},nbt={{UUID:{native_uuid}}},limit=1] run data get entity @s"
+                )
+                values = [nbtlib.parse_nbt(line.split("has the following entity data: ", 1)[1])
+                          for line in lines if "has the following entity data: " in line]
+                if (len(values) != 1 or list(values[0]["UUID"]) != uuid_parts(target)
+                        or float(values[0]["Health"]) != enemy["health"]):
+                    raise RuntimeError(f"Expedition target missing, injured or changed: {enemy['role']}")
+            opening = {"target_uuid": expected["target_uuid"], "health": targets[0]["health"],
+                       "player_uuid": str(self.config.player_uuid)}
+            if "targets" in expected:
+                opening["targets"] = targets
+            (self.world / "livequest-opening.json").write_text(json.dumps(opening, indent=2) + "\n")
 
     async def _verify_input_ready(self) -> None:
         """Verify mouse/keyboard acceptance and restore the starting view and slot."""

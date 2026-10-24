@@ -23,3 +23,9 @@ BlockTool and RollTool use native energy/weapon rules. These tools do not pick a
 target, auto-aim, navigate into range or fight a complete encounter for you.
 Previously seen enemies can move during reasoning. Reobserve and manage aim,
 distance, weapon readiness, health and finite recovery supplies yourself.
+
+When supplied, StrikeTool combines one aim at your specified point with a bounded
+primary attack, without a model wait between those two inputs. It does not draw
+the weapon, discover targets, track moving enemies or navigate. Aim height matters:
+entity positions describe their base, not a guaranteed melee hit point. You can
+submit multiple tool calls in one response; they execute sequentially.

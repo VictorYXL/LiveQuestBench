@@ -46,7 +46,8 @@ stone or iron sword, defeat a named native Husk using a crafted sword type,
 then return alive and settled to camp. Materials and food are finite; health,
 inventory and the same world carry across stages. A physical divider protects
 the initial workshop from direct line of sight, but is not an invulnerability
-zone. The enemy has ordinary native AI, health and damage. Recovery is optional.
+zone. The calibrated entry variant starts with ordinary iron armor and native
+Easy difficulty; enemy AI and health are unchanged. Recovery is optional.
 
 The private [expedition evaluator](evaluators/expedition.py) checks a passive
 vanilla `player_killed_entity` advancement bound to the exact authored enemy
@@ -79,13 +80,36 @@ server plus explicit EULA acceptance. Export only its validated player-free
 assets are included. This is an entry-level coupling diagnostic, not yet an
 NPC, boss, multi-outpost or difficulty-calibrated long-horizon task.
 
-Qualification on 2026-10-24: one recorded Baseline run per mode completed with
-valid measurements, readable videos and replayable scores; both task outcomes
-were failures. A public ST reference completed crafting, the native kill and
-return (health 13.3333, zero deaths, horizontal error 0.2263 blocks). Native
-ST regressions also exercised food consumption, no-target attack refusal and
-held-use cutoff. The `all` catalogs now contain 12 tasks per mode. These are
-engineering checks, not statistical difficulty or Agent-ranking evidence.
+The original unarmored Normal variant had two valid Baseline failures. The
+armored Easy revision with explicit-point StrikeTool has a recorded ST success
+and VM failure; this is preliminary calibration, not a stable success rate.
+Public ST references pass. Historical evidence is retained separately.
+
+### Two outposts and return cargo
+
+[`two_outposts_return`](../../config/minecraft/tasks/structured_tools/two_outposts_return.yaml)
+extends preparation into two native encounters, optional chest resupply and
+transport of actual Outpost Records back to camp. A Husk and a daylight-neutral
+spider use ordinary behavior, including wandering; the published coordinates
+are initial positions, not a live location feed. Both exact native kill receipts
+must name the player holding a crafted sword type. Returned paper must carry
+the authored cargo tag; ordinary crafted or renamed paper does not qualify.
+Health, hunger and equipment persist; no recovery action or kill order is forced.
+The 900-second budget and intermediate tier are developmental, not calibrated
+cross-Agent difficulty. The paired VM task uses only ordinary chest UI input.
+
+[`two_outposts_courtyard/`](../../config/minecraft/fixtures/two_outposts_courtyard/) is a separate
+player-free save with [source hashes](../../config/minecraft/fixtures/two_outposts_courtyard.source.json).
+Solid foundations and ordinary walls with inward overhangs limit unintended
+under-platform encounters and spider escape without disabling native AI.
+Reproduce it using the author command above with `--encounters 2` and a fresh
+destination. The passive datapack records kills; it does not deliver the cargo.
+
+The final courtyard has one recorded Baseline ST success and one VM failure.
+Both episodes completed with valid measurements, replayed scores and decoded
+videos. A public ST reference also completed both native kills, chest transfers
+and cargo return without dying. Together with the entry results above, these
+are development feasibility checks, not a calibrated cross-mode difficulty curve.
 
 ### Evaluator mapping and deviations
 
@@ -382,7 +406,7 @@ approximation. Tool operations are programmatic native interactions, not a
 human-like animation of every mouse click. Video remains human-only and is not
 added to the structured Agent input.
 
-Display/recording settings and the `minecraft-1.20.4-st-native-v3` tool profile
+Display/recording settings and the `minecraft-1.20.4-st-native-v4` tool profile
 are saved in `environment.json`. Do not compare previous Mineflayer-profile
 results as identical conditions. Both modes use the same snapshot/evaluator path.
 Snapshots are saved-state boundaries, not exact atomic native-tick cutoffs.
@@ -500,11 +524,15 @@ location; existing displays are not reconfigured.
 
 ## ST interface
 
-Profile: **`minecraft-1.20.4-st-native-v3`**, extending v2 with optional
+Profile: **`minecraft-1.20.4-st-native-v4`**, extending v2 with optional
 `AttackTool` and `UseHeldItemTool`. The former submits one current-crosshair
 entity attack within three-block survival reach without auto-aim, navigation
 or cooldown waiting; the latter holds native item use for 0.05-5 seconds and
 then releases it. Native item rules apply. Cancellation releases held input.
+V4 adds `StrikeTool` (one supplied-point aim plus one unobstructed three-block
+native attack), `InspectContainerTool` (open/read an aimed-at reachable chest)
+and `TakeContainerItemTool` (one native shift-click of an observed chest slot).
+None tracks enemies, navigates, chooses supplies or repeats a combat policy.
 Existing non-expedition task defaults retain the original tool set; explicit
 allowlists may opt into the new tools. V2 replaced
 `minecraft-1.20.4-st-basic-v1`. Tool names are familiar, but backend, navigation,

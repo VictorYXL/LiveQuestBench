@@ -27,7 +27,8 @@ def create_binding(
     )
     if task_type == "structured_tool":
         if tools is None:
-            tools = tuple(st.SPECS) if fixture.get("encounters") else st.BASE_TOOLS
+            tools = (tuple(st.SPECS) if evaluator == "expedition" else
+                     st.COMBAT_TOOLS if fixture.get("encounters") else st.BASE_TOOLS)
         validate_tools(st.agent_tools(), tools)
     elif tools is not None:
         raise ValueError("Tool allowlists are only supported for structured_tool tasks")

@@ -15,8 +15,8 @@ calibration remain necessary before scientific evaluation.
 
 | Game | Current catalog per mode | Setup and task details |
 | --- | --- | --- |
-| Minecraft | 11 island tasks and 1 coupled forge/hunt/return task | [Minecraft README](game/minecraft/README.md) |
-| Veloren | 10 endpoint adaptations, a movement diagnostic, 4 combat/resource goals and 1 coupled preparation/hunt/return task | [Veloren README](game/veloren/README.md) |
+| Minecraft | 11 island tasks and 2 coupled preparation/combat/return tasks | [Minecraft README](game/minecraft/README.md) |
+| Veloren | 10 endpoint adaptations, a movement diagnostic, 4 combat/resource goals and 2 coupled preparation/hunt/return tasks | [Veloren README](game/veloren/README.md) |
 
 - **VM (`visual_motor`)**: actual game pixels and bounded keyboard/mouse control.
   No hidden inventory transcription or object coordinates are supplied.
@@ -25,11 +25,17 @@ calibration remain necessary before scientific evaluation.
 
 Report VM and ST separately: they change both observations and action
 capabilities. Scores are not a pure comparison of visual reasoning.
-The two entry coupled tasks have recorded Baseline runs in both modes and
-successful public-tool reference trajectories. All four Baseline task outcomes
-were failures with valid engineering measurements. These small development
-checks do not establish calibrated difficulty or complete the proposed
-multi-site/NPC task ladder. Temporary qualification subsets belong under
+The entry coupled tasks have recorded Baseline runs in both modes and
+successful public-tool reference trajectories. After native difficulty/armor
+and courtyard adjustments, entry Baselines succeeded in Minecraft ST and
+Veloren VM; the other two modes failed. Multi-encounter extensions add finite
+resupply/cargo or gathering prerequisites. Minecraft's two-outpost Baseline
+succeeded in ST and failed in VM. Veloren's two-enemy Baselines failed despite
+successful public-control references; that task remains a challenging
+development candidate, not a calibrated medium tier. One targeted Hermes ST
+run succeeded. These checks do
+not establish stable difficulty or complete the proposed NPC/Boss ladder.
+Temporary qualification subsets belong under
 `output/temp/`; production experiments retain only each mode's `all` catalog.
 The current catalog includes crafting, resource retention, construction,
 navigation, recovery and native combat. Small diagnostics and overlapping variants are not

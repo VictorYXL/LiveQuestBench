@@ -7,13 +7,16 @@ from uuid import UUID
 
 import nbtlib
 
-from game.minecraft.fixtures.forge_hunt import SCHEMA, TARGET, pack_hashes, uuid_parts
+from game.minecraft.fixtures.forge_hunt import OUTPOST_SCHEMA, SCHEMA, TARGET, pack_hashes, targets_for, uuid_parts
 
 
 def registry(world: Path) -> dict:
     value = json.loads((world / "livequest-expedition.json").read_text())
-    if value["schema"] != SCHEMA or pack_hashes(world) != value["pack_sha256"]:
+    encounters = 2 if value["schema"] == OUTPOST_SCHEMA else 1
+    if value["schema"] not in (SCHEMA, OUTPOST_SCHEMA) or pack_hashes(world, encounters) != value["pack_sha256"]:
         raise ValueError("Expedition fixture or passive evidence datapack changed")
+    if encounters == 2 and (value["targets"] != targets_for(2) or value["cargo"] != "outpost_records"):
+        raise ValueError("Outpost targets or cargo differ from the native evidence predicates")
     if UUID(value["target_uuid"]) != TARGET or value["target_type"] != "minecraft:husk":
         raise ValueError("Expedition target must match the passive datapack's native predicate")
     point = value["return_position"]
@@ -34,11 +37,21 @@ def verify_initial(world: Path, player: UUID) -> None:
     expected = registry(world)
     record = evidence(world)
     opening = json.loads((world / "livequest-opening.json").read_text())
-    if (record["state"]["schema"] != SCHEMA or record["state"]["target"] != expected["target_uuid"]
+    if (record["state"]["schema"] != expected["schema"] or record["state"]["target"] != expected["target_uuid"]
             or record["kills"] or opening["target_uuid"] != expected["target_uuid"]
             or type(opening["health"]) not in (int, float) or not math.isfinite(opening["health"])
             or opening["health"] <= 0 or opening["player_uuid"] != str(player)):
         raise ValueError("Expedition requires a fresh living target and empty native kill evidence")
+    if expected["schema"] == OUTPOST_SCHEMA:
+        if opening["targets"] != expected["targets"] or cargo_count(world, player):
+            raise ValueError("Outpost targets must start alive at full health, with cargo absent from the player")
+
+
+def cargo_count(world: Path, player: UUID) -> int:
+    native = nbtlib.load(world / "playerdata" / f"{player}.dat")
+    return sum(int(item["Count"]) for item in native["Inventory"]
+               if str(item["id"]) == "minecraft:paper"
+               and str(item.get("tag", {}).get("livequest_cargo", "")) == "outpost_records")
 
 
 def deaths(world: Path, player: UUID) -> int:
@@ -63,15 +76,21 @@ def evaluate_expedition(before: Path, after: Path, player: UUID) -> dict:
     if record["state"] != evidence(before)["state"]:
         raise ValueError("Native expedition evidence identity changed")
     kills = record["kills"]
-    if len(kills) > 1:
+    targets = expected.get("targets", targets_for())
+    roles = {enemy["role"] for enemy in targets}
+    if len(kills) > len(targets):
         raise ValueError("Ambiguous native designated-target kill evidence")
-    qualified = False
+    qualified = set()
+    seen = set()
     for kill in kills:
-        if (str(kill["role"]) != "sentinel" or list(kill["player"]) != uuid_parts(player)
+        role = str(kill["role"])
+        if (role not in roles or role in seen or list(kill["player"]) != uuid_parts(player)
                 or int(kill["tick"]) < 0 or min(int(kill["stone"]), int(kill["iron"])) < 0):
             raise ValueError("Native kill receipt has wrong actor, role or counters")
-        qualified = ((str(kill["hand"]) == "minecraft:stone_sword" and int(kill["stone"]) > 0)
-                     or (str(kill["hand"]) == "minecraft:iron_sword" and int(kill["iron"]) > 0))
+        seen.add(role)
+        if ((str(kill["hand"]) == "minecraft:stone_sword" and int(kill["stone"]) > 0)
+                or (str(kill["hand"]) == "minecraft:iron_sword" and int(kill["iron"]) > 0)):
+            qualified.add(role)
     native = nbtlib.load(after / "playerdata" / f"{player}.dat")
     if int(native["DataVersion"]) != 3700 or list(native["UUID"]) != uuid_parts(player):
         raise ValueError("Final player evidence identity changed")
@@ -88,12 +107,17 @@ def evaluate_expedition(before: Path, after: Path, player: UUID) -> dict:
     if death_delta < 0:
         raise ValueError("Native death counter moved backwards")
     checks = [
-        {"kind": "crafted_weapon_native_kill", "passed": qualified},
+        {"kind": "crafted_weapon_native_kill", "passed": qualified == roles},
         {"kind": "survival", "health": health, "deaths": death_delta, "passed": health > 0 and death_delta == 0},
         {"kind": "return", "horizontal_error": horizontal, "vertical_error": vertical,
          "motion_blocks_per_tick": speed, "passed": str(native["Dimension"]) == "minecraft:overworld"
          and bool(native["OnGround"]) and horizontal <= 2 and vertical <= .5 and speed <= .1},
     ]
+    if expected["schema"] == OUTPOST_SCHEMA:
+        checks.insert(1, {"kind": "outpost_kills", "required": sorted(roles), "qualified": sorted(qualified),
+                          "passed": qualified == roles})
+        amount = cargo_count(after, player)
+        checks.append({"kind": "cargo_return", "count": amount, "passed": amount == 1})
     return {"success": all(check["passed"] for check in checks), "checks": checks,
             "semantics": "Native player_killed_entity for the exact authored UUID, with a held stone/iron "
             "sword and a positive native crafted counter for that sword type at the kill. "

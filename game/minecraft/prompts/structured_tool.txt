@@ -5,3 +5,7 @@ nearby_blocks.data_rle contains [palette_index, repeat_count] pairs encoding the
 Tool arguments and effects are defined by the provided tool schemas. A normal tool refusal is reported as success=false. Observations arrive automatically after each tool batch.
 
 When exposed by the task, AttackTool submits one native melee attack at the current crosshair within ordinary survival reach. It does not aim, move, repeatedly attack or wait for the weapon cooldown. UseHeldItemTool holds ordinary use on the selected item for a bounded duration, then releases it; native item and hunger rules apply. Neither tool chooses equipment or a recovery policy for you.
+
+StrikeTool combines one turn toward a supplied XYZ point with one melee attack along that ray. It observes no new enemy position, tracks nothing and does not approach or repeat attacks. The point may be stale after reasoning; native reach and blocks constrain the strike. Tool calls in the same response execute in order without a model wait between them.
+
+When available, InspectContainerTool opens the chest under your aim and reports its native contents. TakeContainerItemTool shift-clicks one observed chest slot (numbered from 0), with no item selection policy. Inspect again after moving, turning or performing another action that closes the chest screen. Ordinary inventory slots still use their separately documented 1-based numbering.

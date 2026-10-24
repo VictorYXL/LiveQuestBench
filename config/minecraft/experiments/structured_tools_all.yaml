@@ -13,6 +13,7 @@ tasks:
   - path: ../tasks/structured_tools/build_plank_cube_2x2x2.yaml
   - path: ../tasks/structured_tools/build_plank_enclosure_5x5x2.yaml
   - path: ../tasks/structured_tools/forge_hunt_return.yaml
+  - path: ../tasks/structured_tools/two_outposts_return.yaml
 repetitions: 10
 
 agents:

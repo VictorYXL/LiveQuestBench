@@ -39,7 +39,7 @@ registry and bounded native events. Public ST projection and VM screenshots
 never include this registry or event journal. Final evidence is captured after
 the public gate, while the world continues; it is not an atomic server pause.
 
-Combat ST uses `veloren-native-fixed-tools-v3-combat`: `LookTool` aims once at a
+Combat ST uses `veloren-native-fixed-tools-v4-combat`: `LookTool` aims once at a
 point, `AttackTool` holds primary/secondary for at most 60 client updates,
 `WieldTool` controls weapon readiness, and bounded `BlockTool`, `RollTool` and
 `StopTool` expose ordinary native controls. None selects a target, auto-aims,
@@ -216,7 +216,9 @@ budgets and difficulty are not calibrated scientific release settings.
 and its [VM counterpart](../../config/veloren/tasks/visual_motor/prepare_hunt_return.yaml)
 combine the rawhide preparation chain with an ordinary Green Legoom encounter
 and a return to camp, in one persistent episode. A physical wall separates
-the workshop and enemy, with a walkable end. Start with five hides, the known
+the workshop and enemy, with a walkable end. Ordinary two-metre courtyard
+walls reduce accidental player/enemy falls; they are not an invulnerability
+zone. Start with five hides, the known
 leather/armor recipes, a starter sword and two minor potions; there is no
 stage reset, healing controller or resupply. Recovery remains optional.
 
@@ -224,8 +226,9 @@ The [expedition evaluator](evaluators/expedition.py) extends the native
 encounter evidence with compact private equipment-change samples. The native
 server must observe newly equipped rawhide chest armor before the player's
 first damaging contribution to a designated enemy. Final requirements retain
-the armor, replaced worker shirt, own combat contribution, native target
-death, same-life survival and settled camp return. Equipment samples are
+the armor, own combat contribution, native target death, same-life survival
+and a settled return within two metres of camp. The old worker shirt is no
+longer an unrelated retention requirement. Equipment samples are
 bound to the original actor generation and native oracle sequence. They are
 not public observations, recipe-event proof, or continuous gear-at-every-hit
 proof. The sampling requirement is explicit in both public prompts.
@@ -233,7 +236,7 @@ proof. The sampling requirement is explicit in both public prompts.
 This 600-second entry variant adds preparation-to-combat ordering, not a
 claim that one weak enemy establishes calibrated long-horizon difficulty.
 Multi-site supply allocation and native NPC/contract dependencies remain
-later tiers. One recorded Baseline episode per mode completed with valid
+later tiers. Before the courtyard revision, one recorded Baseline episode per mode completed with valid
 measurements, decoded videos and independently replayed scores on 2026-10-24;
 both were task failures. Both prepared and wore the armor, but neither
 recorded own damaging contribution to the designated enemy. A public ST
@@ -243,10 +246,39 @@ and return error 0.2195 m. Private equipment samples were matched to the
 native oracle, and no measured automatic-protection events were found in
 the Baseline runs. This task is included in both `all` catalogs.
 
+After the courtyard revision, the recorded VM Baseline succeeded; ST failed
+both before and after the optional supplied-point StrikeTool was added.
+The final-tool ST run prepared armor and dealt native damage but died.
+These are valid task failures, not evidence that a larger time limit alone
+would solve the control problem. The entry tier remains provisional.
+
+### Gathering for a two-enemy hunt
+
+[`provisioned_hunt_return`](../../config/veloren/tasks/structured_tools/provisioned_hunt_return.yaml)
+and its VM counterpart start without hides. Gather a finite native hide stack,
+process leather, make/equip armor, defeat two separated Green Legooms and
+return in the same life. Three carried potions are available throughout;
+healing and kill order remain choices. The native loose-item lifetime is
+disclosed, rather than silently refreshing missing materials. This reuses
+the fixed tools and ordered native preparation/encounter evaluator. The
+900-second budget remains developmental. The final-enclosure Baselines failed
+in both modes, including an additional ST run with StrikeTool. Public ST
+references succeeded with both separate aim/attack and the combined skill;
+the latter also verified cancellation of an in-flight strike at episode end.
+Treat this as a challenging development candidate, **not a calibrated medium
+task**. It is feasible through public controls but is not yet reliably solved
+by Baseline, and it is not an NPC contract.
+
+A targeted Hermes ST diagnostic using the same configured model succeeded:
+both native kills, ordered armor preparation, no death and camp return, with
+53.6875 final health. Its recording, native evidence and score replay passed.
+This is evidence of an Agent solution, not merely a scripted reference; one
+success does not establish a stable rate or an Agent ranking.
+
 ### Previously implemented catalog
 
-Each mode's full-catalog experiment includes the 15 tasks below plus the new
-entry coupled task (16 total), with **10 repetitions per
+Each mode's full-catalog experiment includes the 15 tasks below plus the two
+coupled tasks above (17 total), with **10 repetitions per
 Agent**. The modes share fixtures, goals, budgets and private evaluators. These
 are development configurations, not native-qualified scores. They adapt
 [VelorenBench](https://github.com/wyaaaattwho/VelorenBench) revision
@@ -357,7 +389,11 @@ forwarded. Coordinates are native x/y horizontal and z up.
 | `CraftTool` | Known recipe | Amount 1-10; native material/station requirements |
 | `EquipTool` | Observed inventory slot to chest slot | Native equip/swap; no navigation or item creation |
 
-Encounter fixtures additionally expose these v3-combat tools by default:
+Encounter fixtures retain the original v3 combat tool set by default.
+Expedition tasks also expose v4 `StrikeTool`: one supplied-point aim followed
+by bounded primary attack, with no target lookup, tracking, movement, automatic
+wielding or healing. If the gate closes after aiming, no attack is submitted.
+The original combat tools are:
 
 | Tool | Native operation | Bound / semantics |
 | --- | --- | --- |

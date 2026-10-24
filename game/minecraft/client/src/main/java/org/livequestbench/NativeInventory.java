@@ -76,6 +76,46 @@ final class NativeInventory {
         return true;
     }
 
+    static NativeBridge.Job inspectContainer() {
+        if (!openStation("chest")) return () -> NativeBridge.fail("Aim at a reachable chest first");
+        long started = System.nanoTime();
+        return () -> {
+            var handler = NativeBridge.client().player.currentScreenHandler;
+            if (!(handler instanceof GenericContainerScreenHandler container)) {
+                return System.nanoTime() - started > 3_000_000_000L
+                        ? NativeBridge.fail("Native chest screen did not open") : null;
+            }
+            JsonArray items = new JsonArray();
+            for (int slot = 0; slot < container.getRows() * 9; slot++) {
+                var stack = handler.getSlot(slot).getStack();
+                if (!stack.isEmpty()) items.add(NativeBridge.item(stack, slot));
+            }
+            return NativeBridge.ok("slots", container.getRows() * 9, "items", items);
+        };
+    }
+
+    static NativeBridge.Job takeContainerItem(JsonObject params) {
+        var handler = NativeBridge.client().player.currentScreenHandler;
+        if (!(handler instanceof GenericContainerScreenHandler container))
+            return () -> NativeBridge.fail("Inspect a chest before taking an item");
+        int slot = params.get("slot").getAsInt();
+        if (slot < 0 || slot >= container.getRows() * 9 || handler.getSlot(slot).getStack().isEmpty())
+            return () -> NativeBridge.fail("Container slot is empty or out of range");
+        if (!handler.getCursorStack().isEmpty()) return () -> NativeBridge.fail("Clear the inventory cursor first");
+        int before = handler.getSlot(slot).getStack().getCount();
+        click(slot, 0, SlotActionType.QUICK_MOVE);
+        long started = System.nanoTime();
+        return () -> {
+            if (NativeBridge.client().player.currentScreenHandler != handler)
+                return NativeBridge.fail("Container screen closed during transfer");
+            if (System.nanoTime() - started < 250_000_000L) return null;
+            int moved = before - handler.getSlot(slot).getStack().getCount();
+            if (moved > 0) return NativeBridge.ok("moved_count", moved, "slot", slot);
+            return System.nanoTime() - started > 3_000_000_000L
+                    ? NativeBridge.fail("No native transfer confirmed; inventory may be full") : null;
+        };
+    }
+
     static NativeBridge.Job craft(JsonObject params) {
         var mc = NativeBridge.client();
         var matches = craftingRecipes(params);

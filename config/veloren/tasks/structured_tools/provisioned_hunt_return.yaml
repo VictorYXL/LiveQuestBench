@@ -1,0 +1,91 @@
+id: provisioned_hunt_return
+game: veloren
+task_type: structured_tool
+task: >-
+  Gather the five animal hides lying at [18704.5,10811.5,501], process them
+  into leather and prepare rawhide chest armor. Wear it before your first
+  damaging strike on either of the two designated Green Legooms, initially
+  near [18705.5,10824.5,501] and [18722.5,10824.5,501]. Defeat both and return
+  alive wearing the armor to [18708.5,10806.5,501], grounded within 2 metres
+  horizontally and 0.5 vertically, at speed <=0.1 m/s. You must not die.
+  You know simple_leather and rawhide_chest. The tanning rack is at
+  [18705.5,10807.5,501] and crafting bench at [18712.5,10808.5,501].
+  A stone divider at y=10815 ends at x=18718; walk around its east end.
+  A second wall at x=18714 spans y=10818 through 10827, separating the two
+  northern enclosures. The passage between enclosures is near y=10816.
+  The courtyard has ordinary two-metre perimeter walls. You have a starter
+  sword and three minor potions, but no hides in your inventory. The loose
+  hides have the native roughly 300-game-second item lifetime from setup:
+  collect them before they expire. Native server evidence must observe the
+  armor equipped before your first damaging hit; inspect your equipment after
+  equipping. Fight in either order, manage distance and energy, and decide
+  whether and when to heal. There is no reset or resupply between encounters.
+  The world continues while you think. Release controls before your final answer.
+time_limit_seconds: 900
+fixture:
+  world_path: ../../fixtures/veloren_0_18_0_0.bin
+  world_seed: 130626853
+  time_of_day: '12:00'
+  day_length: 30
+  calendar: none
+  platform:
+    origin: [18700, 10800, 500]
+    size: [28, 28]
+    block: Rock
+  blocks:
+    - origin: [18700, 10815, 501]
+      size: [18, 1, 3]
+    - origin: [18714, 10818, 501]
+      size: [1, 10, 3]
+    - origin: [18700, 10800, 501]
+      size: [28, 1, 2]
+    - origin: [18700, 10827, 501]
+      size: [28, 1, 2]
+    - origin: [18700, 10801, 501]
+      size: [1, 26, 2]
+    - origin: [18727, 10801, 501]
+      size: [1, 26, 2]
+  player_state:
+    position: [18708.5, 10806.5, 501]
+    look: [0, 1, 0]
+    health: 100
+    inventory:
+      common.items.consumable.potion_minor: 3
+    equipment:
+      active_mainhand: common.items.weapons.sword.starter
+      chest: common.items.armor.misc.chest.worker_purple_brown
+      feet: common.items.armor.misc.foot.sandals
+      glider: common.items.glider.basic_white
+      lantern: common.items.lantern.black_0
+      legs: common.items.armor.misc.pants.worker_brown
+  recipes:
+    simple_leather: true
+    rawhide_chest: true
+  supplies:
+    - position: [18704.5, 10811.5, 501]
+      item: common.items.crafting_ing.hide.animal_hide
+      amount: 5
+  stations:
+    - position: [18705.5, 10807.5, 501]
+      sprite: TanningRack
+    - position: [18712.5, 10808.5, 501]
+      sprite: CraftingBench
+  encounters:
+    - role: west_legoom
+      asset: common.entity.benchmark.male_green_legoom
+      position: [18705.5, 10824.5, 501]
+    - role: east_legoom
+      asset: common.entity.benchmark.male_green_legoom
+      position: [18722.5, 10824.5, 501]
+evaluator:
+  name: expedition
+  parameters:
+    chest_item: common.items.armor.hide.rawhide.chest
+    roles: [west_legoom, east_legoom]
+    equipment:
+      chest: common.items.armor.hide.rawhide.chest
+    position:
+      target: [18708.5, 10806.5, 501]
+      horizontal_tolerance: 2
+      vertical_tolerance: 0.5
+      max_speed: 0.1

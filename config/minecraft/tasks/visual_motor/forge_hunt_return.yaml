@@ -11,7 +11,9 @@ task: >-
   The sentinel starts near [28.5,72,0.5]. The divider at x=12 spans z=-8 to 8;
   you can walk around either end. You have eight planks, four cobblestone,
   two iron ingots and six bread, but no finished weapon. Choose your preparation
-  and approach. Health, food and equipment persist throughout; recovery is
+  and approach. You already wear a full set of iron armor. Native difficulty is
+  Easy; armor durability, incoming damage and hunger still apply. Health, food
+  and equipment persist throughout; recovery is
   optional and there is no free resupply. The world continues while you think.
   Select your crafted sword before attacking; manage aim and attack cooldown.
   Finish with a text answer and release held controls.
@@ -19,7 +21,7 @@ time_limit_seconds: 600
 fixture:
   world_path: ../../fixtures/forge_hunt
   instance: 1.20.4
-  difficulty: normal
+  difficulty: easy
   player_state:
     position: [0.5, 72, 0.5]
     dimension: minecraft:overworld
@@ -35,6 +37,10 @@ fixture:
       - {slot: 1, item: cobblestone, count: 4}
       - {slot: 2, item: iron_ingot, count: 2}
       - {slot: 3, item: bread, count: 6}
+      - {slot: 100, item: iron_boots, count: 1}
+      - {slot: 101, item: iron_leggings, count: 1}
+      - {slot: 102, item: iron_chestplate, count: 1}
+      - {slot: 103, item: iron_helmet, count: 1}
 evaluator:
   name: expedition
   parameters: {}

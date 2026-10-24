@@ -205,9 +205,25 @@ class Session:
                 "move_forward", "move_backward", "move_left", "move_right",
                 "turn", "jump", "pickup", "use_item", "craft", "equip",
                 "look_at", "attack_primary", "attack_secondary", "toggle_wield", "block", "roll", "stop",
+                "aimed_attack",
             ):
                 raise PermissionError("Native action is not in the fixed public skill set")
             try:
+                if args["action_type"] == "aimed_attack":
+                    aimed = await setup.action(
+                        self.actor, origin="agent", require_completed=False, action_type="look_at",
+                        position=[args[axis] for axis in ("x", "y", "z")],
+                    )
+                    if aimed["status"] != "completed":
+                        return {**aimed, "action_type": "aimed_attack"}
+                    if not self.running:
+                        return {"action_type": "aimed_attack", "status": "cancelled",
+                                "detail": {"code": "public_gate_closed_before_attack"}}
+                    struck = await setup.action(
+                        self.actor, origin="agent", require_completed=False, action_type="attack_primary",
+                        duration_ticks=args["duration_ticks"],
+                    )
+                    return {**struck, "action_type": "aimed_attack", "started_tick": aimed["started_tick"]}
                 return await setup.action(self.actor, origin="agent", require_completed=False, **args)
             except NativeRefusal as error:
                 expected = {

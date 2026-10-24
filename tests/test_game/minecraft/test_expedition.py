@@ -7,16 +7,16 @@ import nbtlib
 import pytest
 
 from game.minecraft.evaluators.expedition import evaluate_expedition, verify_initial
-from game.minecraft.fixtures.forge_hunt import SCHEMA, TARGET, pack_files, pack_hashes, uuid_parts
+from game.minecraft.fixtures.forge_hunt import OUTPOST_SCHEMA, SCHEMA, TARGET, pack_files, pack_hashes, targets_for, uuid_parts
 from game.minecraft.structured_tools.interface import BASE_TOOLS, validate_tool
 
 
 PLAYER = UUID("00000000-0000-0000-0000-000000000001")
 
 
-def write_evidence(world, kills):
+def write_evidence(world, kills, schema=SCHEMA):
     record = nbtlib.Compound({
-        "state": nbtlib.Compound({"schema": nbtlib.String(SCHEMA), "target": nbtlib.String(str(TARGET))}),
+        "state": nbtlib.Compound({"schema": nbtlib.String(schema), "target": nbtlib.String(str(TARGET))}),
         "kills": nbtlib.List[nbtlib.Compound](kills),
     })
     (world / "data").mkdir(exist_ok=True)
@@ -133,6 +133,8 @@ def test_fresh_target_and_unchanged_datapack_are_mandatory(pair):
 
 def test_new_combat_tools_are_bounded_and_legacy_defaults_unchanged():
     assert "AttackTool" not in BASE_TOOLS and "UseHeldItemTool" not in BASE_TOOLS
+    assert "StrikeTool" not in BASE_TOOLS
+    validate_tool("StrikeTool", {"x": 1, "y": 72, "z": 0})
     validate_tool("AttackTool", {})
     validate_tool("UseHeldItemTool", {"duration": 5})
     for name, arguments in (
@@ -152,3 +154,45 @@ def test_invalid_opening_health_is_an_evidence_error(pair, value):
     opening.write_text(json.dumps(record))
     with pytest.raises(ValueError):
         verify_initial(before, PLAYER)
+
+
+def test_two_outposts_require_both_native_kills_and_authored_cargo(pair):
+    before, after = pair
+    for world in pair:
+        for name, value in pack_files(2).items():
+            file = world / "datapacks/livequest_forge" / name
+            file.parent.mkdir(parents=True, exist_ok=True)
+            file.write_text(value if isinstance(value, str) else json.dumps(value))
+        path = world / "livequest-expedition.json"
+        value = json.loads(path.read_text())
+        value.update(schema=OUTPOST_SCHEMA, targets=targets_for(2), cargo="outpost_records",
+                     pack_sha256=pack_hashes(world, 2))
+        path.write_text(json.dumps(value))
+        path = world / "livequest-opening.json"
+        value = json.loads(path.read_text())
+        value["targets"] = targets_for(2)
+        path.write_text(json.dumps(value))
+        write_evidence(world, [], OUTPOST_SCHEMA)
+    (before / "playerdata").mkdir()
+    nbtlib.File({"Inventory": nbtlib.List[nbtlib.Compound]([])}, gzipped=True).save(
+        before / "playerdata" / f"{PLAYER}.dat")
+    player_file = after / "playerdata" / f"{PLAYER}.dat"
+    player = nbtlib.load(player_file)
+    player["Inventory"] = nbtlib.List[nbtlib.Compound]([])
+    player.save(player_file)
+    kills = [kill(), kill(role=nbtlib.String("spider"))]
+    write_evidence(after, kills, OUTPOST_SCHEMA)
+    result = evaluate_expedition(before, after, PLAYER)
+    assert result["checks"][0]["passed"] and not result["success"]
+    paper = nbtlib.Compound({"id": nbtlib.String("minecraft:paper"), "Count": nbtlib.Byte(1)})
+    player["Inventory"].append(paper)
+    player.save(player_file)
+    assert not evaluate_expedition(before, after, PLAYER)["success"]
+    paper["tag"] = nbtlib.Compound({"livequest_cargo": nbtlib.String("outpost_records")})
+    player.save(player_file)
+    assert evaluate_expedition(before, after, PLAYER)["success"]
+    write_evidence(after, kills[:1], OUTPOST_SCHEMA)
+    assert not evaluate_expedition(before, after, PLAYER)["success"]
+    write_evidence(after, [kill(), kill()], OUTPOST_SCHEMA)
+    with pytest.raises(ValueError):
+        evaluate_expedition(before, after, PLAYER)

@@ -1,0 +1,51 @@
+id: two_outposts_return
+game: minecraft
+task_type: structured_tool
+task: >-
+  Prepare a stone or iron sword, clear two occupied outposts, recover their
+  records and return alive to camp. Obtain native kill credit for the named
+  Husk Sentinel (initially [28.5,72,0.5]) and Outpost Spider (initially
+  [62.5,72,0.5]), holding a sword of a type you crafted this episode at each
+  kill. Their order is your choice. Retrieve the Outpost Records from the chest
+  at [68,72,0] and carry them back to the yellow camp marker [0.5,72,0.5].
+  Finish grounded within 2 blocks horizontally and 0.5 vertically, at saved
+  motion <=0.1 blocks/tick. You must not die.
+  You wear iron armor and carry eight planks, four cobblestone, two iron
+  ingots and three bread, but no weapon. The camp table is at [-1,72,2].
+  Stone dividers at x=12 and x=45 span z=-8 to 8; both have walkable ends.
+  The compound has solid foundations and ordinary perimeter walls with inward
+  overhangs to limit spider escape. Enemies can roam inside the compound.
+  A supply chest at [50,72,5] holds four additional bread. Decide whether and
+  when to visit it; eating is optional, not a score requirement. All health,
+  hunger, equipment durability and inventory persist between encounters.
+  Native difficulty is Easy and time is fixed at noon. The spider has ordinary
+  daylight behavior and may remain neutral until attacked; this is not a Boss.
+  The world continues during reasoning and chest interaction. Tool refusals
+  do not prove a kill. Finish with a text answer and release all controls.
+time_limit_seconds: 900
+fixture:
+  world_path: ../../fixtures/two_outposts_courtyard
+  instance: 1.20.4
+  difficulty: easy
+  player_state:
+    position: [0.5, 72, 0.5]
+    dimension: minecraft:overworld
+    yaw: 0
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+      - {slot: 0, item: oak_planks, count: 8}
+      - {slot: 1, item: cobblestone, count: 4}
+      - {slot: 2, item: iron_ingot, count: 2}
+      - {slot: 3, item: bread, count: 3}
+      - {slot: 100, item: iron_boots, count: 1}
+      - {slot: 101, item: iron_leggings, count: 1}
+      - {slot: 102, item: iron_chestplate, count: 1}
+      - {slot: 103, item: iron_helmet, count: 1}
+evaluator:
+  name: expedition
+  parameters: {}

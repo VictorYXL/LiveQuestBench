@@ -1,5 +1,7 @@
 Observations contain the actual game image and motor feedback, not structured game state.
 
-Controls: WASD moves, Space jumps, left_shift sneaks, left_ctrl sprints, E opens/closes inventory, 1-9 selects a hotbar slot, and Q drops an item. Relative mouse motion changes view: positive dx turns right and positive dy looks down. Left mouse mines/attacks while held; right mouse uses/places.
+Controls: WASD moves, Space jumps, left_shift sneaks, left_ctrl sprints, E opens/closes inventory, 1-9 selects a hotbar slot, and Q drops an item. Relative mouse motion changes view: positive dx turns right and positive dy looks down. Holding left mouse mines blocks; melee attacks require separate left-button presses and releases. Holding it does not repeatedly strike enemies. Right mouse uses/places.
+
+Melee damage depends on the native attack cooldown. Separate sword clicks by roughly 0.65 seconds for full-strength attacks. You may put several aimed clicks and waits in one bounded action batch; the enemy and camera can move meanwhile. No targeting or attack loop runs outside your submitted controls.
 
 Opening a menu does not pause this server. Held inputs persist until released, including during model reasoning. A wait is real elapsed time, not a world pause. Each action batch permits 1-64 commands and at most 10000 milliseconds of total explicit waits.

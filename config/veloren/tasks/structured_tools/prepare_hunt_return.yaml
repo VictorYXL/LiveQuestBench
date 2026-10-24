@@ -9,12 +9,13 @@ task: >-
   Then find and defeat the Green Legoom beyond the stone divider, initially near
   [18708.5,10824.5,501], and return alive to [18708.5,10806.5,501], still wearing
   the prepared armor. The divider ends at x=18718; ordinary movement around its
-  end is possible. Keep the replaced worker shirt in your bag. Your starter
+  end is possible. The courtyard has ordinary two-metre perimeter walls to
+  prevent accidental falls, not invisible barriers or protection. Your starter
   sword and two minor potions are finite resources; recovery is optional and
   there is no automatic resupply or reset. The world and enemy continue while
   you think. Native server evidence must observe the armor equipped before
   your first damaging hit; observe your equipment after equipping. At return,
-  settle grounded within 1 metre horizontally and 0.5 vertically, at speed
+  settle grounded within 2 metres horizontally and 0.5 vertically, at speed
   <=0.1 m/s. You must not die. Finish with a text answer and release all controls.
 time_limit_seconds: 600
 fixture:
@@ -30,6 +31,14 @@ fixture:
   blocks:
     - origin: [18700, 10815, 501]
       size: [18, 1, 3]
+    - origin: [18700, 10800, 501]
+      size: [28, 1, 2]
+    - origin: [18700, 10827, 501]
+      size: [28, 1, 2]
+    - origin: [18700, 10801, 501]
+      size: [1, 26, 2]
+    - origin: [18727, 10801, 501]
+      size: [1, 26, 2]
   player_state:
     position: [18708.5, 10806.5, 501]
     look: [0, 1, 0]
@@ -63,11 +72,8 @@ evaluator:
     roles: [green_legoom]
     equipment:
       chest: common.items.armor.hide.rawhide.chest
-    inventory:
-      - item: common.items.armor.misc.chest.worker_purple_brown
-        min_count: 1
     position:
       target: [18708.5, 10806.5, 501]
-      horizontal_tolerance: 1
+      horizontal_tolerance: 2
       vertical_tolerance: 0.5
       max_speed: 0.1

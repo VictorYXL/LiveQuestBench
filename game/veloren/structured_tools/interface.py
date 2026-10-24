@@ -49,6 +49,15 @@ SPECS.update({
                  "roll", {"duration_ticks": {"type": "integer", "minimum": 1, "maximum": 30}}),
     "StopTool": ("Release native movement and ability inputs without undoing effects.", "stop", {}),
 })
+COMBAT_TOOLS = tuple(SPECS)
+SPECS["StrikeTool"] = (
+    "Aim once at a supplied XYZ point, then hold primary attack for bounded client updates. "
+    "Requires a drawn weapon; no target lookup, tracking, movement, healing or combat loop.",
+    "aimed_attack", {
+        **{axis: {"type": "number", "minimum": -1000000, "maximum": 1000000} for axis in ("x", "y", "z")},
+        "duration_ticks": {"type": "integer", "minimum": 1, "maximum": 60},
+    },
+)
 
 
 @dataclass(frozen=True)

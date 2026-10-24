@@ -13,7 +13,7 @@ from game.minecraft.runtime.bridge import BridgeError, NativeBridge
 from agent_framework.utils.tools import Tool
 
 
-PROFILE_ID = "minecraft-1.20.4-st-native-v3"
+PROFILE_ID = "minecraft-1.20.4-st-native-v4"
 logger = logging.getLogger(__name__)
 NUMBER = {"type": "number", "minimum": -30000000, "maximum": 30000000}
 POSITION = {"x": NUMBER, "y": {"type": "number", "minimum": -2048, "maximum": 2048}, "z": NUMBER}
@@ -57,6 +57,14 @@ SCHEMAS = [
 ]
 BASE_TOOLS = tuple(schema["name"] for schema in SCHEMAS if schema["name"] != "GetObservationTool")
 SCHEMAS.extend([
+    tool("InspectContainerTool", "Open the reachable chest under your aim and read its native slots. "
+         "No navigation, remote contents, automatic pickup or task-item selection.", {}, []),
+    tool("TakeContainerItemTool", "Shift-click one observed chest slot into your inventory. "
+         "Requires the chest screen opened by InspectContainerTool; may transfer only part if inventory is full.",
+         {"slot": {"type": "integer", "minimum": 0, "maximum": 53}}, ["slot"]),
+    tool("StrikeTool", "Aim once at a supplied world point and submit one ordinary melee attack. "
+         "Native reach and occlusion apply; no enemy tracking, movement, repetition or cooldown wait.",
+         POSITION, ["x", "y", "z"]),
     tool("AttackTool", "Submit one ordinary attack at the current crosshair, then release. "
          "No auto-aim, movement, cooldown wait or kill guarantee.", {}, []),
     tool("UseHeldItemTool", "Hold ordinary use on the selected item, then release. "
@@ -157,6 +165,8 @@ async def execute_tool(bridge: NativeBridge, name: str, arguments: dict) -> dict
         "MoveTool": "move_" + arguments.get("direction", ""),
         "LookAtPositionTool": "look", "SelectTool": "select", "StopTool": "stop",
         "JumpTool": "jump", "GoToPositionTool": "go_to_position",
+        "StrikeTool": "strike",
+        "InspectContainerTool": "container_inspect", "TakeContainerItemTool": "container_take",
         "DigTool": "dig_block", "PlaceTool": "place",
         "CraftItemTool": "craft", "SmeltItemTool": "smelt",
         "AttackTool": "attack", "UseHeldItemTool": "use_held",

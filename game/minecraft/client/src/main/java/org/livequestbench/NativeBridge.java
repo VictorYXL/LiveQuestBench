@@ -14,6 +14,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.*;
 import org.slf4j.Logger;
@@ -242,9 +243,26 @@ public class NativeBridge implements ClientModInitializer {
     }
     private static Job action(String name, JsonObject params) {
         MinecraftClient mc = client();
-        if (!name.equals("craft") && !name.equals("smelt") && mc.currentScreen != null) mc.player.closeHandledScreen();
+        if (!name.equals("craft") && !name.equals("smelt") && !name.equals("container_take")
+                && mc.currentScreen != null) mc.player.closeHandledScreen();
         switch (name) {
             case "stop": release(); return () -> ok();
+            case "strike":
+                look(vector(params));
+                return () -> {
+                    Vec3d eye = mc.player.getEyePos();
+                    Vec3d direction = mc.player.getRotationVec(1).multiply(3);
+                    double reach = eye.squaredDistanceTo(mc.player.raycast(3, 1, false).getPos());
+                    EntityHitResult hit = ProjectileUtil.raycast(
+                            mc.player, eye, eye.add(direction),
+                            mc.player.getBoundingBox().stretch(direction).expand(1),
+                            entity -> !entity.isSpectator() && entity.canHit(), reach);
+                    if (hit == null || !hit.getEntity().isAlive())
+                        return fail("No living entity along the aimed ray within unobstructed survival reach");
+                    mc.interactionManager.attackEntity(mc.player, hit.getEntity());
+                    mc.player.swingHand(Hand.MAIN_HAND);
+                    return ok("submitted", true, "target_id", hit.getEntity().getId());
+                };
             case "attack":
                 if (!(mc.crosshairTarget instanceof EntityHitResult target))
                     return () -> fail("No entity under the current crosshair within native reach");
@@ -324,6 +342,8 @@ public class NativeBridge implements ClientModInitializer {
             case "go_to_position": return NativeNavigation.create(vector(params));
             case "craft": return NativeInventory.craft(params);
             case "smelt": return NativeInventory.smelt(params);
+            case "container_inspect": return NativeInventory.inspectContainer();
+            case "container_take": return NativeInventory.takeContainerItem(params);
             default: return () -> fail("Unknown native action: " + name);
         }
     }

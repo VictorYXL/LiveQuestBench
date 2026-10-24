@@ -54,7 +54,7 @@ def test_st_observation_and_tools(
             assert rejected["error"] == "invalid_tool_arguments" and rejected["executed"] is False
             initial = await interface.observe()
             assert initial["health"] == 20 and initial["position"] is not None
-            assert initial["profile"] == "minecraft-1.20.4-st-native-v3"
+            assert initial["profile"] == "minecraft-1.20.4-st-native-v4"
             assert initial["nearby_blocks"]["dims"] == {"x": 31, "y": 31, "z": 31}
             assert len(initial["nearby_blocks"]["data"]) == 31 ** 3
             assert any(item["name"] == "oak_log" and item["count"] == 1 for item in initial["inventory"])

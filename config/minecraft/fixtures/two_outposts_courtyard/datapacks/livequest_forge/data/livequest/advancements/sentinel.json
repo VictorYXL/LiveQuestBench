@@ -1,0 +1,16 @@
+{
+  "criteria": {
+    "kill": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:husk",
+          "nbt": "{UUID:[I;1951146151,666062694,-1570150977,-431514671]}"
+        }
+      }
+    }
+  },
+  "rewards": {
+    "function": "livequest:sentinel"
+  }
+}

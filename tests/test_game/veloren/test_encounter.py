@@ -7,7 +7,7 @@ import pytest
 from game.veloren.evaluators.encounter import encounter_checks
 from game.veloren.evaluators.expedition import expedition_checks
 from game.veloren.fixture import validate_fixture
-from game.veloren.structured_tools.interface import FIELDS, validate_tool, project
+from game.veloren.structured_tools.interface import COMBAT_TOOLS, FIELDS, validate_tool, project
 from benchmark.config import load_task
 from pathlib import Path
 
@@ -171,6 +171,11 @@ def test_public_projection_never_contains_private_encounter_registry():
 
 
 def test_public_combat_tools_are_bounded_and_never_autoaim():
+    assert "StrikeTool" not in COMBAT_TOOLS
+    assert validate_tool("StrikeTool", {"x": 1, "y": 2, "z": 3, "duration_ticks": 10}) == (
+        "aimed_attack", {"x": 1, "y": 2, "z": 3, "duration_ticks": 10})
+    with pytest.raises(ValueError):
+        validate_tool("StrikeTool", {"x": 1, "y": 2, "z": 3, "duration_ticks": 61})
     assert validate_tool("LookTool", {"x": 1, "y": 2, "z": 3}) == ("look_at", {"position": [1, 2, 3]})
     assert validate_tool("AttackTool", {"channel": "primary", "duration_ticks": 60}) == (
         "attack_primary", {"duration_ticks": 60},
