@@ -1,27 +1,74 @@
 id: veloren_visual_motor_all
 game: veloren
 tasks:
-  - path: ../tasks/visual_motor/move_2_metres.yaml
-  - path: ../tasks/visual_motor/known_food.yaml
-  - path: ../tasks/visual_motor/gather_food.yaml
-  - path: ../tasks/visual_motor/learn_food.yaml
-  - path: ../tasks/visual_motor/food_reserve.yaml
-  - path: ../tasks/visual_motor/craft_equip.yaml
-  - path: ../tasks/visual_motor/recover_health.yaml
-  - path: ../tasks/visual_motor/staggered_detour.yaml
-  - path: ../tasks/visual_motor/elevation_steps.yaml
-  - path: ../tasks/visual_motor/defeat_legoom.yaml
-  - path: ../tasks/visual_motor/dual_legoom.yaml
-  - path: ../tasks/visual_motor/combat_supply_return.yaml
-  - path: ../tasks/visual_motor/provisioned_hunt_return.yaml
+- path: ../tasks/visual_motor/move_2_metres.yaml
+- path: ../tasks/visual_motor/known_food.yaml
+- path: ../tasks/visual_motor/gather_food.yaml
+- path: ../tasks/visual_motor/learn_food.yaml
+- path: ../tasks/visual_motor/food_reserve.yaml
+- path: ../tasks/visual_motor/craft_equip.yaml
+- path: ../tasks/visual_motor/recover_health.yaml
+- path: ../tasks/visual_motor/staggered_detour.yaml
+- path: ../tasks/visual_motor/elevation_steps.yaml
+- path: ../tasks/visual_motor/defeat_legoom.yaml
+- path: ../tasks/visual_motor/dual_legoom.yaml
+- path: ../tasks/visual_motor/combat_supply_return.yaml
+- path: ../tasks/visual_motor/provisioned_hunt_return.yaml
+- path: ../tasks/visual_motor/pickup_supplies.yaml
+- path: ../tasks/visual_motor/equip_supplied_armor.yaml
+- path: ../tasks/visual_motor/learn_recipe.yaml
+- path: ../tasks/visual_motor/restore_health.yaml
+- path: ../tasks/visual_motor/jump_and_land.yaml
+- path: ../tasks/visual_motor/dodge_roll.yaml
+- path: ../tasks/visual_motor/draw_weapon.yaml
+- path: ../tasks/visual_motor/deal_damage.yaml
 repetitions: 10
-
 agents:
-  - id: tool_calling_astra
-    name: tool_calling
-    model:
-      provider: github_copilot
-      name: gpt-6-astra
-      reasoning_effort: low
-      max_output_tokens: 4096
-      max_attempts: 3
+- id: tool_calling_astra
+  name: tool_calling
+  model:
+    provider: github_copilot
+    name: gpt-6-astra
+    reasoning_effort: low
+    max_output_tokens: 4096
+    max_attempts: 3
+- id: deepseek_harness_astra
+  name: deepseek_harness
+  model:
+    provider: github_copilot
+    name: gpt-6-astra
+    reasoning_effort: low
+    max_output_tokens: 4096
+    max_attempts: 3
+- id: hermes_agent_astra
+  name: hermes_agent
+  model:
+    provider: github_copilot
+    name: gpt-6-astra
+    reasoning_effort: low
+    max_output_tokens: 4096
+    max_attempts: 3
+- id: orak_astra
+  name: orak
+  model:
+    provider: github_copilot
+    name: gpt-6-astra
+    reasoning_effort: low
+    max_output_tokens: 4096
+    max_attempts: 3
+- id: smolagents_astra
+  name: smolagents
+  model:
+    provider: github_copilot
+    name: gpt-6-astra
+    reasoning_effort: low
+    max_output_tokens: 4096
+    max_attempts: 3
+- id: gamingagent_astra
+  name: gamingagent
+  model:
+    provider: github_copilot
+    name: gpt-6-astra
+    reasoning_effort: low
+    max_output_tokens: 4096
+    max_attempts: 3

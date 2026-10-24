@@ -1,0 +1,53 @@
+id: deal_damage
+game: veloren
+task_type: structured_tool
+task: Deal actual damage to the hostile Green Legoom ahead without dying. A kill is
+  not required. You have a starter sword and two minor potions. The native enemy remains
+  autonomous during your reasoning. Finish alive, release controls and answer.
+time_limit_seconds: 180
+fixture:
+  world_path: ../../fixtures/veloren_0_18_0_0.bin
+  world_seed: 130626853
+  time_of_day: '12:00'
+  day_length: 30
+  calendar: none
+  platform:
+    origin:
+    - 18700
+    - 10800
+    - 500
+    size:
+    - 28
+    - 28
+    block: Rock
+  player_state:
+    position:
+    - 18708.5
+    - 10806.5
+    - 501
+    look:
+    - 0
+    - 1
+    - 0
+    health: 100
+    inventory:
+      common.items.consumable.potion_minor: 2
+    equipment:
+      active_mainhand: common.items.weapons.sword.starter
+      chest: common.items.armor.misc.chest.worker_purple_brown
+      feet: common.items.armor.misc.foot.sandals
+      glider: common.items.glider.basic_white
+      lantern: common.items.lantern.black_0
+      legs: common.items.armor.misc.pants.worker_brown
+  encounters:
+  - role: green_legoom
+    asset: common.entity.benchmark.male_green_legoom
+    position:
+    - 18708.5
+    - 10820.5
+    - 501
+evaluator:
+  name: damage
+  parameters:
+    roles:
+    - green_legoom

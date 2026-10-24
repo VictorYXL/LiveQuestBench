@@ -9,7 +9,7 @@ from game.bindings import Controls, GameBinding, bind_controls, validate_tools
 from game.veloren.evaluators.endpoints import evaluate_displacement, evaluate_health, evaluate_inventory
 from game.veloren.evaluators.endpoints import validate_displacement, validate_health, validate_inventory
 from game.veloren.evaluators.endpoints import evaluate_state, validate_state
-from game.veloren.evaluators.encounter import evaluate_encounter, validate_encounter
+from game.veloren.evaluators.encounter import evaluate_damage, evaluate_encounter, validate_encounter
 from game.veloren.evaluators.expedition import evaluate_expedition, validate_expedition
 from game.veloren.game import VelorenGame
 from game.veloren.structured_tools import interface as st
@@ -35,20 +35,24 @@ def create_binding(
     evaluators: dict[str, Callable[..., dict]] = {
         "displacement": evaluate_displacement, "inventory": evaluate_inventory, "health": evaluate_health,
         "state": evaluate_state, "encounter": evaluate_encounter, "expedition": evaluate_expedition,
+        "damage": evaluate_damage,
     }
     validators: dict[str, Callable[..., object]] = {
         "displacement": validate_displacement, "inventory": validate_inventory, "health": validate_health,
         "state": validate_state, "encounter": validate_encounter, "expedition": validate_expedition,
+        "damage": validate_encounter,
     }
     if evaluator not in evaluators:
         raise ValueError(f"Unknown Veloren evaluator: {evaluator}")
     score = evaluators[evaluator]
     inspect.signature(score).bind(Path(), Path(), **parameters)
     validators[evaluator](**parameters)
-    if evaluator in ("encounter", "expedition") and set(parameters["roles"]) != {
+    if evaluator in ("encounter", "expedition", "damage") and set(parameters["roles"]) != {
         row["role"] for row in game.fixture.get("encounters", [])
     }:
         raise ValueError("Scored encounter roles must match the fixture's designated targets")
+    if parameters.get("motion") is not None and not fixture.get("motion_evidence"):
+        raise ValueError("Motion scoring requires private fixture motion evidence")
 
     def controls() -> tuple[Controls, list[Tool[Controls]]]:
         public = game.get_agent_interface()

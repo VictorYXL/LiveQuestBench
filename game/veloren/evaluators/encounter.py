@@ -27,7 +27,7 @@ def validate_encounter(*, roles: list[str], **state) -> None:
     validate_state(**state)
 
 
-def encounter_checks(initial: dict, final: dict, *, roles: list[str], **state) -> dict:
+def _combat_checks(initial: dict, final: dict, *, roles: list[str], require_death: bool, **state) -> dict:
     validate_encounter(roles=roles, **state)
     first, last = (row["private_encounter_evidence"] for row in (initial, final))
     registry = first["registry"]
@@ -74,16 +74,31 @@ def encounter_checks(initial: dict, final: dict, *, roles: list[str], **state) -
         checks.append({"kind": "encounter", "role": target["role"], "uid": binding["uid"],
                        "native_death": bool(killed), "player_damage_events": len(damage),
                        "damage": sum(row["data"]["before"] - row["data"]["after"] for row in damage),
-                       "passed": bool(killed) and bool(damage)})
+                       "passed": bool(damage) and (bool(killed) or not require_death)})
     checks.append({"kind": "player_never_died", "passed": not deaths(source)})
     result = state_checks(initial, final, **state)
     checks.extend(result["checks"])
     return {"success": all(row["passed"] for row in checks), "checks": checks,
-            "semantics": "Designated native UID/entity-generation death, real player damaging contribution "
-                         "before death, no player death, and simultaneous terminal requirements. "
+            "semantics": ("Designated native UID/entity-generation death, real player damaging contribution "
+                          "before death, " if require_death else
+                          "Designated native UID/entity-generation target, no kill required, "
+                          "real player damaging contribution before any target death, ")
+                         + "no player death, and simultaneous terminal requirements. "
                          "No last-blow requirement; disappearance and loot do not prove death. "
                          "Evidence ends at post-gate client snapshot, not an atomic server pause."}
 
 
+def encounter_checks(initial: dict, final: dict, *, roles: list[str], **state) -> dict:
+    return _combat_checks(initial, final, roles=roles, require_death=True, **state)
+
+
+def damage_checks(initial: dict, final: dict, *, roles: list[str], **state) -> dict:
+    return _combat_checks(initial, final, roles=roles, require_death=False, **state)
+
+
 def evaluate_encounter(before: Path, after: Path, *, roles: list[str], **state) -> dict:
     return encounter_checks(*load_pair(before, after), roles=roles, **state)
+
+
+def evaluate_damage(before: Path, after: Path, *, roles: list[str], **state) -> dict:
+    return damage_checks(*load_pair(before, after), roles=roles, **state)

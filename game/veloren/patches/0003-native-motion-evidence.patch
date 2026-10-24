@@ -1,0 +1,144 @@
+--- a/voxygen/src/native_agent.rs
++++ b/voxygen/src/native_agent.rs
+@@ -16,6 +16,50 @@
+ pub const FRAME_SCHEMA: &str = "1.0";
+ mod visual_ui;
+ 
++#[derive(Default)]
++struct MotionEvidence {
++    uid: Option<u64>,
++    invalid: bool,
++    samples: u64,
++    previous_ground: Option<(bool, f32)>,
++    takeoff: Option<f32>,
++    peak: f32,
++    jump_landings: u64,
++    roll_movement: bool,
++    roll_entries: u64,
++}
++
++impl MotionEvidence {
++    fn sample(&mut self, uid: u64, grounded: bool, z: f32, vz: f32, rolling: bool) {
++        if self.uid.is_some_and(|previous| previous != uid) || !z.is_finite() || !vz.is_finite() {
++            self.invalid = true;
++            return;
++        }
++        self.uid = Some(uid);
++        self.samples += 1;
++        if let Some((true, previous_z)) = self.previous_ground
++            && !grounded && vz > 1.0
++        {
++            self.takeoff = Some(previous_z);
++            self.peak = z;
++        }
++        if let Some(start) = self.takeoff {
++            self.peak = self.peak.max(z);
++            if grounded {
++                if self.peak - start >= 0.5 {
++                    self.jump_landings += 1;
++                }
++                self.takeoff = None;
++            }
++        }
++        if rolling && !self.roll_movement {
++            self.roll_entries += 1;
++        }
++        self.roll_movement = rolling;
++        self.previous_ground = Some((grounded, z));
++    }
++}
++
+ enum Input {
+     Line(String),
+     Closed,
+@@ -44,6 +88,7 @@
+     last_actuator_dispatch: Value,
+     image_only: bool,
+     visual: visual_ui::VisualUi,
++    motion: MotionEvidence,
+ }
+ 
+ fn host_ns() -> Result<String, String> {
+@@ -175,6 +220,7 @@
+             last_actuator_dispatch: Value::Null,
+             image_only: args.agent_observation == "image",
+             visual: visual_ui::VisualUi::default(),
++            motion: MotionEvidence::default(),
+         })
+     }
+ 
+@@ -189,6 +235,16 @@
+     /// Returns false only on explicit close, input failure or EOF.
+     pub fn poll(&mut self, client: &mut Client, hud: &mut crate::hud::Hud,
+                 talk: &Interactables) -> bool {
++        if let (Some(uid), Some(position), Some(velocity), Some(physics), Some(character)) = (
++            client.uid(), client.current::<comp::Pos>(), client.current::<comp::Vel>(),
++            client.current::<comp::PhysicsState>(), client.current::<comp::CharacterState>(),
++        ) {
++            self.motion.sample(
++                uid.0.get(), physics.on_ground.is_some(), position.0.z, velocity.0.z,
++                matches!(character, comp::CharacterState::Roll(data)
++                    if data.stage_section == common::states::utils::StageSection::Movement),
++            );
++        }
+         while let Ok(input) = self.receiver.try_recv() {
+             let line = match input {
+                 Input::Line(line) => line,
+@@ -237,6 +293,28 @@
+                 });
+             }
+             match request.cmd.as_str() {
++                "motion_evidence" => {
++                    let actor = protocol::actuator_identity(client, &self.state)["actor"].clone();
++                    if let Err(code) = frame_fence(&request.args, &self.state.session_id, &actor) {
++                        self.error(request.id, code, code);
++                    } else if self.motion.invalid || self.motion.samples == 0
++                        || self.motion.uid != client.uid().map(|uid| uid.0.get())
++                    {
++                        self.error(request.id, "invalid_motion_evidence", "native actor or samples changed");
++                    } else {
++                        protocol::emit(&json!({
++                            "type": "response", "protocol_version": protocol::PROTOCOL_VERSION,
++                            "session_id": self.state.session_id, "id": request.id, "ok": true,
++                            "result": {
++                                "schema": "native-client-motion/1", "session_id": self.state.session_id,
++                                "uid": self.motion.uid, "through_tick": self.state.tick,
++                                "samples": self.motion.samples, "jump_landings": self.motion.jump_landings,
++                                "roll_entries": self.motion.roll_entries,
++                                "semantics": "Passive client-update samples: grounded upward takeoff above 0.5m then landing; native Roll Movement entries. Not input receipts or server-atomic event counts.",
++                            }, "error": null,
++                        }));
++                    }
++                },
+                 "physical_input" => {
+                     let actor = protocol::actuator_identity(client, &self.state)["actor"].clone();
+                     let mut fence = request.args.clone();
+@@ -431,6 +509,28 @@
+     }
+ 
+     #[test]
++    fn motion_samples_require_rise_landing_and_real_roll_phase() {
++        let mut motion = MotionEvidence::default();
++        motion.sample(7, true, 10.0, 0.0, false);
++        motion.sample(7, false, 9.9, -1.0, false);
++        motion.sample(7, true, 9.0, 0.0, false);
++        assert_eq!(motion.jump_landings, 0);
++        motion.sample(7, false, 9.2, 5.0, false);
++        motion.sample(7, false, 9.6, 1.0, false);
++        assert_eq!(motion.jump_landings, 0);
++        motion.sample(7, true, 9.0, 0.0, false);
++        assert_eq!(motion.jump_landings, 1);
++        motion.sample(7, true, 9.0, 0.0, true);
++        motion.sample(7, true, 9.0, 0.0, true);
++        assert_eq!(motion.roll_entries, 1);
++        motion.sample(7, true, 9.0, 0.0, false);
++        motion.sample(7, true, 9.0, 0.0, true);
++        assert_eq!(motion.roll_entries, 2);
++        motion.sample(8, true, 9.0, 0.0, false);
++        assert!(motion.invalid);
++    }
++
++    #[test]
+     fn frame_fences_exact_session_actor_lifecycle_and_schema() {
+         let actor = json!({"uid": 7, "lifecycle": "incarnation:Entity(1, 1)"});
+         let args = json!({"schema_version": FRAME_SCHEMA, "expected_session_id": "s", "actor": actor});

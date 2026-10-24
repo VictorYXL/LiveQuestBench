@@ -4,7 +4,7 @@ from copy import deepcopy
 
 import pytest
 
-from game.veloren.evaluators.encounter import encounter_checks
+from game.veloren.evaluators.encounter import damage_checks, encounter_checks
 from game.veloren.evaluators.expedition import expedition_checks
 from game.veloren.fixture import validate_fixture
 from game.veloren.structured_tools.interface import COMBAT_TOOLS, FIELDS, validate_tool, project
@@ -42,6 +42,10 @@ def evidence():
 def test_actual_death_and_own_damage_are_both_required():
     initial, final = evidence()
     assert encounter_checks(initial, final, roles=["enemy"])["success"]
+    damage_only = deepcopy(final)
+    damage_only["private_encounter_evidence"]["events"].pop()
+    assert damage_checks(initial, damage_only, roles=["enemy"])["success"]
+    assert not encounter_checks(initial, damage_only, roles=["enemy"])["success"]
     for field, value in (
         ("contributor", {"Solo": 99}), ("contributor_entity", "reused-player-generation"),
         ("target_entity", "reused-enemy-generation"), ("changed", False),
@@ -50,6 +54,7 @@ def test_actual_death_and_own_damage_are_both_required():
         changed = deepcopy(final)
         changed["private_encounter_evidence"]["events"][0]["data"][field] = value
         assert not encounter_checks(initial, changed, roles=["enemy"])["success"]
+        assert not damage_checks(initial, changed, roles=["enemy"])["success"]
 
 
     for index in (0, 1):
@@ -135,6 +140,7 @@ def test_player_death_before_terminal_recovery_is_failure():
     final["private_encounter_evidence"]["events"].append(death)
     final["private_encounter_evidence"]["through_sequence"] = 13
     assert not encounter_checks(initial, final, roles=["enemy"])["success"]
+    assert not damage_checks(initial, final, roles=["enemy"])["success"]
 
 
 def test_group_damage_preserves_actor_identity_and_must_precede_death():
@@ -167,7 +173,9 @@ def test_combat_does_not_override_reserve_or_destination_requirements():
 def test_public_projection_never_contains_private_encounter_registry():
     row = {name: {} for name in FIELDS}
     row["private_encounter_evidence"] = {"secret": True}
+    row["private_motion_evidence"] = {"secret": True}
     assert "private_encounter_evidence" not in project(row)
+    assert "private_motion_evidence" not in project(row)
 
 
 def test_public_combat_tools_are_bounded_and_never_autoaim():

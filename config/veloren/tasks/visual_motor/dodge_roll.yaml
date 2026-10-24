@@ -1,0 +1,55 @@
+id: dodge_roll
+game: veloren
+task_type: visual_motor
+task: 'Perform a native dodge roll: its movement phase must actually occur. Finish
+  alive and grounded on the platform, within twelve horizontal metres and half a vertical
+  metre of your start, with speed at most 0.1 metres/second. You initially face the
+  open space ahead. Release controls and finish with a text answer.'
+time_limit_seconds: 150
+fixture:
+  world_path: ../../fixtures/veloren_0_18_0_0.bin
+  world_seed: 130626853
+  time_of_day: '12:00'
+  day_length: 30
+  calendar: none
+  platform:
+    origin:
+    - 18700
+    - 10800
+    - 500
+    size:
+    - 30
+    - 30
+    block: Rock
+  player_state:
+    position:
+    - 18714.5
+    - 10814.5
+    - 501
+    look:
+    - 0
+    - 1
+    - 0
+    health: 100
+    inventory: {}
+    equipment:
+      active_mainhand: common.items.weapons.sword.starter
+      chest: common.items.armor.misc.chest.worker_purple_brown
+      feet: common.items.armor.misc.foot.sandals
+      glider: common.items.glider.basic_white
+      lantern: common.items.lantern.black_0
+      legs: common.items.armor.misc.pants.worker_brown
+  motion_evidence: true
+evaluator:
+  name: state
+  parameters:
+    motion:
+      roll_entries: 1
+    position:
+      target:
+      - 18714.5
+      - 10814.5
+      - 501
+      horizontal_tolerance: 12
+      vertical_tolerance: 0.5
+      max_speed: 0.1

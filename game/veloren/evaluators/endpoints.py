@@ -121,9 +121,18 @@ def evaluate_health(
 def validate_state(
     *, inventory: list[dict] | None = None, equipment: dict[str, str] | None = None,
     recipes: list[str] | None = None, position: dict | None = None, min_health: float = 1,
+    wielding: bool | None = None, motion: dict[str, int] | None = None,
 ) -> None:
     if finite(min_health, "min_health") <= 0:
         raise ValueError("min_health must be positive")
+    if wielding is not None and type(wielding) is not bool:
+        raise ValueError("wielding must be boolean")
+    if motion is not None and (
+        not isinstance(motion, dict) or not motion
+        or any(key not in ("jump_landings", "roll_entries") or type(value) is not int or value < 1
+               for key, value in motion.items())
+    ):
+        raise ValueError("motion requires positive jump_landings or roll_entries deltas")
     if inventory is not None:
         if not isinstance(inventory, list) or not inventory:
             raise ValueError("inventory must contain requirements")
@@ -204,25 +213,48 @@ def evaluate_state(
     before: Path, after: Path, *, inventory: list[dict] | None = None,
     equipment: dict[str, str] | None = None, recipes: list[str] | None = None,
     position: dict | None = None, min_health: float = 1,
+    wielding: bool | None = None, motion: dict[str, int] | None = None,
 ) -> dict:
     """Require simultaneous terminal predicates, never infer actions or past survival."""
     validate_state(inventory=inventory, equipment=equipment, recipes=recipes,
-                   position=position, min_health=min_health)
+                   position=position, min_health=min_health, wielding=wielding, motion=motion)
     initial, final = load_pair(before, after)
     return state_checks(initial, final, inventory=inventory, equipment=equipment,
-                        recipes=recipes, position=position, min_health=min_health)
+                        recipes=recipes, position=position, min_health=min_health, wielding=wielding, motion=motion)
 
 
 def state_checks(
     initial: dict, final: dict, *, inventory: list[dict] | None = None,
     equipment: dict[str, str] | None = None, recipes: list[str] | None = None,
     position: dict | None = None, min_health: float = 1,
+    wielding: bool | None = None, motion: dict[str, int] | None = None,
 ) -> dict:
     checks = []
     hp = finite(final["survival"]["health"]["current"], "health")
     checks.append({"kind": "health", "actual": hp, "minimum": min_health,
                    "passed": hp >= min_health and final["survival"].get("dead") is not True
                    and final["survival"]["health"].get("dead") is not True})
+    if wielding is not None:
+        if type(final["wielding"]) is not bool:
+            raise ValueError("Native wielding evidence must be boolean")
+        checks.append({"kind": "wielding", "actual": final["wielding"],
+                       "expected": wielding, "passed": final["wielding"] == wielding})
+    if motion is not None:
+        first, last = (row["private_motion_evidence"] for row in (initial, final))
+        counters = ("samples", "through_tick", "jump_landings", "roll_entries")
+        for row, evidence in ((initial, first), (final, last)):
+            if (evidence["schema"] != "native-client-motion/1"
+                    or evidence["session_id"] != row["session_id"]
+                    or evidence["uid"] != row["self_identity"]["uid"]
+                    or any(type(evidence[key]) is not int or evidence[key] < 0 for key in counters)
+                    or evidence["samples"] == 0):
+                raise ValueError("Invalid native motion identity or counters")
+        if any(last[key] < first[key] for key in counters):
+            raise ValueError("Native motion counters moved backwards")
+        for key, minimum in motion.items():
+            delta = last[key] - first[key]
+            checks.append({"kind": "motion", "name": key, "delta": delta,
+                           "minimum": minimum, "passed": delta >= minimum})
     if inventory:
         first, last = inventory_counts(initial), inventory_counts(final)
         for row in inventory:
@@ -259,4 +291,6 @@ def state_checks(
                        and vertical <= position["vertical_tolerance"]
                        and speed <= position["max_speed"] and final["on_ground"]})
     return {"success": all(row["passed"] for row in checks), "checks": checks,
-            "semantics": "simultaneous terminal state; no action attribution or continuous-survival claim"}
+            "semantics": "simultaneous terminal state; no action attribution or continuous-survival claim"
+            + ("; requested passive client-sampled upward takeoff/landing or native Roll Movement deltas, "
+               "not input receipts or server-atomic event counts" if motion else "")}

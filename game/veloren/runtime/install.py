@@ -37,6 +37,7 @@ def main() -> None:
     hashes = json.loads(source_manifest.read_text())["files_sha256"]
     patch = Path(__file__).parents[1] / "patches/0001-physical-input.patch"
     protection_patch = patch.with_name("0002-disable-native-protection.patch")
+    motion_patch = patch.with_name("0003-native-motion-evidence.patch")
     changed = ("voxygen/src/native_agent.rs", "voxygen/src/session/mod.rs",
                "client/src/agent_protocol/continuous_control.rs")
     with tempfile.TemporaryDirectory(prefix="veloren-patch-", dir=root.parent) as temporary:
@@ -50,6 +51,8 @@ def main() -> None:
         subprocess.run(["patch", "--batch", "-p1", "-i", str(patch.resolve())], cwd=expected, check=True)
         physical_only = hashes | {name: digest(expected / name) for name in changed}
         subprocess.run(["patch", "--batch", "-p1", "-i", str(protection_patch.resolve())], cwd=expected, check=True)
+        without_motion = hashes | {name: digest(expected / name) for name in changed}
+        subprocess.run(["patch", "--batch", "-p1", "-i", str(motion_patch.resolve())], cwd=expected, check=True)
         patched = hashes | {name: digest(expected / name) for name in changed}
     if not root.exists():
         shutil.copytree(cache, root, symlinks=False)
@@ -61,6 +64,10 @@ def main() -> None:
         current = physical_only
     if current == physical_only:
         subprocess.run(["patch", "--batch", "-p1", "-i", str(protection_patch.resolve())],
+                       cwd=root / "source", check=True)
+        current = without_motion
+    if current == without_motion:
+        subprocess.run(["patch", "--batch", "-p1", "-i", str(motion_patch.resolve())],
                        cwd=root / "source", check=True)
     elif current != patched:
         raise ValueError("Build source differs from the selected source plus declared patch")
@@ -85,10 +92,11 @@ def main() -> None:
         "renderer": str(executable), "source": str(root / "source"),
         "source_manifest_sha256": digest(source_manifest), "patch_sha256": digest(patch),
         "protection_patch_sha256": digest(protection_patch),
+        "motion_patch_sha256": digest(motion_patch), "motion_evidence": "native-client-motion/1",
         "native_protection": "disabled by explicit renderer launch environment",
         "compiler_cache": str(cache), "qualification": "requires LiveQuestBench real-game checks",
         "sha256": {str(path.resolve()): digest(path)
-                   for path in (executable, patch, protection_patch, source_manifest)},
+                   for path in (executable, patch, protection_patch, motion_patch, source_manifest)},
     }
     pending = root / ".runtime.json.tmp"
     pending.write_text(json.dumps(record, indent=2) + "\n")

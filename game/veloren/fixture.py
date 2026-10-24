@@ -53,10 +53,12 @@ def vector(value: object, label: str, *, integer: bool = False) -> list:
 
 def validate_fixture(value: object) -> dict:
     required = {"world_path", "world_seed", "time_of_day", "day_length", "calendar", "platform", "player_state"}
-    optional = {"blocks", "stations", "supplies", "recipe_groups", "recipes", "encounters"}
+    optional = {"blocks", "stations", "supplies", "recipe_groups", "recipes", "encounters", "motion_evidence"}
     if not isinstance(value, dict) or required - value.keys() or value.keys() - required - optional:
         raise ValueError(f"Veloren fixture requires exactly {sorted(required)} plus optional {sorted(optional)}")
     fixture = value
+    if "motion_evidence" in fixture and type(fixture["motion_evidence"]) is not bool:
+        raise ValueError("motion_evidence must be boolean")
     if not isinstance(fixture["world_path"], str) or not fixture["world_path"].strip():
         raise ValueError("world_path must explicitly identify a native map file")
     if not Path(fixture["world_path"]).is_file():
@@ -243,6 +245,18 @@ async def initialize_fixture(admin, actor, fixture: dict) -> dict:
             await setup.gift(admin, actor, name, amount)
     supplies = []
     for supply in fixture.get("supplies", []):
+        if inventory_counts(await admin.request("observe")).get(supply["item"], 0):
+            origin = (await setup.ready_observation(admin))["position"]
+            await setup.goto(admin, admin, [value + 100 for value in origin], settle=False)
+            while inventory_counts(observed := await admin.request("observe")).get(supply["item"], 0):
+                stack = next(row for row in observed["inventory"]["items"]
+                             if item_id(row["item"]) == supply["item"])
+                await setup.action(admin, "drop", **setup.slot(stack))
+                if inventory_counts(await admin.request("observe")).get(supply["item"], 0) >= (
+                    inventory_counts(observed)[supply["item"]]
+                ):
+                    raise RuntimeError("Administrator supply cleanup did not remove the native stack")
+            await setup.goto(admin, admin, origin)
         supplies.append(await setup.drop_supply(
             admin, supply["position"], supply["item"], supply["amount"], "flat",
         ))

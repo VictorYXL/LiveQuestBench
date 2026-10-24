@@ -14,6 +14,25 @@ Benchmark recordings live under each Episode's `recording/`: `video.mp4`
 and `chat/`. Standalone game tests retain their own output layout;
 `VelorenGame(recording_path=...)` can select an explicit video destination.
 
+## Basic L1 tasks
+
+The paired L1 selection covers short movement, supplied-input food crafting,
+pickup, equipping supplied armor, learning a recipe, recovery, jumping and
+landing, rolling, drawing a weapon and dealing damage without requiring a kill.
+It reuses the existing native map and fixture authoring. The damage goal reuses
+identity-bound encounter evidence and still requires actual player contribution
+and no player death; existing encounter goals continue to require native deaths.
+
+`fixture.motion_evidence: true` enables private readback of passive renderer
+samples. Jump evidence requires a grounded upward takeoff, at least 0.5 metres
+of rise and a subsequent landing. Roll evidence requires the native Movement
+phase, not a requested input or the preceding Buildup phase. These are sampled
+client effects, not server-atomic event counts; they can miss sufficiently short
+transitions. Terminal grounded/position requirements are checked separately.
+The renderer does not change movement, stamina, collision or damage, and neither
+track receives the private counters. Drawing checks native `wielding`, not
+merely having a weapon in an equipment slot.
+
 ## Native encounter tasks
 
 The [full ST experiment](../../config/veloren/experiments/structured_tools_all.yaml)
@@ -104,11 +123,12 @@ export LIVEQUEST_VELOREN_RUNTIME=/absolute/path/to/new-livequest-veloren-build/r
 
 The independent output root needs space for the source/compiler cache and binary.
 The installer verifies the source against the bound native source manifest,
-applies the declared physical-input and native-protection patches, builds the
+applies the declared physical-input, native-protection and passive-motion patches, builds the
 renderer offline using the original toolchain settings, and hashes the resulting
-executable and both patches. Reusing this output root requires the exact declared
-patched tree; the installer also supports upgrading the verified physical-input-only
-tree by applying the protection patch.
+executable and patches. Reusing this output root requires a verified declared
+tree; the installer can upgrade the physical-input-only or protection-disabled
+tree by applying the remaining patches. Motion-enabled fixtures explicitly
+reject runtime receipts without passive-motion support.
 The upstream runtime is still validated by its original loader on every launch;
 the replacement renderer is separately and explicitly hashed. There is no
 fallback to the unpatched renderer.

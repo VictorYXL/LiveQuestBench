@@ -74,6 +74,8 @@ class Session:
         cfg = self.config
         if cfg.get("native_protection") != "disabled by explicit renderer launch environment":
             raise ValueError("Prepared runtime lacks the native-protection opt-out patch; rerun Veloren setup")
+        if self.fixture.get("motion_evidence") and cfg.get("motion_evidence") != "native-client-motion/1":
+            raise ValueError("Fixture requires passive native motion evidence; rerun Veloren setup")
         for path, digest in cfg["sha256"].items():
             if hashlib.sha256(Path(path).read_bytes()).hexdigest() != digest:
                 raise ValueError(f"Prepared runtime changed: {path}")
@@ -108,8 +110,9 @@ class Session:
             lambda row: all(entry["uid"] != administrator_uid for entry in row["nearby_entities"]),
             "fixture administrator disconnected and absent",
         )
+        opening = await recipe_observation(self.actor, self.fixture, opening)
         verify_player(self.fixture, opening)
-        initialized["opening"] = await recipe_observation(self.actor, self.fixture, opening)
+        initialized["opening"] = opening
         initialized["administrator_retirement"] = {
             "uid": administrator_uid, "confirmed_absent": True,
             "returncode": admin.process.returncode, "cleanup": admin.cleanup,
@@ -151,6 +154,10 @@ class Session:
             if self.running:
                 raise RuntimeError("Snapshot requires a closed public gate")
             observation = await recipe_observation(self.actor, self.fixture)
+            if self.fixture.get("motion_evidence"):
+                observation["private_motion_evidence"] = await self.actor.request(
+                    "motion_evidence", await self.frame_fence(), origin="private-validation",
+                )
             if self.fixture.get("encounters"):
                 from scripts.rpg_benchmark import native_outcomes
                 rows = native_outcomes.read(self.output / "private-native-oracle.ndjson", self.output.name)

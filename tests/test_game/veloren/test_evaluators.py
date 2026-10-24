@@ -56,6 +56,32 @@ def test_truncated_recipe_book_can_only_prove_explicit_entries():
     assert known_recipes(row, required=["a"]) == {"a"}
     with pytest.raises(ValueError, match="Truncated"):
         known_recipes(row, required=["b"])
+    row["private_recipe_evidence"] = {"b": {"items": [{"recipe": "b", "character_known": False}]}}
+    assert known_recipes(row, required=["b"]) == {"a"}
+
+
+def test_motion_and_wielding_require_native_effects_and_matching_identity():
+    initial = {
+        "session_id": "same", "self_identity": {"uid": 7}, "wielding": False,
+        "survival": {"health": {"current": 100}},
+        "private_motion_evidence": {"schema": "native-client-motion/1", "session_id": "same",
+                                   "uid": 7, "samples": 10, "through_tick": 20,
+                                   "jump_landings": 0, "roll_entries": 0},
+    }
+    final = deepcopy(initial)
+    assert not state_checks(initial, final, wielding=True)["success"]
+    assert not state_checks(initial, final, motion={"jump_landings": 1})["success"]
+    final["wielding"] = True
+    final["private_motion_evidence"].update(samples=30, through_tick=40, jump_landings=1, roll_entries=1)
+    assert state_checks(initial, final, wielding=True, motion={"jump_landings": 1, "roll_entries": 1})["success"]
+    for field, value in (("uid", 8), ("session_id", "other"), ("samples", 9), ("jump_landings", True)):
+        changed = deepcopy(final)
+        changed["private_motion_evidence"][field] = value
+        with pytest.raises(ValueError):
+            state_checks(initial, changed, motion={"jump_landings": 1})
+    for params in ({"wielding": 1}, {"motion": {"jump": 1}}, {"motion": {"roll_entries": 0}}):
+        with pytest.raises(ValueError):
+            validate_state(**params)
 
 
 def test_endpoint_thresholds_and_integrity(tmp_path: Path) -> None:
