@@ -68,8 +68,18 @@ def pack_hashes(world: Path, encounters: int = 1) -> dict[str, str]:
     return {name: hashlib.sha256((root / name).read_bytes()).hexdigest() for name in pack_files(encounters)}
 
 
-async def author(source: Path, output: Path, encounters: int = 1) -> Path:
+def route_gates(condition: int) -> list[dict]:
+    if type(condition) is not int or condition not in (0, 1):
+        raise ValueError("Reconnaissance condition must be 0 or 1")
+    return [{"x": x, "open_z": z, "closed_z": -z - 1}
+            for x, z in zip((20, 45), ((-8, 7) if condition == 0 else (7, -8)))]
+
+
+async def author(source: Path, output: Path, encounters: int = 1, *, route_condition: int | None = None) -> Path:
     targets = targets_for(encounters)
+    gates = route_gates(route_condition) if route_condition is not None else None
+    if gates is not None and encounters != 2:
+        raise ValueError("Reconnaissance requires two outposts")
     schema = SCHEMA if encounters == 1 else OUTPOST_SCHEMA
     if os.environ.get("MINECRAFT_EULA_ACCEPTED") != "true":
         raise PermissionError("Explicit Minecraft EULA acceptance is required")
@@ -137,6 +147,25 @@ async def author(source: Path, output: Path, encounters: int = 1) -> Path:
             + ",".join(map(str, uuid_parts(UUID(spider["uuid"]))))
             + '],PersistenceRequired:1b,CustomName:\'{"text":"Outpost Spider"}\',CustomNameVisible:1b}',
         ]
+    if gates is not None:
+        geometry = [
+            "fill 12 72 -8 12 74 8 air",
+            "fill -12 76 -12 74 79 -12 stone_bricks",
+            "fill -12 76 12 74 79 12 stone_bricks",
+            "fill -12 76 -11 -12 79 11 stone_bricks",
+            "fill 74 76 -11 74 79 11 stone_bricks",
+            "fill -12 80 -12 74 80 -11 stone_bricks",
+            "fill -12 80 11 74 80 12 stone_bricks",
+            "fill -12 80 -10 -11 80 10 stone_bricks",
+            "fill 73 80 -10 74 80 10 stone_bricks",
+        ]
+        for gate in gates:
+            x, z = gate["x"], gate["open_z"]
+            geometry.extend([
+                f"fill {x} 72 -11 {x} 79 11 stone_bricks",
+                f"fill {x} 72 {z - 1} {x} 75 {z + 2} air",
+            ])
+        commands[-1:-1] = geometry
     receipts = []
     try:
         await server.start()
@@ -165,6 +194,9 @@ async def author(source: Path, output: Path, encounters: int = 1) -> Path:
     if encounters == 2:
         registry["targets"] = targets
         registry["cargo"] = "outpost_records"
+    if gates is not None:
+        registry["route_condition"] = route_condition
+        registry["route_gates"] = gates
     (world / "livequest-expedition.json").write_text(json.dumps(registry, indent=2) + "\n")
     (output / "authoring.json").write_text(json.dumps({
         "source": str(source.resolve()), "registry": registry, "commands": receipts,
@@ -179,5 +211,7 @@ if __name__ == "__main__":
     parser.add_argument("source", type=Path)
     parser.add_argument("output", type=Path)
     parser.add_argument("--encounters", type=int, choices=(1, 2), default=1)
+    parser.add_argument("--route-condition", type=int, choices=(0, 1))
     arguments = parser.parse_args()
-    print(asyncio.run(author(arguments.source, arguments.output, arguments.encounters)))
+    print(asyncio.run(author(arguments.source, arguments.output, arguments.encounters,
+                           route_condition=arguments.route_condition)))

@@ -1,18 +1,43 @@
 """Counterexamples for native preparation/kill evidence and a same-life return."""
 
 import json
+from pathlib import Path
 from uuid import UUID
 
 import nbtlib
 import pytest
 
 from game.minecraft.evaluators.expedition import evaluate_expedition, verify_initial
-from game.minecraft.fixtures.forge_hunt import OUTPOST_SCHEMA, SCHEMA, TARGET, pack_files, pack_hashes, targets_for, uuid_parts
-from game.minecraft.fixtures import trade_hunt
+from game.minecraft.fixtures.forge_hunt import OUTPOST_SCHEMA, SCHEMA, TARGET, pack_files, pack_hashes, route_gates, targets_for, uuid_parts
+from game.minecraft.fixtures import lost_expedition, trade_hunt
 from game.minecraft.structured_tools.interface import BASE_TOOLS, EXPEDITION_TOOLS, validate_tool
 
 
 PLAYER = UUID("00000000-0000-0000-0000-000000000001")
+
+
+def test_lost_expedition_is_paired_goal_level_and_preserves_native_dependencies():
+    from benchmark.config import load_task
+    from game.minecraft.evaluators.world import read_blocks
+
+    root = Path(__file__).resolve().parents[3]
+    st, vm = [load_task(root / f"config/minecraft/tasks/{track}/lost_expedition.yaml")
+              for track in ("structured_tools", "visual_motor")]
+    assert st.task == vm.task and st.fixture == vm.fixture
+    assert st.time_limit_seconds == vm.time_limit_seconds == 3600
+    assert st.fixture["player_state"]["inventory"] == [{"slot": 0, "item": "bread", "count": 2}]
+    assert "GoToPositionTool" not in st.tools
+    assert {"InspectMerchantTool", "TradeTool", "PlaceTool", "DigTool"} <= set(st.tools)
+    assert "X76" not in st.task and "X-60" not in st.task and "diamond_pickaxe" not in st.task
+    blocks = read_blocks(Path(st.fixture["world_path"]), (72, 69, -64), (80, 77, -56),
+                         "minecraft:overworld")
+    for (x, y, z), block in blocks.items():
+        inside = 75 <= x <= 77 and 72 <= y <= 74 and -61 <= z <= -59
+        assert inside or block == "minecraft:obsidian"
+    assert blocks[(76, 72, -60)] == "minecraft:chest"
+    setup = lost_expedition.commands()
+    assert "gamerule doMobSpawning true" in setup and "gamerule doDaylightCycle true" in setup
+    assert all(any(f'livequest_folio: "{folio}"' in line for line in setup) for folio in lost_expedition.FOLIOS)
 
 
 def write_evidence(world, kills, schema=SCHEMA, purchases=None):
@@ -209,6 +234,29 @@ def test_two_outposts_require_both_native_kills_and_authored_cargo(outpost_pair)
         evaluate_expedition(before, after, PLAYER)
 
 
+def test_reconnaissance_requires_matching_native_opening(outpost_pair):
+    before, after = outpost_pair
+    for world in (before, after):
+        path = world / "livequest-expedition.json"
+        value = json.loads(path.read_text())
+        value.update(route_condition=0, route_gates=route_gates(0))
+        path.write_text(json.dumps(value))
+    with pytest.raises(ValueError, match="passage validation"):
+        verify_initial(before, PLAYER)
+    path = before / "livequest-opening.json"
+    value = json.loads(path.read_text())
+    value["route_gates"] = route_gates(0)
+    path.write_text(json.dumps(value))
+    verify_initial(before, PLAYER)
+    value["route_gates"] = route_gates(1)
+    path.write_text(json.dumps(value))
+    with pytest.raises(ValueError, match="passage validation"):
+        verify_initial(before, PLAYER)
+    for invalid in (True, 2, -1, "0"):
+        with pytest.raises(ValueError):
+            route_gates(invalid)
+
+
 def test_trade_tools_are_opt_in_and_require_an_observed_quote():
     assert "TradeTool" not in BASE_TOOLS and "TradeTool" not in EXPEDITION_TOOLS
     validate_tool("InspectMerchantTool", {})
@@ -216,6 +264,42 @@ def test_trade_tools_are_opt_in_and_require_an_observed_quote():
     for changes in ({"slot": 10}, {"slot": True}, {"quote": ""}, {"offer_index": -1}, {"count": 2}):
         with pytest.raises(ValueError):
             validate_tool("TradeTool", {"offer_index": 0, "quote": "observed-quote", "slot": 3} | changes)
+
+
+def test_lost_expedition_requires_distinct_folios_but_not_a_prescribed_weapon(pair):
+    before, after = pair
+    for world in pair:
+        path = world / "livequest-expedition.json"
+        value = json.loads(path.read_text())
+        value.update(schema=lost_expedition.SCHEMA, targets=lost_expedition.TARGETS,
+                     merchants=lost_expedition.MERCHANTS, folios=list(lost_expedition.FOLIOS))
+        path.write_text(json.dumps(value))
+        path = world / "livequest-opening.json"
+        value = json.loads(path.read_text())
+        value.update(targets=lost_expedition.TARGETS, merchants=lost_expedition.MERCHANTS)
+        path.write_text(json.dumps(value))
+        write_evidence(world, [], lost_expedition.SCHEMA)
+    (before / "playerdata").mkdir()
+    nbtlib.File({"Inventory": nbtlib.List[nbtlib.Compound]([])}, gzipped=True).save(
+        before / "playerdata" / f"{PLAYER}.dat")
+    path = after / "playerdata" / f"{PLAYER}.dat"
+    player = nbtlib.load(path)
+    player["Inventory"] = nbtlib.List[nbtlib.Compound]([])
+    player.save(path)
+    write_evidence(after, [kill(hand=nbtlib.String("minecraft:iron_axe"), stone=nbtlib.Int(0))],
+                   lost_expedition.SCHEMA)
+    assert not evaluate_expedition(before, after, PLAYER)["success"]
+    for folio in lost_expedition.FOLIOS:
+        player["Inventory"].append(nbtlib.Compound({
+            "id": nbtlib.String("minecraft:paper"), "Count": nbtlib.Byte(1),
+            "tag": nbtlib.Compound({"livequest_folio": nbtlib.String(folio)}),
+        }))
+    player.save(path)
+    assert evaluate_expedition(before, after, PLAYER)["success"]
+    player["Inventory"][2]["tag"]["livequest_folio"] = nbtlib.String(lost_expedition.FOLIOS[0])
+    player["Inventory"][0]["Count"] = nbtlib.Byte(3)
+    player.save(path)
+    assert not evaluate_expedition(before, after, PLAYER)["success"]
 
 
 def test_native_purchase_identity_and_order_gate_the_combat_chain(outpost_pair):

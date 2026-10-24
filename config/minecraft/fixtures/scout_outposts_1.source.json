@@ -1,0 +1,493 @@
+{
+  "source": "/home/msra/GameAgent/LiveQuestBench/config/minecraft/fixtures/island",
+  "registry": {
+    "schema": "minecraft-two-outposts/1",
+    "target_uuid": "744c20a7-27b3-4f66-a269-65bfe6479bd1",
+    "target_type": "minecraft:husk",
+    "target_position": [
+      28.5,
+      72,
+      0.5
+    ],
+    "return_position": [
+      0.5,
+      72,
+      0.5
+    ],
+    "pack_sha256": {
+      "pack.mcmeta": "f8278c827211eff0ff8298b468a8c74587562f86c391730f4381d53d0af69c24",
+      "data/livequest/advancements/sentinel.json": "5112fcdd8775eac10a8893d0688989f69bb2c09a705f2aab94ccf24ffb118a6f",
+      "data/livequest/functions/sentinel.mcfunction": "f9a15293f4cb1d51add63169cf1203f6eb71a4dfbd750791418b5e10383bee6c",
+      "data/livequest/advancements/spider.json": "4954f1d77d52b8f75fd63563289b59a3911eb97582f2edf5467a952a0f2c1143",
+      "data/livequest/functions/spider.mcfunction": "087d162f3dc92abe9de2721a20f913839507a0ce250afc96b26f0a6c5548a78a"
+    },
+    "targets": [
+      {
+        "role": "sentinel",
+        "uuid": "744c20a7-27b3-4f66-a269-65bfe6479bd1",
+        "type": "minecraft:husk",
+        "position": [
+          28.5,
+          72,
+          0.5
+        ],
+        "health": 20
+      },
+      {
+        "role": "spider",
+        "uuid": "b2520b61-8001-4e04-a777-e01a71e881fa",
+        "type": "minecraft:spider",
+        "position": [
+          62.5,
+          72,
+          0.5
+        ],
+        "health": 16
+      }
+    ],
+    "cargo": "outpost_records",
+    "route_condition": 1,
+    "route_gates": [
+      {
+        "x": 20,
+        "open_z": 7,
+        "closed_z": -8
+      },
+      {
+        "x": 45,
+        "open_z": -8,
+        "closed_z": 7
+      }
+    ]
+  },
+  "commands": [
+    {
+      "command": "tick freeze",
+      "feedback": [
+        "[17:01:19] [Server thread/INFO]: The game is frozen",
+        "[17:01:19] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "gamerule doMobSpawning false",
+      "feedback": [
+        "[17:01:19] [Server thread/INFO]: Gamerule doMobSpawning is now set to: false",
+        "[17:01:19] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "gamerule doDaylightCycle false",
+      "feedback": [
+        "[17:01:19] [Server thread/INFO]: Gamerule doDaylightCycle is now set to: false",
+        "[17:01:19] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "gamerule doWeatherCycle false",
+      "feedback": [
+        "[17:01:19] [Server thread/INFO]: Gamerule doWeatherCycle is now set to: false",
+        "[17:01:19] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "gamerule doTraderSpawning false",
+      "feedback": [
+        "[17:01:19] [Server thread/INFO]: Gamerule doTraderSpawning is now set to: false",
+        "[17:01:19] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "gamerule naturalRegeneration true",
+      "feedback": [
+        "[17:01:19] [Server thread/INFO]: Gamerule naturalRegeneration is now set to: true",
+        "[17:01:19] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "gamerule keepInventory false",
+      "feedback": [
+        "[17:01:19] [Server thread/INFO]: Gamerule keepInventory is now set to: false",
+        "[17:01:19] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "gamerule commandBlockOutput false",
+      "feedback": [
+        "[17:01:20] [Server thread/INFO]: Gamerule commandBlockOutput is now set to: false",
+        "[17:01:20] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "gamerule sendCommandFeedback false",
+      "feedback": [
+        "[17:01:20] [Server thread/INFO]: Gamerule sendCommandFeedback is now set to: false",
+        "[17:01:20] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "time set noon",
+      "feedback": [
+        "[17:01:20] [Server thread/INFO]: Set the time to 6000",
+        "[17:01:20] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "weather clear",
+      "feedback": [
+        "[17:01:20] [Server thread/INFO]: Set the weather to clear",
+        "[17:01:20] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "forceload add -16 -16 47 15",
+      "feedback": [
+        "[17:01:20] [Server thread/INFO]: Marked [-1, -1] chunks in minecraft:overworld from [-1, -1] to [2, 0] to be force loaded",
+        "[17:01:20] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "fill -12 72 -12 38 82 12 air",
+      "feedback": [
+        "[17:01:20] [Server thread/INFO]: Successfully filled 535 block(s)",
+        "[17:01:20] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "fill -12 71 -12 38 71 12 grass_block",
+      "feedback": [
+        "[17:01:20] [Server thread/INFO]: Successfully filled 914 block(s)",
+        "[17:01:20] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "fill 12 72 -8 12 74 8 stone_bricks",
+      "feedback": [
+        "[17:01:20] [Server thread/INFO]: Successfully filled 51 block(s)",
+        "[17:01:20] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock 0 71 0 yellow_wool",
+      "feedback": [
+        "[17:01:20] [Server thread/INFO]: Changed the block at 0, 71, 0",
+        "[17:01:20] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock -1 72 2 crafting_table",
+      "feedback": [
+        "[17:01:20] [Server thread/INFO]: Changed the block at -1, 72, 2",
+        "[17:01:20] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock 1 72 2 furnace",
+      "feedback": [
+        "[17:01:20] [Server thread/INFO]: Changed the block at 1, 72, 2",
+        "[17:01:20] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "scoreboard objectives add lq_stone minecraft.crafted:minecraft.stone_sword",
+      "feedback": [
+        "[17:01:20] [Server thread/INFO]: Created new objective [lq_stone]",
+        "[17:01:20] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "scoreboard objectives add lq_iron minecraft.crafted:minecraft.iron_sword",
+      "feedback": [
+        "[17:01:20] [Server thread/INFO]: Created new objective [lq_iron]",
+        "[17:01:20] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "data modify storage livequest:expedition state set value {schema:\"minecraft-two-outposts/1\",target:\"744c20a7-27b3-4f66-a269-65bfe6479bd1\"}",
+      "feedback": [
+        "[17:01:20] [Server thread/INFO]: Modified storage livequest:expedition",
+        "[17:01:20] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "data modify storage livequest:expedition kills set value []",
+      "feedback": [
+        "[17:01:20] [Server thread/INFO]: Modified storage livequest:expedition",
+        "[17:01:20] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "kill @e[type=minecraft:husk]",
+      "feedback": [
+        "[17:01:20] [Server thread/INFO]: No entity was found",
+        "[17:01:20] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "summon minecraft:husk 28.5 72 0.5 {UUID:[I;1951146151,666062694,-1570150977,-431514671],PersistenceRequired:1b,CanPickUpLoot:0b,CustomName:'{\"text\":\"Sentinel\"}',CustomNameVisible:1b}",
+      "feedback": [
+        "[17:01:20] [Server thread/INFO]: Summoned new Sentinel",
+        "[17:01:20] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "forceload add 32 -16 79 15",
+      "feedback": [
+        "[17:01:20] [Server thread/INFO]: Marked [3, -1] chunks in minecraft:overworld from [2, -1] to [4, 0] to be force loaded",
+        "[17:01:20] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "fill 39 72 -12 74 82 12 air",
+      "feedback": [
+        "[17:01:20] [Server thread/INFO]: Successfully filled 969 block(s)",
+        "[17:01:20] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "fill -12 64 -12 74 70 12 stone",
+      "feedback": [
+        "[17:01:20] [Server thread/INFO]: Successfully filled 10952 block(s)",
+        "[17:01:20] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "fill 39 71 -12 74 71 12 grass_block",
+      "feedback": [
+        "[17:01:21] [Server thread/INFO]: Successfully filled 476 block(s)",
+        "[17:01:21] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "fill -12 72 -12 74 74 -12 stone_bricks",
+      "feedback": [
+        "[17:01:21] [Server thread/INFO]: Successfully filled 261 block(s)",
+        "[17:01:21] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "fill -12 72 12 74 74 12 stone_bricks",
+      "feedback": [
+        "[17:01:21] [Server thread/INFO]: Successfully filled 261 block(s)",
+        "[17:01:21] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "fill -12 72 -11 -12 74 11 stone_bricks",
+      "feedback": [
+        "[17:01:21] [Server thread/INFO]: Successfully filled 69 block(s)",
+        "[17:01:21] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "fill 74 72 -11 74 74 11 stone_bricks",
+      "feedback": [
+        "[17:01:21] [Server thread/INFO]: Successfully filled 69 block(s)",
+        "[17:01:21] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "fill -12 75 -12 74 75 -11 stone_bricks",
+      "feedback": [
+        "[17:01:21] [Server thread/INFO]: Successfully filled 174 block(s)",
+        "[17:01:21] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "fill -12 75 11 74 75 12 stone_bricks",
+      "feedback": [
+        "[17:01:21] [Server thread/INFO]: Successfully filled 174 block(s)",
+        "[17:01:21] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "fill -12 75 -10 -11 75 10 stone_bricks",
+      "feedback": [
+        "[17:01:21] [Server thread/INFO]: Successfully filled 42 block(s)",
+        "[17:01:21] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "fill 73 75 -10 74 75 10 stone_bricks",
+      "feedback": [
+        "[17:01:21] [Server thread/INFO]: Successfully filled 42 block(s)",
+        "[17:01:21] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "fill 45 72 -8 45 74 8 stone_bricks",
+      "feedback": [
+        "[17:01:21] [Server thread/INFO]: Successfully filled 51 block(s)",
+        "[17:01:21] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock 50 72 5 chest",
+      "feedback": [
+        "[17:01:21] [Server thread/INFO]: Changed the block at 50, 72, 5",
+        "[17:01:21] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "data merge block 50 72 5 {Items:[{Slot:0b,id:\"minecraft:bread\",Count:4b}]}",
+      "feedback": [
+        "[17:01:21] [Server thread/INFO]: Modified block data of 50, 72, 5",
+        "[17:01:21] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "setblock 68 72 0 chest",
+      "feedback": [
+        "[17:01:21] [Server thread/INFO]: Changed the block at 68, 72, 0",
+        "[17:01:21] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "data merge block 68 72 0 {Items:[{Slot:0b,id:\"minecraft:paper\",Count:1b,tag:{livequest_cargo:\"outpost_records\",display:{Name:'{\"text\":\"Outpost Records\"}'}}}]}",
+      "feedback": [
+        "[17:01:21] [Server thread/INFO]: Modified block data of 68, 72, 0",
+        "[17:01:21] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "summon minecraft:spider 62.5 72 0.5 {UUID:[I;-1303245983,-2147398140,-1485316070,1911063034],PersistenceRequired:1b,CustomName:'{\"text\":\"Outpost Spider\"}',CustomNameVisible:1b}",
+      "feedback": [
+        "[17:01:21] [Server thread/INFO]: Summoned new Outpost Spider",
+        "[17:01:21] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "fill 12 72 -8 12 74 8 air",
+      "feedback": [
+        "[17:01:21] [Server thread/INFO]: Successfully filled 51 block(s)",
+        "[17:01:21] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "fill -12 76 -12 74 79 -12 stone_bricks",
+      "feedback": [
+        "[17:01:21] [Server thread/INFO]: Successfully filled 348 block(s)",
+        "[17:01:21] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "fill -12 76 12 74 79 12 stone_bricks",
+      "feedback": [
+        "[17:01:21] [Server thread/INFO]: Successfully filled 348 block(s)",
+        "[17:01:21] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "fill -12 76 -11 -12 79 11 stone_bricks",
+      "feedback": [
+        "[17:01:21] [Server thread/INFO]: Successfully filled 92 block(s)",
+        "[17:01:21] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "fill 74 76 -11 74 79 11 stone_bricks",
+      "feedback": [
+        "[17:01:21] [Server thread/INFO]: Successfully filled 92 block(s)",
+        "[17:01:21] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "fill -12 80 -12 74 80 -11 stone_bricks",
+      "feedback": [
+        "[17:01:22] [Server thread/INFO]: Successfully filled 174 block(s)",
+        "[17:01:22] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "fill -12 80 11 74 80 12 stone_bricks",
+      "feedback": [
+        "[17:01:22] [Server thread/INFO]: Successfully filled 174 block(s)",
+        "[17:01:22] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "fill -12 80 -10 -11 80 10 stone_bricks",
+      "feedback": [
+        "[17:01:22] [Server thread/INFO]: Successfully filled 42 block(s)",
+        "[17:01:22] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "fill 73 80 -10 74 80 10 stone_bricks",
+      "feedback": [
+        "[17:01:22] [Server thread/INFO]: Successfully filled 42 block(s)",
+        "[17:01:22] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "fill 20 72 -11 20 79 11 stone_bricks",
+      "feedback": [
+        "[17:01:22] [Server thread/INFO]: Successfully filled 182 block(s)",
+        "[17:01:22] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "fill 20 72 6 20 75 9 air",
+      "feedback": [
+        "[17:01:22] [Server thread/INFO]: Successfully filled 16 block(s)",
+        "[17:01:22] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "fill 45 72 -11 45 79 11 stone_bricks",
+      "feedback": [
+        "[17:01:22] [Server thread/INFO]: Successfully filled 131 block(s)",
+        "[17:01:22] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "fill 45 72 -9 45 75 -6 air",
+      "feedback": [
+        "[17:01:22] [Server thread/INFO]: Successfully filled 16 block(s)",
+        "[17:01:22] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    },
+    {
+      "command": "save-all flush",
+      "feedback": [
+        "[17:01:22] [Server thread/INFO]: Saving the game (this may take a moment!)",
+        "[17:01:22] [Server thread/INFO]: ThreadedAnvilChunkStorage (world): All chunks are saved",
+        "[17:01:22] [Server thread/INFO]: ThreadedAnvilChunkStorage (DIM-1): All chunks are saved",
+        "[17:01:22] [Server thread/INFO]: ThreadedAnvilChunkStorage (DIM1): All chunks are saved",
+        "[17:01:22] [Server thread/INFO]: ThreadedAnvilChunkStorage: All dimensions are saved",
+        "[17:01:22] [Server thread/INFO]: Saved the game",
+        "[17:01:22] [Server thread/INFO]: Modified storage gameagent:runner"
+      ]
+    }
+  ],
+  "scope": "Native vanilla fixture authoring; passive kill evidence, no combat assistance.",
+  "schema": "livequest-reconnaissance-source/1",
+  "author_sha256": "b22187bee0aedc79c0bd1b471bdce44ef93a87b8a9d5b11eed871f24cefb03cb",
+  "fixture_sha256": {
+    "DIM-1/data/raids.dat": "d67faf5e1dc4f5c7b4da09aaf04f6b596efef409e19232102bf47bc3d63ad7b6",
+    "DIM1/data/raids_end.dat": "d67faf5e1dc4f5c7b4da09aaf04f6b596efef409e19232102bf47bc3d63ad7b6",
+    "data/chunks.dat": "3e4ca68cfbf45918226a1cf3f3ec93f9fa09101cff45f571d89b9be2ac4779ba",
+    "data/command_storage_gameagent.dat": "cb97891a7e0ed12908e7961e58e4c9458635f0e760001795920f69695eaea68b",
+    "data/command_storage_livequest.dat": "5ad595845292c99c9d46a390bea658da168a56e983cb6f77230c6a5f549fbdc0",
+    "data/raids.dat": "d67faf5e1dc4f5c7b4da09aaf04f6b596efef409e19232102bf47bc3d63ad7b6",
+    "data/scoreboard.dat": "3295d99d5ffeba0a202c5fe5af5ff3b293a96e885ef974900b7d0f446848a661",
+    "datapacks/livequest_forge/data/livequest/advancements/sentinel.json": "5112fcdd8775eac10a8893d0688989f69bb2c09a705f2aab94ccf24ffb118a6f",
+    "datapacks/livequest_forge/data/livequest/advancements/spider.json": "4954f1d77d52b8f75fd63563289b59a3911eb97582f2edf5467a952a0f2c1143",
+    "datapacks/livequest_forge/data/livequest/functions/sentinel.mcfunction": "f9a15293f4cb1d51add63169cf1203f6eb71a4dfbd750791418b5e10383bee6c",
+    "datapacks/livequest_forge/data/livequest/functions/spider.mcfunction": "087d162f3dc92abe9de2721a20f913839507a0ce250afc96b26f0a6c5548a78a",
+    "datapacks/livequest_forge/pack.mcmeta": "f8278c827211eff0ff8298b468a8c74587562f86c391730f4381d53d0af69c24",
+    "entities/r.-1.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "entities/r.-1.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "entities/r.0.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "entities/r.0.0.mca": "42b8ffafeec43825ac9f02593352cc29da5ebb5e7ecd14e079eaafa9a4332736",
+    "level.dat": "d2f2fb7cbd12fb77388f13f68a01df677e97beecbe2affb33e3e0e9655204a82",
+    "livequest-expedition.json": "0349156b10ddd1a58223da488a7e07e2754a153695b5e91fbfdcf6d4f132fa35",
+    "poi/r.-1.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "poi/r.-1.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "poi/r.0.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "poi/r.0.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "region/r.-1.-1.mca": "5c0c5e71ae74cdc4071b8dc02079a6f2824eeae812abfe0f5039cbad6e8f6fc1",
+    "region/r.-1.0.mca": "870c01ef262dbfa0284e3e8e55831868e34d2a02988541a60d02052edeaf65f6",
+    "region/r.0.-1.mca": "1306d95bcd2b19a17e830b838a42bc9e88db6b9bf2f66d3615f6e054e6d057ea",
+    "region/r.0.0.mca": "835e884b915fccb56f821d9c689cdd5c999c38313fb5e811e0963015f4aedb41"
+  }
+}

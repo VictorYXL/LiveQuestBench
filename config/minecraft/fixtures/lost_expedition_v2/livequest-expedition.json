@@ -1,0 +1,62 @@
+{
+  "schema": "minecraft-lost-expedition/1",
+  "target_uuid": "744c20a7-27b3-4f66-a269-65bfe6479bd1",
+  "target_type": "minecraft:husk",
+  "target_position": [
+    76.5,
+    72,
+    -51.5
+  ],
+  "targets": [
+    {
+      "role": "sentinel",
+      "uuid": "744c20a7-27b3-4f66-a269-65bfe6479bd1",
+      "type": "minecraft:husk",
+      "position": [
+        76.5,
+        72,
+        -51.5
+      ],
+      "health": 20
+    }
+  ],
+  "merchants": [
+    {
+      "role": "weaponsmith",
+      "uuid": "624fda3c-ac53-4693-9bdc-28b2e310ed88",
+      "type": "minecraft:villager",
+      "position": [
+        -18.5,
+        72,
+        48.5
+      ],
+      "health": 20
+    },
+    {
+      "role": "farmer",
+      "uuid": "250641fc-09bf-4342-a8b3-42bf6d7f7ed1",
+      "type": "minecraft:villager",
+      "position": [
+        -24.5,
+        72,
+        48.5
+      ],
+      "health": 20
+    }
+  ],
+  "folios": [
+    "route_survey",
+    "mineral_survey",
+    "archive_ledger"
+  ],
+  "return_position": [
+    0.5,
+    72,
+    0.5
+  ],
+  "pack_sha256": {
+    "pack.mcmeta": "f8278c827211eff0ff8298b468a8c74587562f86c391730f4381d53d0af69c24",
+    "data/livequest/advancements/sentinel.json": "5112fcdd8775eac10a8893d0688989f69bb2c09a705f2aab94ccf24ffb118a6f",
+    "data/livequest/functions/sentinel.mcfunction": "f9a15293f4cb1d51add63169cf1203f6eb71a4dfbd750791418b5e10383bee6c"
+  }
+}

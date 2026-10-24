@@ -147,6 +147,79 @@ unchanged two-outpost fixture. The server binary and vanilla mechanics remain
 unchanged; the Fabric control bridge, passive evidence datapack and authored
 save mean this is **not an unmodified, mod-free evaluation environment**.
 
+### Reconnaissance outposts: two initial conditions
+
+[`scout_outposts_return_0`](../../config/minecraft/tasks/structured_tools/scout_outposts_return_0.yaml)
+and [`scout_outposts_return_1`](../../config/minecraft/tasks/structured_tools/scout_outposts_return_1.yaml)
+add two fixed map conditions to one reconnaissance family, each paired with VM.
+Prepare a sword, discover passages through two dividers, defeat the two native
+targets, recover the records and return in the same life. Candidate passage
+locations are public; the actual open sides must be observed. The world is not
+edited during play, and the existing native kill/cargo/return scorer applies.
+Native digging and construction remain legal alternatives, not scorer violations.
+
+ST retains the local block cube and bounded movement but excludes
+`GoToPositionTool`: its internal path search could replace the route decision
+being evaluated. VM retains pixels and bounded physical input only. The separate
+player-free saves and source manifests are under `config/minecraft/fixtures/`
+as `scout_outposts_0` and `scout_outposts_1`; the fixture author accepts
+`--encounters 2 --route-condition 0` (or `1`) with a fresh destination.
+Opening checks verify the authored passages against the live native world.
+
+These 900-second instances are short adaptation prototypes, not admitted L4
+tasks or evidence of general learning. Both public ST references and both Baseline ST runs succeeded;
+both Baseline VM runs died in combat. Condition 1 ST revised its route after
+approaching blocked candidates and reused discovered passages on return.
+Completion alone does not prove learning, and two known conditions are not an
+unseen evaluation distribution.
+
+### Lost expedition: exploratory long-task development
+
+[`lost_expedition`](../../config/minecraft/tasks/structured_tools/lost_expedition.yaml)
+and its [VM task](../../config/minecraft/tasks/visual_motor/lost_expedition.yaml)
+start on the resource island with two bread and no equipment. Recover the three
+original named folios, obtain native player kill credit for the Archive Sentinel,
+and return alive in the same life. The public goal names all success conditions
+but supplies only a starting direction, not the field sites or an action sequence.
+Native chest-item names provide discoverable notes in both the ST item description
+and ordinary VM inventory hover UI. No new game binary or reading tool is needed.
+
+The authored sites combine resource development, underground exploration,
+an obsidian archive shell, optional ordinary villager trading, and native combat.
+Mining, crafting, building and trade are means, not secret mandatory score steps.
+Native mob spawning and the day/night cycle are enabled; no play-time world edits,
+automatic recovery or reminder system is added. ST excludes automatic navigation.
+The 3,600-second cap is not a success-duration claim. The target is approximately
+30 minutes of meaningful successful play, subject to workload and adaptation
+calibration. Engineering and evidence-backed feasibility checks pass; this is a
+**development L4 task, not a calibrated difficulty tier or proof of adaptation**.
+
+Reproduce the isolated player-free save with a fresh destination:
+
+```bash
+MINECRAFT_EULA_ACCEPTED=true .venv/bin/python -m game.minecraft.fixtures.lost_expedition \
+  config/minecraft/fixtures/island output/temp/lost-expedition-new-authoring
+```
+
+The published [revision 2](../../config/minecraft/fixtures/lost_expedition_v2/)
+and [source manifest](../../config/minecraft/fixtures/lost_expedition_v2.source.json)
+include ordinary site-access steps and field-station lighting. Baseline ST ran
+32m15s, recovered two folios and developed mining equipment before a zombie
+killed it; VM failed after 11m51s. Both results have valid native measurements,
+replayed scores, decoded videos and cleanup/privacy audits. Earlier failures
+remain separate; failed duration is not a successful completion-time estimate.
+
+Native world inspection verifies genuine folios, discoverable field-note names,
+adequate sampled wood/iron/coal/diamond, chest clearance and a non-circular
+resource/access path. A prepared-state component diagnostic completed native
+Sentinel combat, six-block diamond-pickaxe obsidian access and Ledger pickup.
+A separate prepared-position VM check confirmed ordinary chest-hover clue
+readability. These diagnostics change starting position/equipment and are
+**not full-task successes**. No complete successful trajectory has been observed;
+full-budget feasibility is supported by dependency/resource analysis and
+component timings rather than demonstrated end to end. Stable difficulty and
+information-conditioned adaptation remain open calibration questions.
+
 ### Evaluator mapping and deviations
 
 - The eight source `InventoryEvaluator` tasks use the existing native inventory

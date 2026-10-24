@@ -15,6 +15,9 @@ tasks:
   - path: ../tasks/visual_motor/forge_hunt_return.yaml
   - path: ../tasks/visual_motor/two_outposts_return.yaml
   - path: ../tasks/visual_motor/trade_outposts_return.yaml
+  - path: ../tasks/visual_motor/scout_outposts_return_0.yaml
+  - path: ../tasks/visual_motor/scout_outposts_return_1.yaml
+  - path: ../tasks/visual_motor/lost_expedition.yaml
 repetitions: 10
 
 agents:

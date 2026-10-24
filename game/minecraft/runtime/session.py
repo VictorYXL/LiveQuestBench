@@ -366,6 +366,17 @@ class MinecraftSession:
                 opening["targets"] = targets
             if "merchants" in expected:
                 opening["merchants"] = expected["merchants"]
+            if "route_gates" in expected:
+                for gate in expected["route_gates"]:
+                    for key, block in (("open_z", "air"), ("closed_z", "stone_bricks")):
+                        for y in (72, 73):
+                            lines = await self.server.command(
+                                f"execute if block {gate['x']} {y} {gate[key]} minecraft:{block} "
+                                "run data get storage livequest:expedition state"
+                            )
+                            if not any("has the following contents:" in line for line in lines):
+                                raise RuntimeError("Reconnaissance passage differs from the declared condition")
+                opening["route_gates"] = expected["route_gates"]
             (self.world / "livequest-opening.json").write_text(json.dumps(opening, indent=2) + "\n")
 
     async def _verify_input_ready(self) -> None:

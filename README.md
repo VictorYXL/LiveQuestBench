@@ -15,8 +15,8 @@ calibration remain necessary before scientific evaluation.
 
 | Game | Current catalog per mode | Setup and task details |
 | --- | --- | --- |
-| Minecraft | 11 island tasks and 3 coupled preparation/trading/combat/return tasks | [Minecraft README](game/minecraft/README.md) |
-| Veloren | 10 endpoint adaptations, a movement diagnostic, 4 combat/resource goals and 2 coupled preparation/hunt/return tasks | [Veloren README](game/veloren/README.md) |
+| Minecraft | 17 entries: 11 island tasks, 3 coupled expeditions, 2 short reconnaissance conditions and 1 exploratory expedition | [Minecraft README](game/minecraft/README.md) |
+| Veloren | 17 entries: 10 endpoint adaptations, a movement diagnostic, 4 combat/resource goals and 2 coupled expeditions | [Veloren README](game/veloren/README.md) |
 
 - **VM (`visual_motor`)**: actual game pixels and bounded keyboard/mouse control.
   No hidden inventory transcription or object coordinates are supplied.
@@ -40,7 +40,14 @@ Temporary qualification subsets belong under
 The current catalog includes native villager trading, crafting, resource retention, construction,
 navigation, recovery and native combat. Small diagnostics and overlapping variants are not
 independent long-horizon capabilities; a raw catalog average is not a balanced
-research leaderboard.
+research leaderboard. One executable task YAML counts as one task: the catalog
+contains 68 published tasks (34 Minecraft and 34 Veloren). Minecraft's two
+short reconnaissance conditions contribute four task YAMLs but only one
+mechanism family; they do not meet the intended long-horizon L4 admission gate.
+The paired Minecraft lost-expedition tasks have Baseline and evidence-backed
+feasibility checks, with no observed full success. They are development L4
+tasks, not a calibrated difficulty tier. Unpublished Veloren reconnaissance
+prototypes are not included in these counts.
 
 ## Getting started
 

@@ -7,20 +7,29 @@ from uuid import UUID
 
 import nbtlib
 
-from game.minecraft.fixtures.forge_hunt import OUTPOST_SCHEMA, SCHEMA, TARGET, pack_hashes, targets_for, uuid_parts
+from game.minecraft.fixtures.forge_hunt import OUTPOST_SCHEMA, SCHEMA, TARGET, pack_hashes, route_gates, targets_for, uuid_parts
 from game.minecraft.fixtures.trade_hunt import MERCHANTS, SCHEMA as TRADE_SCHEMA, SMITH, pack_hashes as trade_hashes
+from game.minecraft.fixtures import lost_expedition
 
 
 def registry(world: Path) -> dict:
     value = json.loads((world / "livequest-expedition.json").read_text())
     encounters = 2 if value["schema"] in (OUTPOST_SCHEMA, TRADE_SCHEMA) else 1
     hashes = trade_hashes(world) if value["schema"] == TRADE_SCHEMA else pack_hashes(world, encounters)
-    if value["schema"] not in (SCHEMA, OUTPOST_SCHEMA, TRADE_SCHEMA) or hashes != value["pack_sha256"]:
+    if value["schema"] not in (SCHEMA, OUTPOST_SCHEMA, TRADE_SCHEMA, lost_expedition.SCHEMA) or hashes != value["pack_sha256"]:
         raise ValueError("Expedition fixture or passive evidence datapack changed")
+    if value["schema"] == lost_expedition.SCHEMA and (
+            value["targets"] != lost_expedition.TARGETS or value["merchants"] != lost_expedition.MERCHANTS
+            or value["folios"] != list(lost_expedition.FOLIOS)):
+        raise ValueError("Lost expedition native identities or folios changed")
     if value["schema"] == TRADE_SCHEMA and value["merchants"] != MERCHANTS:
         raise ValueError("Merchant identities differ from the native purchase predicate")
     if encounters == 2 and (value["targets"] != targets_for(2) or value["cargo"] != "outpost_records"):
         raise ValueError("Outpost targets or cargo differ from the native evidence predicates")
+    if "route_condition" in value or "route_gates" in value:
+        if (value["schema"] != OUTPOST_SCHEMA
+                or value["route_gates"] != route_gates(value["route_condition"])):
+            raise ValueError("Reconnaissance route registry differs from the authored condition")
     if UUID(value["target_uuid"]) != TARGET or value["target_type"] != "minecraft:husk":
         raise ValueError("Expedition target must match the passive datapack's native predicate")
     point = value["return_position"]
@@ -49,9 +58,22 @@ def verify_initial(world: Path, player: UUID) -> None:
     if expected["schema"] in (OUTPOST_SCHEMA, TRADE_SCHEMA):
         if opening["targets"] != expected["targets"] or cargo_count(world, player):
             raise ValueError("Outpost targets must start alive at full health, with cargo absent from the player")
+    if "route_gates" in expected and opening.get("route_gates") != expected["route_gates"]:
+        raise ValueError("Reconnaissance opening lacks native passage validation")
     if expected["schema"] == TRADE_SCHEMA:
         if record["purchases"] or opening["merchants"] != expected["merchants"]:
             raise ValueError("Trade expedition requires fresh merchants and no previous purchase receipt")
+    if expected["schema"] == lost_expedition.SCHEMA:
+        if (opening["targets"] != expected["targets"] or opening["merchants"] != expected["merchants"]
+                or folios(world, player)):
+            raise ValueError("Lost expedition requires fresh targets, merchants and no initial folios")
+
+
+def folios(world: Path, player: UUID) -> set[str]:
+    native = nbtlib.load(world / "playerdata" / f"{player}.dat")
+    return {str(item.get("tag", {}).get("livequest_folio", "")) for item in native["Inventory"]
+            if str(item["id"]) == "minecraft:paper" and int(item["Count"]) > 0
+            and str(item.get("tag", {}).get("livequest_folio", "")) in lost_expedition.FOLIOS}
 
 
 def cargo_count(world: Path, player: UUID) -> int:
@@ -117,6 +139,8 @@ def evaluate_expedition(before: Path, after: Path, player: UUID) -> dict:
                     and int(kill["tick"]) >= int(purchase["tick"])
                     and str(kill["hand"]) == str(purchase["item"])):
                 qualified.add(role)
+        elif expected["schema"] == lost_expedition.SCHEMA:
+            qualified.add(role)
         elif ((str(kill["hand"]) == "minecraft:stone_sword" and int(kill["stone"]) > 0)
                 or (str(kill["hand"]) == "minecraft:iron_sword" and int(kill["iron"]) > 0)):
             qualified.add(role)
@@ -136,7 +160,8 @@ def evaluate_expedition(before: Path, after: Path, player: UUID) -> dict:
     if death_delta < 0:
         raise ValueError("Native death counter moved backwards")
     checks = [
-        {"kind": "traded_weapon_native_kill" if trading else "crafted_weapon_native_kill", "passed": qualified == roles},
+        {"kind": ("native_kill" if expected["schema"] == lost_expedition.SCHEMA else
+                  "traded_weapon_native_kill" if trading else "crafted_weapon_native_kill"), "passed": qualified == roles},
         {"kind": "survival", "health": health, "deaths": death_delta, "passed": health > 0 and death_delta == 0},
         {"kind": "return", "horizontal_error": horizontal, "vertical_error": vertical,
          "motion_blocks_per_tick": speed, "passed": str(native["Dimension"]) == "minecraft:overworld"
@@ -154,6 +179,16 @@ def evaluate_expedition(before: Path, after: Path, player: UUID) -> dict:
                 "followed in native event order by both designated player_killed_entity receipts holding that "
                 "weapon type. This is purchase/type provenance, not unique-item tracking or last-damage proof. "
                 "Same-player death-free grounded cargo return; coal sales and food purchases are not mandatory score steps."}
+    if expected["schema"] == lost_expedition.SCHEMA:
+        recovered = folios(after, player)
+        checks.append({"kind": "folio_return", "required": list(lost_expedition.FOLIOS),
+                       "recovered": sorted(recovered), "passed": recovered == set(lost_expedition.FOLIOS)})
+        return {"success": all(check["passed"] for check in checks), "checks": checks,
+                "semantics": "Exact native Archive Sentinel player kill credit, all three distinct authored "
+                "paper folios carried by the same living player on grounded camp return, and no deaths. "
+                "No required weapon, crafting recipe, trade, route, construction or discovery order. "
+                "Native identity tags distinguish genuine folios from renamed or duplicated ordinary paper; "
+                "completion does not itself prove adaptation or memory use."}
     return {"success": all(check["passed"] for check in checks), "checks": checks,
             "semantics": "Native player_killed_entity for the exact authored UUID, with a held stone/iron "
             "sword and a positive native crafted counter for that sword type at the kill. "
