@@ -1,0 +1,70 @@
+id: crossing_cargo_return
+game: minecraft
+task_type: structured_tool
+task: Recover one gold nugget from the far-bank chest at [12,72,39] and return to
+  the west white marker [-5.5,72,39.5], retaining at least two oak planks and two
+  bread. You start on the west bank at [0.5,72,39.5], facing east, with six oak planks
+  and three bread. Plan both the outward trip and return under the material reserve.
+  The trench removes ground at X=2..9, Z=14..64, down through Y=64. Standing ground
+  is Y=72. Ground detours exist north at Z=13 and south at Z=65. Repair, jumping,
+  digging, gathering additional materials and detours are all legal; no particular
+  route or construction history is required. Success checks final holdings and arrival,
+  not chest provenance. Finish alive without having died. For arrival goals, be grounded
+  within two horizontal blocks and half a vertical block of the marker, at speed no
+  more than 0.1 blocks/tick. Release controls and finish with a text answer.
+time_limit_seconds: 720
+fixture:
+  world_path: ../../fixtures/planning_workshop
+  instance: 1.20.4
+  difficulty: easy
+  player_state:
+    position:
+    - 0.5
+    - 72
+    - 39.5
+    dimension: minecraft:overworld
+    yaw: -90
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+    - slot: 0
+      item: oak_planks
+      count: 6
+    - slot: 1
+      item: bread
+      count: 3
+evaluator:
+  name: state
+  parameters:
+    inventory:
+    - item: gold_nugget
+      min_count: 1
+      min_delta: 1
+    - item: oak_planks
+      min_count: 2
+    - item: bread
+      min_count: 2
+    position:
+      target:
+      - -5.5
+      - 72
+      - 39.5
+      horizontal_tolerance: 2
+      vertical_tolerance: 0.5
+      max_speed: 0.1
+    no_death: true
+tools:
+- MoveTool
+- LookAtPositionTool
+- SelectTool
+- StopTool
+- JumpTool
+- DigTool
+- PlaceTool
+- UseHeldItemTool
+- InspectContainerTool
+- TakeContainerItemTool

@@ -1,0 +1,10 @@
+{
+  "schema": "minecraft-action-sequence/1",
+  "pack_sha256": {
+    "pack.mcmeta": "e4625ad09c54beddf9ac5312bcb36499e302b208084421bc63fca75bab3951de",
+    "data/livequest_actions/advancements/block.json": "5ebed8d1460765ba215c73168411c2d44dd61d0c55e4fa9528b7275354ec4889",
+    "data/livequest_actions/functions/block.mcfunction": "d50599665a5dcbc9348f5336fc5374ac568741f251387bb8d7147e908a0ed7f1",
+    "data/livequest_actions/advancements/damage.json": "5a5199eba0609401d271c94894a05f0ddea9b852690371a978d6915d0b2c84e1",
+    "data/livequest_actions/functions/damage.mcfunction": "0cabc5faec6086d4a103fe4d04fa7f539e8e7c9277b6297a0d86fb230bc277da"
+  }
+}

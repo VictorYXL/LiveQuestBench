@@ -1,0 +1,89 @@
+id: mixed_material_shelter
+game: minecraft
+task_type: visual_motor
+task: Gather raw resources and leave a small mixed-material shelter with a two-block-high
+  open north entrance. You have a stone pickaxe, stone axe and two bread, but no building
+  materials. The exact footprint is X=-2..0, Z=4..6. At Y=72 place cobblestone around
+  its perimeter except the entrance at [-1,72,4]. At Y=73 repeat that perimeter in
+  oak planks, again leaving [-1,73,4] open. Leave the center [-1,72,5] and [-1,73,5]
+  empty. Cover all nine footprint cells at Y=74 with oak planks. This requires seven
+  cobblestone and sixteen oak planks; obtain them legally from the island. No other
+  blocks may occupy the four designated air cells. The new final blocks are checked,
+  not resource provenance. Finish alive without having died. For arrival goals, be
+  grounded within two horizontal blocks and half a vertical block of the marker, at
+  speed no more than 0.1 blocks/tick. Release controls and finish with a text answer.
+time_limit_seconds: 1800
+fixture:
+  world_path: ../../fixtures/island
+  instance: 1.20.4
+  difficulty: easy
+  player_state:
+    position:
+    - 0.5
+    - 72
+    - 0.5
+    dimension: minecraft:overworld
+    yaw: 0
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+    - slot: 0
+      item: stone_pickaxe
+      count: 1
+    - slot: 1
+      item: stone_axe
+      count: 1
+    - slot: 2
+      item: bread
+      count: 2
+evaluator:
+  name: state
+  parameters:
+    structure:
+      target:
+        structure:
+        - - - cobblestone
+            - air
+            - cobblestone
+          - - cobblestone
+            - air
+            - cobblestone
+          - - cobblestone
+            - cobblestone
+            - cobblestone
+        - - - oak_planks
+            - air
+            - oak_planks
+          - - oak_planks
+            - air
+            - oak_planks
+          - - oak_planks
+            - oak_planks
+            - oak_planks
+        - - - oak_planks
+            - oak_planks
+            - oak_planks
+          - - oak_planks
+            - oak_planks
+            - oak_planks
+          - - oak_planks
+            - oak_planks
+            - oak_planks
+      region:
+        min:
+        - -2
+        - 72
+        - 4
+        max:
+        - 0
+        - 74
+        - 6
+      match:
+        rotation_invariant: false
+        require_empty: true
+        require_new_blocks: true
+    no_death: true

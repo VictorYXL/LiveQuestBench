@@ -7,11 +7,12 @@ import json
 import os
 from pathlib import Path
 import shutil
+from uuid import UUID
 
 import nbtlib
 
 from game.minecraft.evaluators.expedition import registry
-from game.minecraft.fixtures.forge_hunt import SCHEMA
+from game.minecraft.fixtures.forge_hunt import SCHEMA, uuid_parts
 from game.minecraft.fixtures.lost_expedition import chest
 from game.minecraft.runtime.install import check_java, server_jar
 from game.minecraft.runtime.server import MinecraftServer
@@ -19,6 +20,7 @@ from game.minecraft.runtime.session import WorldReadLock, validate_world
 
 
 ACTION_SCHEMA = "minecraft-action-sequence/1"
+ARCHER = UUID("25779341-e6b1-4330-998f-a62372be8be6")
 
 
 def action_pack() -> dict[str, str | dict]:
@@ -76,7 +78,35 @@ def commands() -> list[str]:
     return result
 
 
-async def author(source: Path, output: Path) -> Path:
+def planning_commands() -> list[str]:
+    native_uuid = "[I;" + ",".join(map(str, uuid_parts(ARCHER))) + "]"
+    return [
+        "forceload add -16 16 79 79",
+        "fill -12 64 12 16 71 68 stone",
+        "fill -12 72 12 16 82 68 air",
+        "fill -12 71 12 16 71 68 grass_block",
+        "fill 2 64 14 9 71 64 air",
+        "setblock 0 71 39 yellow_wool",
+        "setblock -6 71 39 white_wool",
+        "setblock 14 71 39 white_wool",
+        *chest(12, 72, 39, [("gold_nugget", 1, "Crossing cargo", "")]),
+        "fill 52 64 18 76 71 36 stone",
+        "fill 52 72 18 76 82 36 air",
+        "fill 52 71 18 76 71 36 grass_block",
+        "fill 56 72 20 74 75 34 stone_bricks hollow",
+        "fill 57 72 21 73 72 33 air",
+        "fill 56 72 26 56 74 28 air",
+        "fill 60 72 24 60 74 24 stone_bricks",
+        "fill 60 72 30 60 74 30 stone_bricks",
+        "setblock 54 71 27 yellow_wool",
+        *chest(72, 72, 27, [("amethyst_shard", 1, "Guarded cargo", "")]),
+        'summon minecraft:skeleton 66.5 72 27.5 {UUID:' + native_uuid
+        + ',PersistenceRequired:1b,HandItems:[{id:"minecraft:bow",Count:1b},{}],'
+        + 'CustomName:\'{"text":"Cache Archer"}\',CustomNameVisible:1b}',
+    ]
+
+
+async def author(source: Path, output: Path, *, planning: bool = False) -> Path:
     if os.environ.get("MINECRAFT_EULA_ACCEPTED") != "true":
         raise PermissionError("Explicit Minecraft EULA acceptance is required")
     validate_world(source)
@@ -105,10 +135,23 @@ async def author(source: Path, output: Path) -> Path:
         enabled = await server.command("datapack list enabled")
         if not any("livequest_actions" in line for line in enabled):
             raise RuntimeError("Passive action datapack was not enabled")
-        for command in commands():
+        authored = commands()
+        if planning:
+            authored[-1:-1] = planning_commands()
+        for command in authored:
             feedback = await server.command(command)
             if any(word in line for line in feedback for word in ("Unknown", "Incorrect", "Error")):
                 raise RuntimeError(f"Workshop command rejected: {command}: {feedback}")
+            receipts.append({"command": command, "feedback": feedback})
+        if planning:
+            command = f"data get entity {ARCHER}"
+            feedback = await server.command(command)
+            rows = [nbtlib.parse_nbt(line.split("has the following entity data: ", 1)[1])
+                    for line in feedback if "has the following entity data: " in line]
+            if (len(rows) != 1 or float(rows[0]["Health"]) != 20
+                    or bool(rows[0].get("NoAI", False)) or bool(rows[0].get("Invulnerable", False))
+                    or str(rows[0]["HandItems"][0]["id"]) != "minecraft:bow"):
+                raise RuntimeError("Planning archer must have native health, AI and bow equipment")
             receipts.append({"command": command, "feedback": feedback})
     finally:
         await server.stop()
@@ -136,6 +179,12 @@ async def author(source: Path, output: Path) -> Path:
                            if p.is_file() and p.name not in ("session.lock", "level.dat_old")},
         "export_exclusions": ["session.lock", "level.dat_old"],
     }
+    if planning:
+        manifest["variant"] = "planning"
+        manifest["scope"] = (
+            "Workshop plus an eight-block-wide trench with ground detours and a separate roofed "
+            "bow-equipped Skeleton cache. Native health, AI, prices and gameplay rules are unchanged."
+        )
     (output / "source.json").write_text(json.dumps(manifest, indent=2) + "\n")
     validate_world(world)
     return world
@@ -145,5 +194,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("source", type=Path)
     parser.add_argument("output", type=Path)
+    parser.add_argument("--planning", action="store_true")
     args = parser.parse_args()
-    print(asyncio.run(author(args.source, args.output)))
+    print(asyncio.run(author(args.source, args.output, planning=args.planning)))

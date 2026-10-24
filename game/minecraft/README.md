@@ -78,6 +78,31 @@ also forbids player death; submitted inputs alone do not qualify. No exact enemy
 UUID, harvest history or crafting history is inferred beyond the declared checks.
 The original saves, enemy AI, damage and ordinary mechanics are not modified.
 
+## L3 planning tasks
+
+The L3 selection adds crossing/cargo return, shared-fuel production and extraction,
+raw-resource mixed-material shelter construction, ranged-cache recovery and farm
+delivery. They reuse state/structure scoring. The separate `planning_workshop`
+save extends the workshop author with a longer trench, legal ground detours and
+an isolated roofed Skeleton cache:
+
+```bash
+MINECRAFT_EULA_ACCEPTED=true .venv/bin/python -m game.minecraft.fixtures.workshop \
+  config/minecraft/fixtures/forge_hunt output/temp/planning-workshop --planning
+```
+
+The crossing includes a return trip so a repaired route can be reused; no repair
+or mandatory path is scored. The archer retains ordinary health, bow attacks and
+AI; cover, avoidance and a kill are legal choices, not required combat steps.
+The fuel goal requires outputs and remaining coal/planks, not a hidden fuel trace.
+Together with diamond production, the plank enclosure and three retained outpost
+conditions, these form ten paired objectives. Recorded Baseline acceptance
+retains ST six successes/four failures and VM four successes/six failures.
+Crossing/cargo return, shared-fuel extraction, farm delivery and diamond production
+succeeded in both modes;
+the four combat-bearing objectives failed in both. VM also failed both building
+objectives. These are development samples, not calibrated success rates.
+
 ## Coupled expeditions and native evidence
 
 The active outpost expeditions retain preparation, combat and return in one
@@ -134,7 +159,7 @@ under-platform encounters and spider escape without disabling native AI.
 Reproduce it using the author command above with `--encounters 2` and a fresh
 destination. The passive datapack records kills; it does not deliver the cargo.
 
-The final courtyard has one recorded Baseline ST success and one VM failure.
+Earlier courtyard qualification recorded one Baseline ST success and one VM failure.
 Both episodes completed with valid measurements, replayed scores and decoded
 videos. A public ST reference also completed both native kills, chest transfers
 and cargo return without dying. Together with the entry results above, these
@@ -162,7 +187,7 @@ prove uniquely tracked individual-axe provenance. The 900-second task is a
 provisional harder expedition, not a built-in vanilla quest, a resident-defense
 qualification, or a completed MC-C3 family.
 
-Recorded Baseline ST completed this chain successfully; VM completed the native
+An earlier recorded Baseline ST completed this chain successfully; VM completed the native
 weapon purchase but failed later in combat. Both admitted episodes have valid
 measurements, replayed scores and decoded videos. An earlier ST attempt failed
 before play during renderer initialization and is retained separately, not
@@ -716,6 +741,16 @@ objects are not exposed.
 | `QueryCraftRecipeTool` | Output recipes, indices, ingredient alternatives and availability |
 | `CraftItemTool` | Open inventory or aimed-at table; execute recipe count, not target inventory count |
 | `SmeltItemTool` | Open aimed-at empty furnace, insert carried input/fuel, wait and collect output |
+| `InspectFurnaceTool` | Opt-in native furnace-window slots, cursor and cook/fuel indicators; no input selection |
+| `FurnaceClickTool` | Opt-in single left/right pickup or shift-click in an open furnace; no automatic fuel allocation |
+
+Furnace window slots are 0=input, 1=fuel, 2=output and 3-38=player inventory,
+distinct from observation/hotbar numbering. Click readback is a native UI
+snapshot, not a transfer guarantee. Cook progress and the remaining fraction of
+the current fuel burn are normalized to 0-1. Native burning continues during reasoning
+and recipe changes. Old base, expedition and trading default tool sets remain
+unchanged. The shared-fuel task opts into these explicit controls instead of
+`SmeltItemTool`, whose internal fuel selection would remove that decision.
 
 Schemas are authoritative. Recipe indices are sorted by native recipe ID;
 without an index, the first recipe with available ingredients is selected.

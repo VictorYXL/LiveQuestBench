@@ -1,0 +1,77 @@
+id: shared_fuel_extraction
+game: minecraft
+task_type: visual_motor
+task: 'Reach the far-bank white marker [14.5,72,39.5] carrying an iron pickaxe, a
+  shield, four cooked beef, at least one coal and two oak planks. You start with four
+  raw iron, four raw beef, two coal, three oak logs, a stone pickaxe and two bread.
+  The existing crafting table is at [-1,72,2] and furnace at [1,72,2]. Manage wood
+  and fuel across production and the required reserves: burning a reserved resource
+  is not permanent failure if you legally replace it before finishing. Native furnace
+  fuel continues burning while you think or change inputs. Additional gathering is
+  allowed. The trench removes ground at X=2..9, Z=14..64, down through Y=64. Standing
+  ground is Y=72. Ground detours exist north at Z=13 and south at Z=65. Repair, jumping,
+  digging, gathering additional materials and detours are all legal; no particular
+  route or construction history is required. No recipe or exact fuel-use history is
+  required. Finish alive without having died. For arrival goals, be grounded within
+  two horizontal blocks and half a vertical block of the marker, at speed no more
+  than 0.1 blocks/tick. Release controls and finish with a text answer.'
+time_limit_seconds: 1200
+fixture:
+  world_path: ../../fixtures/planning_workshop
+  instance: 1.20.4
+  difficulty: easy
+  player_state:
+    position:
+    - 0.5
+    - 72
+    - 0.5
+    dimension: minecraft:overworld
+    yaw: 0
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+    - slot: 0
+      item: stone_pickaxe
+      count: 1
+    - slot: 1
+      item: raw_iron
+      count: 4
+    - slot: 2
+      item: beef
+      count: 4
+    - slot: 3
+      item: coal
+      count: 2
+    - slot: 4
+      item: oak_log
+      count: 3
+    - slot: 5
+      item: bread
+      count: 2
+evaluator:
+  name: state
+  parameters:
+    inventory:
+    - item: iron_pickaxe
+      min_count: 1
+    - item: shield
+      min_count: 1
+    - item: cooked_beef
+      min_count: 4
+    - item: coal
+      min_count: 1
+    - item: oak_planks
+      min_count: 2
+    position:
+      target:
+      - 14.5
+      - 72
+      - 39.5
+      horizontal_tolerance: 2
+      vertical_tolerance: 0.5
+      max_speed: 0.1
+    no_death: true

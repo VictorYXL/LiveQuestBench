@@ -116,6 +116,53 @@ final class NativeInventory {
         };
     }
 
+    private static JsonObject furnaceState(FurnaceScreenHandler furnace) {
+        JsonArray slots = new JsonArray();
+        for (Slot slot : furnace.slots) {
+            slots.add(NativeBridge.object("slot", slot.id, "item", NativeBridge.item(slot.getStack(), slot.id)));
+        }
+        return NativeBridge.ok("slots", slots, "cursor", NativeBridge.item(furnace.getCursorStack(), -1),
+                "burning", furnace.isBurning(), "cook_progress", furnace.getCookProgress(),
+                "fuel_progress", furnace.getFuelProgress());
+    }
+
+    static NativeBridge.Job inspectFurnace() {
+        var mc = NativeBridge.client();
+        if (!(mc.player.currentScreenHandler instanceof FurnaceScreenHandler) && !openStation("furnace"))
+            return () -> NativeBridge.fail("Aim at a reachable furnace first");
+        long started = System.nanoTime();
+        return () -> {
+            if (mc.player.currentScreenHandler instanceof FurnaceScreenHandler furnace)
+                return furnaceState(furnace);
+            return System.nanoTime() - started > 3_000_000_000L
+                    ? NativeBridge.fail("Native furnace screen did not open") : null;
+        };
+    }
+
+    static NativeBridge.Job clickFurnace(JsonObject params) {
+        var mc = NativeBridge.client();
+        if (!(mc.player.currentScreenHandler instanceof FurnaceScreenHandler furnace))
+            return () -> NativeBridge.fail("Inspect a furnace before clicking its slots");
+        int slot = params.get("slot").getAsInt();
+        String button = NativeBridge.text(params, "button", "");
+        String operation = NativeBridge.text(params, "operation", "");
+        if (slot < 0 || slot >= furnace.slots.size()
+                || !(button.equals("left") || button.equals("right"))
+                || !(operation.equals("pickup") || operation.equals("quick_move")))
+            return () -> NativeBridge.fail("Invalid native furnace click");
+        click(slot, button.equals("left") ? 0 : 1,
+                operation.equals("pickup") ? SlotActionType.PICKUP : SlotActionType.QUICK_MOVE);
+        long started = System.nanoTime();
+        return () -> {
+            if (mc.player.currentScreenHandler != furnace)
+                return NativeBridge.fail("Furnace screen closed after click; partial effects persist");
+            if (System.nanoTime() - started < 250_000_000L) return null;
+            JsonObject result = furnaceState(furnace);
+            result.getAsJsonObject("payload").addProperty("click_submitted", true);
+            return result;
+        };
+    }
+
     static NativeBridge.Job craft(JsonObject params) {
         var mc = NativeBridge.client();
         var matches = craftingRecipes(params);

@@ -50,6 +50,8 @@ def create_binding(
                 tools = st.BASE_TOOLS
             elif "merchants" not in expedition:
                 tools = st.EXPEDITION_TOOLS
+            else:
+                tools = st.TRADING_TOOLS
         validate_tools(st.agent_tools(), tools)
     elif tools is not None:
         raise ValueError("Tool allowlists are only supported for structured_tool tasks")

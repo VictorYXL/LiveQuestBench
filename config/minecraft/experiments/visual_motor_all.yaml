@@ -27,6 +27,11 @@ tasks:
 - path: ../tasks/visual_motor/follow_quarry_note.yaml
 - path: ../tasks/visual_motor/block_and_counter.yaml
 - path: ../tasks/visual_motor/bridge_small_gap.yaml
+- path: ../tasks/visual_motor/crossing_cargo_return.yaml
+- path: ../tasks/visual_motor/shared_fuel_extraction.yaml
+- path: ../tasks/visual_motor/mixed_material_shelter.yaml
+- path: ../tasks/visual_motor/ranged_cache_return.yaml
+- path: ../tasks/visual_motor/farm_delivery.yaml
 repetitions: 10
 agents:
 - id: tool_calling_astra

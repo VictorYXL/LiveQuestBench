@@ -258,7 +258,17 @@ def test_reconnaissance_requires_matching_native_opening(outpost_pair):
 
 
 def test_trade_tools_are_opt_in_and_require_an_observed_quote():
+    from game.minecraft.structured_tools.interface import TRADING_TOOLS
+
     assert "TradeTool" not in BASE_TOOLS and "TradeTool" not in EXPEDITION_TOOLS
+    assert "TradeTool" in TRADING_TOOLS
+    assert all("FurnaceClickTool" not in defaults and "InspectFurnaceTool" not in defaults
+               for defaults in (BASE_TOOLS, EXPEDITION_TOOLS, TRADING_TOOLS))
+    click = {"slot": 0, "button": "right", "operation": "pickup"}
+    validate_tool("FurnaceClickTool", click)
+    for changes in ({"slot": 39}, {"slot": True}, {"button": "middle"}, {"operation": "clone"}):
+        with pytest.raises(ValueError):
+            validate_tool("FurnaceClickTool", click | changes)
     validate_tool("InspectMerchantTool", {})
     validate_tool("TradeTool", {"offer_index": 0, "quote": "observed-quote", "slot": 3})
     for changes in ({"slot": 10}, {"slot": True}, {"quote": ""}, {"offer_index": -1}, {"count": 2}):

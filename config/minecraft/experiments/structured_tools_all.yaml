@@ -27,6 +27,11 @@ tasks:
 - path: ../tasks/structured_tools/follow_quarry_note.yaml
 - path: ../tasks/structured_tools/block_and_counter.yaml
 - path: ../tasks/structured_tools/bridge_small_gap.yaml
+- path: ../tasks/structured_tools/crossing_cargo_return.yaml
+- path: ../tasks/structured_tools/shared_fuel_extraction.yaml
+- path: ../tasks/structured_tools/mixed_material_shelter.yaml
+- path: ../tasks/structured_tools/ranged_cache_return.yaml
+- path: ../tasks/structured_tools/farm_delivery.yaml
 repetitions: 10
 agents:
 - id: tool_calling_astra

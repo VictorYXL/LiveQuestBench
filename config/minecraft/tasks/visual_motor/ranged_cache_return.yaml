@@ -1,0 +1,64 @@
+id: ranged_cache_return
+game: minecraft
+task_type: visual_motor
+task: Recover one amethyst shard from the chest at [72,72,27] and return to the yellow
+  marker [54.5,72,27.5]. You start just inside a roofed stone courtyard at [58.5,72,27.5],
+  facing east. An ordinary full-health bow-equipped Skeleton starts at [66.5,72,27.5]
+  and retains native movement and ranged attacks. The west doorway is at X=56, Z=26..28;
+  stone pillars at [60,72..74,24] and [60,72..74,30] offer cover. You have an iron
+  sword, an offhand shield, three bread, eight oak planks and a stone pickaxe. You
+  may fight, use cover, build, dig, lure or avoid the enemy; a kill is not required.
+  Success checks holdings and arrival, not a particular chest-transfer or combat history.
+  Finish alive without having died. For arrival goals, be grounded within two horizontal
+  blocks and half a vertical block of the marker, at speed no more than 0.1 blocks/tick.
+  Release controls and finish with a text answer.
+time_limit_seconds: 720
+fixture:
+  world_path: ../../fixtures/planning_workshop
+  instance: 1.20.4
+  difficulty: easy
+  player_state:
+    position:
+    - 58.5
+    - 72
+    - 27.5
+    dimension: minecraft:overworld
+    yaw: -90
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+    - slot: 0
+      item: iron_sword
+      count: 1
+    - slot: 1
+      item: bread
+      count: 3
+    - slot: 2
+      item: oak_planks
+      count: 8
+    - slot: 3
+      item: stone_pickaxe
+      count: 1
+    - slot: -106
+      item: shield
+      count: 1
+evaluator:
+  name: state
+  parameters:
+    inventory:
+    - item: amethyst_shard
+      min_count: 1
+      min_delta: 1
+    position:
+      target:
+      - 54.5
+      - 72
+      - 27.5
+      horizontal_tolerance: 2
+      vertical_tolerance: 0.5
+      max_speed: 0.1
+    no_death: true

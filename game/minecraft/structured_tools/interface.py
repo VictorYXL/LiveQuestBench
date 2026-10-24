@@ -87,6 +87,19 @@ SCHEMAS.extend([
              "quote": ITEM, "slot": SLOT,
          }, ["offer_index", "quote", "slot"]),
 ])
+TRADING_TOOLS = tuple(schema["name"] for schema in SCHEMAS if schema["name"] != "GetObservationTool")
+SCHEMAS.extend([
+    tool("InspectFurnaceTool", "Open the reachable furnace under your aim, or read the already open furnace. "
+         "Read native window slots (0=input, 1=fuel, 2=output, 3-38=player inventory), cursor and UI progress. "
+         "No material choice, insertion, waiting for cooking or collection.", {}, []),
+    tool("FurnaceClickTool", "Submit one ordinary click in the open furnace window and return native UI readback. "
+         "Pickup uses left/right clicks for full stacks or individual items; quick_move is shift-click. "
+         "No automatic input/fuel choice or transfer guarantee. Partial effects and cursor contents persist.", {
+             "slot": {"type": "integer", "minimum": 0, "maximum": 38},
+             "button": {"type": "string", "enum": ["left", "right"]},
+             "operation": {"type": "string", "enum": ["pickup", "quick_move"]},
+         }, ["slot", "button", "operation"]),
+])
 
 
 @dataclass(frozen=True)
@@ -185,6 +198,7 @@ async def execute_tool(bridge: NativeBridge, name: str, arguments: dict) -> dict
         "InspectMerchantTool": "merchant_inspect", "TradeTool": "merchant_trade",
         "DigTool": "dig_block", "PlaceTool": "place",
         "CraftItemTool": "craft", "SmeltItemTool": "smelt",
+        "InspectFurnaceTool": "furnace_inspect", "FurnaceClickTool": "furnace_click",
         "AttackTool": "attack", "UseHeldItemTool": "use_held",
     }[name]
     params = {key: value for key, value in arguments.items() if key != "direction"}

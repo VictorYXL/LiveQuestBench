@@ -100,6 +100,94 @@ def test_st_observation_and_tools(
 
 
 @pytest.mark.game
+@pytest.mark.skipif(os.environ.get("LIVEQUEST_MINECRAFT_TEST") != "1", reason="Opt-in furnace UI check")
+def test_native_furnace_slots_and_residual_fuel(headless: bool, recording: bool) -> None:
+    root = Path(os.environ.get("MINECRAFT_TEST_OUTPUT", "output/test"))
+    output = root / f"minecraft-furnace-{uuid4().hex}"
+    game = MinecraftGame(
+        track="structured_tool", output_dir=output,
+        world_path=Path("config/minecraft/fixtures/workshop").resolve(),
+        headless=headless, recording=recording,
+        player_state=PlayerState(position=(.5, 72, .5), inventory=[
+            {"slot": 0, "item": "coal", "count": 2},
+            {"slot": 1, "item": "raw_iron", "count": 1},
+            {"slot": 2, "item": "beef", "count": 1},
+        ]),
+    )
+
+    async def run() -> None:
+        try:
+            await game.start()
+            before = await game.save_snapshot(output / "before")
+            await game.begin()
+            public = game.get_agent_interface()
+            assert not (await public.call_tool("FurnaceClickTool", {
+                "slot": 0, "button": "left", "operation": "pickup",
+            }))["success"]
+            await public.call_tool("LookAtPositionTool", {"x": 1.5, "y": 72.5, "z": 2.5})
+
+            async def inspect():
+                result = await public.call_tool("InspectFurnaceTool", {})
+                assert result["success"], result
+                assert len(result["payload"]["slots"]) == 39
+                assert 0 <= result["payload"]["cook_progress"] <= 1
+                assert 0 <= result["payload"]["fuel_progress"] <= 1
+                return result["payload"]
+
+            async def click(slot, button="left", operation="pickup"):
+                result = await public.call_tool("FurnaceClickTool", {
+                    "slot": slot, "button": button, "operation": operation,
+                })
+                assert result["success"] and result["payload"]["click_submitted"], result
+                return result["payload"]
+
+            async def slot_for(name):
+                state = await inspect()
+                return next(row["slot"] for row in state["slots"][3:]
+                            if row["item"] is not None and row["item"]["name"] == name)
+
+            async def cooked(name):
+                for _ in range(150):
+                    state = await inspect()
+                    item = state["slots"][2]["item"]
+                    if item is not None and item["name"] == name:
+                        return state
+                    await asyncio.sleep(.2)
+                raise AssertionError(f"Native furnace did not produce {name}")
+
+            coal = await slot_for("coal")
+            await click(coal)
+            await click(1, "right")
+            state = await click(coal)
+            assert state["cursor"] is None and state["slots"][1]["item"]["count"] == 1
+            await click(await slot_for("raw_iron"))
+            await click(0)
+            assert (await cooked("iron_ingot"))["burning"]
+            await click(2, operation="quick_move")
+            await click(await slot_for("beef"))
+            await click(0)
+            state = await cooked("cooked_beef")
+            assert state["burning"] and state["slots"][1]["item"] is None
+            assert 0 < state["fuel_progress"] < 1
+            await click(2, operation="quick_move")
+            await game.end()
+            after = await game.save_snapshot(output / "after")
+            assert evaluate_inventory(before, after, game.player_uuid, [
+                {"item": "iron_ingot", "min_count": 1},
+                {"item": "cooked_beef", "min_count": 1},
+                {"item": "coal", "min_count": 1},
+            ])["success"]
+        finally:
+            await game.close()
+        if recording:
+            subprocess.run(["ffmpeg", "-v", "error", "-xerror", "-i", str(game.recording_path),
+                            "-map", "0:v:0", "-f", "null", "-"],
+                           check=True, capture_output=True, timeout=60)
+
+    asyncio.run(run())
+
+
+@pytest.mark.game
 @pytest.mark.skipif(os.environ.get("LIVEQUEST_MINECRAFT_TEST") != "1", reason="Opt-in native trading check")
 def test_native_trade_refusal_and_cutoff(headless: bool, recording: bool) -> None:
     from benchmark.config import load_task

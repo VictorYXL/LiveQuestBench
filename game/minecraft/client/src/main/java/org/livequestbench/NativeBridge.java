@@ -245,6 +245,7 @@ public class NativeBridge implements ClientModInitializer {
         MinecraftClient mc = client();
         if (!name.equals("craft") && !name.equals("smelt") && !name.equals("container_take")
                 && !name.equals("merchant_inspect") && !name.equals("merchant_trade")
+                && !name.equals("furnace_inspect") && !name.equals("furnace_click")
                 && mc.currentScreen != null) mc.player.closeHandledScreen();
         switch (name) {
             case "stop": release(); return () -> ok();
@@ -343,6 +344,8 @@ public class NativeBridge implements ClientModInitializer {
             case "go_to_position": return NativeNavigation.create(vector(params));
             case "craft": return NativeInventory.craft(params);
             case "smelt": return NativeInventory.smelt(params);
+            case "furnace_inspect": return NativeInventory.inspectFurnace();
+            case "furnace_click": return NativeInventory.clickFurnace(params);
             case "container_inspect": return NativeInventory.inspectContainer();
             case "container_take": return NativeInventory.takeContainerItem(params);
             case "merchant_inspect": return NativeTrading.inspect();
