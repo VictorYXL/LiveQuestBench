@@ -8,15 +8,11 @@ tasks:
   - path: ../tasks/structured_tools/food_reserve.yaml
   - path: ../tasks/structured_tools/craft_equip.yaml
   - path: ../tasks/structured_tools/recover_health.yaml
-  - path: ../tasks/structured_tools/wall_detour.yaml
   - path: ../tasks/structured_tools/staggered_detour.yaml
   - path: ../tasks/structured_tools/elevation_steps.yaml
-  - path: ../tasks/structured_tools/long_detour.yaml
   - path: ../tasks/structured_tools/defeat_legoom.yaml
-  - path: ../tasks/structured_tools/defeat_wolf.yaml
   - path: ../tasks/structured_tools/dual_legoom.yaml
   - path: ../tasks/structured_tools/combat_supply_return.yaml
-  - path: ../tasks/structured_tools/prepare_hunt_return.yaml
   - path: ../tasks/structured_tools/provisioned_hunt_return.yaml
 repetitions: 10
 

@@ -15,8 +15,8 @@ calibration remain necessary before scientific evaluation.
 
 | Game | Current catalog per mode | Setup and task details |
 | --- | --- | --- |
-| Minecraft | 17 entries: 11 island tasks, 3 coupled expeditions, 2 short reconnaissance conditions and 1 exploratory expedition | [Minecraft README](game/minecraft/README.md) |
-| Veloren | 17 entries: 10 endpoint adaptations, a movement diagnostic, 4 combat/resource goals and 2 coupled expeditions | [Veloren README](game/veloren/README.md) |
+| Minecraft | 10 entries: 6 island tasks, 2 coupled expeditions, 1 short reconnaissance condition and 1 exploratory expedition | [Minecraft README](game/minecraft/README.md) |
+| Veloren | 13 entries: 8 endpoint adaptations, a movement diagnostic, 3 combat/resource goals and 1 coupled expedition | [Veloren README](game/veloren/README.md) |
 
 - **VM (`visual_motor`)**: actual game pixels and bounded keyboard/mouse control.
   No hidden inventory transcription or object coordinates are supplied.
@@ -25,7 +25,7 @@ calibration remain necessary before scientific evaluation.
 
 Report VM and ST separately: they change both observations and action
 capabilities. Scores are not a pure comparison of visual reasoning.
-The entry coupled tasks have recorded Baseline runs in both modes and
+Historical entry coupled tasks have recorded Baseline runs in both modes and
 successful public-tool reference trajectories. After native difficulty/armor
 and courtyard adjustments, entry Baselines succeeded in Minecraft ST and
 Veloren VM; the other two modes failed. Multi-encounter extensions add finite
@@ -41,9 +41,10 @@ The current catalog includes native villager trading, crafting, resource retenti
 navigation, recovery and native combat. Small diagnostics and overlapping variants are not
 independent long-horizon capabilities; a raw catalog average is not a balanced
 research leaderboard. One executable task YAML counts as one task: the catalog
-contains 68 published tasks (34 Minecraft and 34 Veloren). Minecraft's two
-short reconnaissance conditions contribute four task YAMLs but only one
-mechanism family; they do not meet the intended long-horizon L4 admission gate.
+contains 46 active tasks (20 Minecraft and 26 Veloren). Redundant or nested
+diagnostics were retired from the active catalogs without changing historical
+results. Minecraft's retained short reconnaissance condition contributes two
+task YAMLs; it does not meet the intended long-horizon L4 admission gate.
 The paired Minecraft lost-expedition tasks have Baseline and evidence-backed
 feasibility checks, with no observed full success. They are development L4
 tasks, not a calibrated difficulty tier.

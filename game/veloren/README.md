@@ -18,7 +18,7 @@ and `chat/`. Standalone game tests retain their own output layout;
 
 The [full ST experiment](../../config/veloren/experiments/structured_tools_all.yaml)
 and [full VM experiment](../../config/veloren/experiments/visual_motor_all.yaml)
-include four encounter goals: defeat a Green Legoom, defeat a Wolf, defeat two simultaneous
+include three encounter goals: defeat a Green Legoom, defeat two simultaneous
 Green Legooms, and collect expiring simple leather while resolving combat, retaining a
 potion and returning to the starting point. These are development tasks, not
 calibrated difficulty tiers or a claim of complete long-horizon coverage.
@@ -210,17 +210,10 @@ budgets and difficulty are not calibrated scientific release settings.
 
 ## Task catalog
 
-### Entry coupled task
+### Preparation evidence
 
-[`prepare_hunt_return`](../../config/veloren/tasks/structured_tools/prepare_hunt_return.yaml)
-and its [VM counterpart](../../config/veloren/tasks/visual_motor/prepare_hunt_return.yaml)
-combine the rawhide preparation chain with an ordinary Green Legoom encounter
-and a return to camp, in one persistent episode. A physical wall separates
-the workshop and enemy, with a walkable end. Ordinary two-metre courtyard
-walls reduce accidental player/enemy falls; they are not an invulnerability
-zone. Start with five hides, the known
-leather/armor recipes, a starter sword and two minor potions; there is no
-stage reset, healing controller or resupply. Recovery remains optional.
+The simpler single-hunt preparation task was retired from the active catalog.
+The retained two-enemy expedition uses the same preparation evidence:
 
 The [expedition evaluator](evaluators/expedition.py) extends the native
 encounter evidence with compact private equipment-change samples. The native
@@ -232,25 +225,6 @@ longer an unrelated retention requirement. Equipment samples are
 bound to the original actor generation and native oracle sequence. They are
 not public observations, recipe-event proof, or continuous gear-at-every-hit
 proof. The sampling requirement is explicit in both public prompts.
-
-This 600-second entry variant adds preparation-to-combat ordering, not a
-claim that one weak enemy establishes calibrated long-horizon difficulty.
-Multi-site supply allocation and native NPC/contract dependencies remain
-later tiers. Before the courtyard revision, one recorded Baseline episode per mode completed with valid
-measurements, decoded videos and independently replayed scores on 2026-10-24;
-both were task failures. Both prepared and wore the armor, but neither
-recorded own damaging contribution to the designated enemy. A public ST
-reference passed the full chain: native preparation sequence 6172 preceded
-first damage 6661, with 10 damaging events totaling 25, final health 76.6953
-and return error 0.2195 m. Private equipment samples were matched to the
-native oracle, and no measured automatic-protection events were found in
-the Baseline runs. This task is included in both `all` catalogs.
-
-After the courtyard revision, the recorded VM Baseline succeeded; ST failed
-both before and after the optional supplied-point StrikeTool was added.
-The final-tool ST run prepared armor and dealt native damage but died.
-These are valid task failures, not evidence that a larger time limit alone
-would solve the control problem. The entry tier remains provisional.
 
 ### Gathering for a two-enemy hunt
 
@@ -275,10 +249,10 @@ both native kills, ordered armor preparation, no death and camp return, with
 This is evidence of an Agent solution, not merely a scripted reference; one
 success does not establish a stable rate or an Agent ranking.
 
-### Previously implemented catalog
+### Active catalog
 
-Each mode's full-catalog experiment includes the 15 tasks below plus the two
-coupled tasks above (17 total), with **10 repetitions per
+Each mode's full-catalog experiment includes the 12 tasks below plus the
+two-enemy expedition above (13 total), with **10 repetitions per
 Agent**. The modes share fixtures, goals, budgets and private evaluators. These
 are development configurations, not native-qualified scores. They adapt
 [VelorenBench](https://github.com/wyaaaattwho/VelorenBench) revision
@@ -293,17 +267,14 @@ are development configurations, not native-qualified scores. They adapt
 | `food_reserve` | T03 | Product/knowledge plus mushroom, twig and apple reserves | 300 |
 | `craft_equip` | T04, incorporating C4's chain | Rawhide chest equipped, old shirt retained | 600 |
 | `recover_health` | T05 | Health >=80 from 35, at least two of three potions retained | 300 |
-| `wall_detour` | N1 | Settled arrival past a wall | 300 |
 | `staggered_detour` | N2 | Settled arrival past staggered walls | 300 |
 | `elevation_steps` | N3 | Raised destination reached using side steps | 300 |
-| `long_detour` | N4 | Settled arrival 220 m away, past staggered walls | 900 |
 | `defeat_legoom` | B1 asset/setup, T06 death/contribution evidence | Designated Green Legoom dead after player damage; player survives | 300 |
-| `defeat_wolf` | B2 asset/setup, T06 death/contribution evidence | Designated Wolf dead after player damage; player survives | 300 |
 | `dual_legoom` | New flat encounter, T08 multi-target evidence pattern | Both simultaneous enemies dead after player damage; player survives | 300 |
 | `combat_supply_return` | New composite using native combat and item expiry | Resolve combat, collect expiring leather, retain potion and return grounded | 420 |
 
 Craft/recovery tasks use an explicit elevated 24x18 Rock platform instead of
-source natural-site qualification. Navigation N1-N4 retain the source solid
+source natural-site qualification. Retained navigation tasks N2/N3 use the source solid
 geometry and start/goal coordinates, remapped from y-up to native z-up.
 Arrival now uses **one endpoint**, not the source's two-sample sustained
 arrival: horizontal error <=1 m, vertical error <=0.5 m, speed <=0.1 m/s,

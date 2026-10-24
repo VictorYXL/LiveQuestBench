@@ -97,10 +97,10 @@ def test_expedition_requires_native_preparation_before_first_damage():
     assert not expedition_checks(initial, final, **parameters)["success"]
 
 
-def test_entry_expedition_catalog_admits_paired_native_fixtures():
+def test_expedition_catalog_admits_paired_native_fixtures():
     root = Path(__file__).resolve().parents[3] / "config/veloren/tasks"
-    st = load_task(root / "structured_tools/prepare_hunt_return.yaml")
-    vm = load_task(root / "visual_motor/prepare_hunt_return.yaml")
+    st = load_task(root / "structured_tools/provisioned_hunt_return.yaml")
+    vm = load_task(root / "visual_motor/provisioned_hunt_return.yaml")
     assert validate_fixture(st.fixture) == validate_fixture(vm.fixture)
     assert st.evaluator_parameters == vm.evaluator_parameters
 
@@ -208,7 +208,7 @@ def test_encounter_fixture_rejects_ambiguous_or_unsupported_enemies():
 
 def test_encounter_catalog_pairs_share_fixtures_and_simultaneous_requirements():
     root = Path(__file__).resolve().parents[3] / "config/veloren/tasks"
-    for name in ("defeat_legoom", "defeat_wolf", "dual_legoom", "combat_supply_return"):
+    for name in ("defeat_legoom", "dual_legoom", "combat_supply_return"):
         st = load_task(root / "structured_tools" / f"{name}.yaml")
         vm = load_task(root / "visual_motor" / f"{name}.yaml")
         assert st.fixture == vm.fixture

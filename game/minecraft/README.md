@@ -8,27 +8,22 @@ and `chat/`. Standalone game tests retain their own output layout;
 `MinecraftGame(recording_path=...)` can select an explicit video destination.
 `MinecraftGame` requires an existing `world_path` and explicit `player_state`.
 The resource-island fixture supports the migrated island catalog and integration tests.
-The coupled forge/hunt task uses a separate authored native fixture.
+Coupled expeditions use separate authored native fixtures.
 There is no default/generated world or benchmark-time scene-construction command.
 
 ## Migrated island tasks
 
-All eleven tasks from `GameAgentResearch/benchmark/tasks/island/` are migrated to
+Six representative tasks from the migrated island catalog remain in
 **both** `config/minecraft/tasks/visual_motor/` and
-`config/minecraft/tasks/structured_tools/`, retaining these IDs:
+`config/minecraft/tasks/structured_tools/`:
 
 | Task ID | Endpoint requirement |
 | --- | --- |
 | `island.collect_logs` | 3 oak logs |
-| `island.collect_dirt` | 3 dirt |
-| `island.collect_cobblestone` | 3 cobblestone |
 | `island.craft_wooden_pickaxe` | 1 wooden pickaxe |
-| `island.craft_stone_pickaxe` | 1 stone pickaxe |
-| `island.smelt_iron_ingot` | 1 iron ingot |
 | `island.craft_iron_pickaxe` | 1 iron pickaxe |
 | `island.collect_diamond` | 1 diamond |
 | `island.build_plank_wall_2x2` | New 2×2 oak-plank wall |
-| `island.build_plank_cube_2x2x2` | New solid 2×2×2 oak-plank cube |
 | `island.build_plank_enclosure_5x5x2` | New 5×5 perimeter, height 2, empty interior |
 
 Each source filename is preserved (`<source task name>.yaml`). Every task has a 2,100-second
@@ -38,16 +33,11 @@ exactly 64 oak planks in slot 0. ST tasks expose the existing game-provided tool
 profile's original tool set by default; the later combat additions are not
 silently granted to these migrated tasks.
 
-## Entry coupled task: forge, hunt and return
+## Coupled expeditions and native evidence
 
-[`forge_hunt_return`](../../config/minecraft/tasks/structured_tools/forge_hunt_return.yaml)
-has paired ST/VM definitions with a 600-second developmental budget. Craft a
-stone or iron sword, defeat a named native Husk using a crafted sword type,
-then return alive and settled to camp. Materials and food are finite; health,
-inventory and the same world carry across stages. A physical divider protects
-the initial workshop from direct line of sight, but is not an invulnerability
-zone. The calibrated entry variant starts with ordinary iron armor and native
-Easy difficulty; enemy AI and health are unchanged. Recovery is optional.
+The active outpost expeditions retain preparation, combat and return in one
+persistent world. The simpler single-encounter task was retired from the active
+catalog; its native fixture, shared author and historical evidence remain.
 
 The private [expedition evaluator](evaluators/expedition.py) checks a passive
 vanilla `player_killed_entity` advancement bound to the exact authored enemy
@@ -77,13 +67,7 @@ MINECRAFT_EULA_ACCEPTED=true .venv/bin/python -m game.minecraft.fixtures.forge_h
 The author refuses an existing destination and requires an installed native
 server plus explicit EULA acceptance. Export only its validated player-free
 `world/`, not the temporary server directory or logs. No game binaries or
-assets are included. This is an entry-level coupling diagnostic, not yet an
-NPC, boss, multi-outpost or difficulty-calibrated long-horizon task.
-
-The original unarmored Normal variant had two valid Baseline failures. The
-armored Easy revision with explicit-point StrikeTool has a recorded ST success
-and VM failure; this is preliminary calibration, not a stable success rate.
-Public ST references pass. Historical evidence is retained separately.
+assets are included. The author also supports the multi-outpost scenes below.
 
 ### Two outposts and return cargo
 
@@ -147,11 +131,11 @@ unchanged two-outpost fixture. The server binary and vanilla mechanics remain
 unchanged; the Fabric control bridge, passive evidence datapack and authored
 save mean this is **not an unmodified, mod-free evaluation environment**.
 
-### Reconnaissance outposts: two initial conditions
+### Reconnaissance outposts
 
 [`scout_outposts_return_0`](../../config/minecraft/tasks/structured_tools/scout_outposts_return_0.yaml)
-and [`scout_outposts_return_1`](../../config/minecraft/tasks/structured_tools/scout_outposts_return_1.yaml)
-add two fixed map conditions to one reconnaissance family, each paired with VM.
+retains one fixed reconnaissance condition, paired with VM. The alternate
+passage condition was retired from the active catalog.
 Prepare a sword, discover passages through two dividers, defeat the two native
 targets, recover the records and return in the same life. Candidate passage
 locations are public; the actual open sides must be observed. The world is not
@@ -166,8 +150,9 @@ as `scout_outposts_0` and `scout_outposts_1`; the fixture author accepts
 `--encounters 2 --route-condition 0` (or `1`) with a fresh destination.
 Opening checks verify the authored passages against the live native world.
 
-These 900-second instances are short adaptation prototypes, not admitted L4
-tasks or evidence of general learning. Both public ST references and both Baseline ST runs succeeded;
+The 900-second reconnaissance task is a short adaptation prototype, not an
+admitted L4 task or evidence of general learning. Historical runs covered both
+passage conditions: both public ST references and both Baseline ST runs succeeded;
 both Baseline VM runs died in combat. Condition 1 ST revised its route after
 approaching blocked candidates and reused discovered passages on return.
 Completion alone does not prove learning, and two known conditions are not an
@@ -211,10 +196,10 @@ duration and adaptive-planning difficulty remain uncalibrated.
 
 ### Evaluator mapping and deviations
 
-- The eight source `InventoryEvaluator` tasks use the existing native inventory
+- The retained inventory tasks use the existing native inventory
   evaluator with the original minimum endpoint counts. Craft/smelt verbs do not
   imply recipe-event or causal verification; the scorer reads saved inventory.
-- The three `StructureEvaluator` blueprints are preserved in `[y][z][x]` order.
+- The two retained `StructureEvaluator` blueprints use `[y][z][x]` order.
   The native scorer compares saved before/after worlds, requires newly placed
   oak planks, allows quarter-turn rotations, and requires exact recall,
   precision and IoU plus empty enclosure interiors.

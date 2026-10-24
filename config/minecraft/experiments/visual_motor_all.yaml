@@ -2,21 +2,14 @@ id: minecraft_visual_motor_all
 game: minecraft
 tasks:
   - path: ../tasks/visual_motor/collect_logs.yaml
-  - path: ../tasks/visual_motor/collect_dirt.yaml
-  - path: ../tasks/visual_motor/collect_cobblestone.yaml
   - path: ../tasks/visual_motor/collect_diamond.yaml
   - path: ../tasks/visual_motor/craft_wooden_pickaxe.yaml
-  - path: ../tasks/visual_motor/craft_stone_pickaxe.yaml
   - path: ../tasks/visual_motor/craft_iron_pickaxe.yaml
-  - path: ../tasks/visual_motor/smelt_iron_ingot.yaml
   - path: ../tasks/visual_motor/build_plank_wall_2x2.yaml
-  - path: ../tasks/visual_motor/build_plank_cube_2x2x2.yaml
   - path: ../tasks/visual_motor/build_plank_enclosure_5x5x2.yaml
-  - path: ../tasks/visual_motor/forge_hunt_return.yaml
   - path: ../tasks/visual_motor/two_outposts_return.yaml
   - path: ../tasks/visual_motor/trade_outposts_return.yaml
   - path: ../tasks/visual_motor/scout_outposts_return_0.yaml
-  - path: ../tasks/visual_motor/scout_outposts_return_1.yaml
   - path: ../tasks/visual_motor/lost_expedition.yaml
 repetitions: 10
 

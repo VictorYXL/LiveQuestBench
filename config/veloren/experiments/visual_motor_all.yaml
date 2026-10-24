@@ -8,15 +8,11 @@ tasks:
   - path: ../tasks/visual_motor/food_reserve.yaml
   - path: ../tasks/visual_motor/craft_equip.yaml
   - path: ../tasks/visual_motor/recover_health.yaml
-  - path: ../tasks/visual_motor/wall_detour.yaml
   - path: ../tasks/visual_motor/staggered_detour.yaml
   - path: ../tasks/visual_motor/elevation_steps.yaml
-  - path: ../tasks/visual_motor/long_detour.yaml
   - path: ../tasks/visual_motor/defeat_legoom.yaml
-  - path: ../tasks/visual_motor/defeat_wolf.yaml
   - path: ../tasks/visual_motor/dual_legoom.yaml
   - path: ../tasks/visual_motor/combat_supply_return.yaml
-  - path: ../tasks/visual_motor/prepare_hunt_return.yaml
   - path: ../tasks/visual_motor/provisioned_hunt_return.yaml
 repetitions: 10
 
