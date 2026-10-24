@@ -199,6 +199,70 @@ def test_public_combat_tools_are_bounded_and_never_autoaim():
         validate_tool("WieldTool", {"wield": 1})
 
 
+def test_settlement_projection_preserves_dialogue_ids_without_expanding_old_profiles():
+    from game.veloren.structured_tools.interface import EXPEDITION_TOOLS
+
+    assert "TalkTool" not in EXPEDITION_TOOLS
+    row = {name: {} for name in FIELDS}
+    identifier = 2**64 - 1
+    row.update(
+        dialogue={"sender_uid": 7, "sender": {"uid": 7, "lifecycle": "incarnation:Entity(7, 1)"},
+                  "dialogue_id": identifier, "received_client_tick": 8, "kind": "Question", "tag": 9,
+                  "text": "Where?", "responses": [{"response_id": 2, "text": "Workshop", "content": "not projected"}],
+                  "dialogue": {"not": "projected"}},
+        dialogue_markers=[], social_and_trade={"pending_trade": None, "players": ["not projected"]},
+        last_trade_result=None, private_encounter_evidence={"not": "projected"},
+    )
+    assert "dialogue" not in project(row)
+    public = project(row, rpg=True)
+    assert public["dialogue"]["dialogue_id"] == str(identifier)
+    assert "dialogue" not in public["dialogue"] and "social_and_trade" not in public
+    assert "private_encounter_evidence" not in public and public["pending_trade"] is None
+    assert public["dialogue"]["responses"] == [{"response_id": 2, "text": "Workshop"}]
+    args = {"sender_uid": 7, "dialogue_id": str(identifier), "tag": 9, "response_id": 2}
+    native, converted = validate_tool("DialogueResponseTool", args)
+    assert native == "dialogue_action" and converted["dialogue_id"] == identifier
+    assert converted["operation"] == "respond"
+    for value in (identifier, str(2**64), "-1", "1e3", "abc"):
+        with pytest.raises(ValueError):
+            validate_tool("DialogueResponseTool", {**args, "dialogue_id": value})
+
+
+def test_native_settlement_fixture_does_not_hide_an_authored_platform():
+    from game.veloren.fixture import solid_voxels
+
+    root = Path(__file__).resolve().parents[3]
+    fixture = load_task(root / "config/veloren/tasks/structured_tools/known_food.yaml").fixture
+    fixture.pop("platform")
+    fixture["native_site"] = "Spausalm"
+    fixture["player_state"]["position"] = [18703.5, 10799.5, 382]
+    assert solid_voxels(validate_fixture(fixture)) == set()
+    with pytest.raises(ValueError, match="exactly one"):
+        validate_fixture({**fixture, "platform": {}})
+    with pytest.raises(ValueError, match="do not author"):
+        validate_fixture({**fixture, "encounters": []})
+
+
+def test_merchant_lifecycle_is_bound_in_the_player_client_not_the_admin_client():
+    from game.veloren.settlement import bind_merchant, quoted_stack, verify_merchant
+
+    admin = {"uid": 7, "lifecycle": "admin:Entity(1, 1)"}
+    player = {"uid": 7, "lifecycle": "player:Entity(12, 1)"}
+    row = {"nearby_entities": [{"uid": 7, "control_target": player, "health": {"current": 100, "dead": False}}]}
+    prepared = bind_merchant(row, {"uid": 7, "administrator_target": admin})
+    assert prepared["player_target"] == player
+    verify_merchant(row, prepared)
+    changed = deepcopy(row)
+    changed["nearby_entities"][0]["control_target"]["lifecycle"] = "player:Entity(12, 2)"
+    with pytest.raises(RuntimeError, match="lifecycle"):
+        verify_merchant(changed, prepared)
+    books = [{"slot": slot, "amount": 1, "id": {"Simple": "book"}, "unit_site_value": 33.33}
+             for slot in (589836, 0)]
+    assert quoted_stack(books, "book")["slot"] == 0
+    with pytest.raises(RuntimeError, match="no quoted stack"):
+        quoted_stack(books, "missing")
+
+
 def test_encounter_fixture_rejects_ambiguous_or_unsupported_enemies():
     root = Path(__file__).resolve().parents[3]
     fixture = load_task(root / "config/veloren/tasks/structured_tools/dual_legoom.yaml").fixture

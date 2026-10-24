@@ -22,6 +22,9 @@ tasks:
 - path: ../tasks/structured_tools/dodge_roll.yaml
 - path: ../tasks/structured_tools/draw_weapon.yaml
 - path: ../tasks/structured_tools/deal_damage.yaml
+- path: ../tasks/structured_tools/glide_and_land.yaml
+- path: ../tasks/structured_tools/workshop_directions.yaml
+- path: ../tasks/structured_tools/merchant_exchange.yaml
 repetitions: 10
 agents:
 - id: tool_calling_astra

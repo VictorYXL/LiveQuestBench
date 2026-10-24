@@ -84,6 +84,71 @@ def test_motion_and_wielding_require_native_effects_and_matching_identity():
             validate_state(**params)
 
 
+def test_glide_landing_requires_new_flight_distance_and_correct_landing():
+    from game.veloren.structured_tools.interface import EXPEDITION_TOOLS, validate_tool
+
+    assert "GlideTool" not in EXPEDITION_TOOLS
+    assert validate_tool("GlideTool", {"enabled": True}) == ("glide", {"enabled": True})
+    with pytest.raises(ValueError):
+        validate_tool("GlideTool", {"enabled": 1})
+    initial = {
+        "session_id": "same", "self_identity": {"uid": 7},
+        "survival": {"health": {"current": 100}},
+        "private_motion_evidence": {
+            "schema": "native-client-motion/1", "session_id": "same", "uid": 7,
+            "samples": 10, "through_tick": 20, "jump_landings": 0, "roll_entries": 0,
+            "glide_schema": "native-client-glide/1", "glide_landings": [],
+        },
+    }
+    goal = {"target": [0, 20, 0], "horizontal_tolerance": 2, "vertical_tolerance": .5, "min_distance": 6}
+    validate_state(glide_landing=goal)
+    final = deepcopy(initial)
+    final["private_motion_evidence"].update(samples=100, through_tick=110)
+    assert not state_checks(initial, final, glide_landing=goal)["success"]
+    landed = {"position": [2, 20, .5], "glide_distance": 6}
+    final["private_motion_evidence"]["glide_landings"] = [landed]
+    assert state_checks(initial, final, glide_landing=goal)["success"]
+    for changed in (
+        {**landed, "position": [2.01, 20, .5]},
+        {**landed, "position": [2, 20, .51]},
+        {**landed, "glide_distance": 5.99},
+    ):
+        final["private_motion_evidence"]["glide_landings"] = [changed]
+        assert not state_checks(initial, final, glide_landing=goal)["success"]
+    initial["private_motion_evidence"]["glide_landings"] = [landed]
+    final["private_motion_evidence"]["glide_landings"] = [landed]
+    assert not state_checks(initial, final, glide_landing=goal)["success"]
+    final["private_motion_evidence"]["glide_landings"] = []
+    with pytest.raises(ValueError, match="history changed"):
+        state_checks(initial, final, glide_landing=goal)
+
+
+def test_marker_arrival_requires_new_native_directions_not_a_personal_marker():
+    goal = {"label_key": "hud-map-workshop", "horizontal_tolerance": 2, "max_speed": .1}
+    validate_state(marker_arrival=goal)
+    initial = {"tick": 10, "dialogue_markers": [], "survival": {"health": {"current": 100}}}
+    final = {**deepcopy(initial), "tick": 20, "position": [2, 20, 381],
+             "velocity": [0, 0, 0], "on_ground": True,
+             "personal_map_marker": {"x": 0, "y": 20}}
+    assert not state_checks(initial, final, marker_arrival=goal)["success"]
+    marker = {"schema_version": "1.0", "source": "validated_server_dialogue",
+              "kind": "Marker", "received_client_tick": 15,
+              "marker": {"label": {"Localized": {"key": "hud-map-workshop", "args": {}, "seed": 1}},
+                         "wpos": {"x": 0, "y": 20}}}
+    final["dialogue_markers"] = [marker]
+    assert state_checks(initial, final, marker_arrival=goal)["success"]
+    for field, value in (("position", [2.01, 20, 381]), ("on_ground", False), ("velocity", [.11, 0, 0])):
+        changed = {**final, field: value}
+        assert not state_checks(initial, changed, marker_arrival=goal)["success"]
+    old = deepcopy(initial)
+    old["dialogue_markers"] = [marker]
+    assert not state_checks(old, final, marker_arrival=goal)["success"]
+    wrong = deepcopy(final)
+    wrong["dialogue_markers"][0]["source"] = "personal_map_marker"
+    with pytest.raises(ValueError, match="evidence"):
+        state_checks(initial, wrong, marker_arrival=goal)
+
+
 def test_endpoint_thresholds_and_integrity(tmp_path: Path) -> None:
     for name, phase, position, amount, health, timestamp in (
         ("before", "ready", [0, 0, 10], 1, 40, 1),

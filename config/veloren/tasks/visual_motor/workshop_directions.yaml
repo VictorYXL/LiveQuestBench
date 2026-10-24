@@ -1,0 +1,46 @@
+id: workshop_directions
+game: veloren
+task_type: visual_motor
+task: 'You start in the ordinary native settlement Spausalm at [18703.5,10799.5,382],
+  facing positive y (x/y horizontal, z up). Find a nearby resident, ask for directions
+  to a workshop, and reach the workshop marker they give you. You must receive actual
+  native workshop directions during this episode: a personal map pin or merely finding
+  a workshop without those directions does not qualify. Finish alive, grounded within
+  eight horizontal metres of a received workshop marker, with speed at most 0.1 metres/second.
+  The marker is two-dimensional; entering an interior or crafting is not required.
+  Residents retain their ordinary movement and behaviour. Release controls and finish
+  with a text answer. E interacts with a nearby resident; choose the ordinary dialogue
+  options. M opens the map.'
+time_limit_seconds: 600
+fixture:
+  world_path: ../../fixtures/veloren_0_18_0_0.bin
+  world_seed: 130626853
+  time_of_day: '12:00'
+  day_length: 30
+  calendar: none
+  player_state:
+    position:
+    - 18703.5
+    - 10799.5
+    - 382
+    look:
+    - 0
+    - 1
+    - 0
+    health: 100
+    inventory: {}
+    equipment:
+      active_mainhand: common.items.weapons.sword.starter
+      chest: common.items.armor.misc.chest.worker_purple_brown
+      feet: common.items.armor.misc.foot.sandals
+      glider: common.items.glider.basic_white
+      lantern: common.items.lantern.black_0
+      legs: common.items.armor.misc.pants.worker_brown
+  native_site: Spausalm
+evaluator:
+  name: state
+  parameters:
+    marker_arrival:
+      label_key: hud-map-workshop
+      horizontal_tolerance: 8
+      max_speed: 0.1

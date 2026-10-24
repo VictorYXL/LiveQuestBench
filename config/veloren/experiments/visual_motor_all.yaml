@@ -22,6 +22,9 @@ tasks:
 - path: ../tasks/visual_motor/dodge_roll.yaml
 - path: ../tasks/visual_motor/draw_weapon.yaml
 - path: ../tasks/visual_motor/deal_damage.yaml
+- path: ../tasks/visual_motor/glide_and_land.yaml
+- path: ../tasks/visual_motor/workshop_directions.yaml
+- path: ../tasks/visual_motor/merchant_exchange.yaml
 repetitions: 10
 agents:
 - id: tool_calling_astra

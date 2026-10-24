@@ -12,6 +12,17 @@ def finite(value: object, name: str) -> float:
     return float(value)
 
 
+def player_motion(row: dict) -> tuple[list[float], float, bool]:
+    point, velocity = row["position"], row["velocity"]
+    if any(not isinstance(value, list) or len(value) != 3 for value in (point, velocity)):
+        raise ValueError("Native position and velocity must contain XYZ")
+    point = [finite(value, "position") for value in point]
+    speed = math.sqrt(sum(finite(value, "velocity") ** 2 for value in velocity))
+    if type(row["on_ground"]) is not bool:
+        raise ValueError("Native on_ground must be boolean")
+    return point, speed, row["on_ground"]
+
+
 def load_pair(before: Path, after: Path) -> tuple[dict, dict]:
     rows = []
     metadata = []
@@ -122,11 +133,32 @@ def validate_state(
     *, inventory: list[dict] | None = None, equipment: dict[str, str] | None = None,
     recipes: list[str] | None = None, position: dict | None = None, min_health: float = 1,
     wielding: bool | None = None, motion: dict[str, int] | None = None,
+    glide_landing: dict | None = None,
+    marker_arrival: dict | None = None,
 ) -> None:
     if finite(min_health, "min_health") <= 0:
         raise ValueError("min_health must be positive")
     if wielding is not None and type(wielding) is not bool:
         raise ValueError("wielding must be boolean")
+    if marker_arrival is not None:
+        required = {"label_key", "horizontal_tolerance", "max_speed"}
+        if not isinstance(marker_arrival, dict) or set(marker_arrival) != required:
+            raise ValueError(f"marker_arrival requires exactly {sorted(required)}")
+        key = marker_arrival["label_key"]
+        if not isinstance(key, str) or not key or len(key) > 128:
+            raise ValueError("Marker label must be a native localization key")
+        for name in required - {"label_key"}:
+            if finite(marker_arrival[name], name) < 0:
+                raise ValueError("Marker arrival limits must be nonnegative")
+    if glide_landing is not None:
+        required = {"target", "horizontal_tolerance", "vertical_tolerance", "min_distance"}
+        if not isinstance(glide_landing, dict) or set(glide_landing) != required:
+            raise ValueError(f"glide_landing requires exactly {sorted(required)}")
+        if finite(glide_landing["min_distance"], "min_distance") <= 0:
+            raise ValueError("Glide distance must be positive")
+        validate_state(position={
+            **{key: glide_landing[key] for key in required - {"min_distance"}}, "max_speed": 0,
+        })
     if motion is not None and (
         not isinstance(motion, dict) or not motion
         or any(key not in ("jump_landings", "roll_entries") or type(value) is not int or value < 1
@@ -214,13 +246,17 @@ def evaluate_state(
     equipment: dict[str, str] | None = None, recipes: list[str] | None = None,
     position: dict | None = None, min_health: float = 1,
     wielding: bool | None = None, motion: dict[str, int] | None = None,
+    glide_landing: dict | None = None,
+    marker_arrival: dict | None = None,
 ) -> dict:
     """Require simultaneous terminal predicates, never infer actions or past survival."""
     validate_state(inventory=inventory, equipment=equipment, recipes=recipes,
-                   position=position, min_health=min_health, wielding=wielding, motion=motion)
+                   position=position, min_health=min_health, wielding=wielding, motion=motion,
+                   glide_landing=glide_landing, marker_arrival=marker_arrival)
     initial, final = load_pair(before, after)
     return state_checks(initial, final, inventory=inventory, equipment=equipment,
-                        recipes=recipes, position=position, min_health=min_health, wielding=wielding, motion=motion)
+                        recipes=recipes, position=position, min_health=min_health, wielding=wielding, motion=motion,
+                        glide_landing=glide_landing, marker_arrival=marker_arrival)
 
 
 def state_checks(
@@ -228,6 +264,8 @@ def state_checks(
     equipment: dict[str, str] | None = None, recipes: list[str] | None = None,
     position: dict | None = None, min_health: float = 1,
     wielding: bool | None = None, motion: dict[str, int] | None = None,
+    glide_landing: dict | None = None,
+    marker_arrival: dict | None = None,
 ) -> dict:
     checks = []
     hp = finite(final["survival"]["health"]["current"], "health")
@@ -239,7 +277,7 @@ def state_checks(
             raise ValueError("Native wielding evidence must be boolean")
         checks.append({"kind": "wielding", "actual": final["wielding"],
                        "expected": wielding, "passed": final["wielding"] == wielding})
-    if motion is not None:
+    if motion is not None or glide_landing is not None:
         first, last = (row["private_motion_evidence"] for row in (initial, final))
         counters = ("samples", "through_tick", "jump_landings", "roll_entries")
         for row, evidence in ((initial, first), (final, last)):
@@ -251,10 +289,39 @@ def state_checks(
                 raise ValueError("Invalid native motion identity or counters")
         if any(last[key] < first[key] for key in counters):
             raise ValueError("Native motion counters moved backwards")
-        for key, minimum in motion.items():
+        for key, minimum in (motion or {}).items():
             delta = last[key] - first[key]
             checks.append({"kind": "motion", "name": key, "delta": delta,
                            "minimum": minimum, "passed": delta >= minimum})
+        if glide_landing is not None:
+            for evidence in (first, last):
+                if evidence.get("glide_schema") != "native-client-glide/1":
+                    raise ValueError("Native glide evidence is unavailable; upgrade the prepared runtime")
+                landings = evidence["glide_landings"]
+                if not isinstance(landings, list) or len(landings) > 128:
+                    raise ValueError("Invalid native glide landing list")
+                for landing in landings:
+                    if not isinstance(landing, dict) or set(landing) != {"position", "glide_distance"}:
+                        raise ValueError("Invalid native glide landing")
+                    point = landing["position"]
+                    if not isinstance(point, list) or len(point) != 3:
+                        raise ValueError("Invalid native glide landing position")
+                    for value in point:
+                        finite(value, "landing position")
+                    if finite(landing["glide_distance"], "glide distance") < 0:
+                        raise ValueError("Invalid native glide distance")
+            previous = first["glide_landings"]
+            if last["glide_landings"][:len(previous)] != previous:
+                raise ValueError("Native glide landing history changed")
+            added = last["glide_landings"][len(previous):]
+            target = glide_landing["target"]
+            passed = any(
+                landing["glide_distance"] >= glide_landing["min_distance"]
+                and math.dist(landing["position"][:2], target[:2]) <= glide_landing["horizontal_tolerance"]
+                and abs(landing["position"][2] - target[2]) <= glide_landing["vertical_tolerance"]
+                for landing in added
+            )
+            checks.append({"kind": "glide_landing", "landings": added, "passed": passed})
     if inventory:
         first, last = inventory_counts(initial), inventory_counts(final)
         for row in inventory:
@@ -275,22 +342,55 @@ def state_checks(
     if recipes:
         known = known_recipes(final, required=recipes)
         checks.extend({"kind": "recipe", "recipe": recipe, "passed": recipe in known} for recipe in recipes)
+    if marker_arrival is not None:
+        first, last = initial["dialogue_markers"], final["dialogue_markers"]
+        if not isinstance(first, list) or not isinstance(last, list):
+            raise ValueError("Native received markers must be lists")
+        for row in (initial, final):
+            if type(row["tick"]) is not int or row["tick"] < 0:
+                raise ValueError("Invalid native marker clock")
+        if final["tick"] < initial["tick"]:
+            raise ValueError("Native marker clock moved backwards")
+        point, speed, grounded = player_motion(final)
+        matches = []
+        for receipt in last:
+            tick = receipt["received_client_tick"]
+            if (receipt["schema_version"] != "1.0" or receipt["source"] != "validated_server_dialogue"
+                    or receipt["kind"] != "Marker" or type(tick) is not int
+                    or not 0 <= tick <= final["tick"]):
+                raise ValueError("Invalid native received marker evidence")
+            if receipt in first or tick < initial["tick"]:
+                continue
+            marker = receipt["marker"]
+            label = marker["label"]
+            if not isinstance(label, dict):
+                continue
+            localized = label.get("Localized")
+            key = localized.get("key") if isinstance(localized, dict) else label.get("Key")
+            if key != marker_arrival["label_key"]:
+                continue
+            target = [finite(marker["wpos"][axis], "marker position") for axis in ("x", "y")]
+            distance = math.dist(point[:2], target)
+            matches.append({"target": target, "horizontal_error": distance,
+                            "received_client_tick": tick})
+        checks.append({"kind": "marker_arrival", "markers": matches, "speed": speed,
+                       "on_ground": grounded, "passed": grounded and speed <= marker_arrival["max_speed"]
+                       and any(row["horizontal_error"] <= marker_arrival["horizontal_tolerance"]
+                               for row in matches)})
     if position:
-        point, velocity = final["position"], final["velocity"]
-        if any(not isinstance(value, list) or len(value) != 3 for value in (point, velocity)):
-            raise ValueError("Native position and velocity must contain XYZ")
-        point = [finite(value, "position") for value in point]
-        speed = math.sqrt(sum(finite(value, "velocity") ** 2 for value in velocity))
-        if type(final["on_ground"]) is not bool:
-            raise ValueError("Native on_ground must be boolean")
+        point, speed, grounded = player_motion(final)
         horizontal = math.dist(point[:2], position["target"][:2])
         vertical = abs(point[2] - position["target"][2])
         checks.append({"kind": "position", "actual": point, "horizontal_error": horizontal,
-                       "vertical_error": vertical, "speed": speed, "on_ground": final["on_ground"],
+                       "vertical_error": vertical, "speed": speed, "on_ground": grounded,
                        "passed": horizontal <= position["horizontal_tolerance"]
                        and vertical <= position["vertical_tolerance"]
-                       and speed <= position["max_speed"] and final["on_ground"]})
+                       and speed <= position["max_speed"] and grounded})
     return {"success": all(row["passed"] for row in checks), "checks": checks,
             "semantics": "simultaneous terminal state; no action attribution or continuous-survival claim"
             + ("; requested passive client-sampled upward takeoff/landing or native Roll Movement deltas, "
-               "not input receipts or server-atomic event counts" if motion else "")}
+               "not input receipts or server-atomic event counts" if motion else "")
+            + ("; actual sampled airborne Glide displacement followed by a landing in the stated zone, "
+               "not drawing a glider or walking into the zone after another landing" if glide_landing else "")
+            + ("; grounded horizontal arrival at a newly received native dialogue marker; "
+               "no height or workshop-interior claim" if marker_arrival else "")}

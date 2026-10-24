@@ -19,6 +19,8 @@ def cuboid(value: object, label: str) -> tuple[list, list]:
 
 
 def solid_voxels(fixture: dict) -> set[tuple[int, int, int]]:
+    if "native_site" in fixture:
+        return set()
     platform = fixture["platform"]
     regions = [{"origin": platform["origin"], "size": [*platform["size"], 1]}, *fixture.get("blocks", [])]
     voxels = set()
@@ -52,13 +54,15 @@ def vector(value: object, label: str, *, integer: bool = False) -> list:
 
 
 def validate_fixture(value: object) -> dict:
-    required = {"world_path", "world_seed", "time_of_day", "day_length", "calendar", "platform", "player_state"}
-    optional = {"blocks", "stations", "supplies", "recipe_groups", "recipes", "encounters", "motion_evidence"}
+    required = {"world_path", "world_seed", "time_of_day", "day_length", "calendar", "player_state"}
+    optional = {"blocks", "stations", "supplies", "recipe_groups", "recipes", "encounters",
+                "motion_evidence", "glide_evidence", "platform", "native_site", "merchant"}
     if not isinstance(value, dict) or required - value.keys() or value.keys() - required - optional:
         raise ValueError(f"Veloren fixture requires exactly {sorted(required)} plus optional {sorted(optional)}")
     fixture = value
-    if "motion_evidence" in fixture and type(fixture["motion_evidence"]) is not bool:
-        raise ValueError("motion_evidence must be boolean")
+    for flag in ("motion_evidence", "glide_evidence"):
+        if flag in fixture and type(fixture[flag]) is not bool:
+            raise ValueError(f"{flag} must be boolean")
     if not isinstance(fixture["world_path"], str) or not fixture["world_path"].strip():
         raise ValueError("world_path must explicitly identify a native map file")
     if not Path(fixture["world_path"]).is_file():
@@ -71,41 +75,51 @@ def validate_fixture(value: object) -> dict:
         raise ValueError("time_of_day must be HH:MM")
     if type(fixture["day_length"]) not in (int, float) or not math.isfinite(fixture["day_length"]) or fixture["day_length"] <= 0:
         raise ValueError("day_length must be positive finite minutes")
-    platform = fields(fixture["platform"], {"origin", "size", "block"}, "platform")
-    origin = vector(platform["origin"], "platform.origin", integer=True)
-    size = platform["size"]
-    if (not isinstance(size, list) or len(size) != 2
-            or any(type(n) is not int or not 2 <= n <= 1024 for n in size)
-            or math.prod(size) > MAX_VOXELS):
-        raise ValueError(f"platform.size must be in [2, 1024] with at most {MAX_VOXELS} cells")
-    if platform["block"] != "Rock":
-        raise ValueError("The current native fixture author supports Rock platforms only")
     player = fields(fixture["player_state"], {"position", "look", "health", "inventory", "equipment"}, "player_state")
     point = vector(player["position"], "player_state.position")
-    if not all(origin[i] < point[i] < origin[i] + size[i] for i in range(2)):
-        raise ValueError("Player must start on the declared platform")
+    if ("platform" in fixture) == ("native_site" in fixture):
+        raise ValueError("Declare exactly one authored platform or existing native_site")
     for key in ("blocks", "stations", "supplies", "recipe_groups"):
         if key in fixture and not isinstance(fixture[key], list):
             raise ValueError(f"{key} must be a list")
-    voxels = solid_voxels(fixture)
-    # setup.site teleports the actor here before any additional blocks are authored.
-    setup_start = [origin[0] + 2.5, origin[1] + size[1] / 2 + .5, origin[2] + 1]
-    require_standing_point(setup_start, solid_voxels({**fixture, "blocks": []}), "Native setup start")
-    require_standing_point(setup_start, voxels, "Native setup start")
-    require_standing_point(point, voxels, "Player")
-    occupied = set(voxels)
-    for station in fixture.get("stations", []):
-        fields(station, {"position", "sprite"}, "station")
-        station_point = vector(station["position"], "station.position")
-        require_standing_point(station_point, occupied, "Station")
-        if station["sprite"] not in ("CraftingBench", "TanningRack"):
-            raise ValueError("Only CraftingBench and TanningRack stations are supported")
-        occupied.add(tuple(math.floor(value) for value in station_point))
-    for station in fixture.get("stations", []):
-        x, y, z = station["position"]
-        require_standing_point([x - 2, y, z], occupied, "Station approach")
-    require_standing_point(point, occupied, "Player")
-    require_standing_point(setup_start, occupied, "Native setup start")
+    if "native_site" in fixture:
+        site = fixture["native_site"]
+        if not isinstance(site, str) or not site.strip() or len(site) > 128:
+            raise ValueError("native_site must name an existing native settlement")
+        if {"blocks", "stations", "supplies", "encounters"} & fixture.keys():
+            raise ValueError("Natural settlement fixtures do not author terrain, supplies or encounters")
+        occupied = set()
+    else:
+        platform = fields(fixture["platform"], {"origin", "size", "block"}, "platform")
+        origin = vector(platform["origin"], "platform.origin", integer=True)
+        size = platform["size"]
+        if (not isinstance(size, list) or len(size) != 2
+                or any(type(n) is not int or not 2 <= n <= 1024 for n in size)
+                or math.prod(size) > MAX_VOXELS):
+            raise ValueError(f"platform.size must be in [2, 1024] with at most {MAX_VOXELS} cells")
+        if platform["block"] != "Rock":
+            raise ValueError("The current native fixture author supports Rock platforms only")
+        if not all(origin[i] < point[i] < origin[i] + size[i] for i in range(2)):
+            raise ValueError("Player must start on the declared platform")
+        voxels = solid_voxels(fixture)
+        # setup.site teleports the actor here before any additional blocks are authored.
+        setup_start = [origin[0] + 2.5, origin[1] + size[1] / 2 + .5, origin[2] + 1]
+        require_standing_point(setup_start, solid_voxels({**fixture, "blocks": []}), "Native setup start")
+        require_standing_point(setup_start, voxels, "Native setup start")
+        require_standing_point(point, voxels, "Player")
+        occupied = set(voxels)
+        for station in fixture.get("stations", []):
+            fields(station, {"position", "sprite"}, "station")
+            station_point = vector(station["position"], "station.position")
+            require_standing_point(station_point, occupied, "Station")
+            if station["sprite"] not in ("CraftingBench", "TanningRack"):
+                raise ValueError("Only CraftingBench and TanningRack stations are supported")
+            occupied.add(tuple(math.floor(value) for value in station_point))
+        for station in fixture.get("stations", []):
+            x, y, z = station["position"]
+            require_standing_point([x - 2, y, z], occupied, "Station approach")
+        require_standing_point(point, occupied, "Player")
+        require_standing_point(setup_start, occupied, "Native setup start")
     encounters = fixture.get("encounters", [])
     if not isinstance(encounters, list) or len(encounters) > 4:
         raise ValueError("encounters must contain at most four designated native enemies")
@@ -157,6 +171,23 @@ def validate_fixture(value: object) -> dict:
         for k, v in equipment.items()
     ):
         raise ValueError("equipment must map native equipped slots to item IDs")
+    if "merchant" in fixture:
+        if "native_site" not in fixture:
+            raise ValueError("Merchant preparation requires an existing native settlement")
+        merchant = fields(fixture["merchant"], {
+            "position", "stock_item", "stock_amount", "payment_item", "payment_reserve", "coin_reserve",
+        }, "merchant")
+        spawn = vector(merchant["position"], "merchant.position")
+        if not 2 <= math.dist(spawn, point) <= 6:
+            raise ValueError("Merchant placement must be 2-6 metres from the player")
+        for key in ("stock_item", "payment_item"):
+            if not isinstance(merchant[key], str) or not re.fullmatch(r"common\.items\.[a-z0-9_.]+", merchant[key]):
+                raise ValueError("Merchant items must have native item IDs")
+        for key in ("stock_amount", "payment_reserve", "coin_reserve"):
+            if type(merchant[key]) is not int or not 1 <= merchant[key] <= 99:
+                raise ValueError("Merchant stock and reserves must be integers in [1, 99]")
+        if inventory.get(merchant["payment_item"], 0) <= merchant["payment_reserve"]:
+            raise ValueError("Merchant purchase requires spendable initial goods beyond the reserve")
     return deepcopy(fixture)
 
 
@@ -203,6 +234,11 @@ async def recipe_observation(actor, fixture: dict, observation: dict | None = No
 
 def verify_player(fixture: dict, observation: dict) -> None:
     player = fixture["player_state"]
+    if "native_site" in fixture and (
+        observation["current_site"]["location_name"] != fixture["native_site"]
+        or observation["current_site"]["loaded_chunk"] is not True
+    ):
+        raise RuntimeError("Initial native settlement differs from the fixture")
     if math.dist(observation["position"], player["position"]) > .2:
         raise RuntimeError("Initial player position differs from the fixture")
     if math.dist(observation["look"], player["look"]) > .01:
@@ -227,10 +263,14 @@ async def initialize_fixture(admin, actor, fixture: dict) -> dict:
 
     fixture = validate_fixture(fixture)
     await setup.ready_observation(actor)
-    platform = fixture["platform"]
-    construction = await setup.site(
-        admin, actor, "flat", {"flat_origin": platform["origin"]}, size=tuple(platform["size"]),
-    )
+    if "native_site" in fixture:
+        construction = {"constructed": False, "native_site": fixture["native_site"],
+                        "ambient_npcs_removed": False, "safezone_created": False}
+    else:
+        platform = fixture["platform"]
+        construction = await setup.site(
+            admin, actor, "flat", {"flat_origin": platform["origin"]}, size=tuple(platform["size"]),
+        )
     base = solid_voxels({**fixture, "blocks": []})
     additional = solid_voxels(fixture) - base
     blocks = await setup.author_voxels(admin, [list(point) for point in sorted(additional)]) if additional else []
@@ -260,11 +300,21 @@ async def initialize_fixture(admin, actor, fixture: dict) -> dict:
         supplies.append(await setup.drop_supply(
             admin, supply["position"], supply["item"], supply["amount"], "flat",
         ))
+    merchant = None
+    if "merchant" in fixture:
+        from game.veloren.settlement import initialize_merchant
+        merchant = await initialize_merchant(admin, fixture)
+    if "native_site" in fixture:
+        point = fixture["player_state"]["position"]
+        await setup.goto(admin, admin, [point[0] + 12, point[1], point[2]], settle=False)
     await setup.goto(admin, actor, fixture["player_state"]["position"])
     await setup.command(admin, "time", fixture["time_of_day"])
     await setup.command(admin, "sudo", actor.name, "health", fixture["player_state"]["health"])
     opening = await recipe_observation(actor, fixture, await setup.ready_observation(actor))
     verify_player(fixture, opening)
+    if merchant is not None:
+        from game.veloren.settlement import bind_merchant
+        merchant = bind_merchant(opening, merchant)
     encounters = []
     source = None
     if fixture.get("encounters"):
@@ -288,4 +338,4 @@ async def initialize_fixture(admin, actor, fixture: dict) -> dict:
             raise RuntimeError("Encounter player is not alive at initialization")
     return {"fixture": fixture, "construction": construction, "blocks": blocks,
             "stations": stations, "supplies": supplies, "opening": opening,
-            "encounters": encounters, "source_binding": source}
+            "encounters": encounters, "source_binding": source, "merchant": merchant}

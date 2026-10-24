@@ -58,6 +58,57 @@ SPECS["StrikeTool"] = (
         "duration_ticks": {"type": "integer", "minimum": 1, "maximum": 60},
     },
 )
+EXPEDITION_TOOLS = tuple(SPECS)
+SPECS["GlideTool"] = (
+    "Draw or stow the equipped native glider. Drawing on the ground is not flight. "
+    "No automatic takeoff, steering, landing or navigation; ordinary physics continue.",
+    "glide", {"enabled": {"type": "boolean"}},
+)
+TARGET_FIELDS = {
+    "uid": {"type": "integer", "minimum": 1, "maximum": 2**64 - 1},
+    "lifecycle": {"type": "string", "minLength": 1, "maxLength": 128},
+}
+DIALOGUE_FIELDS = {
+    "sender_uid": TARGET_FIELDS["uid"],
+    "dialogue_id": {"type": "string", "minLength": 1, "maxLength": 20},
+    "tag": {"type": "integer", "minimum": 0, "maximum": 2**32 - 1},
+}
+TRADE_FIELDS = {
+    "trade_id": {"type": "integer", "minimum": 0, "maximum": 2**64 - 1},
+    "counterparty_uid": TARGET_FIELDS["uid"],
+    "phase": {"type": "string", "enum": ["Mutate", "Review", "Complete"]},
+}
+SPECS.update({
+    "TalkTool": ("Ask a currently observed nearby resident to talk. No automatic response selection.",
+                 "context_interact", TARGET_FIELDS),
+    "InviteTradeTool": ("Invite a currently observed nearby NPC to trade. Does not negotiate or buy.",
+                        "social_action", TARGET_FIELDS),
+    "DialogueResponseTool": (
+        "Choose one offered response from the current native question. Copy its decimal-string dialogue_id "
+        "exactly; this submits a response, not confirmation of a quest or reward.",
+        "dialogue_action", {**DIALOGUE_FIELDS,
+                            "response_id": {"type": "integer", "minimum": 0, "maximum": 65535}},
+    ),
+    "DialogueAckTool": (
+        "Acknowledge the current native statement so dialogue may advance. Copy its decimal-string dialogue_id.",
+        "dialogue_action", DIALOGUE_FIELDS,
+    ),
+    "TradeOfferTool": (
+        "Add or remove an exact quantity from an observed party's inventory slot in the current trade. "
+        "ours selects your side. No automatic item choice, pricing, balancing or acceptance.",
+        "trade_action", {**TRADE_FIELDS,
+                         "operation": {"type": "string", "enum": ["add_item", "remove_item"]},
+                         "slot": {"type": "integer", "minimum": 0, "maximum": 2**32 - 1},
+                         "quantity": {"type": "integer", "minimum": 1, "maximum": 2**32 - 1},
+                         "ours": {"type": "boolean"}},
+    ),
+    "TradeFinishTool": (
+        "Accept the current native trade phase, or decline the trade. Acceptance can advance to Review "
+        "without completing the exchange; inspect the server result and actual inventory afterwards.",
+        "trade_action", {**TRADE_FIELDS,
+                         "operation": {"type": "string", "enum": ["accept", "decline"]}},
+    ),
+})
 
 
 @dataclass(frozen=True)
@@ -66,12 +117,53 @@ class StructuredInterface:
     call_tool: Callable[[str, dict], Awaitable[dict]]
 
 
-def project(observation: dict) -> dict:
+def public_dialogue(row: dict | None) -> dict | None:
+    if row is None:
+        return None
+    identifier = row["dialogue_id"]
+    if type(identifier) is not int or not 0 <= identifier < 2**64:
+        raise ValueError("Invalid native dialogue identifier")
+    result = {key: row[key] for key in (
+        "sender_uid", "sender", "received_client_tick", "kind", "tag", "text", "marker",
+    ) if key in row}
+    result["dialogue_id"] = str(identifier)
+    if "responses" in row:
+        result["responses"] = [{key: response[key] for key in ("response_id", "text")}
+                               for response in row["responses"]]
+    return result
+
+
+def public_trade(row: dict | None) -> dict | None:
+    if row is None:
+        return None
+    result = {key: row[key] for key in (
+        "trade_id", "parties", "self_party_index", "phase", "offers", "accept_flags",
+        "offer_site_values", "price_scope", "effect_scope",
+    )}
+    result["inventories"] = [
+        None if items is None else [
+            {key: item[key] for key in ("slot", "id", "amount", "kind", "unit_site_value")}
+            for item in items
+        ] for items in row["inventories"]
+    ]
+    return result
+
+
+def project(observation: dict, *, rpg: bool = False) -> dict:
     missing = set(FIELDS) - observation.keys()
     if missing:
         raise ValueError(f"Native observation lacks required fields: {sorted(missing)}")
-    return {"profile": PROFILE_ID, "coordinate_frame": "native x/y horizontal, z up",
-            **{name: observation[name] for name in FIELDS}}
+    result = {"profile": PROFILE_ID, "coordinate_frame": "native x/y horizontal, z up",
+              **{name: observation[name] for name in FIELDS}}
+    if rpg:
+        result.update(
+            profile="veloren-native-settlement-tools",
+            dialogue=public_dialogue(observation["dialogue"]),
+            dialogue_markers=[public_dialogue(row) for row in observation["dialogue_markers"]],
+            pending_trade=public_trade(observation["social_and_trade"]["pending_trade"]),
+            last_trade_result=observation["last_trade_result"],
+        )
+    return result
 
 
 def validate_tool(name: str, arguments: dict) -> tuple[str, dict]:
@@ -101,6 +193,15 @@ def validate_tool(name: str, arguments: dict) -> tuple[str, dict]:
         native = "attack_" + converted.pop("channel")
     elif native == "look_at":
         converted = {"position": [converted[axis] for axis in ("x", "y", "z")]}
+    elif name in ("TalkTool", "InviteTradeTool"):
+        converted = {"operation": "talk" if name == "TalkTool" else "invite_trade",
+                     "target": converted}
+    elif name in ("DialogueResponseTool", "DialogueAckTool"):
+        identifier = converted["dialogue_id"]
+        if not identifier.isascii() or not identifier.isdecimal() or int(identifier) >= 2**64:
+            raise ValueError("dialogue_id must be an unsigned 64-bit decimal string")
+        converted["dialogue_id"] = int(identifier)
+        converted["operation"] = "respond" if name == "DialogueResponseTool" else "ack"
     return native, converted
 
 

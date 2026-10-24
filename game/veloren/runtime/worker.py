@@ -76,6 +76,8 @@ class Session:
             raise ValueError("Prepared runtime lacks the native-protection opt-out patch; rerun Veloren setup")
         if self.fixture.get("motion_evidence") and cfg.get("motion_evidence") != "native-client-motion/1":
             raise ValueError("Fixture requires passive native motion evidence; rerun Veloren setup")
+        if self.fixture.get("glide_evidence") and cfg.get("glide_evidence") != "native-client-glide/1":
+            raise ValueError("Fixture requires passive native glide evidence; rerun Veloren setup")
         for path, digest in cfg["sha256"].items():
             if hashlib.sha256(Path(path).read_bytes()).hexdigest() != digest:
                 raise ValueError(f"Prepared runtime changed: {path}")
@@ -112,6 +114,9 @@ class Session:
         )
         opening = await recipe_observation(self.actor, self.fixture, opening)
         verify_player(self.fixture, opening)
+        if initialized.get("merchant") is not None:
+            from game.veloren.settlement import verify_merchant
+            verify_merchant(opening, initialized["merchant"])
         initialized["opening"] = opening
         initialized["administrator_retirement"] = {
             "uid": administrator_uid, "confirmed_absent": True,
@@ -154,9 +159,14 @@ class Session:
             if self.running:
                 raise RuntimeError("Snapshot requires a closed public gate")
             observation = await recipe_observation(self.actor, self.fixture)
-            if self.fixture.get("motion_evidence"):
+            if self.initialized.get("merchant") is not None and not hasattr(self, "merchant_opening"):
+                from game.veloren.settlement import verify_merchant
+                verify_merchant(observation, self.initialized["merchant"])
+                self.merchant_opening = True
+            if self.fixture.get("motion_evidence") or self.fixture.get("glide_evidence"):
                 observation["private_motion_evidence"] = await self.actor.request(
-                    "motion_evidence", await self.frame_fence(), origin="private-validation",
+                    "glide_evidence" if self.fixture.get("glide_evidence") else "motion_evidence",
+                    await self.frame_fence(), origin="private-validation",
                 )
             if self.fixture.get("encounters"):
                 from scripts.rpg_benchmark import native_outcomes
@@ -212,10 +222,23 @@ class Session:
                 "move_forward", "move_backward", "move_left", "move_right",
                 "turn", "jump", "pickup", "use_item", "craft", "equip",
                 "look_at", "attack_primary", "attack_secondary", "toggle_wield", "block", "roll", "stop",
-                "aimed_attack",
+                "aimed_attack", "glide", "context_interact", "social_action", "dialogue_action", "trade_action",
             ):
                 raise PermissionError("Native action is not in the fixed public skill set")
+            rpg_actions = {
+                "context_interact": ("talk",), "social_action": ("invite_trade",),
+                "dialogue_action": ("ack", "respond"),
+                "trade_action": ("add_item", "remove_item", "accept", "decline"),
+            }
+            if args["action_type"] in rpg_actions and args.get("operation") not in rpg_actions[args["action_type"]]:
+                raise PermissionError("Native RPG operation is not in the fixed public skill set")
             try:
+                if args["action_type"] == "glide":
+                    result = await setup.action(
+                        self.actor, origin="agent", require_completed=False,
+                        action_type="character_action", kind="glide", enabled=args["enabled"],
+                    )
+                    return {**result, "action_type": "glide"}
                 if args["action_type"] == "aimed_attack":
                     aimed = await setup.action(
                         self.actor, origin="agent", require_completed=False, action_type="look_at",
@@ -234,6 +257,7 @@ class Session:
                 return await setup.action(self.actor, origin="agent", require_completed=False, **args)
             except NativeRefusal as error:
                 expected = {
+                    ("glide", "glider_not_equipped", "no equipped glider"),
                     ("pickup", "invalid_action", "no pickable item within range"),
                     ("pickup", "pickup_send_rejected",
                      "local client does not send pickup while dead; not a server refusal"),
@@ -241,6 +265,22 @@ class Session:
                     ("equip", "invalid_action", "inventory slot is empty"),
                 }
                 refusal = error.native_error
+                rpg_refusals = {
+                    "context_interact": {"actor_unavailable", "interaction_target_changed", "interaction_ineligible"},
+                    "social_action": {"actor_unavailable", "trade_target_changed", "trade_already_pending"},
+                    "dialogue_action": {"dialogue_unavailable", "dialogue_changed", "dialogue_sender_changed",
+                                        "dialogue_sender_unavailable", "dialogue_response_unknown"},
+                    "trade_action": {"actor_unavailable", "no_pending_trade", "trade_identity_or_phase_changed",
+                                     "trade_slot_unavailable", "trade_offer_changed"},
+                }
+                if refusal.get("code") in rpg_refusals.get(args["action_type"], set()):
+                    return {"action_type": args["action_type"], "status": "refused", "detail": refusal}
+                expected.update({
+                    ("dialogue_action", "invalid_action",
+                     "dialogue action must match a current statement tag or offered question choice"),
+                    ("trade_action", "invalid_action",
+                     "trade action fields/phase do not match an offer or accept/decline"),
+                })
                 if (args["action_type"], refusal.get("code"), refusal.get("message")) not in expected:
                     raise
                 return {"action_type": args["action_type"], "status": "refused", "detail": refusal}

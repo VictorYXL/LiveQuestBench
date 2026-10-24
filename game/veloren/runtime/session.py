@@ -64,14 +64,14 @@ class VelorenSession:
         if self.process is None or self.process.returncode is not None or self.reader is None or self.reader.done():
             raise RuntimeError("Veloren runtime is not running; inspect worker.log")
 
-    async def request(self, operation: str, *, timeout: float = 60, **arguments) -> dict:
+    async def request(self, method: str, *, timeout: float = 60, **arguments) -> dict:
         self.check_ready()
         assert self.process is not None and self.process.stdin is not None
         identifier = uuid4().hex
         future = asyncio.get_running_loop().create_future()
         self.pending[identifier] = future
         try:
-            self.process.stdin.write((json.dumps({"id": identifier, "op": operation, "arguments": arguments}) + "\n").encode())
+            self.process.stdin.write((json.dumps({"id": identifier, "op": method, "arguments": arguments}) + "\n").encode())
             await self.process.stdin.drain()
             return await asyncio.wait_for(future, timeout)
         finally:

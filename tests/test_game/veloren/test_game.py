@@ -19,6 +19,30 @@ from game.veloren.game import VelorenGame
 from game.veloren.structured_tools.interface import StructuredInterface, agent_tools
 
 
+def test_native_rpc_keeps_payload_operation_separate_from_transport_method(tmp_path, monkeypatch):
+    from types import SimpleNamespace
+    from game.veloren.runtime.session import VelorenSession
+
+    session = VelorenSession(tmp_path, ":test", "structured_tool", {})
+    sent = {}
+
+    class Input:
+        def write(self, value):
+            sent.update(json.loads(value))
+
+        async def drain(self):
+            session.pending[sent["id"]].set_result({"accepted": True})
+
+    monkeypatch.setattr(session, "check_ready", lambda: None)
+    monkeypatch.setattr(session, "process", SimpleNamespace(stdin=Input()))
+    assert asyncio.run(session.request(
+        "action", action_type="context_interact", operation="talk",
+        target={"uid": 7, "lifecycle": "incarnation:Entity(7, 1)"},
+    )) == {"accepted": True}
+    assert sent["op"] == "action" and sent["arguments"]["operation"] == "talk"
+    assert not session.pending
+
+
 @pytest.mark.game
 @pytest.mark.skipif(os.environ.get("LIVEQUEST_VELOREN_TEST") != "1", reason="Opt-in native Veloren test")
 @pytest.mark.parametrize("track", ["visual_motor", "structured_tool"])

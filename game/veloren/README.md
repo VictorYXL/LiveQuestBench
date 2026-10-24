@@ -33,6 +33,54 @@ The renderer does not change movement, stamina, collision or damage, and neither
 track receives the private counters. Drawing checks native `wielding`, not
 merely having a weapon in an equipment slot.
 
+## L2 workflows and opt-in interfaces
+
+The paired L2 subsets cover gathering, recipe learning, craft/equip, recovery,
+two terrain routes, a Legoom encounter, glide/landing, native workshop
+directions and merchant acquisition with reserves. Recorded Baseline acceptance
+retains ST six successes/four failures and VM two successes/eight failures.
+These are engineering coverage results, not calibrated success rates; no full
+successful glide or merchant task trajectory has been observed.
+
+`GlideTool` draws or stows the equipped glider; it does not fly a route or land
+for the Agent. VM uses the stock Control binding. `fixture.glide_evidence`
+enables private sampled airborne-Glide and subsequent landing records. The
+distance is the largest horizontal displacement from the first sampled Glide
+position while still in that flight's Glide state, not distance walked or fallen
+afterwards. The landing must satisfy the declared zone; final position and
+survival are separate checks. Ground-only deployment does not count. Sampling
+can miss brief transitions; more than 128 landings invalidates glide evidence
+rather than silently truncating it. Its separate private readback and capacity
+guard do not invalidate legacy jump/roll evidence.
+
+`fixture.native_site` selects a named existing settlement instead of an authored
+platform and preserves its native terrain and population. Optional `merchant`
+preparation selects an existing trader and places them at a declared initial
+point. Stock, actual native prices and cash are checked against the supplied
+goods and reserves; missing stock is supplied through an ordinary paid
+administrator-to-merchant trade. No new resident, safezone, NPC removal,
+synthetic price or fabricated workshop marker is installed. The merchant's
+health and AI are unchanged. Private setup queries never become Agent tools.
+The opt-in settlement ST profile adds current received dialogue/markers,
+pending native trade offers and inventories, native UI-derived unit/offer values,
+and the last server trade result. It does not expose a quest database or whole
+world map. Dialogue IDs are decimal strings to preserve all 64 bits across Agent
+runtimes. Tools submit one talk, offered response, acknowledgement, invitation,
+offer edit or phase acceptance; they do not choose replies, balance offers or
+complete a transaction automatically. Pending disappearance is not a purchase
+receipt. Old task defaults retain their original tool sets and observations.
+VM uses ordinary dialogue, map and trade UI with E, M and T.
+The fixed ST talk/invite surfaces require targets within five metres; dialogue
+replies require the speaker to remain closer than five metres. Native VM talk
+can start within eight metres, while trading still uses five. Opening a dialogue
+or trade window releases the cursor through the normal HUD.
+
+The directions predicate checks a newly received native workshop marker and a
+grounded horizontal arrival. It does not claim entry into a workshop interior
+or infer dialogue from proximity alone. Recorded native acceptance includes a
+successful ST directions task and a physical-T trade-opening component check;
+opening trade alone is not a completed exchange.
+
 ## Native encounter tasks
 
 The [full ST experiment](../../config/veloren/experiments/structured_tools_all.yaml)
@@ -62,7 +110,7 @@ Combat ST uses `veloren-native-fixed-tools-v4-combat`: `LookTool` aims once at a
 point, `AttackTool` holds primary/secondary for at most 60 client updates,
 `WieldTool` controls weapon readiness, and bounded `BlockTool`, `RollTool` and
 `StopTool` expose ordinary native controls. None selects a target, auto-aims,
-approaches an enemy or runs a combat policy. Old fixtures retain their v2
+approaches an enemy or runs a combat policy. Old fixtures retain their original
 observation profile and original default tool set. Explicit task allowlists can
 select any supported tools. VM retains actual OS input; R toggles wield and
 middle mouse rolls. The default Alt block binding remains unavailable.
@@ -74,10 +122,9 @@ consume time and finite supplies. This is one resource/time-sensitive composite,
 not proof of a calibrated latency effect. The non-food supply is deliberate:
 native non-humanoid enemies can loot consumables, and the initial apple prototype
 could disappear into the enemy's inventory before public control opened.
-NPC dialogue, merchant exchange and
-Message/Slay contract migration remain separate qualification work: success
-must join real offered responses, native participant identities and actual
-reward insertion, not just proximity or inventory deltas.
+Message/Slay contract migration remains separate qualification work: contract
+success must join real offered responses, native participant identities and
+actual reward insertion, not just proximity or inventory deltas.
 
 ### Development validation (2026-10-24)
 
@@ -123,12 +170,12 @@ export LIVEQUEST_VELOREN_RUNTIME=/absolute/path/to/new-livequest-veloren-build/r
 
 The independent output root needs space for the source/compiler cache and binary.
 The installer verifies the source against the bound native source manifest,
-applies the declared physical-input, native-protection and passive-motion patches, builds the
+applies the declared physical-input, native-protection, passive-motion and glide patches, builds the
 renderer offline using the original toolchain settings, and hashes the resulting
 executable and patches. Reusing this output root requires a verified declared
 tree; the installer can upgrade the physical-input-only or protection-disabled
-tree by applying the remaining patches. Motion-enabled fixtures explicitly
-reject runtime receipts without passive-motion support.
+tree by applying the remaining patches, including a previously motion-enabled
+tree. Motion/glide fixtures explicitly reject receipts missing the corresponding support.
 The upstream runtime is still validated by its original loader on every launch;
 the replacement renderer is separately and explicitly hashed. There is no
 fallback to the unpatched renderer.
@@ -203,6 +250,12 @@ unwanted supplies 100 m from its starting location and clears skills/buffs.
 Equipment is checked exactly against the pinned starter character, not silently
 replaced or treated as an arbitrary editable loadout. The currently admitted
 initial look is `[0, 1, 0]`; other orientations are rejected before launch.
+For `native_site`, terrain authoring is skipped and the loaded settlement name
+is additionally verified. Authored blocks, stations, loose supplies and encounter
+overlays are not currently accepted in that natural-settlement branch.
+Merchant identity is joined by native UID during setup, then bound to the
+player client's own lifecycle token; administrator and renderer entity tokens
+are not interchangeable.
 
 Optional `blocks` add Rock cuboids (`origin`/`size`), with at most 8192 total
 authored solid voxels. `stations` declare `position` and `sprite` (CraftingBench

@@ -2,6 +2,7 @@
 
 from collections.abc import Callable
 import inspect
+import json
 from pathlib import Path
 
 from agent_framework.utils.tools import Tool
@@ -27,7 +28,7 @@ def create_binding(
     )
     if task_type == "structured_tool":
         if tools is None:
-            tools = (tuple(st.SPECS) if evaluator == "expedition" else
+            tools = (st.EXPEDITION_TOOLS if evaluator == "expedition" else
                      st.COMBAT_TOOLS if fixture.get("encounters") else st.BASE_TOOLS)
         validate_tools(st.agent_tools(), tools)
     elif tools is not None:
@@ -51,8 +52,14 @@ def create_binding(
         row["role"] for row in game.fixture.get("encounters", [])
     }:
         raise ValueError("Scored encounter roles must match the fixture's designated targets")
-    if parameters.get("motion") is not None and not fixture.get("motion_evidence"):
+    if parameters.get("motion") is not None and not (
+        fixture.get("motion_evidence") or fixture.get("glide_evidence")
+    ):
         raise ValueError("Motion scoring requires private fixture motion evidence")
+    if parameters.get("glide_landing") is not None and not fixture.get("glide_evidence"):
+        raise ValueError("Glide landing scoring requires private fixture glide evidence")
+    if parameters.get("marker_arrival") is not None and "native_site" not in fixture:
+        raise ValueError("Dialogue marker arrival requires an admitted native settlement fixture")
 
     def controls() -> tuple[Controls, list[Tool[Controls]]]:
         public = game.get_agent_interface()
@@ -66,5 +73,9 @@ def create_binding(
     def verify_initial(before: Path) -> None:
         if not (before / "observation.json").is_file():
             raise RuntimeError("Missing initial Veloren observation")
+        if parameters.get("marker_arrival") is not None and json.loads(
+            (before / "observation.json").read_text()
+        )["dialogue_markers"]:
+            raise RuntimeError("Dialogue marker task must start without received directions")
 
     return GameBinding(game, controls, evaluate, verify_initial)
