@@ -21,7 +21,7 @@ task: >-
   Release controls and finish with a text answer when done.
 time_limit_seconds: 3600
 fixture:
-  world_path: ../../fixtures/lost_expedition_v2
+  world_path: ../../fixtures/lost_expedition
   instance: 1.20.4
   difficulty: normal
   player_state:

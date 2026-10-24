@@ -173,7 +173,7 @@ approaching blocked candidates and reused discovered passages on return.
 Completion alone does not prove learning, and two known conditions are not an
 unseen evaluation distribution.
 
-### Lost expedition: exploratory long-task development
+### Lost expedition
 
 [`lost_expedition`](../../config/minecraft/tasks/structured_tools/lost_expedition.yaml)
 and its [VM task](../../config/minecraft/tasks/visual_motor/lost_expedition.yaml)
@@ -201,24 +201,13 @@ MINECRAFT_EULA_ACCEPTED=true .venv/bin/python -m game.minecraft.fixtures.lost_ex
   config/minecraft/fixtures/island output/temp/lost-expedition-new-authoring
 ```
 
-The published [revision 2](../../config/minecraft/fixtures/lost_expedition_v2/)
-and [source manifest](../../config/minecraft/fixtures/lost_expedition_v2.source.json)
-include ordinary site-access steps and field-station lighting. Baseline ST ran
-32m15s, recovered two folios and developed mining equipment before a zombie
-killed it; VM failed after 11m51s. Both results have valid native measurements,
-replayed scores, decoded videos and cleanup/privacy audits. Earlier failures
-remain separate; failed duration is not a successful completion-time estimate.
-
-Native world inspection verifies genuine folios, discoverable field-note names,
-adequate sampled wood/iron/coal/diamond, chest clearance and a non-circular
-resource/access path. A prepared-state component diagnostic completed native
-Sentinel combat, six-block diamond-pickaxe obsidian access and Ledger pickup.
-A separate prepared-position VM check confirmed ordinary chest-hover clue
-readability. These diagnostics change starting position/equipment and are
-**not full-task successes**. No complete successful trajectory has been observed;
-full-budget feasibility is supported by dependency/resource analysis and
-component timings rather than demonstrated end to end. Stable difficulty and
-information-conditioned adaptation remain open calibration questions.
+The [task world](../../config/minecraft/fixtures/lost_expedition/) and
+[source manifest](../../config/minecraft/fixtures/lost_expedition.source.json)
+provide the fixed initial scene and provenance. Both Baseline modes completed
+audited, valid failures. Native resource/access inspection and prepared-state
+archive and visual-clue checks support feasibility, but are not full-task
+successes. No complete successful trajectory has been observed; successful
+duration and adaptive-planning difficulty remain uncalibrated.
 
 ### Evaluator mapping and deviations
 

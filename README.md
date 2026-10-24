@@ -46,8 +46,7 @@ short reconnaissance conditions contribute four task YAMLs but only one
 mechanism family; they do not meet the intended long-horizon L4 admission gate.
 The paired Minecraft lost-expedition tasks have Baseline and evidence-backed
 feasibility checks, with no observed full success. They are development L4
-tasks, not a calibrated difficulty tier. Unpublished Veloren reconnaissance
-prototypes are not included in these counts.
+tasks, not a calibrated difficulty tier.
 
 ## Getting started
 
