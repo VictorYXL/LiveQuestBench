@@ -26,12 +26,30 @@ Six representative tasks from the migrated island catalog remain in
 | `island.build_plank_wall_2x2` | New 2×2 oak-plank wall |
 | `island.build_plank_enclosure_5x5x2` | New 5×5 perimeter, height 2, empty interior |
 
-Each source filename is preserved (`<source task name>.yaml`). Every task has a 2,100-second
-budget and a survival start at `(0.5, 72, 0.5)`, full health/food, no experience,
+Each source filename is preserved (`<source task name>.yaml`). Log collection has a
+300-second budget; the other migrated tasks retain 2,100 seconds. They use a survival
+start at `(0.5, 72, 0.5)`, full health/food, no experience,
 and normal difficulty. Inventory tasks start empty; structure tasks receive
 exactly 64 oak planks in slot 0. ST tasks expose the existing game-provided tool
 profile's original tool set by default; the later combat additions are not
 silently granted to these migrated tasks.
+
+## Basic L1 tasks
+
+The paired L1 catalog covers log collection, nearby grounded positioning, hotbar
+selection, one-block placement, hunger recovery, chest opening, supply pickup,
+sticks from supplied planks, market-access emerald acquisition and a damaging hit.
+It reuses the resource island and existing expedition saves without editing them.
+Task YAMLs declare exact starting supplies, goals, budgets and ST allowlists.
+
+Inventory and structure goals reuse their existing evaluators. The shared
+[state evaluator](evaluators/state.py) checks native player position/motion,
+selected hotbar item, food and health, or increases in vanilla `open_chest` and
+`damage_dealt` statistics. An attempted input is not evidence of its effect.
+Those statistics identify neither a particular chest nor an enemy; the goals
+deliberately require no such attribution. Possession goals likewise do not prove
+a particular crafting recipe, transfer or trade. VM receives only native pixels
+and physical input feedback, never the private scoring evidence.
 
 ## Coupled expeditions and native evidence
 

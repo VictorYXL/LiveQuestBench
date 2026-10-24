@@ -15,7 +15,7 @@ calibration remain necessary before scientific evaluation.
 
 | Game | Current catalog per mode | Setup and task details |
 | --- | --- | --- |
-| Minecraft | 10 entries: 6 island tasks, 2 coupled expeditions, 1 short reconnaissance condition and 1 exploratory expedition | [Minecraft README](game/minecraft/README.md) |
+| Minecraft | 19 entries, including 10 basic L1 objectives and the retained production/expedition tasks | [Minecraft README](game/minecraft/README.md) |
 | Veloren | 13 entries: 8 endpoint adaptations, a movement diagnostic, 3 combat/resource goals and 1 coupled expedition | [Veloren README](game/veloren/README.md) |
 
 - **VM (`visual_motor`)**: actual game pixels and bounded keyboard/mouse control.
@@ -36,12 +36,13 @@ development candidate, not a calibrated medium tier. One targeted Hermes ST
 run succeeded. These checks do
 not establish stable difficulty or complete the proposed NPC/Boss ladder.
 Temporary qualification subsets belong under
-`output/temp/`; production experiments retain only each mode's `all` catalog.
+`output/temp/`; production experiments provide each mode's `all` catalog and
+accepted level subsets such as `structured_tools_L1.yaml` and `visual_motor_L1.yaml`.
 The current catalog includes native villager trading, crafting, resource retention, construction,
 navigation, recovery and native combat. Small diagnostics and overlapping variants are not
 independent long-horizon capabilities; a raw catalog average is not a balanced
 research leaderboard. One executable task YAML counts as one task: the catalog
-contains 46 active tasks (20 Minecraft and 26 Veloren). Redundant or nested
+contains 64 active tasks (38 Minecraft and 26 Veloren). Redundant or nested
 diagnostics were retired from the active catalogs without changing historical
 results. Minecraft's retained short reconnaissance condition contributes two
 task YAMLs; it does not meet the intended long-horizon L4 admission gate.
@@ -108,15 +109,18 @@ For VM, choose a model that accepts images; ST still requires tool calling.
 
 ## Running an experiment
 
-The four supplied experiments are:
+The full-catalog experiments are:
 
 - [Minecraft VM](config/minecraft/experiments/visual_motor_all.yaml)
 - [Minecraft ST](config/minecraft/experiments/structured_tools_all.yaml)
 - [Veloren VM](config/veloren/experiments/visual_motor_all.yaml)
 - [Veloren ST](config/veloren/experiments/structured_tools_all.yaml)
 
-Each lists all tasks for its game/mode with **10 repetitions** and one baseline
-configuration. They are full development sweeps, not quick smoke tests.
+Each lists all tasks for its game/mode with **10 repetitions**.
+Minecraft's full catalogs and paired `L1` subsets list all six supported Agents
+with GPT-6-Astra; Veloren's catalogs currently retain the Baseline configuration.
+These are development sweep configurations, not claims that the full all-Agent
+campaign has run. Level acceptance uses separate one-repetition Baseline runs.
 For a quick check, make a separate experiment with fewer representative tasks,
 `repetitions: 1` and appropriate task budgets.
 

@@ -1,0 +1,38 @@
+id: take_supplies
+game: minecraft
+task_type: structured_tool
+task: Obtain and retain at least four bread. You start without bread near the field-station
+  chest at [-52,72,48], recessed in the floor ahead. It contains bread and paper notes.
+  Any legal acquisition counts; success checks inventory, not a particular transfer
+  history. Answer when done.
+time_limit_seconds: 180
+fixture:
+  world_path: ../../fixtures/lost_expedition
+  instance: 1.20.4
+  difficulty: easy
+  player_state:
+    position:
+    - -51.5
+    - 73
+    - 46.2
+    dimension: minecraft:overworld
+    yaw: 0
+    pitch: 36
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory: []
+evaluator:
+  name: inventory
+  parameters:
+    requirements:
+    - item: bread
+      min_count: 4
+      min_delta: 4
+tools:
+- LookAtPositionTool
+- InspectContainerTool
+- TakeContainerItemTool
+- StopTool

@@ -1,0 +1,52 @@
+id: place_single_block
+game: minecraft
+task_type: structured_tool
+task: You start at [0.5,72,0.5], facing north (-Z), with east (+X) to your right.
+  Place one oak plank at [2,72,0], above the ground block two cells east of the one under your feet.
+  The target ground block is [2,71,0]. Leave the
+  block there and answer when done.
+time_limit_seconds: 150
+fixture:
+  world_path: ../../fixtures/island
+  instance: 1.20.4
+  difficulty: easy
+  player_state:
+    position:
+    - 0.5
+    - 72
+    - 0.5
+    dimension: minecraft:overworld
+    yaw: 180
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+    - slot: 0
+      item: oak_planks
+      count: 4
+evaluator:
+  name: structure
+  parameters:
+    config:
+      target:
+        structure:
+        - - - oak_planks
+      region:
+        min:
+        - 2
+        - 72
+        - 0
+        max:
+        - 2
+        - 72
+        - 0
+tools:
+- MoveTool
+- LookAtPositionTool
+- SelectTool
+- PlaceTool
+- DigTool
+- StopTool

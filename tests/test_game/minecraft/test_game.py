@@ -88,6 +88,45 @@ def test_minecraft_lifecycle_requires_explicit_consent(tmp_path: Path, monkeypat
     asyncio.run(check())
 
 
+def test_native_state_distinguishes_selection_effects_and_history(tmp_path):
+    from game.minecraft.evaluators.state import evaluate_state, validate_state
+
+    player = UUID(int=1)
+    before, after = tmp_path / "before", tmp_path / "after"
+    for world in (before, after):
+        world.mkdir()
+        PlayerState(position=(0.5, 72, 0.5), food=10,
+                    inventory=[{"slot": 1, "item": "wooden_pickaxe", "count": 1}]).write(world, player)
+    assert not evaluate_state(before, after, player, held_item="wooden_pickaxe")["success"]
+    assert not evaluate_state(before, after, player, statistics={"open_chest": 1})["success"]
+    path = after / "playerdata" / f"{player}.dat"
+    native = nbtlib.load(path)
+    native["SelectedItemSlot"] = nbtlib.Int(1)
+    native["OnGround"] = nbtlib.Byte(1)
+    native.save(path)
+    assert evaluate_state(before, after, player, held_item="wooden_pickaxe")["success"]
+    assert not evaluate_state(before, after, player, min_food=15)["success"]
+    position = {"target": [0.5, 72, 0.5], "horizontal_tolerance": 0.5,
+                "vertical_tolerance": 0.5, "max_speed": 0.1}
+    assert evaluate_state(before, after, player, position=position)["success"]
+    native["OnGround"] = nbtlib.Byte(0)
+    native.save(path)
+    assert not evaluate_state(before, after, player, position=position)["success"]
+    (after / "stats").mkdir()
+    stats = after / "stats" / f"{player}.json"
+    stats.write_text(json.dumps({"DataVersion": 3700, "stats": {"minecraft:custom": {
+        "minecraft:open_chest": 1, "minecraft:damage_dealt": 10,
+    }}}))
+    assert evaluate_state(before, after, player, statistics={"open_chest": 1, "damage_dealt": 1})["success"]
+    assert not evaluate_state(after, after, player, statistics={"open_chest": 1})["success"]
+    with pytest.raises(ValueError, match="backwards"):
+        evaluate_state(after, before, player, statistics={"open_chest": 1})
+    for params in ({}, {"statistics": {"jump": 0}}, {"min_food": True},
+                   {"held_item": "invalid name"}, {"position": position | {"max_speed": float("nan")}}):
+        with pytest.raises(ValueError):
+            validate_state(**params)
+
+
 @pytest.mark.game
 @pytest.mark.skipif(os.environ.get("LIVEQUEST_MINECRAFT_TEST") != "1", reason="Opt-in installed-game check")
 def test_installation_world_and_recording(

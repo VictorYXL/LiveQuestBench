@@ -1,0 +1,63 @@
+id: minecraft_structured_tools_L1
+game: minecraft
+tasks:
+- path: ../tasks/structured_tools/collect_logs.yaml
+- path: ../tasks/structured_tools/reach_nearby_point.yaml
+- path: ../tasks/structured_tools/select_pickaxe.yaml
+- path: ../tasks/structured_tools/place_single_block.yaml
+- path: ../tasks/structured_tools/restore_hunger.yaml
+- path: ../tasks/structured_tools/open_chest.yaml
+- path: ../tasks/structured_tools/take_supplies.yaml
+- path: ../tasks/structured_tools/obtain_sticks.yaml
+- path: ../tasks/structured_tools/obtain_emerald.yaml
+- path: ../tasks/structured_tools/deal_damage.yaml
+repetitions: 10
+agents:
+- id: tool_calling_astra
+  name: tool_calling
+  model:
+    provider: github_copilot
+    name: gpt-6-astra
+    reasoning_effort: low
+    max_output_tokens: 4096
+    max_attempts: 3
+- id: deepseek_harness_astra
+  name: deepseek_harness
+  model:
+    provider: github_copilot
+    name: gpt-6-astra
+    reasoning_effort: low
+    max_output_tokens: 4096
+    max_attempts: 3
+- id: hermes_agent_astra
+  name: hermes_agent
+  model:
+    provider: github_copilot
+    name: gpt-6-astra
+    reasoning_effort: low
+    max_output_tokens: 4096
+    max_attempts: 3
+- id: orak_astra
+  name: orak
+  model:
+    provider: github_copilot
+    name: gpt-6-astra
+    reasoning_effort: low
+    max_output_tokens: 4096
+    max_attempts: 3
+- id: smolagents_astra
+  name: smolagents
+  model:
+    provider: github_copilot
+    name: gpt-6-astra
+    reasoning_effort: low
+    max_output_tokens: 4096
+    max_attempts: 3
+- id: gamingagent_astra
+  name: gamingagent
+  model:
+    provider: github_copilot
+    name: gpt-6-astra
+    reasoning_effort: low
+    max_output_tokens: 4096
+    max_attempts: 3

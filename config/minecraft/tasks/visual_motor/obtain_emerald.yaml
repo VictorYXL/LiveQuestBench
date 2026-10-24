@@ -1,0 +1,36 @@
+id: obtain_emerald
+game: minecraft
+task_type: visual_motor
+task: Obtain and retain one emerald. You have 15 coal and no emeralds. The nearby
+  weaponsmith at [8.5,72,4.5] buys 15 coal for one emerald through the ordinary trade
+  screen. Any legal acquisition counts; no particular transaction history is required.
+  Answer when done.
+time_limit_seconds: 180
+fixture:
+  world_path: ../../fixtures/trade_outposts_courtyard
+  instance: 1.20.4
+  difficulty: easy
+  player_state:
+    position:
+    - 8.5
+    - 72
+    - 2.5
+    dimension: minecraft:overworld
+    yaw: 0
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+    - slot: 0
+      item: coal
+      count: 15
+evaluator:
+  name: inventory
+  parameters:
+    requirements:
+    - item: emerald
+      min_count: 1
+      min_delta: 1

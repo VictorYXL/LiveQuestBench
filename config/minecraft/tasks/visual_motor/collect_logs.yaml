@@ -3,7 +3,7 @@ game: minecraft
 task_type: visual_motor
 task: Collect 3 oak logs (oak_log). Keep the requested items in your inventory. Finish with a text answer
   when you believe the task is complete.
-time_limit_seconds: 2100
+time_limit_seconds: 300
 fixture:
   world_path: ../../fixtures/island
   instance: 1.20.4

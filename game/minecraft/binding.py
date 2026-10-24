@@ -8,6 +8,7 @@ from agent_framework.utils.tools import Tool
 from game.bindings import Controls, GameBinding, bind_controls, validate_tools
 from game.minecraft.evaluators.inventory import evaluate_inventory, inventory, validate_requirements
 from game.minecraft.evaluators.structure import evaluate_structure, validate_config
+from game.minecraft.evaluators.state import evaluate_state, validate_state
 from game.minecraft.evaluators.expedition import evaluate_expedition, registry, verify_initial as verify_expedition
 from game.minecraft.game import MinecraftGame
 from game.minecraft.init_player_state import PlayerState
@@ -56,6 +57,10 @@ def create_binding(
         inspect.signature(evaluate_inventory).bind(Path(), Path(), None, **parameters)
         validate_requirements(parameters["requirements"])
         score: Callable[..., dict] = evaluate_inventory
+    elif evaluator == "state":
+        inspect.signature(evaluate_state).bind(Path(), Path(), None, **parameters)
+        validate_state(**parameters)
+        score = evaluate_state
     elif evaluator == "structure":
         inspect.signature(evaluate_structure).bind(Path(), Path(), **parameters)
         validate_config(parameters["config"])
