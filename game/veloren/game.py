@@ -158,7 +158,9 @@ class VelorenGame(BaseGame[MotorInterface | StructuredInterface]):
         native, converted = validate_tool(name, arguments)
         async with self._io:
             session = self._check_running()
-            self._active_tool = asyncio.create_task(session.request("action", action_type=native, **converted))
+            self._active_tool = asyncio.create_task(
+                session.request("action", timeout=None, action_type=native, **converted),
+            )
             try:
                 result = await self._active_tool
                 return {key: result[key] for key in (

@@ -64,7 +64,7 @@ class VelorenSession:
         if self.process is None or self.process.returncode is not None or self.reader is None or self.reader.done():
             raise RuntimeError("Veloren runtime is not running; inspect worker.log")
 
-    async def request(self, method: str, *, timeout: float = 60, **arguments) -> dict:
+    async def request(self, method: str, *, timeout: float | None = 60, **arguments) -> dict:
         self.check_ready()
         assert self.process is not None and self.process.stdin is not None
         identifier = uuid4().hex

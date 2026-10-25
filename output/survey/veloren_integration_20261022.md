@@ -3,6 +3,29 @@
 Date: 2026-10-22. This is an engineering integration record, not a benchmark
 leaderboard, formal task calibration or reproduction of VelorenBench results.
 
+## Runtime correction, 2026-10-25
+
+The first larger Azure batch exposed setup synchronization and entity-selection
+defects that the original acceptance runs did not exercise. Fixture initialization
+now waits up to 30 seconds for the declared player state after native setup
+readiness, without changing health tolerances, repairing state during the wait or
+retrying mutations. Transport failures still propagate; timeout diagnostics report
+the last observed mismatch.
+
+Encounter initialization now requires a unique newly observed entity with the
+declared exact body before checking its private native Enemy binding. The old
+upstream helper could select a late-arriving administrator as the new enemy.
+Existing scene, body, health, inventory, equipment and scoring requirements remain
+unchanged.
+
+Public native steps retain their client-update bounds, but no longer have a
+second fixed 60-second wall-clock transport timeout at either RPC layer. Waiting
+consumes the existing Episode budget; its cutoff cancels pending tools and
+releases native input. Read, setup and cleanup operations retain their transport
+timeouts. The world is not paused and task budgets are not extended. This is a
+versioned adapter correction, not evidence of equivalent timing across machines.
+Affected old and corrected runs must retain separate source provenance.
+
 ## Scope and reuse
 
 - Added `game/veloren` with the existing `BaseGame` lifecycle, mode-local public

@@ -22,6 +22,14 @@ from game.veloren.runtime.server import fixture_server
 
 
 class LocalRenderer(RendererBridge):
+    async def envelope(self, request: dict, *, origin: str, timeout: float | None = 60) -> dict:
+        # Public steps retain native tick bounds and are cancelled at the Episode deadline.
+        # Client updates are not guaranteed to run at 60 Hz.
+        return await super().envelope(
+            request, origin=origin,
+            timeout=None if origin == "agent" and request["cmd"] == "step" else timeout,
+        )
+
     async def start(self) -> None:
         self.ready = asyncio.get_running_loop().create_future()
         self.renderer_ready = asyncio.get_running_loop().create_future()

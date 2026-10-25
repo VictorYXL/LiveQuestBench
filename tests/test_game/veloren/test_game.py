@@ -19,6 +19,39 @@ from game.veloren.game import VelorenGame
 from game.veloren.structured_tools.interface import StructuredInterface, agent_tools
 
 
+def test_native_tool_wait_uses_episode_cutoff_and_releases_lock(tmp_path, veloren_fixture):
+    from types import SimpleNamespace
+
+    game = VelorenGame(output_dir=tmp_path / "game", fixture=veloren_fixture, track="structured_tool")
+    game.phase = "running"
+    calls = []
+
+    async def scenario():
+        submitted = asyncio.Event()
+        cancelled = asyncio.Event()
+
+        async def request(method, *, timeout=60, **arguments):
+            calls.append((method, timeout, arguments))
+            submitted.set()
+            try:
+                await asyncio.Future()
+            finally:
+                cancelled.set()
+
+        game._session = SimpleNamespace(check_ready=lambda: None, request=request)
+        action = asyncio.create_task(game._call_tool("JumpTool", {}))
+        await submitted.wait()
+        await game._cancel_tool()
+        with pytest.raises(asyncio.CancelledError):
+            await action
+        assert cancelled.is_set()
+        assert not game._io.locked()
+        assert game._active_tool is None
+
+    asyncio.run(scenario())
+    assert calls == [("action", None, {"action_type": "jump"})]
+
+
 def test_native_rpc_keeps_payload_operation_separate_from_transport_method(tmp_path, monkeypatch):
     from types import SimpleNamespace
     from game.veloren.runtime.session import VelorenSession

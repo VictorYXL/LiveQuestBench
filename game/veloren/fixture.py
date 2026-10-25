@@ -10,6 +10,10 @@ import re
 MAX_VOXELS = 8192
 
 
+class FixtureMismatch(RuntimeError):
+    """Native readback has not established the declared player state."""
+
+
 def cuboid(value: object, label: str) -> tuple[list, list]:
     region = fields(value, {"origin", "size"}, label)
     origin = vector(region["origin"], label + ".origin", integer=True)
@@ -276,30 +280,90 @@ def verify_player(fixture: dict, observation: dict) -> None:
         observation["current_site"]["location_name"] != fixture["native_site"]
         or observation["current_site"]["loaded_chunk"] is not True
     ):
-        raise RuntimeError("Initial native settlement differs from the fixture")
+        raise FixtureMismatch("Initial native settlement differs from the fixture")
     if math.dist(observation["position"], player["position"]) > .2:
-        raise RuntimeError("Initial player position differs from the fixture")
+        raise FixtureMismatch(f"Initial player position {observation['position']} differs from {player['position']}")
     if math.dist(observation["look"], player["look"]) > .01:
-        raise RuntimeError("Initial player look differs from the fixture")
+        raise FixtureMismatch(f"Initial player look {observation['look']} differs from {player['look']}")
     if (abs(observation["survival"]["health"]["current"] - player["health"]) > .01
             or observation["survival"]["buffs"] or observation["on_ground"] is not True
             or math.sqrt(sum(v * v for v in observation["velocity"])) >= .1):
-        raise RuntimeError("Initial health, buffs or settled state differs from the fixture")
+        raise FixtureMismatch(
+            f"Initial health {observation['survival']['health']['current']} (expected {player['health']}), "
+            f"buffs {observation['survival']['buffs']}, on_ground {observation['on_ground']}, "
+            f"velocity {observation['velocity']} differ from the fixture"
+        )
     equipped = {slot: item_id(item) for slot, item in observation["inventory"]["equipment"].items() if item is not None}
     if inventory_counts(observation) != player["inventory"] or equipped != player["equipment"]:
-        raise RuntimeError("Initial inventory or equipment differs from the fixture")
+        raise FixtureMismatch("Initial inventory or equipment differs from the fixture")
     if fixture.get("recipes"):
         from game.veloren.evaluators.endpoints import known_recipes
         known = known_recipes(observation, required=list(fixture["recipes"]))
         if any((recipe in known) != expected for recipe, expected in fixture["recipes"].items()):
-            raise RuntimeError("Initial recipe knowledge differs from the fixture")
+            raise FixtureMismatch("Initial recipe knowledge differs from the fixture")
     if "sword_skill_points" in fixture:
         groups = [row for row in observation["skill_tree"]["groups"] if row["group"] == {"Weapon": "Sword"}]
         if (len(groups) != 1 or groups[0]["accessible"] is not True
                 or groups[0]["available_points"] != fixture["sword_skill_points"]
                 or groups[0]["earned_points"] != fixture["sword_skill_points"]
                 or any(row["learned_level"] not in (None, 0) for row in groups[0]["skills"])):
-            raise RuntimeError("Initial Sword points, accessibility or unlearned skills differ from the fixture")
+            raise FixtureMismatch("Initial Sword points, accessibility or unlearned skills differ from the fixture")
+
+
+async def wait_player(actor, fixture: dict, observation: dict, *, timeout: float = 30) -> dict:
+    """Wait for setup effects to reach the client without mutating or relaxing the fixture."""
+    mismatch = "player readback unavailable"
+    deadline = asyncio.timeout(timeout)
+    try:
+        async with deadline:
+            while True:
+                observation = await recipe_observation(actor, fixture, observation)
+                try:
+                    verify_player(fixture, observation)
+                except FixtureMismatch as error:
+                    mismatch = str(error)
+                else:
+                    return observation
+                await asyncio.sleep(.1)
+                observation = await actor.request("observe", origin="private-validation")
+    except TimeoutError as error:
+        if not deadline.expired():
+            raise
+        raise FixtureMismatch(f"Player setup did not synchronize within {timeout}s: {mismatch}") from error
+
+
+async def initialize_encounter(admin, actor, spec: dict, position: list) -> dict:
+    from scripts.rpg_benchmark import setup
+    from scripts.rpg_benchmark.combat_support import native_binding
+
+    expected = (
+        {"BipedSmall": {"species": "GreenLegoom", "body_type": "Male"}}
+        if spec["asset"].endswith("male_green_legoom")
+        else {"QuadrupedMedium": {"species": "Wolf", "body_type": "Male"}}
+    )
+    await setup.goto(admin, admin, position)
+    existing = {row["uid"] for row in (await actor.request("observe"))["nearby_entities"]}
+    receipt = await setup.command(admin, "make_npc", spec["asset"], 1)
+
+    def candidates(row):
+        # Teleported administrators can reach this client's visibility window after the spawn command.
+        return [entry for entry in row["nearby_entities"]
+                if entry["uid"] not in existing and entry.get("body_identity") == expected
+                and entry.get("health")]
+
+    after = await setup.wait_observation(
+        actor, lambda row: len(candidates(row)) == 1, "unique new exact-body native encounter UID",
+    )
+    target = candidates(after)[0]
+    binding = await native_binding(actor, target["uid"])
+    if (binding["body"] != expected or binding["alignment"] != "Enemy"
+            or binding["dead"] or binding["health"] <= 0
+            or target["health"]["dead"] or target["health"]["current"] <= 0):
+        raise RuntimeError("Encounter target lacks the declared living native body and Enemy alignment")
+    return {"role": spec["role"], "asset": spec["asset"], "public": target, "binding": binding,
+            "spawn_receipt": receipt,
+            "stock_loadout": "Unchanged native asset loadout; exact-body benchmark derivative.",
+            "native_loadout_observed": True}
 
 
 def verify_aged_supplies(initialized: dict, observation: dict) -> None:
@@ -419,8 +483,7 @@ async def initialize_fixture(admin, actor, fixture: dict) -> dict:
         await setup.goto(admin, actor, fixture["player_state"]["position"])
     await setup.command(admin, "time", fixture["time_of_day"])
     await setup.command(admin, "sudo", actor.name, "health", fixture["player_state"]["health"])
-    opening = await recipe_observation(actor, fixture, await setup.ready_observation(actor))
-    verify_player(fixture, opening)
+    opening = await wait_player(actor, fixture, await setup.ready_observation(actor))
     if any(row.get("pre_age_seconds") for row in fixture.get("supplies", [])):
         current = {row["uid"]: row for row in opening["nearby_entities"]}
         for supply in supplies:
@@ -438,23 +501,14 @@ async def initialize_fixture(admin, actor, fixture: dict) -> dict:
     encounters = []
     source = None
     if fixture.get("encounters") or contract is not None:
-        from scripts.rpg_benchmark.combat_support import native_binding, spawn
+        from scripts.rpg_benchmark.combat_support import native_binding
         if contract is not None:
             encounters.append({
                 "role": "contract_target", "asset": "existing native RTSim Ogre",
                 "binding": contract["target"]["binding"], "public": contract["target"]["public"],
             })
         for enemy in fixture.get("encounters", []):
-            target = await spawn(admin, actor, {
-                **enemy, "stock_loadout": "Unchanged native asset loadout; exact-body benchmark derivative.",
-            }, enemy["position"])
-            expected = (
-                {"BipedSmall": {"species": "GreenLegoom", "body_type": "Male"}}
-                if enemy["asset"].endswith("male_green_legoom")
-                else {"QuadrupedMedium": {"species": "Wolf", "body_type": "Male"}}
-            )
-            if target["public"].get("body_identity") != expected or target["binding"]["body"] != expected:
-                raise RuntimeError("Encounter target body differs from the exact declared native asset")
+            target = await initialize_encounter(admin, actor, enemy, enemy["position"])
             encounters.append(target)
         opening = await actor.request("observe", origin="private-validation")
         verify_player(fixture, opening)
