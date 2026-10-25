@@ -180,11 +180,16 @@ class Session:
             if self.running:
                 raise RuntimeError("Snapshot requires a closed public gate")
             observation = await recipe_observation(self.actor, self.fixture)
-            from scripts.rpg_benchmark import native_outcomes
             from game.veloren.evaluators.deaths import death_snapshot
-            rows = native_outcomes.read(self.output / "private-native-oracle.ndjson", self.output.name)
+            from game.veloren.runtime.journal import snapshot_rows
+            registry = getattr(self, "death_registry", None)
+            rows = snapshot_rows(
+                self.output / "private-native-oracle.ndjson", self.output.name,
+                after_sequence=registry["opening_sequence"] if registry is not None else None,
+                encounters=bool(self.initialized["encounters"]),
+            )
             observation["private_death_evidence"] = death_snapshot(
-                rows, observation["self_identity"], getattr(self, "death_registry", None),
+                rows, observation["self_identity"], registry,
             )
             self.death_registry = observation["private_death_evidence"]["registry"]
             if not hasattr(self, "supplies_opening"):
