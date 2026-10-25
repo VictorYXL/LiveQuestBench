@@ -1,0 +1,140 @@
+id: market_hunt_return
+game: veloren
+task_type: visual_motor
+task: Prepare through the native merchant market, defeat the designated east Green Legoom and return with
+  reserves. Wear rawhide chest armor before your first damaging strike on the enemy. Finish wearing that
+  armor, holding at least one minor potion and ten coins, alive without having died at [18708.5,10806.5,501],
+  grounded within 2 metres horizontally and 0.5 vertically at speed <=0.1 m/s. You start with three minor
+  potions, a starter sword and ordinary worker clothing, but no rawhide armor or coins. An existing native
+  merchant has been placed initially near [18710.5,10809.5,501] in this authored courtyard. It uses its
+  unchanged native AI and real prices, and has rawhide chest armor and coins available. It can walk
+  away from its setup point; locate the named merchant rather than relying on stale coordinates. Trade some of
+  your potions while budgeting for healing and the final reserve. T opens nearby native trade; acceptance
+  advances through the normal review phases. Inspect the actual completed transfer and equip the armor
+  before fighting. The enemy starts near [18722.5,10824.5,501]. A three-metre divider at y=10815 ends
+  at x=18718; the northern divider at x=18714 spans y=10818..10827. The courtyard has ordinary six-metre
+  perimeter walls. The enemy must actually die after you damage it. The scorer checks native pre-strike
+  equipment, death, survival and final holdings/arrival, not exclusive provenance of each acquired item.
+  The world continues while you think. Release controls before your final answer.
+time_limit_seconds: 1200
+fixture:
+  world_path: ../../fixtures/veloren_0_18_0_0.bin
+  world_seed: 130626853
+  time_of_day: '12:00'
+  day_length: 30
+  calendar: none
+  platform:
+    origin:
+    - 18700
+    - 10800
+    - 500
+    size:
+    - 28
+    - 28
+    block: Rock
+  blocks:
+  - origin:
+    - 18700
+    - 10815
+    - 501
+    size:
+    - 18
+    - 1
+    - 3
+  - origin:
+    - 18714
+    - 10818
+    - 501
+    size:
+    - 1
+    - 10
+    - 3
+  - origin:
+    - 18700
+    - 10800
+    - 501
+    size:
+    - 28
+    - 1
+    - 6
+  - origin:
+    - 18700
+    - 10827
+    - 501
+    size:
+    - 28
+    - 1
+    - 6
+  - origin:
+    - 18700
+    - 10801
+    - 501
+    size:
+    - 1
+    - 26
+    - 6
+  - origin:
+    - 18727
+    - 10801
+    - 501
+    size:
+    - 1
+    - 26
+    - 6
+  player_state:
+    position:
+    - 18708.5
+    - 10806.5
+    - 501
+    look:
+    - 0
+    - 1
+    - 0
+    health: 100
+    inventory:
+      common.items.consumable.potion_minor: 3
+    equipment:
+      active_mainhand: common.items.weapons.sword.starter
+      chest: common.items.armor.misc.chest.worker_purple_brown
+      feet: common.items.armor.misc.foot.sandals
+      glider: common.items.glider.basic_white
+      lantern: common.items.lantern.black_0
+      legs: common.items.armor.misc.pants.worker_brown
+  encounters:
+  - role: east_legoom
+    asset: common.entity.benchmark.male_green_legoom
+    position:
+    - 18722.5
+    - 10824.5
+    - 501
+  merchant:
+    position:
+    - 18710.5
+    - 10809.5
+    - 501
+    stock_item: common.items.armor.hide.rawhide.chest
+    stock_amount: 1
+    payment_item: common.items.consumable.potion_minor
+    payment_reserve: 1
+    coin_reserve: 10
+evaluator:
+  name: expedition
+  parameters:
+    roles:
+    - east_legoom
+    chest_item: common.items.armor.hide.rawhide.chest
+    equipment:
+      chest: common.items.armor.hide.rawhide.chest
+    inventory:
+    - item: common.items.consumable.potion_minor
+      min_count: 1
+    - item: common.items.utility.coins
+      min_count: 10
+    position:
+      target:
+      - 18708.5
+      - 10806.5
+      - 501
+      horizontal_tolerance: 2
+      vertical_tolerance: 0.5
+      max_speed: 0.1

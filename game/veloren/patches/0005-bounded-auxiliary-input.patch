@@ -1,0 +1,33 @@
+--- a/client/src/agent_protocol/mod.rs
++++ b/client/src/agent_protocol/mod.rs
+@@ -4080,8 +4080,28 @@
+                 target: state.look_dir,
+             }
+         },
+-        "attack" | "attack_primary" | "attack_secondary" => {
+-            let input = if action_type == "attack_secondary" {
++        "attack" | "attack_primary" | "attack_secondary" | "attack_auxiliary" => {
++            let input = if action_type == "attack_auxiliary" {
++                let Some(slot) = action.get("slot").and_then(Value::as_u64)
++                    .and_then(|slot| usize::try_from(slot).ok())
++                else {
++                    error_response(state, request.id, "invalid_action", "auxiliary slot must be an index");
++                    return;
++                };
++                let abilities = auxiliary_ability_snapshot(client);
++                let selected = abilities["active_set"].as_array().and_then(|slots| slots.get(slot));
++                if action.contains_key("target_uid") {
++                    error_response(state, request.id, "invalid_action", "auxiliary input does not accept target tracking");
++                    return;
++                }
++                if selected.is_none_or(|ability| ability == &json!("Empty")
++                    || !abilities["available"].as_array().is_some_and(|available| available.contains(ability)))
++                {
++                    error_response(state, request.id, "auxiliary_ineligible", "auxiliary slot is empty or unavailable");
++                    return;
++                }
++                InputKind::Ability(slot)
++            } else if action_type == "attack_secondary" {
+                 InputKind::Secondary
+             } else {
+                 InputKind::Primary

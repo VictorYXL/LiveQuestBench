@@ -1,0 +1,141 @@
+id: slay_contract
+game: veloren
+task_type: structured_tool
+task: 'Accept one real native Slay contract from the guard initially near [18710.5,10809.5,501], defeat
+  its designated Ogre after acceptance, return to the giver and receive the actual 1000-coin reward. You
+  must damage the target yourself before its death and must not die. Finish alive, grounded within 2 metres
+  horizontally and 0.5 vertically of [18708.5,10806.5,501], at speed <=0.1 m/s. This is a real existing
+  Spausalm guard and a real existing RTSim Monster, initially placed in an authored courtyard. The giver
+  receives 1000 native coins during setup to fund the ordinary deposit. No quest is preaccepted. Native
+  offers are random: decline unrelated jobs and ask again if necessary. E opens nearby dialogue; read
+  the actual questions and reward statements. A kill alone, a vanished quest or an inventory delta without
+  native delivery evidence is not enough. The normal-health Ogre starts near [18722.5,10824.5,501] and
+  retains its native loadout and AI. You have a starter sword, ordinary worker clothing and eight minor
+  potions. A five-metre divider at y=10815 ends at x=18718; the three-metre northern divider at x=18714
+  spans y=10818..10827. The courtyard has ordinary six-metre perimeter walls. Both NPCs retain their native
+  movement and combat behavior; follow the actual giver if it moves. The world continues while you think.
+  Release controls before your final answer.'
+time_limit_seconds: 1800
+fixture:
+  world_path: ../../fixtures/veloren_0_18_0_0.bin
+  world_seed: 130626853
+  time_of_day: '12:00'
+  day_length: 30
+  calendar: none
+  platform:
+    origin:
+    - 18700
+    - 10800
+    - 500
+    size:
+    - 28
+    - 28
+    block: Rock
+  blocks:
+  - origin:
+    - 18700
+    - 10815
+    - 501
+    size:
+    - 18
+    - 1
+    - 5
+  - origin:
+    - 18714
+    - 10818
+    - 501
+    size:
+    - 1
+    - 10
+    - 3
+  - origin:
+    - 18700
+    - 10800
+    - 501
+    size:
+    - 28
+    - 1
+    - 6
+  - origin:
+    - 18700
+    - 10827
+    - 501
+    size:
+    - 28
+    - 1
+    - 6
+  - origin:
+    - 18700
+    - 10801
+    - 501
+    size:
+    - 1
+    - 26
+    - 6
+  - origin:
+    - 18727
+    - 10801
+    - 501
+    size:
+    - 1
+    - 26
+    - 6
+  player_state:
+    position:
+    - 18708.5
+    - 10806.5
+    - 501
+    look:
+    - 0
+    - 1
+    - 0
+    health: 100
+    inventory:
+      common.items.consumable.potion_minor: 8
+    equipment:
+      active_mainhand: common.items.weapons.sword.starter
+      chest: common.items.armor.misc.chest.worker_purple_brown
+      feet: common.items.armor.misc.foot.sandals
+      glider: common.items.glider.basic_white
+      lantern: common.items.lantern.black_0
+      legs: common.items.armor.misc.pants.worker_brown
+  contract:
+    source_site: Spausalm
+    giver_position:
+    - 18710.5
+    - 10809.5
+    - 501
+    target_position:
+    - 18722.5
+    - 10824.5
+    - 501
+evaluator:
+  name: contract
+  parameters:
+    min_reward: 1000
+    position:
+      target:
+      - 18708.5
+      - 10806.5
+      - 501
+      horizontal_tolerance: 2
+      vertical_tolerance: 0.5
+      max_speed: 0.1
+tools:
+- MoveTool
+- TurnTool
+- JumpTool
+- PickupTool
+- UseItemTool
+- CraftTool
+- EquipTool
+- LookTool
+- AttackTool
+- WieldTool
+- BlockTool
+- RollTool
+- StopTool
+- StrikeTool
+- TalkTool
+- DialogueResponseTool
+- DialogueAckTool

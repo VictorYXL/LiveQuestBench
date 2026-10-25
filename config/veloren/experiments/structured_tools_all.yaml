@@ -25,6 +25,12 @@ tasks:
 - path: ../tasks/structured_tools/glide_and_land.yaml
 - path: ../tasks/structured_tools/workshop_directions.yaml
 - path: ../tasks/structured_tools/merchant_exchange.yaml
+- path: ../tasks/structured_tools/market_hunt_return.yaml
+- path: ../tasks/structured_tools/slay_contract.yaml
+- path: ../tasks/structured_tools/leather_outfit.yaml
+- path: ../tasks/structured_tools/expiring_supply_return.yaml
+- path: ../tasks/structured_tools/skill_hunt_return.yaml
+- path: ../tasks/structured_tools/companion_hunt_return.yaml
 repetitions: 10
 agents:
 - id: tool_calling_astra

@@ -1,0 +1,127 @@
+id: skill_hunt_return
+game: veloren
+task_type: visual_motor
+task: Allocate your two unspent native Sword points, learn Defensive Riposte, configure it in the first
+  auxiliary hotbar slot, defeat the designated east Green Legoom, and return alive without dying to [18708.5,10806.5,501],
+  grounded within 2 metres horizontally and 0.5 vertically at speed <=0.1 m/s. The Sword group is lawfully
+  unlocked but no Sword skill is prelearned. Plan prerequisites before spending your points. The normal
+  P diary provides skills and ability configuration; the first auxiliary slot uses key 1. In ST, this
+  is zero-based slot 0 and main-weapon ability index 10. You have a starter sword and three minor potions.
+  The enemy starts near [18722.5,10824.5,501] with ordinary health, loadout and AI. A three-metre divider
+  at y=10815 ends at x=18718; the northern divider at x=18714 spans y=10818..10827. The courtyard has
+  ordinary two-metre perimeter walls. The enemy must actually die after you damage it. Finish with your
+  starter sword in the main hand and Defensive Riposte learned and configured; no specific ability hit
+  or last blow is required. The world continues
+  while you think. Release controls before your final answer.
+time_limit_seconds: 720
+fixture:
+  world_path: ../../fixtures/veloren_0_18_0_0.bin
+  world_seed: 130626853
+  time_of_day: '12:00'
+  day_length: 30
+  calendar: none
+  platform:
+    origin:
+    - 18700
+    - 10800
+    - 500
+    size:
+    - 28
+    - 28
+    block: Rock
+  blocks:
+  - origin:
+    - 18700
+    - 10815
+    - 501
+    size:
+    - 18
+    - 1
+    - 3
+  - origin:
+    - 18714
+    - 10818
+    - 501
+    size:
+    - 1
+    - 10
+    - 3
+  - origin:
+    - 18700
+    - 10800
+    - 501
+    size:
+    - 28
+    - 1
+    - 2
+  - origin:
+    - 18700
+    - 10827
+    - 501
+    size:
+    - 28
+    - 1
+    - 2
+  - origin:
+    - 18700
+    - 10801
+    - 501
+    size:
+    - 1
+    - 26
+    - 2
+  - origin:
+    - 18727
+    - 10801
+    - 501
+    size:
+    - 1
+    - 26
+    - 2
+  player_state:
+    position:
+    - 18708.5
+    - 10806.5
+    - 501
+    look:
+    - 0
+    - 1
+    - 0
+    health: 100
+    inventory:
+      common.items.consumable.potion_minor: 3
+    equipment:
+      active_mainhand: common.items.weapons.sword.starter
+      chest: common.items.armor.misc.chest.worker_purple_brown
+      feet: common.items.armor.misc.foot.sandals
+      glider: common.items.glider.basic_white
+      lantern: common.items.lantern.black_0
+      legs: common.items.armor.misc.pants.worker_brown
+  encounters:
+  - role: east_legoom
+    asset: common.entity.benchmark.male_green_legoom
+    position:
+    - 18722.5
+    - 10824.5
+    - 501
+  sword_skill_points: 2
+evaluator:
+  name: encounter
+  parameters:
+    roles:
+    - east_legoom
+    sword_skills:
+    - DefensiveRiposte
+    auxiliary_ability:
+      slot: 0
+      mainhand_index: 10
+    equipment:
+      active_mainhand: common.items.weapons.sword.starter
+    position:
+      target:
+      - 18708.5
+      - 10806.5
+      - 501
+      horizontal_tolerance: 2
+      vertical_tolerance: 0.5
+      max_speed: 0.1

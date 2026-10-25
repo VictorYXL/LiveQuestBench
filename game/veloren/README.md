@@ -70,6 +70,44 @@ offer edit or phase acceptance; they do not choose replies, balance offers or
 complete a transaction automatically. Pending disappearance is not a purchase
 receipt. Old task defaults retain their original tool sets and observations.
 VM uses ordinary dialogue, map and trade UI with E, M and T.
+
+## L3 native mechanisms
+
+The paired ten-objective L3 subsets retain ST five successes/five failures and
+VM two successes/eight failures. Outfit and expiring-supply tasks succeeded in
+both modes; ST also completed food reserve, skill/hunt and market/hunt.
+Both Slay runs created real native contracts but ended in player deaths, not
+completed reward deliveries. These are engineering acceptance results, not
+stable success rates or a completed difficulty calibration.
+
+The L3 additions reuse the courtyard, native recipes, inventory/equipment and
+ordered preparation scoring. `supplies[].pre_age_seconds` waits in the live
+server before play; it does not change the native 300-second expiry. Original
+pickup identities and remaining estimated lifetime are checked at opening.
+
+`sword_skill_points` lawfully unlocks the Sword group, then grants only the
+declared unspent points. Opt-in tools learn one skill, configure one eligible
+auxiliary slot or hold one bounded auxiliary input. Costs and prerequisites
+remain native; there is no target tracking. VM uses the P diary and numeric
+hotbar keys. Skill and active-slot predicates extend ordinary state scoring.
+Ability indices are weapon-relative, so the skill task also checks its equipped sword.
+
+An optional native owned sheep retains its normal health and AI. `PetStayTool`
+submits native stay/follow, equivalent to nearby-pet V control, without healing
+or protection. Companion scoring binds its original identity, ownership, group,
+absence of death and terminal proximity. Authored markets reuse an existing
+world trader with its actual prices and stock preparation, without assuming
+that it remains inside a settlement during terrain construction.
+
+The native Slay fixture reuses an existing guard and Monster, with initial
+placement and a disclosed 1000-coin giver deposit. Contract scoring additionally
+requires fresh native activation, post-acceptance combat and an identity-bound
+settlement/statement/removal/insertion reward chain from the pinned private
+helper. It does not require ST acceptance receipts, and never exposes a quest
+database to either track. Merchant destination readback joins by native UID in
+the player's client, not the administrator's potentially obsolete source
+lifecycle. Merchant and Slay courtyards use six-metre ordinary perimeter walls;
+the administrator does not return beside the Slay giver after moving the Ogre.
 The fixed ST talk/invite surfaces require targets within five metres; dialogue
 replies require the speaker to remain closer than five metres. Native VM talk
 can start within eight metres, while trading still uses five. Opening a dialogue
@@ -486,7 +524,7 @@ The `state` evaluator defaults to final health of at least 1 and combines all
 supplied predicates with AND. Position checks use separate horizontal/vertical
 tolerances, not path history. Recipe checks reject ambiguous truncated evidence. These
 checks do not prove crafting/consumption attribution, continuous survival, or
-sustained arrival across multiple observations. The extended fixtures and v2
+sustained arrival across multiple observations. The extended fixtures and fixed
 tools still require native qualification before a task suite is certified.
 
 Inventory thresholds `min_count` and `min_delta` are independently optional;

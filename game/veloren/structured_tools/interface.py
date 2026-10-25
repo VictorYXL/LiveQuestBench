@@ -108,6 +108,33 @@ SPECS.update({
         "trade_action", {**TRADE_FIELDS,
                          "operation": {"type": "string", "enum": ["accept", "decline"]}},
     ),
+    "UnlockSwordSkillTool": (
+        "Learn one named native Sword skill using your points. Native costs and prerequisites apply; "
+        "no point grants, automatic prerequisite purchases or refunds.",
+        "unlock_skill", {"skill_name": {"type": "string", "minLength": 1, "maxLength": 64}},
+    ),
+    "ConfigureAbilityTool": (
+        "Assign one currently eligible main-weapon auxiliary ability index to a zero-based hotbar slot. "
+        "Does not unlock, draw or activate the ability.",
+        "configure_auxiliary_ability", {
+            "slot": {"type": "integer", "minimum": 0, "maximum": 4},
+            "mainhand_index": {"type": "integer", "minimum": 0, "maximum": 127},
+        },
+    ),
+    "AuxiliaryAttackTool": (
+        "Hold one configured native auxiliary slot for bounded client updates, then release. "
+        "Uses current aim and ordinary weapon/energy rules; no targeting, tracking or movement.",
+        "attack_auxiliary", {
+            "slot": {"type": "integer", "minimum": 0, "maximum": 4},
+            "duration_ticks": {"type": "integer", "minimum": 1, "maximum": 60},
+        },
+    ),
+    "PetStayTool": (
+        "Ask one currently observed, nearby owned pet to stay or follow using the native pet command. "
+        "Ordinary range and ownership rules apply. A submission is not state confirmation; "
+        "inspect pet_staying. Does not teleport, heal, shield or choose a route.",
+        "companion_action", {**TARGET_FIELDS, "stay": {"type": "boolean"}},
+    ),
 })
 
 
@@ -149,12 +176,14 @@ def public_trade(row: dict | None) -> dict | None:
     return result
 
 
-def project(observation: dict, *, rpg: bool = False) -> dict:
+def project(observation: dict, *, rpg: bool = False, skills: bool = False) -> dict:
     missing = set(FIELDS) - observation.keys()
     if missing:
         raise ValueError(f"Native observation lacks required fields: {sorted(missing)}")
     result = {"profile": PROFILE_ID, "coordinate_frame": "native x/y horizontal, z up",
               **{name: observation[name] for name in FIELDS}}
+    if skills:
+        result.update(skill_tree=observation["skill_tree"], auxiliary_abilities=observation["auxiliary_abilities"])
     if rpg:
         result.update(
             profile="veloren-native-settlement-tools",
@@ -193,6 +222,12 @@ def validate_tool(name: str, arguments: dict) -> tuple[str, dict]:
         native = "attack_" + converted.pop("channel")
     elif native == "look_at":
         converted = {"position": [converted[axis] for axis in ("x", "y", "z")]}
+    elif name == "UnlockSwordSkillTool":
+        converted = {"skill": {"Sword": converted["skill_name"]}}
+    elif name == "ConfigureAbilityTool":
+        converted = {"slot": converted["slot"], "ability": {"MainWeapon": converted["mainhand_index"]}}
+    elif name == "PetStayTool":
+        converted = {"operation": "pet_stay", "stay": converted.pop("stay"), "target": converted}
     elif name in ("TalkTool", "InviteTradeTool"):
         converted = {"operation": "talk" if name == "TalkTool" else "invite_trade",
                      "target": converted}

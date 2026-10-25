@@ -30,7 +30,26 @@ def quoted_stack(rows: list[dict], identifier: str) -> dict:
     return min(matches, key=lambda row: (-row["amount"], row["slot"]))
 
 
-async def initialize_merchant(admin, fixture: dict) -> dict:
+def nearby_merchants(observation: dict) -> list[dict]:
+    return [row for row in observation["nearby_entities"]
+            if isinstance(row.get("name_text"), str) and "(Merchant)" in row["name_text"] and row["distance"] < 4]
+
+
+async def native_command_text(admin, commands: list[dict], name: str, *arguments) -> str:
+    from scripts.rpg_benchmark import setup
+
+    receipt = await setup.action(admin, "server_command", name=name, args=[str(arg) for arg in arguments])
+    await asyncio.sleep(.2)
+    events = await admin.request("events")
+    commands.append({"name": name, "arguments": arguments, "receipt": receipt, "events": events})
+    if any(row.get("data", {}).get("kind") == "command_error" for row in events):
+        raise RuntimeError(f"Native resident preparation command failed: {name}")
+    return "\n".join(row["data"]["content"]["Plain"] for row in events
+                     if row.get("data", {}).get("kind") == "command_info"
+                     and "Plain" in row["data"].get("content", {}))
+
+
+async def initialize_merchant(admin, actor, fixture: dict) -> dict:
     from scripts.rpg_benchmark import setup
 
     spec = fixture["merchant"]
@@ -38,15 +57,7 @@ async def initialize_merchant(admin, fixture: dict) -> dict:
     transactions = []
 
     async def command(name, *arguments):
-        receipt = await setup.action(admin, "server_command", name=name, args=[str(arg) for arg in arguments])
-        await asyncio.sleep(.2)
-        events = await admin.request("events")
-        commands.append({"name": name, "arguments": arguments, "receipt": receipt, "events": events})
-        if any(row.get("data", {}).get("kind") == "command_error" for row in events):
-            raise RuntimeError(f"Native merchant preparation command failed: {name}")
-        return "\n".join(row["data"]["content"]["Plain"] for row in events
-                         if row.get("data", {}).get("kind") == "command_info"
-                         and "Plain" in row["data"].get("content", {}))
+        return await native_command_text(admin, commands, name, *arguments)
 
     listing = await command("rtsim_npc", "merchant", 1)
     identifiers = re.findall(r"\((\d+)\)", listing)
@@ -55,14 +66,12 @@ async def initialize_merchant(admin, fixture: dict) -> dict:
     await command("rtsim_info", identifiers[0])
     await command("rtsim_tp", identifiers[0])
     observed = await setup.wait_observation(
-        admin, lambda row: any("(Merchant)" in npc.get("name_text", "") and npc["distance"] < 4
-                               for npc in row["nearby_entities"]), "native merchant loaded nearby", timeout=60,
+        admin, lambda row: row["current_site"]["loaded_chunk"] is True
+        and bool(nearby_merchants(row)), "native merchant and source terrain loaded nearby", timeout=60,
     )
-    if observed["current_site"]["location_name"] != fixture["native_site"]:
+    if "native_site" in fixture and observed["current_site"]["location_name"] != fixture["native_site"]:
         raise RuntimeError("Nearest native merchant is not in the declared settlement")
-    candidates = [npc for npc in observed["nearby_entities"]
-                  if "(Merchant)" in npc.get("name_text", "") and npc["distance"] < 4]
-    npc = min(candidates, key=lambda row: row["distance"])
+    npc = min(nearby_merchants(observed), key=lambda row: row["distance"])
     target = npc["control_target"]
 
     async def invite():
@@ -134,18 +143,18 @@ async def initialize_merchant(admin, fixture: dict) -> dict:
         raise RuntimeError("Native stock, prices or liquidity do not support the declared purchase and reserves")
     qualified_stock = trade
     await decline(trade)
+    await setup.goto(admin, actor, fixture["player_state"]["position"])
     await command("sudo", f"uid@{target['uid']}", "goto", *spec["position"])
-    await setup.goto(admin, admin, [spec["position"][0] + 2, spec["position"][1], spec["position"][2]],
-                     settle=False)
     placed = await setup.wait_observation(
-        admin, lambda row: any(npc["control_target"] == target
-                               and math.dist(npc["position"], spec["position"]) < .5
-                               for npc in row["nearby_entities"]), "declared native merchant placement",
+        actor, lambda row: any(npc["uid"] == target["uid"]
+                               and math.dist(npc["position"], spec["position"]) < 8
+                               for npc in row["nearby_entities"]), "native merchant destination in the player's client",
     )
     prepared = {"uid": target["uid"], "administrator_target": target,
+                "source_site_observed": observed["current_site"],
                 "lookup_rtsim_uid": int(identifiers[0]), "initial_stock": initial_stock,
                 "qualified_stock": qualified_stock, "commands": commands, "transactions": transactions,
                 "scope": "Existing native resident; finite stock via ordinary trade when needed; "
                          "initial placement only; unchanged health, AI, native prices and gameplay rules."}
-    observed_merchant(placed, prepared["uid"])
+    prepared["placement_readback"] = observed_merchant(placed, prepared["uid"])
     return prepared

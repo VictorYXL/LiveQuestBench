@@ -1,8 +1,9 @@
 """Private identity-bound native death and player-contribution scoring."""
 
 from pathlib import Path
+import math
 
-from game.veloren.evaluators.endpoints import load_pair, state_checks, validate_state
+from game.veloren.evaluators.endpoints import finite, load_pair, state_checks, validate_state
 
 
 def player_damage(event: dict, source: dict, target: dict) -> bool:
@@ -19,16 +20,24 @@ def player_damage(event: dict, source: dict, target: dict) -> bool:
             and data["target_entity"] == target["server_entity"])
 
 
-def validate_encounter(*, roles: list[str], **state) -> None:
+def validate_encounter(*, roles: list[str], companion: dict | None = None, **state) -> None:
     if (not isinstance(roles, list) or not roles
             or any(not isinstance(role, str) or not role for role in roles)
             or len(set(roles)) != len(roles)):
         raise ValueError("Encounter roles must be unique nonempty names")
+    if companion is not None:
+        if not isinstance(companion, dict) or set(companion) != {"max_distance", "min_health"}:
+            raise ValueError("companion requires max_distance and min_health")
+        if any(finite(value, key) <= 0 for key, value in companion.items()):
+            raise ValueError("Companion distance and health thresholds must be positive")
     validate_state(**state)
 
 
-def _combat_checks(initial: dict, final: dict, *, roles: list[str], require_death: bool, **state) -> dict:
-    validate_encounter(roles=roles, **state)
+def _combat_checks(
+    initial: dict, final: dict, *, roles: list[str], require_death: bool,
+    companion: dict | None = None, **state,
+) -> dict:
+    validate_encounter(roles=roles, companion=companion, **state)
     first, last = (row["private_encounter_evidence"] for row in (initial, final))
     registry = first["registry"]
     if (first["schema"] != "livequest-encounter/1" or last["schema"] != first["schema"]
@@ -75,6 +84,42 @@ def _combat_checks(initial: dict, final: dict, *, roles: list[str], require_deat
                        "native_death": bool(killed), "player_damage_events": len(damage),
                        "damage": sum(row["data"]["before"] - row["data"]["after"] for row in damage),
                        "passed": bool(damage) and (bool(killed) or not require_death)})
+    if companion is not None:
+        registered = registry["companion"]
+        pet = registered["binding"]
+        if (pet["alignment"] != {"Owned": source["uid"]} or source["group"] is None
+                or pet["group"] != source["group"] or pet["dead"] is not False
+                or pet["health"] <= 0 or pet["health"] != pet["maximum_health"]
+                or (pet["uid"], pet["server_entity"]) in identities
+                or pet["uid"] == source["uid"]):
+            raise ValueError("Companion opening lacks a distinct, fully healthy native owned group member")
+        public = next((row for row in final["nearby_entities"] if row["uid"] == pet["uid"]), None)
+        current = last["companion_binding"]
+        distance = None
+        visible_alive = False
+        if public is not None:
+            point = public["position"]
+            if not isinstance(point, list) or len(point) != 3:
+                raise ValueError("Companion position must contain native XYZ")
+            distance = math.dist([finite(value, "companion position") for value in point], final["position"])
+            visible_alive = (
+                public["control_target"] == registered["player_target"]
+                and public["companion"]["owned_by_actor"] is True and public["same_native_group"] is True
+                and public["health"] is not None and public["health"]["dead"] is False
+                and finite(public["health"]["current"], "companion health") >= companion["min_health"]
+                and distance <= companion["max_distance"]
+            )
+        native_alive = (
+            current is not None and current["uid"] == pet["uid"] and current["server_entity"] == pet["server_entity"]
+            and current["alignment"] == {"Owned": source["uid"]} and current["dead"] is False
+            and finite(current["health"], "native companion health") >= companion["min_health"]
+            and public is not None and current["group"] == public["group"]
+        )
+        killed = bool(deaths(pet))
+        checks.append({"kind": "companion_preserved", "uid": pet["uid"], "native_death": killed,
+                       "distance": distance, "minimum_health": companion["min_health"],
+                       "maximum_distance": companion["max_distance"],
+                       "passed": visible_alive and native_alive and not killed})
     checks.append({"kind": "player_never_died", "passed": not deaths(source)})
     result = state_checks(initial, final, **state)
     checks.extend(result["checks"])
@@ -85,7 +130,9 @@ def _combat_checks(initial: dict, final: dict, *, roles: list[str], require_deat
                           "real player damaging contribution before any target death, ")
                          + "no player death, and simultaneous terminal requirements. "
                          "No last-blow requirement; disappearance and loot do not prove death. "
-                         "Evidence ends at post-gate client snapshot, not an atomic server pause."}
+                         "Evidence ends at post-gate client snapshot, not an atomic server pause."
+                         + (" Original owned companion must never die and remain alive, owned, grouped and "
+                            "within the declared terminal distance; no required support input." if companion else "")}
 
 
 def encounter_checks(initial: dict, final: dict, *, roles: list[str], **state) -> dict:

@@ -70,6 +70,94 @@ def test_actual_death_and_own_damage_are_both_required():
     assert not encounter_checks(initial, changed, roles=["enemy"])["success"]
 
 
+def test_companion_requires_original_living_owned_identity_not_replacement_or_disappearance():
+    initial, final = evidence()
+    pet = {"uid": 3, "server_entity": "sheep-generation-1", "alignment": {"Owned": 1},
+           "group": 7, "health": 40, "maximum_health": 40, "dead": False}
+    target = {"uid": 3, "lifecycle": "client-sheep-generation-1"}
+    public = {"uid": 3, "control_target": target, "position": [3, 0, 0], "group": 7,
+              "same_native_group": True, "companion": {"owned_by_actor": True},
+              "health": {"current": 40, "dead": False}}
+    for row in (initial, final):
+        row.update(position=[0, 0, 0], nearby_entities=[deepcopy(public)])
+        row["private_encounter_evidence"]["registry"]["source"]["group"] = 7
+        row["private_encounter_evidence"]["registry"]["companion"] = {
+            "binding": deepcopy(pet), "player_target": deepcopy(target),
+        }
+        row["private_encounter_evidence"]["companion_binding"] = deepcopy(pet)
+    parameters = {"roles": ["enemy"], "companion": {"max_distance": 4, "min_health": 1}}
+    assert encounter_checks(initial, final, **parameters)["success"]
+    for change in (
+        lambda row: row.update(nearby_entities=[]),
+        lambda row: row["nearby_entities"][0]["companion"].update(owned_by_actor=False),
+        lambda row: row["nearby_entities"][0].update(position=[4.01, 0, 0]),
+        lambda row: row["private_encounter_evidence"]["companion_binding"].update(server_entity="replacement"),
+    ):
+        changed = deepcopy(final)
+        change(changed)
+        assert not encounter_checks(initial, changed, **parameters)["success"]
+    death = deepcopy(final["private_encounter_evidence"]["events"][-1])
+    death.update(sequence=13, data={"uid": 3, "entity": "sheep-generation-1"})
+    final["private_encounter_evidence"]["events"].append(death)
+    final["private_encounter_evidence"]["through_sequence"] = 13
+    assert not encounter_checks(initial, final, **parameters)["success"]
+
+
+def test_native_contract_requires_activation_then_bound_kill_and_actual_reward_chain():
+    from game.veloren.evaluators.contract import contract_checks
+
+    initial, final = evidence()
+    player, giver, target = {"Character": 3}, {"Npc": 4}, {"Npc": 5}
+    control = {"uid": 1, "lifecycle": "player-client"}
+    target_ref = {"uid": 2, "lifecycle": "enemy-client"}
+    registry = {
+        "run_id": "run", "nonce": "nonce", "opening_sequence": 10, "preexisting_quest_ids": [],
+        "helper_sha256": "a" * 64, "giver_actor": giver, "target_actor": target,
+        "player": {"uid": 1, "server_entity": "player-generation-1", "actor": player,
+                   "client_session_id": "session", "client_actor": control},
+    }
+    for row in (initial, final):
+        row.update(session_id="session", control_actor=control,
+                   nearby_entities=[{"uid": 2, "control_target": target_ref}])
+        row["private_encounter_evidence"]["registry"]["targets"][0]["role"] = "contract_target"
+        row["private_contract_evidence"] = {
+            "schema": "livequest-native-contract/1", "registry": deepcopy(registry),
+            "through_sequence": 10, "candidates": [], "player_deaths": [],
+        }
+    for event in final["private_encounter_evidence"]["events"]:
+        event["sequence"] += 1
+    final["private_encounter_evidence"]["through_sequence"] = 20
+    proof = final["private_contract_evidence"]
+    proof["through_sequence"] = 20
+    assert not contract_checks(initial, final)["success"]
+    quest = {"kind": {"Slay": {"slayer": player, "target": target}}, "arbiter": giver, "res": 0}
+    proof["candidates"] = [{
+        "activation_sequence": 11, "quest": {"quest_id": 99, "quest": quest, "resolution": None},
+        "slay": {"native_target_death": True, "player_contribution": True, "death_sequences": [14],
+                 "contribution_sequences": [12], "client_uid_lifecycle_links": [target_ref]},
+        "reward": {"resolution": True, "actual_reward_inserted": True, "chains": [{
+            "transaction_id": "nonce:1", "quest_id": 99, "settlement_sequence": 15, "creation_sequence": 16,
+            "removal_sequences": [17], "insertion_sequences": [18],
+            "item": {"Simple": "common.items.utility.coins"}, "amount": 1000,
+            "native_quest_before": quest, "native_quest_at_settlement": {**quest, "res": 2},
+        }]},
+    }]
+    assert contract_checks(initial, final)["success"]
+    for change in (
+        lambda row: row["candidates"][0]["reward"].update(actual_reward_inserted=False),
+        lambda row: row["candidates"][0]["reward"]["chains"][0].update(amount=999),
+        lambda row: row["candidates"][0]["reward"]["chains"][0].update(transaction_id="different-run:1"),
+        lambda row: row["candidates"][0]["slay"].update(client_uid_lifecycle_links=[]),
+        lambda row: row.update(player_deaths=[19]),
+    ):
+        changed = deepcopy(final)
+        change(changed["private_contract_evidence"])
+        assert not contract_checks(initial, changed)["success"]
+    proof["candidates"][0]["slay"]["contribution_sequences"] = [11]
+    with pytest.raises(ValueError, match="sequence"):
+        contract_checks(initial, final)
+
+
 def test_expedition_requires_native_preparation_before_first_damage():
     initial, final = evidence()
     chest = "common.items.armor.hide.rawhide.chest"

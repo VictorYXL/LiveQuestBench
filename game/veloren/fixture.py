@@ -1,6 +1,7 @@
 """Validate explicit native world and actor initialization, never implicit presets."""
 
 from copy import deepcopy
+import asyncio
 import math
 from pathlib import Path
 import re
@@ -56,13 +57,18 @@ def vector(value: object, label: str, *, integer: bool = False) -> list:
 def validate_fixture(value: object) -> dict:
     required = {"world_path", "world_seed", "time_of_day", "day_length", "calendar", "player_state"}
     optional = {"blocks", "stations", "supplies", "recipe_groups", "recipes", "encounters",
-                "motion_evidence", "glide_evidence", "platform", "native_site", "merchant"}
+                "motion_evidence", "glide_evidence", "platform", "native_site", "merchant",
+                "sword_skill_points", "companion", "contract"}
     if not isinstance(value, dict) or required - value.keys() or value.keys() - required - optional:
         raise ValueError(f"Veloren fixture requires exactly {sorted(required)} plus optional {sorted(optional)}")
     fixture = value
     for flag in ("motion_evidence", "glide_evidence"):
         if flag in fixture and type(fixture[flag]) is not bool:
             raise ValueError(f"{flag} must be boolean")
+    if "sword_skill_points" in fixture and (
+        type(fixture["sword_skill_points"]) is not int or not 1 <= fixture["sword_skill_points"] <= 16
+    ):
+        raise ValueError("sword_skill_points must be an integer in [1, 16]")
     if not isinstance(fixture["world_path"], str) or not fixture["world_path"].strip():
         raise ValueError("world_path must explicitly identify a native map file")
     if not Path(fixture["world_path"]).is_file():
@@ -123,6 +129,19 @@ def validate_fixture(value: object) -> dict:
     encounters = fixture.get("encounters", [])
     if not isinstance(encounters, list) or len(encounters) > 4:
         raise ValueError("encounters must contain at most four designated native enemies")
+    if "contract" in fixture:
+        if "platform" not in fixture or encounters or "merchant" in fixture or "companion" in fixture:
+            raise ValueError("Native Slay contracts require a separate authored scene without injected encounters")
+        contract = fields(fixture["contract"], {"source_site", "giver_position", "target_position"}, "contract")
+        if (not isinstance(contract["source_site"], str) or not contract["source_site"].strip()
+                or len(contract["source_site"]) > 128):
+            raise ValueError("Contract source_site must name an existing native settlement")
+        for key in ("giver_position", "target_position"):
+            spawn = vector(contract[key], f"contract.{key}")
+            require_standing_point(spawn, occupied, f"Contract {key}")
+            lower, upper = (2, 5) if key == "giver_position" else (16, 24)
+            if not lower <= math.dist(spawn, point) <= upper:
+                raise ValueError(f"Contract {key} must be {lower}-{upper} metres from the player")
     roles, positions = set(), set()
     for encounter in encounters:
         fields(encounter, {"role", "asset", "position"}, "encounter")
@@ -138,8 +157,22 @@ def validate_fixture(value: object) -> dict:
             raise ValueError("Enemies must have distinct spawn points 10-24 metres from the player")
         roles.add(role)
         positions.add(tuple(spawn))
+    if "companion" in fixture:
+        companion = fields(fixture["companion"], {"species", "position"}, "companion")
+        if companion["species"] != "sheep" or not encounters:
+            raise ValueError("Companion fixtures require a native sheep and a designated encounter")
+        spawn = vector(companion["position"], "companion.position")
+        require_standing_point(spawn, occupied, "Companion")
+        if not 2 <= math.dist(spawn, point) <= 4:
+            raise ValueError("Companion must start 2-4 metres from its owner")
     for supply in fixture.get("supplies", []):
-        fields(supply, {"position", "item", "amount"}, "supply")
+        if not isinstance(supply, dict):
+            raise ValueError("Supply must be a mapping")
+        fields({key: value for key, value in supply.items() if key != "pre_age_seconds"},
+               {"position", "item", "amount"}, "supply")
+        age = supply.get("pre_age_seconds", 0)
+        if type(age) is not int or not 0 <= age <= 240:
+            raise ValueError("Supply pre_age_seconds must be an integer in [0, 240]")
         require_standing_point(vector(supply["position"], "supply.position"), occupied, "Supply")
         if (not isinstance(supply["item"], str) or not re.fullmatch(r"common\.items\.[a-z0-9_.]+", supply["item"])
                 or type(supply["amount"]) is not int or not 1 <= supply["amount"] <= 99):
@@ -172,12 +205,13 @@ def validate_fixture(value: object) -> dict:
     ):
         raise ValueError("equipment must map native equipped slots to item IDs")
     if "merchant" in fixture:
-        if "native_site" not in fixture:
-            raise ValueError("Merchant preparation requires an existing native settlement")
-        merchant = fields(fixture["merchant"], {
+        required_merchant = {
             "position", "stock_item", "stock_amount", "payment_item", "payment_reserve", "coin_reserve",
-        }, "merchant")
+        }
+        merchant = fields(fixture["merchant"], required_merchant, "merchant")
         spawn = vector(merchant["position"], "merchant.position")
+        if "platform" in fixture:
+            require_standing_point(spawn, occupied, "Merchant")
         if not 2 <= math.dist(spawn, point) <= 6:
             raise ValueError("Merchant placement must be 2-6 metres from the player")
         for key in ("stock_item", "payment_item"):
@@ -215,6 +249,10 @@ async def recipe_observation(actor, fixture: dict, observation: dict | None = No
         "mushroom_stick": "common.items.food.mushroom_stick",
         "simple_leather": "common.items.crafting_ing.leather.simple_leather",
         "rawhide_chest": "common.items.armor.hide.rawhide.chest",
+        "thick_leather": "common.items.crafting_ing.leather.thick_leather",
+        "leather_strips": "common.items.crafting_ing.leather.leather_strips",
+        "leather_chest": "common.items.armor.hide.leather.chest",
+        "leather_feet": "common.items.armor.hide.leather.foot",
     }
     evidence = {}
     for recipe in fixture.get("recipes", {}):
@@ -255,6 +293,56 @@ def verify_player(fixture: dict, observation: dict) -> None:
         known = known_recipes(observation, required=list(fixture["recipes"]))
         if any((recipe in known) != expected for recipe, expected in fixture["recipes"].items()):
             raise RuntimeError("Initial recipe knowledge differs from the fixture")
+    if "sword_skill_points" in fixture:
+        groups = [row for row in observation["skill_tree"]["groups"] if row["group"] == {"Weapon": "Sword"}]
+        if (len(groups) != 1 or groups[0]["accessible"] is not True
+                or groups[0]["available_points"] != fixture["sword_skill_points"]
+                or groups[0]["earned_points"] != fixture["sword_skill_points"]
+                or any(row["learned_level"] not in (None, 0) for row in groups[0]["skills"])):
+            raise RuntimeError("Initial Sword points, accessibility or unlearned skills differ from the fixture")
+
+
+def verify_aged_supplies(initialized: dict, observation: dict) -> None:
+    if not any(row.get("pre_age_seconds") for row in initialized["fixture"].get("supplies", [])):
+        return
+    current = {row["uid"]: row for row in observation["nearby_entities"]}
+    clock = observation["survival"]["buff_clock"]["now"]
+    for supply in initialized["supplies"]:
+        entity = current.get(supply["uid"])
+        if (entity is None or entity["control_target"] != supply["player_target"]
+                or item_id(entity["pickup"]) != supply["item"] or entity["pickup"]["amount"] != supply["amount"]
+                or supply["expiry_game_time_estimate"] - clock < 15):
+            raise RuntimeError("Declared expiring supply lacks a live, identity-matched opening with >=15 seconds")
+
+
+async def initialize_companion(admin, actor, fixture: dict) -> dict:
+    from scripts.rpg_benchmark import setup
+    from scripts.rpg_benchmark.combat_support import native_binding
+
+    before = await actor.request("observe")
+    existing = {row["uid"] for row in before["nearby_entities"]}
+    receipt = await setup.command(admin, "sudo", actor.name, "spawn", "pet", "sheep", 1, "true")
+    spawned = await setup.wait_observation(actor, lambda row: len([
+        entry for entry in row["nearby_entities"]
+        if entry["uid"] not in existing and entry["companion"]["owned_by_actor"]
+    ]) == 1, "one newly owned native sheep")
+    pet = next(row for row in spawned["nearby_entities"]
+               if row["uid"] not in existing and row["companion"]["owned_by_actor"])
+    target = fixture["companion"]["position"]
+    await setup.command(admin, "sudo", f"uid@{pet['uid']}", "goto", *target)
+    settled = await setup.wait_observation(actor, lambda row: any(
+        entry["uid"] == pet["uid"] and math.dist(entry["position"], target) < 2
+        and abs(entry["position"][2] - target[2]) < .1 and entry["same_native_group"] is True
+        for entry in row["nearby_entities"]
+    ), "owned native sheep settled at its declared start")
+    pet = next(row for row in settled["nearby_entities"] if row["uid"] == pet["uid"])
+    binding = await native_binding(actor, pet["uid"])
+    if (pet["body_identity"].get("QuadrupedSmall", {}).get("species") != "Sheep"
+            or binding["alignment"] != {"Owned": before["self_identity"]["uid"]}
+            or binding["health"] != binding["maximum_health"] or binding["health"] <= 0 or binding["dead"]):
+        raise RuntimeError("Companion lacks native sheep identity, ownership or full ordinary health")
+    return {"binding": binding, "player_target": pet["control_target"], "spawn_receipt": receipt,
+            "initial_public": pet, "native_ai": True, "tethered": False}
 
 
 async def initialize_fixture(admin, actor, fixture: dict) -> dict:
@@ -283,6 +371,20 @@ async def initialize_fixture(admin, actor, fixture: dict) -> dict:
         await setup.clean_inventory(admin, actor)
         for name, amount in fixture["player_state"]["inventory"].items():
             await setup.gift(admin, actor, name, amount)
+    if "sword_skill_points" in fixture:
+        identity = (await actor.request("observe"))["self_identity"]["uid"]
+        await setup.command(admin, "skill_point", "general", 1, f"uid@{identity}")
+        await setup.wait_observation(actor, lambda row: any(
+            {"UnlockGroup": {"Weapon": "Sword"}} in group["unlockable_now"]
+            for group in row["skill_tree"]["groups"]
+        ), "lawful Sword group unlock")
+        await setup.action(actor, "unlock_skill", skill={"UnlockGroup": {"Weapon": "Sword"}})
+        await setup.command(admin, "skill_point", "sword", fixture["sword_skill_points"], f"uid@{identity}")
+        await setup.wait_observation(actor, lambda row: any(
+            group["group"] == {"Weapon": "Sword"} and group["accessible"]
+            and group["available_points"] == fixture["sword_skill_points"]
+            for group in row["skill_tree"]["groups"]
+        ), "declared unspent native Sword points")
     supplies = []
     for supply in fixture.get("supplies", []):
         if inventory_counts(await admin.request("observe")).get(supply["item"], 0):
@@ -300,26 +402,49 @@ async def initialize_fixture(admin, actor, fixture: dict) -> dict:
         supplies.append(await setup.drop_supply(
             admin, supply["position"], supply["item"], supply["amount"], "flat",
         ))
+        if supply.get("pre_age_seconds"):
+            await asyncio.sleep(supply["pre_age_seconds"])
     merchant = None
     if "merchant" in fixture:
         from game.veloren.settlement import initialize_merchant
-        merchant = await initialize_merchant(admin, fixture)
+        merchant = await initialize_merchant(admin, actor, fixture)
+    contract = None
     if "native_site" in fixture:
         point = fixture["player_state"]["position"]
         await setup.goto(admin, admin, [point[0] + 12, point[1], point[2]], settle=False)
     await setup.goto(admin, actor, fixture["player_state"]["position"])
+    companion = None
+    if "companion" in fixture:
+        companion = await initialize_companion(admin, actor, fixture)
+        await setup.goto(admin, actor, fixture["player_state"]["position"])
     await setup.command(admin, "time", fixture["time_of_day"])
     await setup.command(admin, "sudo", actor.name, "health", fixture["player_state"]["health"])
     opening = await recipe_observation(actor, fixture, await setup.ready_observation(actor))
     verify_player(fixture, opening)
+    if any(row.get("pre_age_seconds") for row in fixture.get("supplies", [])):
+        current = {row["uid"]: row for row in opening["nearby_entities"]}
+        for supply in supplies:
+            entity = current.get(supply["uid"])
+            if (entity is None or item_id(entity["pickup"]) != supply["item"]
+                    or entity["pickup"]["amount"] != supply["amount"]):
+                raise RuntimeError("Expiring supply cannot be bound in the player's native client")
+            supply["player_target"] = entity["control_target"]
     if merchant is not None:
         from game.veloren.settlement import bind_merchant
         merchant = bind_merchant(opening, merchant)
+    if "contract" in fixture:
+        from game.veloren.contracts import initialize_contract
+        contract = await initialize_contract(admin, actor, fixture)
     encounters = []
     source = None
-    if fixture.get("encounters"):
+    if fixture.get("encounters") or contract is not None:
         from scripts.rpg_benchmark.combat_support import native_binding, spawn
-        for enemy in fixture["encounters"]:
+        if contract is not None:
+            encounters.append({
+                "role": "contract_target", "asset": "existing native RTSim Ogre",
+                "binding": contract["target"]["binding"], "public": contract["target"]["public"],
+            })
+        for enemy in fixture.get("encounters", []):
             target = await spawn(admin, actor, {
                 **enemy, "stock_loadout": "Unchanged native asset loadout; exact-body benchmark derivative.",
             }, enemy["position"])
@@ -338,4 +463,5 @@ async def initialize_fixture(admin, actor, fixture: dict) -> dict:
             raise RuntimeError("Encounter player is not alive at initialization")
     return {"fixture": fixture, "construction": construction, "blocks": blocks,
             "stations": stations, "supplies": supplies, "opening": opening,
-            "encounters": encounters, "source_binding": source, "merchant": merchant}
+            "encounters": encounters, "source_binding": source, "merchant": merchant,
+            "companion": companion, "contract": contract}

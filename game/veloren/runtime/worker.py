@@ -78,6 +78,8 @@ class Session:
             raise ValueError("Fixture requires passive native motion evidence; rerun Veloren setup")
         if self.fixture.get("glide_evidence") and cfg.get("glide_evidence") != "native-client-glide/1":
             raise ValueError("Fixture requires passive native glide evidence; rerun Veloren setup")
+        if "sword_skill_points" in self.fixture and cfg.get("auxiliary_input") != "native-client-auxiliary/1":
+            raise ValueError("Skill fixture requires bounded native auxiliary input; rerun Veloren setup")
         for path, digest in cfg["sha256"].items():
             if hashlib.sha256(Path(path).read_bytes()).hexdigest() != digest:
                 raise ValueError(f"Prepared runtime changed: {path}")
@@ -159,6 +161,10 @@ class Session:
             if self.running:
                 raise RuntimeError("Snapshot requires a closed public gate")
             observation = await recipe_observation(self.actor, self.fixture)
+            if not hasattr(self, "supplies_opening"):
+                from game.veloren.fixture import verify_aged_supplies
+                verify_aged_supplies(self.initialized, observation)
+                self.supplies_opening = True
             if self.initialized.get("merchant") is not None and not hasattr(self, "merchant_opening"):
                 from game.veloren.settlement import verify_merchant
                 verify_merchant(observation, self.initialized["merchant"])
@@ -168,7 +174,7 @@ class Session:
                     "glide_evidence" if self.fixture.get("glide_evidence") else "motion_evidence",
                     await self.frame_fence(), origin="private-validation",
                 )
-            if self.fixture.get("encounters"):
+            if self.initialized["encounters"]:
                 from scripts.rpg_benchmark import native_outcomes
                 rows = native_outcomes.read(self.output / "private-native-oracle.ndjson", self.output.name)
                 targets = self.initialized["encounters"]
@@ -179,7 +185,7 @@ class Session:
                         entry = current.get(target["binding"]["uid"])
                         if (entry is None or entry["health"]["current"] <= 0 or entry["health"]["dead"]
                                 or entry["health"]["current"] != target["binding"]["health"]):
-                            raise RuntimeError("Designated target unavailable or dead before measured play")
+                            raise RuntimeError("Designated target unavailable, dead or injured before measured play")
                     self.encounter_registry = {
                         "run_id": self.output.name, "nonce": rows[0]["data"]["nonce"],
                         "opening_sequence": rows[-1]["sequence"],
@@ -187,6 +193,18 @@ class Session:
                         "targets": [{"role": target["role"], "asset": target["asset"],
                                      "binding": target["binding"]} for target in targets],
                     }
+                    if self.initialized.get("companion") is not None:
+                        companion = self.initialized["companion"]
+                        pet = current.get(companion["binding"]["uid"])
+                        if (pet is None or pet["control_target"] != companion["player_target"]
+                                or pet["companion"]["owned_by_actor"] is not True
+                                or pet["same_native_group"] is not True
+                                or pet["health"]["current"] != companion["binding"]["maximum_health"]
+                                or pet["health"]["dead"]):
+                            raise RuntimeError("Owned companion unavailable or injured before measured play")
+                        self.encounter_registry["companion"] = {
+                            key: companion[key] for key in ("binding", "player_target")
+                        }
                 equipment_samples = []
                 previous_equipment = self.encounter_registry["source"]["equipment"]
                 for row in rows:
@@ -208,6 +226,21 @@ class Session:
                     "events": [row for row in rows if row["sequence"] > self.encounter_registry["opening_sequence"]
                                and row["event"] in ("health_effect_applied", "native_entity_death")],
                 }
+                if "companion" in self.encounter_registry:
+                    bindings = next(row["data"]["bindings"] for row in reversed(rows)
+                                    if row["event"] == "combat_entity_bindings")
+                    observation["private_encounter_evidence"]["companion_binding"] = next(
+                        (row for row in bindings
+                         if row["uid"] == self.encounter_registry["companion"]["binding"]["uid"]), None,
+                    )
+                if self.initialized.get("contract") is not None:
+                    from game.veloren.contracts import contract_registry, contract_snapshot
+                    if not hasattr(self, "contract_registry"):
+                        self.contract_registry = contract_registry(self.initialized["contract"], observation, rows)
+                        self.contract_opening = dict(observation)
+                    observation["private_contract_evidence"] = contract_snapshot(
+                        self.contract_registry, self.contract_opening, observation, rows,
+                    )
             return observation
         if operation == "inspect_frame":
             return await self.actor.request("frame", await self.frame_fence(), origin="private-validation")
@@ -223,12 +256,15 @@ class Session:
                 "turn", "jump", "pickup", "use_item", "craft", "equip",
                 "look_at", "attack_primary", "attack_secondary", "toggle_wield", "block", "roll", "stop",
                 "aimed_attack", "glide", "context_interact", "social_action", "dialogue_action", "trade_action",
+                "unlock_skill", "configure_auxiliary_ability", "attack_auxiliary",
+                "companion_action",
             ):
                 raise PermissionError("Native action is not in the fixed public skill set")
             rpg_actions = {
                 "context_interact": ("talk",), "social_action": ("invite_trade",),
                 "dialogue_action": ("ack", "respond"),
                 "trade_action": ("add_item", "remove_item", "accept", "decline"),
+                "companion_action": ("pet_stay",),
             }
             if args["action_type"] in rpg_actions and args.get("operation") not in rpg_actions[args["action_type"]]:
                 raise PermissionError("Native RPG operation is not in the fixed public skill set")
@@ -266,6 +302,10 @@ class Session:
                 }
                 refusal = error.native_error
                 rpg_refusals = {
+                    "unlock_skill": {"invalid_action", "skill_ineligible", "skill_state_unavailable"},
+                    "configure_auxiliary_ability": {"ability_ineligible"},
+                    "attack_auxiliary": {"auxiliary_ineligible"},
+                    "companion_action": {"actor_unavailable", "companion_target_changed", "pet_not_owned_or_nearby"},
                     "context_interact": {"actor_unavailable", "interaction_target_changed", "interaction_ineligible"},
                     "social_action": {"actor_unavailable", "trade_target_changed", "trade_already_pending"},
                     "dialogue_action": {"dialogue_unavailable", "dialogue_changed", "dialogue_sender_changed",

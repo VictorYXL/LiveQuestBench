@@ -4,6 +4,7 @@ import hashlib
 import json
 import math
 from pathlib import Path
+import re
 
 
 def finite(value: object, name: str) -> float:
@@ -135,11 +136,25 @@ def validate_state(
     wielding: bool | None = None, motion: dict[str, int] | None = None,
     glide_landing: dict | None = None,
     marker_arrival: dict | None = None,
+    sword_skills: list[str] | None = None, auxiliary_ability: dict[str, int] | None = None,
 ) -> None:
     if finite(min_health, "min_health") <= 0:
         raise ValueError("min_health must be positive")
     if wielding is not None and type(wielding) is not bool:
         raise ValueError("wielding must be boolean")
+    if sword_skills is not None and (
+        not isinstance(sword_skills, list) or not sword_skills
+        or any(not isinstance(skill, str) or not re.fullmatch(r"[A-Za-z]{1,64}", skill) for skill in sword_skills)
+        or len(set(sword_skills)) != len(sword_skills)
+    ):
+        raise ValueError("sword_skills must contain unique native Sword skill names")
+    if auxiliary_ability is not None and (
+        not isinstance(auxiliary_ability, dict) or set(auxiliary_ability) != {"slot", "mainhand_index"}
+        or type(auxiliary_ability["slot"]) is not int or not 0 <= auxiliary_ability["slot"] <= 4
+        or type(auxiliary_ability["mainhand_index"]) is not int
+        or not 0 <= auxiliary_ability["mainhand_index"] <= 127
+    ):
+        raise ValueError("auxiliary_ability requires slot [0, 4] and mainhand_index [0, 127]")
     if marker_arrival is not None:
         required = {"label_key", "horizontal_tolerance", "max_speed"}
         if not isinstance(marker_arrival, dict) or set(marker_arrival) != required:
@@ -248,15 +263,18 @@ def evaluate_state(
     wielding: bool | None = None, motion: dict[str, int] | None = None,
     glide_landing: dict | None = None,
     marker_arrival: dict | None = None,
+    sword_skills: list[str] | None = None, auxiliary_ability: dict[str, int] | None = None,
 ) -> dict:
     """Require simultaneous terminal predicates, never infer actions or past survival."""
     validate_state(inventory=inventory, equipment=equipment, recipes=recipes,
                    position=position, min_health=min_health, wielding=wielding, motion=motion,
-                   glide_landing=glide_landing, marker_arrival=marker_arrival)
+                   glide_landing=glide_landing, marker_arrival=marker_arrival,
+                   sword_skills=sword_skills, auxiliary_ability=auxiliary_ability)
     initial, final = load_pair(before, after)
     return state_checks(initial, final, inventory=inventory, equipment=equipment,
                         recipes=recipes, position=position, min_health=min_health, wielding=wielding, motion=motion,
-                        glide_landing=glide_landing, marker_arrival=marker_arrival)
+                        glide_landing=glide_landing, marker_arrival=marker_arrival,
+                        sword_skills=sword_skills, auxiliary_ability=auxiliary_ability)
 
 
 def state_checks(
@@ -266,6 +284,7 @@ def state_checks(
     wielding: bool | None = None, motion: dict[str, int] | None = None,
     glide_landing: dict | None = None,
     marker_arrival: dict | None = None,
+    sword_skills: list[str] | None = None, auxiliary_ability: dict[str, int] | None = None,
 ) -> dict:
     checks = []
     hp = finite(final["survival"]["health"]["current"], "health")
@@ -342,6 +361,29 @@ def state_checks(
     if recipes:
         known = known_recipes(final, required=recipes)
         checks.extend({"kind": "recipe", "recipe": recipe, "passed": recipe in known} for recipe in recipes)
+    if sword_skills:
+        groups = [group for group in final["skill_tree"]["groups"] if group["group"] == {"Weapon": "Sword"}]
+        if len(groups) != 1:
+            raise ValueError("Native skill evidence requires one Sword group")
+        for skill in sword_skills:
+            rows = [row for row in groups[0]["skills"] if row["skill"] == {"Sword": skill}]
+            if len(rows) != 1:
+                raise ValueError(f"Native Sword skill definition missing or duplicated: {skill}")
+            level = rows[0]["learned_level"]
+            if level is not None and (type(level) is not int or level < 0):
+                raise ValueError("Invalid native learned skill level")
+            checks.append({"kind": "sword_skill", "skill": skill, "learned_level": level,
+                           "passed": level is not None and level > 0})
+    if auxiliary_ability is not None:
+        abilities = final["auxiliary_abilities"]
+        slots, available = abilities["active_set"], abilities["available"]
+        if not isinstance(slots, list) or not isinstance(available, list):
+            raise ValueError("Native auxiliary evidence must contain active and eligible ability lists")
+        slot = auxiliary_ability["slot"]
+        actual = slots[slot] if slot < len(slots) else None
+        expected = {"MainWeapon": auxiliary_ability["mainhand_index"]}
+        checks.append({"kind": "auxiliary_ability", "slot": slot, "actual": actual, "expected": expected,
+                       "passed": actual == expected and expected in available})
     if marker_arrival is not None:
         first, last = initial["dialogue_markers"], final["dialogue_markers"]
         if not isinstance(first, list) or not isinstance(last, list):

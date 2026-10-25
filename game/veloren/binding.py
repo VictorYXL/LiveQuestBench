@@ -12,6 +12,7 @@ from game.veloren.evaluators.endpoints import validate_displacement, validate_he
 from game.veloren.evaluators.endpoints import evaluate_state, validate_state
 from game.veloren.evaluators.encounter import evaluate_damage, evaluate_encounter, validate_encounter
 from game.veloren.evaluators.expedition import evaluate_expedition, validate_expedition
+from game.veloren.evaluators.contract import evaluate_contract, validate_contract
 from game.veloren.game import VelorenGame
 from game.veloren.structured_tools import interface as st
 from game.veloren.visual_motor import interface as vm
@@ -36,12 +37,12 @@ def create_binding(
     evaluators: dict[str, Callable[..., dict]] = {
         "displacement": evaluate_displacement, "inventory": evaluate_inventory, "health": evaluate_health,
         "state": evaluate_state, "encounter": evaluate_encounter, "expedition": evaluate_expedition,
-        "damage": evaluate_damage,
+        "damage": evaluate_damage, "contract": evaluate_contract,
     }
     validators: dict[str, Callable[..., object]] = {
         "displacement": validate_displacement, "inventory": validate_inventory, "health": validate_health,
         "state": validate_state, "encounter": validate_encounter, "expedition": validate_expedition,
-        "damage": validate_encounter,
+        "damage": validate_encounter, "contract": validate_contract,
     }
     if evaluator not in evaluators:
         raise ValueError(f"Unknown Veloren evaluator: {evaluator}")
@@ -60,6 +61,13 @@ def create_binding(
         raise ValueError("Glide landing scoring requires private fixture glide evidence")
     if parameters.get("marker_arrival") is not None and "native_site" not in fixture:
         raise ValueError("Dialogue marker arrival requires an admitted native settlement fixture")
+    if (parameters.get("sword_skills") is not None or parameters.get("auxiliary_ability") is not None
+            ) and "sword_skill_points" not in fixture:
+        raise ValueError("Skill scoring requires declared native Sword points")
+    if parameters.get("companion") is not None and "companion" not in fixture:
+        raise ValueError("Companion scoring requires a declared native owned companion")
+    if evaluator == "contract" and "contract" not in fixture:
+        raise ValueError("Contract scoring requires a declared native Slay fixture")
 
     def controls() -> tuple[Controls, list[Tool[Controls]]]:
         public = game.get_agent_interface()

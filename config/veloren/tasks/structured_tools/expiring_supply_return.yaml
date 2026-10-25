@@ -1,0 +1,134 @@
+id: expiring_supply_return
+game: veloren
+task_type: structured_tool
+task: Recover four cheese and two apples from separate loose supply sites and return alive with all six
+  items to [18708.5,10806.5,501], grounded within 2 metres horizontally and 0.5 vertically at speed <=0.1
+  m/s. The cheese is near [18722.5,10824.5,501]; the apples are near [18704.5,10811.5,501]. Each native
+  drop disappears about 300 game seconds after creation. The cheese is deliberately aged for 210 live
+  seconds during initialization, leaving roughly 90 seconds or less at opening; the apples are created
+  afterwards with nearly their full lifetime. Neither site is replenished. The exact remaining times are
+  not guaranteed. A three-metre divider at y=10815 ends at x=18718; walk around its east end. Another
+  divider at x=18714 spans y=10818..10827. The courtyard has ordinary two-metre perimeter walls. Choose
+  the collection order and route with both deadlines in mind. Final inventory and arrival are scored,
+  not a prescribed route. The world continues while you think. Release controls before your final answer.
+time_limit_seconds: 420
+fixture:
+  world_path: ../../fixtures/veloren_0_18_0_0.bin
+  world_seed: 130626853
+  time_of_day: '12:00'
+  day_length: 30
+  calendar: none
+  platform:
+    origin:
+    - 18700
+    - 10800
+    - 500
+    size:
+    - 28
+    - 28
+    block: Rock
+  blocks:
+  - origin:
+    - 18700
+    - 10815
+    - 501
+    size:
+    - 18
+    - 1
+    - 3
+  - origin:
+    - 18714
+    - 10818
+    - 501
+    size:
+    - 1
+    - 10
+    - 3
+  - origin:
+    - 18700
+    - 10800
+    - 501
+    size:
+    - 28
+    - 1
+    - 2
+  - origin:
+    - 18700
+    - 10827
+    - 501
+    size:
+    - 28
+    - 1
+    - 2
+  - origin:
+    - 18700
+    - 10801
+    - 501
+    size:
+    - 1
+    - 26
+    - 2
+  - origin:
+    - 18727
+    - 10801
+    - 501
+    size:
+    - 1
+    - 26
+    - 2
+  player_state:
+    position:
+    - 18708.5
+    - 10806.5
+    - 501
+    look:
+    - 0
+    - 1
+    - 0
+    health: 100
+    inventory: {}
+    equipment:
+      active_mainhand: common.items.weapons.sword.starter
+      chest: common.items.armor.misc.chest.worker_purple_brown
+      feet: common.items.armor.misc.foot.sandals
+      glider: common.items.glider.basic_white
+      lantern: common.items.lantern.black_0
+      legs: common.items.armor.misc.pants.worker_brown
+  supplies:
+  - position:
+    - 18722.5
+    - 10824.5
+    - 501
+    item: common.items.food.cheese
+    amount: 4
+    pre_age_seconds: 210
+  - position:
+    - 18704.5
+    - 10811.5
+    - 501
+    item: common.items.food.apple
+    amount: 2
+evaluator:
+  name: state
+  parameters:
+    inventory:
+    - item: common.items.food.cheese
+      min_count: 4
+    - item: common.items.food.apple
+      min_count: 2
+    position:
+      target:
+      - 18708.5
+      - 10806.5
+      - 501
+      horizontal_tolerance: 2
+      vertical_tolerance: 0.5
+      max_speed: 0.1
+tools:
+- MoveTool
+- TurnTool
+- JumpTool
+- PickupTool
+- UseItemTool
+- CraftTool
+- EquipTool

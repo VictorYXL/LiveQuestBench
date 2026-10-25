@@ -1,0 +1,77 @@
+id: leather_outfit
+game: veloren
+task_type: visual_motor
+task: 'Make and wear both leather chest armor (common.items.armor.hide.leather.chest) and leather boots
+  (common.items.armor.hide.leather.foot), retaining the replaced worker shirt and sandals in your bag.
+  You have thirteen tough hides and two animal hides, but no leather or prepared armor. You know simple_leather,
+  thick_leather, leather_strips, leather_chest and leather_feet. A tanning rack is at [18707.5,10809.5,501]
+  and a crafting bench at [18715.5,10809.5,501]. Native recipes share materials: plan both outputs before
+  spending them. Use an inventory armor item to equip it; keep the displaced clothing. Finish alive. Only
+  simultaneous final equipment and holdings are scored. The world continues while you think. Release controls
+  before your final answer.'
+time_limit_seconds: 900
+fixture:
+  world_path: ../../fixtures/veloren_0_18_0_0.bin
+  world_seed: 130626853
+  time_of_day: '12:00'
+  day_length: 30
+  calendar: none
+  platform:
+    origin:
+    - 18700
+    - 10800
+    - 500
+    size:
+    - 24
+    - 18
+    block: Rock
+  player_state:
+    position:
+    - 18702.5
+    - 10809.5
+    - 501
+    look:
+    - 0
+    - 1
+    - 0
+    health: 100
+    inventory:
+      common.items.crafting_ing.hide.tough_hide: 13
+      common.items.crafting_ing.hide.animal_hide: 2
+    equipment:
+      active_mainhand: common.items.weapons.sword.starter
+      chest: common.items.armor.misc.chest.worker_purple_brown
+      feet: common.items.armor.misc.foot.sandals
+      glider: common.items.glider.basic_white
+      lantern: common.items.lantern.black_0
+      legs: common.items.armor.misc.pants.worker_brown
+  recipes:
+    simple_leather: true
+    thick_leather: true
+    leather_strips: true
+    leather_chest: true
+    leather_feet: true
+  stations:
+  - position:
+    - 18707.5
+    - 10809.5
+    - 501
+    sprite: TanningRack
+  - position:
+    - 18715.5
+    - 10809.5
+    - 501
+    sprite: CraftingBench
+  recipe_groups:
+  - common.items.recipes.armor.leather
+evaluator:
+  name: state
+  parameters:
+    equipment:
+      chest: common.items.armor.hide.leather.chest
+      feet: common.items.armor.hide.leather.foot
+    inventory:
+    - item: common.items.armor.misc.chest.worker_purple_brown
+      min_count: 1
+    - item: common.items.armor.misc.foot.sandals
+      min_count: 1

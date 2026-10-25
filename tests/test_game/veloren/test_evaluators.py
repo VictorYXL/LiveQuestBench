@@ -11,6 +11,63 @@ from game.veloren.evaluators.endpoints import evaluate_displacement, evaluate_he
 from game.veloren.evaluators.endpoints import known_recipes, state_checks, validate_state
 
 
+def test_merchant_lookup_skips_native_entities_without_names():
+    from game.veloren.settlement import nearby_merchants
+
+    merchant = {"name_text": "Wesab (Merchant)", "distance": 3}
+    assert nearby_merchants({"nearby_entities": [
+        {"name_text": None, "distance": 1}, merchant, {"name_text": "Other (Merchant)", "distance": 5},
+    ]}) == [merchant]
+
+
+def test_skill_goal_requires_learned_native_skill_and_current_eligible_slot():
+    row = {
+        "survival": {"health": {"current": 100}},
+        "skill_tree": {"groups": [{"group": {"Weapon": "Sword"},
+                                  "skills": [{"skill": {"Sword": "DefensiveRiposte"}, "learned_level": None}]}]},
+        "auxiliary_abilities": {"active_set": ["Empty"] * 5, "available": []},
+        "inventory": {"equipment": {"active_mainhand": {"id": {"Simple": "starter_sword"}}}},
+    }
+    goal = {"sword_skills": ["DefensiveRiposte"],
+            "auxiliary_ability": {"slot": 0, "mainhand_index": 10},
+            "equipment": {"active_mainhand": "starter_sword"}}
+    validate_state(**goal)
+    assert not state_checks(row, row, **goal)["success"]
+    row["skill_tree"]["groups"][0]["skills"][0]["learned_level"] = 1
+    row["auxiliary_abilities"]["active_set"][0] = {"MainWeapon": 10}
+    assert not state_checks(row, row, **goal)["success"]
+    row["auxiliary_abilities"]["available"] = [{"MainWeapon": 10}]
+    assert state_checks(row, row, **goal)["success"]
+    row["inventory"]["equipment"]["active_mainhand"]["id"] = {"Simple": "hammer"}
+    assert not state_checks(row, row, **goal)["success"]
+    with pytest.raises(ValueError, match="missing or duplicated"):
+        state_checks(row, row, sword_skills=["Unknown"])
+    with pytest.raises(ValueError, match="slot"):
+        validate_state(auxiliary_ability={"slot": True, "mainhand_index": 10})
+
+
+def test_aged_supply_opening_requires_original_live_pickup_and_remaining_time():
+    from game.veloren.fixture import verify_aged_supplies
+
+    item = {"id": {"Simple": "cheese"}, "amount": 4}
+    entity = {"uid": 7, "control_target": {"uid": 7, "lifecycle": "generation:1"}, "pickup": item}
+    initialized = {
+        "fixture": {"supplies": [{"pre_age_seconds": 210}]},
+        "supplies": [{"uid": 7, "entity": entity, "item": "cheese", "amount": 4,
+                      "player_target": deepcopy(entity["control_target"]),
+                      "expiry_game_time_estimate": 300}],
+    }
+    row = {"nearby_entities": [deepcopy(entity)], "survival": {"buff_clock": {"now": 285}}}
+    verify_aged_supplies(initialized, row)
+    row["survival"]["buff_clock"]["now"] = 285.01
+    with pytest.raises(RuntimeError, match="identity-matched"):
+        verify_aged_supplies(initialized, row)
+    row["survival"]["buff_clock"]["now"] = 220
+    row["nearby_entities"][0]["control_target"]["lifecycle"] = "generation:2"
+    with pytest.raises(RuntimeError, match="identity-matched"):
+        verify_aged_supplies(initialized, row)
+
+
 @pytest.mark.parametrize("book", [
     {"total": 2, "omitted": 1, "items": [{"recipe": "a"}]},
     {"total": 2, "omitted": 0, "items": [{"recipe": "a"}]},

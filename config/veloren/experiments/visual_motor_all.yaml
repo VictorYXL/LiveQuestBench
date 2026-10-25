@@ -25,6 +25,12 @@ tasks:
 - path: ../tasks/visual_motor/glide_and_land.yaml
 - path: ../tasks/visual_motor/workshop_directions.yaml
 - path: ../tasks/visual_motor/merchant_exchange.yaml
+- path: ../tasks/visual_motor/market_hunt_return.yaml
+- path: ../tasks/visual_motor/slay_contract.yaml
+- path: ../tasks/visual_motor/leather_outfit.yaml
+- path: ../tasks/visual_motor/expiring_supply_return.yaml
+- path: ../tasks/visual_motor/skill_hunt_return.yaml
+- path: ../tasks/visual_motor/companion_hunt_return.yaml
 repetitions: 10
 agents:
 - id: tool_calling_astra
