@@ -21,6 +21,15 @@ from game.veloren.fixture import initialize_fixture, recipe_observation, validat
 from game.veloren.runtime.server import fixture_server
 
 
+async def protect_administrator(admin: NativeBridge) -> dict:
+    await setup.command(admin, "buff", "invulnerability", 1, 3600)
+    return await setup.wait_observation(
+        admin,
+        lambda row: any(buff.get("kind") == "Invulnerability" for buff in row["survival"]["buffs"]),
+        "setup administrator-only invulnerability",
+    )
+
+
 class LocalRenderer(RendererBridge):
     async def envelope(self, request: dict, *, origin: str, timeout: float | None = 60) -> dict:
         # Public steps retain native tick bounds and are cancelled at the Episode deadline.
@@ -107,7 +116,9 @@ class Session:
         administrator = await self.stack.enter_async_context(AsyncExitStack())
         administrator.push_async_callback(admin.close)
         await admin.start()
-        administrator_uid = (await admin.request("observe"))["self_identity"]["uid"]
+        protected = await protect_administrator(admin)
+        administrator_uid = protected["self_identity"]["uid"]
+        self.record["setup_admin_protection"] = protected["survival"]["buffs"]
         os.environ["LIVEQUEST_PHYSICAL_INPUT"] = "1" if self.track == "visual_motor" else "0"
         self.actor = LocalRenderer(
             self.output, "Player" + uuid4().hex[:10], port, userdata, journal, native,

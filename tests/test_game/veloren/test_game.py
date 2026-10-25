@@ -174,6 +174,8 @@ def test_native_movement_and_cutoff(track: str, headless: bool, recording: bool,
             assert evaluate_health(before, after, min_health=1)["success"]
             first = json.loads((before / "observation.json").read_text())
             last = json.loads((after / "observation.json").read_text())
+            assert all(buff["kind"] != "Invulnerability"
+                       for observation in (first, last) for buff in observation["survival"]["buffs"])
             retired = json.loads((output / "fixture.json").read_text())["administrator_retirement"]
             assert retired["confirmed_absent"]
             assert retired["uid"] != first["self_identity"]["uid"]
@@ -196,6 +198,7 @@ def test_native_movement_and_cutoff(track: str, headless: bool, recording: bool,
         assert game._session.process.returncode == 0
         native_cleanup = json.loads((output / "native-cleanup.json").read_text())
         assert native_cleanup["server_stopped"]
+        assert any(buff["kind"] == "Invulnerability" for buff in native_cleanup["setup_admin_protection"])
         if recording:
             subprocess.run(["ffmpeg", "-v", "error", "-xerror", "-i", str(output / "video.mp4"),
                             "-map", "0:v:0", "-f", "null", "-"],

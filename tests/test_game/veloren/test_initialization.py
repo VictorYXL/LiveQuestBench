@@ -14,8 +14,8 @@ import pytest
 from game.veloren import fixture as fixtures
 
 
-def test_only_public_native_steps_drop_transport_deadline(monkeypatch):
-    upstream(monkeypatch, SimpleNamespace())
+def load_worker(monkeypatch, setup=None):
+    upstream(monkeypatch, setup if setup is not None else SimpleNamespace())
     package = sys.modules["scripts.rpg_benchmark"]
     package.runtime = SimpleNamespace()
 
@@ -34,6 +34,11 @@ def test_only_public_native_steps_drop_transport_deadline(monkeypatch):
     )
     worker = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(worker)
+    return worker
+
+
+def test_only_public_native_steps_drop_transport_deadline(monkeypatch):
+    worker = load_worker(monkeypatch)
     actor = worker.LocalRenderer()
     for origin, command, expected in (
         ("agent", "step", None), ("agent", "observe", 60),
@@ -41,6 +46,34 @@ def test_only_public_native_steps_drop_transport_deadline(monkeypatch):
     ):
         assert asyncio.run(actor.envelope({"cmd": command}, origin=origin)) == {"timeout": expected}
     assert asyncio.run(actor.envelope({"cmd": "observe"}, origin="setup", timeout=5)) == {"timeout": 5}
+
+
+def test_setup_protects_only_administrator_and_requires_native_readback(monkeypatch):
+    admin = object()
+    calls = []
+    protected = {"self_identity": {"uid": 17}, "survival": {"buffs": [{"kind": "Invulnerability"}]}}
+
+    async def command(target, *args):
+        assert target is admin
+        calls.append(args)
+
+    async def wait_observation(target, predicate, reason):
+        assert target is admin
+        assert calls == [("buff", "invulnerability", 1, 3600)]
+        assert not predicate({"survival": {"buffs": []}})
+        assert not predicate({"survival": {"buffs": [{"kind": "Regeneration"}]}})
+        assert predicate(protected)
+        return protected
+
+    worker = load_worker(monkeypatch, SimpleNamespace(command=command, wait_observation=wait_observation))
+    assert asyncio.run(worker.protect_administrator(admin)) == protected
+
+    async def failed_readback(*args):
+        raise RuntimeError("Administrator protection not observed")
+
+    worker.setup.wait_observation = failed_readback
+    with pytest.raises(RuntimeError, match="Administrator protection not observed"):
+        asyncio.run(worker.protect_administrator(admin))
 
 
 def player_scene(health=35):
