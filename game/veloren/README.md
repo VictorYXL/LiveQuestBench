@@ -1,605 +1,239 @@
 # Veloren
 
-An ordinary native Veloren player behind the same administrative lifecycle as
-Minecraft: `start`, `begin`, `end`, `get_agent_interface`, `save_snapshot`, `close`.
-This is a new engineering profile, not a reproduction of published VelorenBench
-task qualification or Agent scores.
+LiveQuestBench evaluates native Veloren gameplay in two modes:
 
-The production launcher runs the explicit VM/ST examples in
-[`config/veloren/`](../../config/veloren/); see the
-[experiment usage and result semantics](../../README.md#running-an-experiment).
-The same private endpoint evaluators validate configuration before a scheduled
-run and score native before/after evidence afterward.
-Benchmark recordings live under each Episode's `recording/`: `video.mp4`
-and `chat/`. Standalone game tests retain their own output layout;
-`VelorenGame(recording_path=...)` can select an explicit video destination.
+- **VM:** game pixels and bounded keyboard/mouse input.
+- **ST:** permitted native state and fixed game tools.
 
-## Basic L1 tasks
+Tasks cover movement, gathering, crafting, equipment, recovery, combat and NPC
+interaction. The server continues to evolve while the Agent reasons and acts.
+See the [project guide](../../README.md) for experiments, Agents and models.
 
-The paired L1 selection covers short movement, supplied-input food crafting,
-pickup, equipping supplied armor, learning a recipe, recovery, jumping and
-landing, rolling, drawing a weapon and dealing damage without requiring a kill.
-It reuses the existing native map and fixture authoring. The damage goal reuses
-identity-bound encounter evidence and still requires actual player contribution
-and no player death; existing encounter goals continue to require native deaths.
+## Installation
 
-`fixture.motion_evidence: true` enables private readback of passive renderer
-samples. Jump evidence requires a grounded upward takeoff, at least 0.5 metres
-of rise and a subsequent landing. Roll evidence requires the native Movement
-phase, not a requested input or the preceding Buildup phase. These are sampled
-client effects, not server-atomic event counts; they can miss sufficiently short
-transitions. Terminal grounded/position requirements are checked separately.
-The renderer does not change movement, stamina, collision or damage, and neither
-track receives the private counters. Drawing checks native `wielding`, not
-merely having a weapon in an equipment slot.
+First prepare a [VelorenBench](https://github.com/wyaaaattwho/VelorenBench)
+installation and its matching native build cache using that project's setup
+instructions. LiveQuestBench reuses that installation; its setup command is not
+a standalone game downloader.
 
-## L2 workflows and opt-in interfaces
+Requirements:
 
-The paired L2 subsets cover gathering, recipe learning, craft/equip, recovery,
-two terrain routes, a Legoom encounter, glide/landing, native workshop
-directions and merchant acquisition with reserves. Recorded Baseline acceptance
-retains ST six successes/four failures and VM two successes/eight failures.
-These are engineering coverage results, not calibrated success rates; no full
-successful glide or merchant task trajectory has been observed.
+- Linux/X11, Xvfb for headless sessions, and a usable Vulkan driver.
+- FFmpeg for recording, plus `patch` and `uv`.
+- The upstream pinned Rust toolchain and build cache.
+- The upstream harness's Python 3.13 environment; LiveQuestBench uses its
+  separate project environment.
 
-`GlideTool` draws or stows the equipped glider; it does not fly a route or land
-for the Agent. VM uses the stock Control binding. `fixture.glide_evidence`
-enables private sampled airborne-Glide and subsequent landing records. The
-distance is the largest horizontal displacement from the first sampled Glide
-position while still in that flight's Glide state, not distance walked or fallen
-afterwards. The landing must satisfy the declared zone; final position and
-survival are separate checks. Ground-only deployment does not count. Sampling
-can miss brief transitions; more than 128 landings invalidates glide evidence
-rather than silently truncating it. Its separate private readback and capacity
-guard do not invalidate legacy jump/roll evidence.
+On Ubuntu, install `x11-utils` for `xdpyinfo` and `libxkbcommon-x11-0` for the
+renderer. The keyboard library is loaded at runtime: successful compilation
+alone does not prove that it is installed.
 
-`fixture.native_site` selects a named existing settlement instead of an authored
-platform and preserves its native terrain and population. Optional `merchant`
-preparation selects an existing trader and places them at a declared initial
-point. Stock, actual native prices and cash are checked against the supplied
-goods and reserves; missing stock is supplied through an ordinary paid
-administrator-to-merchant trade. No new resident, safezone, NPC removal,
-synthetic price or fabricated workshop marker is installed. The merchant's
-health and AI are unchanged. Private setup queries never become Agent tools.
-The opt-in settlement ST profile adds current received dialogue/markers,
-pending native trade offers and inventories, native UI-derived unit/offer values,
-and the last server trade result. It does not expose a quest database or whole
-world map. Dialogue IDs are decimal strings to preserve all 64 bits across Agent
-runtimes. Tools submit one talk, offered response, acknowledgement, invitation,
-offer edit or phase acceptance; they do not choose replies, balance offers or
-complete a transaction automatically. Pending disappearance is not a purchase
-receipt. Old task defaults retain their original tool sets and observations.
-VM uses ordinary dialogue, map and trade UI with E, M and T.
-
-## L3 native mechanisms
-
-The paired ten-objective L3 subsets retain ST five successes/five failures and
-VM two successes/eight failures. Outfit and expiring-supply tasks succeeded in
-both modes; ST also completed food reserve, skill/hunt and market/hunt.
-Both Slay runs created real native contracts but ended in player deaths, not
-completed reward deliveries. These are engineering acceptance results, not
-stable success rates or a completed difficulty calibration.
-
-The L3 additions reuse the courtyard, native recipes, inventory/equipment and
-ordered preparation scoring. `supplies[].pre_age_seconds` waits in the live
-server before play; it does not change the native 300-second expiry. Original
-pickup identities and remaining estimated lifetime are checked at opening.
-
-`sword_skill_points` lawfully unlocks the Sword group, then grants only the
-declared unspent points. Opt-in tools learn one skill, configure one eligible
-auxiliary slot or hold one bounded auxiliary input. Costs and prerequisites
-remain native; there is no target tracking. VM uses the P diary and numeric
-hotbar keys. Skill and active-slot predicates extend ordinary state scoring.
-Ability indices are weapon-relative, so the skill task also checks its equipped sword.
-
-An optional native owned sheep retains its normal health and AI. `PetStayTool`
-submits native stay/follow, equivalent to nearby-pet V control, without healing
-or protection. Companion scoring binds its original identity, ownership, group,
-absence of death and terminal proximity. Authored markets reuse an existing
-world trader with its actual prices and stock preparation, without assuming
-that it remains inside a settlement during terrain construction.
-
-The native Slay fixture reuses an existing guard and Monster, with initial
-placement and a disclosed 1000-coin giver deposit. Contract scoring additionally
-requires fresh native activation, post-acceptance combat and an identity-bound
-settlement/statement/removal/insertion reward chain from the pinned private
-helper. It does not require ST acceptance receipts, and never exposes a quest
-database to either track. Merchant destination readback joins by native UID in
-the player's client, not the administrator's potentially obsolete source
-lifecycle. Merchant and Slay courtyards use six-metre ordinary perimeter walls;
-the administrator does not return beside the Slay giver after moving the Ogre.
-The fixed ST talk/invite surfaces require targets within five metres; dialogue
-replies require the speaker to remain closer than five metres. Native VM talk
-can start within eight metres, while trading still uses five. Opening a dialogue
-or trade window releases the cursor through the normal HUD.
-
-The directions predicate checks a newly received native workshop marker and a
-grounded horizontal arrival. It does not claim entry into a workshop interior
-or infer dialogue from proximity alone. Recorded native acceptance includes a
-successful ST directions task and a physical-T trade-opening component check;
-opening trade alone is not a completed exchange.
-
-## Native encounter tasks
-
-The [full ST experiment](../../config/veloren/experiments/structured_tools_all.yaml)
-and [full VM experiment](../../config/veloren/experiments/visual_motor_all.yaml)
-include three encounter goals: defeat a Green Legoom, defeat two simultaneous
-Green Legooms, and collect expiring simple leather while resolving combat, retaining a
-potion and returning to the starting point. These are development tasks, not
-calibrated difficulty tiers or a claim of complete long-horizon coverage.
-
-`fixture.encounters` explicitly declares unique roles, exact-body native assets
-and supported spawn positions. The asset/loadout reuse follows VelorenBench
-B1/B2; independent native UID/entity-generation, health-application and actual
-death evidence follows its later T06/T08 implementation rather than treating
-disappearance or random loot as success. Native enemy AI remains autonomous.
-Setup verifies living enemies and an uninjured, stationary player; no damage,
-quest completion or action during setup counts toward success.
-
-The private `encounter` evaluator requires all declared targets to die, actual
-player damage to each before its death, no native player death, and all declared
-terminal inventory/health/position requirements. It does not require a last blow.
-The checksum-protected endpoint stores the private run/nonce, immutable opening
-registry and bounded native events. Public ST projection and VM screenshots
-never include this registry or event journal. Final evidence is captured after
-the public gate, while the world continues; it is not an atomic server pause.
-
-Combat ST uses `veloren-native-fixed-tools-v4-combat`: `LookTool` aims once at a
-point, `AttackTool` holds primary/secondary for at most 60 client updates,
-`WieldTool` controls weapon readiness, and bounded `BlockTool`, `RollTool` and
-`StopTool` expose ordinary native controls. None selects a target, auto-aims,
-approaches an enemy or runs a combat policy. Old fixtures retain their original
-observation profile and original default tool set. Explicit task allowlists can
-select any supported tools. VM retains actual OS input; R toggles wield and
-middle mouse rolls. The default Alt block binding remains unavailable.
-
-The leather is a real native dropped item, expiring after approximately 300 game
-seconds; the task budget is not a promise of that item's continued availability.
-Collecting it early can preserve availability, but combat and recovery still
-consume time and finite supplies. This is one resource/time-sensitive composite,
-not proof of a calibrated latency effect. The non-food supply is deliberate:
-native non-humanoid enemies can loot consumables, and the initial apple prototype
-could disappear into the enemy's inventory before public control opened.
-Message/Slay contract migration remains separate qualification work: contract
-success must join real offered responses, native participant identities and
-actual reward insertion, not just proximity or inventory deltas.
-
-### Development validation (2026-10-24)
-
-The final administrator-free, protection-disabled cohort completed eight
-Baseline task/track episodes before admitting four representative Hermes and
-GamingAgent episodes (one Legoom in each track per Agent). All twelve had valid
-engineering results, independently replayed scores, journal-matched native
-evidence, decoded videos, transcript/accounting checks and native cleanup.
-There were three task successes and nine task failures; failed goals are not
-reported as integration errors.
-
-The offline suite passed 100 tests. Both legacy VM/ST movement, item, gate and
-cutoff checks passed with verified helper retirement. Public-control scripted
-references passed the full supply/return composite and simultaneous two-enemy
-goal. The temporary Wolf controllers failed; successful reference behavior and
-difficulty calibration are still open. This is development acceptance, not a
-frozen ranking, complete external-Agent matrix or long-horizon validation.
-
-## Setup
-
-The current installer reuses an **already prepared and validated VelorenBench
-installation and its matching native build cache**. It is not a fresh game
-downloader. Obtain/build those using the upstream project's installation workflow
-first. The integration preserves the original repository, installation, assets,
-server, helper and Python environment. No game binary is vendored here. The
-unmodified native map is bundled separately under
-[`config/veloren/fixtures`](../../config/veloren/fixtures/) with its upstream
-license and provenance; other game assets still come from the installation.
-
-Host requirements are Linux/X11, Xvfb for headless mode, a Vulkan driver usable by
-the renderer, FFmpeg for recording, `patch`, `uv`, and the upstream pinned Rust
-toolchain/cache. The prepared upstream harness uses Python 3.13 in its own
-environment; LiveQuestBench itself stays on Python 3.11.
+Set `VELOREN_INSTALLATION` to the upstream installation JSON,
+`VELOREN_BUILD_CACHE` to its matching cache, and `VELOREN_RUNTIME_DIR` to a new,
+dedicated destination:
 
 ```bash
 uv sync --locked --extra veloren --group test
 bash game/veloren/setup.sh \
-  --installation /absolute/path/to/veloren-installation/installation.json \
-  --build-cache /absolute/path/to/veloren-installation/build-cache \
-  --root /absolute/path/to/new-livequest-veloren-build
-export LIVEQUEST_VELOREN_RUNTIME=/absolute/path/to/new-livequest-veloren-build/runtime.json
+  --installation "$VELOREN_INSTALLATION" \
+  --build-cache "$VELOREN_BUILD_CACHE" \
+  --root "$VELOREN_RUNTIME_DIR"
+export LIVEQUEST_VELOREN_RUNTIME="$VELOREN_RUNTIME_DIR/runtime.json"
 ```
 
-The independent output root needs space for the source/compiler cache and binary.
-The installer verifies the source against the bound native source manifest,
-applies the declared physical-input, native-protection, passive-motion and glide patches, builds the
-renderer offline using the original toolchain settings, and hashes the resulting
-executable and patches. Reusing this output root requires a verified declared
-tree; the installer can upgrade the physical-input-only or protection-disabled
-tree by applying the remaining patches, including a previously motion-enabled
-tree. Motion/glide fixtures explicitly reject receipts missing the corresponding support.
-The upstream runtime is still validated by its original loader on every launch;
-the replacement renderer is separately and explicitly hashed. There is no
-fallback to the unpatched renderer.
+Keep the upstream installation available after setup. Use a separate build
+destination rather than modifying the original cache, and allow sufficient
+space for a native build. Rebuild if setup reports an incompatible runtime.
 
-The launcher sets `LIVEQUEST_DISABLE_NATIVE_PROTECTION=1` for both tracks.
-The upstream native protection controller otherwise reacts to damage or threats
-without an Agent action, takes ownership of the avatar and can reject subsequent
-ST actions as busy. The declared protection patch disables that controller under
-this launch flag; native enemy AI and ordinary damage, blocking and interruption
-mechanics remain active. The runtime receipt must identify this patch and launch
-policy; older receipts are rejected with instructions to rebuild. Development
-results collected before this change belong to an assisted-runtime cohort and
-must not be silently combined with the new runtime's results.
-This does not remove the game's normal death-protection/downed mechanics;
-those are distinct from the hidden automatic control policy.
+The integration disables the upstream automatic protection controller so that
+combat decisions remain with the Agent. Ordinary enemy AI, damage, blocking
+and the game's native downed/death mechanics remain active.
 
-The inspected upstream checkout was VelorenBench `68b7326`, with uncommitted
-upstream changes left untouched. The actual runtime uses its validated installed
-harness and bound native source manifest, **not** whatever happens to be checked
-out. Preserve that original installation and the generated runtime receipt.
-The native source is GPLv3; the patch retains the [native license](patches/LICENSE).
-Harness, assets and all other upstream components retain their own licenses.
-The bundled map retains its upstream GPLv3 terms; this does not grant blanket
-redistribution rights for other game assets.
+Veloren native source and bundled map retain their applicable GPLv3 terms.
+The [native license notice](patches/LICENSE) is retained. Other components and
+assets have their own licenses; do not assume blanket redistribution rights.
 
-## Modes and ownership
+## Run an experiment
 
-```python
-from pathlib import Path
-from benchmark.config import load_task
-from game.veloren.game import VelorenGame
+Select a configuration from
+[Veloren experiments](../../config/veloren/experiments/).
+For a first run, choose `move_2_metres`, one Agent and one repetition using the
+[smoke-test example](../../README.md#running-an-experiment).
 
-task = load_task(Path("config/veloren/tasks/visual_motor/move_2_metres.yaml"))
-game = VelorenGame(
-    output_dir=Path("output/my-unique-veloren-episode"),
-    fixture=task.fixture,
-    track="visual_motor",  # or "structured_tool"
-    headless=True,
-    recording=True,
-)
-try:
-    await game.start()
-    before = await game.save_snapshot(game.output_dir / "before")
-    public = game.get_agent_interface()
-    await game.begin()
-    # Supply only `public` and game.get_instructions() to the Agent.
-    await game.end()
-    after = await game.save_snapshot(game.output_dir / "after")
-finally:
-    await game.close()
+With `EXPERIMENT_CONFIG` and `RESULTS_DIR` set to your chosen experiment and
+dedicated result destination:
+
+```bash
+uv run --locked --extra veloren python run_benchmark.py \
+  --config "$EXPERIMENT_CONFIG" --output "$RESULTS_DIR" \
+  --headless --recording
 ```
 
-`start()` requires an explicit fixture mapping and creates fresh private server
-userdata, a private authoring helper and an ordinary renderer-owned player.
-After authoring, the helper disconnects and its absence is verified before the
-public gate can open. Its UID and cleanup receipt are recorded privately.
-It cannot remain in the arena as an undeclared enemy distraction or defender.
-`fixture.world_path` selects a native map file, resolved relative to the Task
-YAML (or supplied as an absolute path), just like Minecraft's world reference.
-The server uses native `Load(path)`, not installed asset-name lookup. `world_seed`,
-`time_of_day`, `day_length` and `calendar: none` declare the world settings.
-The native map file hash and generated server-settings hash are recorded.
-Missing maps or detected native map/settings fallback fail initialization.
-
-[`initialize_fixture`](fixture.py) builds a Rock platform at the declared
-absolute origin and size, moves the player to the declared point, sets health
-and time, and validates a grounded, stationary opening with the requested
-inventory, equipment and view direction. There are no `movement`/`spawn`
-shortcuts or offsets inferred from a varying spawn point. Inventory differences
-are applied with native cleanup/gift operations; the existing cleanup drops
-unwanted supplies 100 m from its starting location and clears skills/buffs.
-Equipment is checked exactly against the pinned starter character, not silently
-replaced or treated as an arbitrary editable loadout. The currently admitted
-initial look is `[0, 1, 0]`; other orientations are rejected before launch.
-For `native_site`, terrain authoring is skipped and the loaded settlement name
-is additionally verified. Authored blocks, stations, loose supplies and encounter
-overlays are not currently accepted in that natural-settlement branch.
-Merchant identity is joined by native UID during setup, then bound to the
-player client's own lifecycle token; administrator and renderer entity tokens
-are not interchangeable.
-
-Optional `blocks` add Rock cuboids (`origin`/`size`), with at most 8192 total
-authored solid voxels. `stations` declare `position` and `sprite` (CraftingBench
-or TanningRack); `supplies` declare `position`, native `item` and `amount`.
-Admission checks the helper's intermediate platform start and station approach
-2 m west, as well as player/supply support and clearance. Stations must not
-overlap these standing points or each other.
-`recipe_groups` are learned during setup; `recipes` maps recipe keys to expected
-initial knowledge booleans. Recipe verification requires consistent native
-`total`/`omitted` metadata: an omitted recipe in a truncated book is ambiguous,
-not proof that it is unknown. Explicitly listed recipes remain usable evidence.
-For omitted catalog recipes, private initialization/scoring evidence uses the
-native read-only `goal_recipes` query; this does not expand Agent observations.
-Dropped supplies retain the native 300-game-second expiry;
-they are not replenished during the Episode.
-
-The built-in fixture references the bundled `veloren_0_18_0_0.bin` map,
-seed 130626853, noon, a 30-minute day, no calendar events, a 12x12 Rock platform
-at `[18704, 10800, 401]` and a player at `[18706.5, 10806.5, 402]`.
-Task VM/ST files declare the same world and player conditions.
-This remains a small integration diagnostic. The additional endpoint-compatible
-task catalog, source mapping, intentional redesigns and exclusions are documented
-[below](#task-catalog). Qualification is recorded separately from task success;
-budgets and difficulty are not calibrated scientific release settings.
-
-## Task catalog
-
-### Preparation evidence
-
-The simpler single-hunt preparation task was retired from the active catalog.
-The retained two-enemy expedition uses the same preparation evidence:
-
-The [expedition evaluator](evaluators/expedition.py) extends the native
-encounter evidence with compact private equipment-change samples. The native
-server must observe newly equipped rawhide chest armor before the player's
-first damaging contribution to a designated enemy. Final requirements retain
-the armor, own combat contribution, native target death, same-life survival
-and a settled return within two metres of camp. The old worker shirt is no
-longer an unrelated retention requirement. Equipment samples are
-bound to the original actor generation and native oracle sequence. They are
-not public observations, recipe-event proof, or continuous gear-at-every-hit
-proof. The sampling requirement is explicit in both public prompts.
-
-### Gathering for a two-enemy hunt
-
-[`provisioned_hunt_return`](../../config/veloren/tasks/structured_tools/provisioned_hunt_return.yaml)
-and its VM counterpart start without hides. Gather a finite native hide stack,
-process leather, make/equip armor, defeat two separated Green Legooms and
-return in the same life. Three carried potions are available throughout;
-healing and kill order remain choices. The native loose-item lifetime is
-disclosed, rather than silently refreshing missing materials. This reuses
-the fixed tools and ordered native preparation/encounter evaluator. The
-900-second budget remains developmental. The final-enclosure Baselines failed
-in both modes, including an additional ST run with StrikeTool. Public ST
-references succeeded with both separate aim/attack and the combined skill;
-the latter also verified cancellation of an in-flight strike at episode end.
-Treat this as a challenging development candidate, **not a calibrated medium
-task**. It is feasible through public controls but is not yet reliably solved
-by Baseline, and it is not an NPC contract.
-
-A targeted Hermes ST diagnostic using the same configured model succeeded:
-both native kills, ordered armor preparation, no death and camp return, with
-53.6875 final health. Its recording, native evidence and score replay passed.
-This is evidence of an Agent solution, not merely a scripted reference; one
-success does not establish a stable rate or an Agent ranking.
-
-### Active catalog
-
-Each mode's full-catalog experiment includes the 12 tasks below plus the
-two-enemy expedition above (13 total), with **10 repetitions per
-Agent**. The modes share fixtures, goals, budgets and private evaluators. These
-are development configurations, not native-qualified scores. They adapt
-[VelorenBench](https://github.com/wyaaaattwho/VelorenBench) revision
-`68b73269ffa54caefab9c5ab3d76ac671a38496f`; the source task mapping is below.
-
-| Task | Source | Final-state goal | Budget (s) |
-| --- | --- | --- | --- |
-| `move_2_metres` | Existing integration diagnostic | Displacement, alive at end | 180 |
-| `known_food` | C1/C3 merged | Newly obtained mushroom stick retained | 300 |
-| `gather_food` | C2 | Same product, one ingredient initially missing | 300 |
-| `learn_food` | C3U | Recipe learned and product retained | 300 |
-| `food_reserve` | T03 | Product/knowledge plus mushroom, twig and apple reserves | 300 |
-| `craft_equip` | T04, incorporating C4's chain | Rawhide chest equipped, old shirt retained | 600 |
-| `recover_health` | T05 | Health >=80 from 35, at least two of three potions retained | 300 |
-| `staggered_detour` | N2 | Settled arrival past staggered walls | 300 |
-| `elevation_steps` | N3 | Raised destination reached using side steps | 300 |
-| `defeat_legoom` | B1 asset/setup, T06 death/contribution evidence | Designated Green Legoom dead after player damage; player survives | 300 |
-| `dual_legoom` | New flat encounter, T08 multi-target evidence pattern | Both simultaneous enemies dead after player damage; player survives | 300 |
-| `combat_supply_return` | New composite using native combat and item expiry | Resolve combat, collect expiring leather, retain potion and return grounded | 420 |
-
-Craft/recovery tasks use an explicit elevated 24x18 Rock platform instead of
-source natural-site qualification. Retained navigation tasks N2/N3 use the source solid
-geometry and start/goal coordinates, remapped from y-up to native z-up.
-Arrival now uses **one endpoint**, not the source's two-sample sustained
-arrival: horizontal error <=1 m, vertical error <=0.5 m, speed <=0.1 m/s,
-grounded and positive health. Budgets are uncalibrated engineering choices.
-The integration diagnostic and overlapping variants should not be counted as
-independent long-horizon capabilities in an unweighted catalog average.
-
-The state-only endpoint predicates do not prove crafting, exact pickup provenance, consumption
-attribution or continuous survival. Loose-item expiry is disclosed in prompts.
-The encounter evaluator separately requires native player/target death and
-damaging-contribution events as described [above](#native-encounter-tasks).
-VM receives only pixels, static controls and the public task (including fixed
-navigation targets), never a hidden coordinate feed.
-
-Not migrated: B1-B3, X1-X2 and T06-T12 need combat/support/contract attribution
-or ordered history; T01 needs dialogue evidence; T02 mutates topology during
-play. N5 needs natural-route qualification and exact pickup provenance; N6
-needs a distinct displacement/recovery initialization; N7 needs named-town
-map/localization and site evidence absent from the current public profile.
-C1/C3 are merged, and C4 is folded into T04 rather than duplicated.
-
-Before scientific evaluation, qualify native reset/readback, geometry/chunk
-loading, recipe visibility, VM crafting/equipping, supply presence and expiry,
-physical reachability, tool completion and budgets in both modes. Static
-connectivity does not certify a feasible physical trajectory or model success.
-
-**Map files are not complete snapshots.** Native `FileOpts::Load`/`LoadAsset`
-load world-map data; character DB, terrain modifications and RtSim state are
-separate and omit some live components. The current loader uses the composite
-configuration above, not a claimed full-engine checkpoint. Stable authored
-starting conditions do not imply identical ambient entities, setup ticks,
-session IDs or subsequent simulation trajectories. The prepared runtime and
-assets remain part of the game identity.
-Bundling fixes the input map bytes, not cross-version world-generation behavior.
-The native loader reads the map without saving back to it; mutable server state
-remains in fresh per-Episode userdata. The map's checksum and origin are in
-[`veloren_0_18_0_0.source.json`](../../config/veloren/fixtures/veloren_0_18_0_0.source.json).
-
-VM observations are current XComposite PNG pixels and capture timestamps.
-Actions use the shared bounded atomic XTest keyboard/mouse vocabulary, with
-stateful down/up events and bounded waits. Each call permits at most 10000 ms
-of explicit waits in total; held inputs can persist across calls and reasoning.
-The shared Agent-facing `action` tool rejects invalid arguments before executing
-any command and returns `success=false`, `error=invalid_action_arguments`,
-`message`, `executed_commands=0` and `held_controls`. Previously held inputs are
-unchanged, so the Agent may need to release them explicitly. No actions are
-automatically retried or modified. Runtime execution failures still propagate;
-valid calls still return the action-result array.
-Absolute mouse coordinates use window-local screenshot pixels. All absolute
-positions are checked against the current window dimensions before executing
-any command; out-of-window coordinates reject the batch with valid bounds and
-unchanged held controls. Window/focus/connection failures still propagate.
-The renderer window is matched by
-title and native process ID. The native patch permits physical input only after
-an explicit launch opt-in and a privately fenced lifecycle request.
-It restores normal camera, keyboard/mouse and HUD processing; original semantic
-`visual_input` and other native skills are **not** exposed to the VM Agent.
-Native focus events still update cursor capture while the actor-input gate is
-closed. Disabling the physical gate also releases native queued ability inputs;
-OS release events alone are not treated as proof of that cutoff.
-VM batches interrupted by game shutdown raise `AgentAccessClosed`, including
-during explicit waits, and release held controls. At an intentional benchmark
-cutoff this is a normal stop, not an invalid-input or infrastructure error.
-The shared key whitelist is bounded: Alt/Super/Meta, function keys and punctuation
-are not currently exposed. In particular, the default Alt block binding and
-comma cursor toggle are unavailable; inventory (`I`) supplies the ordinary
-cursor-bearing UI. No hidden skill substitutes for these unsupported bindings.
-
-ST's `veloren-native-fixed-tools-v2` projects explicit actor state: session/update
-identity, position, velocity, grounding, survival/resources/equipment, inventory,
-native nearby entities, known recipes and nearby interactable sprites. This is local native sensing, not a
-visual line-of-sight guarantee. The native observation's global map, terrain
-queries, administrator control state and private fixture/scoring records are not
-forwarded. Coordinates are native x/y horizontal and z up.
-
-| Tool | Native operation | Bound / semantics |
-| --- | --- | --- |
-| `MoveTool` | Relative forward/backward/left/right movement | 1-120 variable-duration client updates, no path planning |
-| `TurnTool` | Native yaw change | -180 to 180 degrees |
-| `JumpTool` | Native jump | Actual grounding/stamina constraints |
-| `PickupTool` | Nearest in-range item | Does not navigate or choose a route |
-| `UseItemTool` | Observed integer inventory slot | Native item effect, not a scripted reward |
-| `CraftTool` | Known recipe | Amount 1-10; native material/station requirements |
-| `EquipTool` | Observed inventory slot to chest slot | Native equip/swap; no navigation or item creation |
-
-Encounter fixtures retain the original v3 combat tool set by default.
-Expedition tasks also expose v4 `StrikeTool`: one supplied-point aim followed
-by bounded primary attack, with no target lookup, tracking, movement, automatic
-wielding or healing. If the gate closes after aiming, no attack is submitted.
-The original combat tools are:
-
-| Tool | Native operation | Bound / semantics |
-| --- | --- | --- |
-| `LookTool` | Aim once at a native x/y/z point | No target UID or tracking |
-| `AttackTool` | Hold primary/secondary ability | 1-60 client updates, no auto-aim or approach |
-| `WieldTool` | Draw or sheathe weapon | Explicit boolean, ordinary native readiness |
-| `BlockTool` | Hold native block | 1-60 client updates, ordinary energy/weapon rules |
-| `RollTool` | Request native roll | 1-30 client updates, ordinary energy constraints |
-| `StopTool` | Release native continuous controls | Does not roll back partial effects |
-
-Tools are serialized and native failures remain explicit receipts. The
-Agent-facing tools reject malformed arguments before native execution with
-`success=false`, `error=invalid_tool_arguments`, `message` and `executed=false`;
-the Agent can correct its next call without an automatic retry. Direct interface
-validation and runtime/communication failures still raise errors. There is no generic server
-command, administrator operation, arbitrary native RPC or whole-task skill.
-Observe remains available while a native action runs; it does not issue an action.
-
-## Time, stopping and evidence
-
-The server and renderer continue while models think, networks wait and tools run.
-Native `tick` is a **client-update counter with variable elapsed time**, not a
-fixed server tick or 60 Hz clock. All benchmark boundaries use host monotonic
-nanoseconds. Actions may have partial effects before cancellation.
-
-`end()` revokes public access, interrupts a pending public call, clears held
-controls and obtains native stop acknowledgement. It does not roll back effects
-or pause the server. Physics, AI and existing consequences can continue after the
-gate. Before/after snapshots are private native-client readbacks at explicit
-ready/ended boundaries, not atomic server saves; capture timing and checksums are
-recorded alongside the full private observation. Do not merge these results with
-Minecraft's tick-freeze protocol as if the timing conditions were identical.
-
-[Endpoint evaluators](evaluators/endpoints.py) support:
-
-- horizontal displacement with positive final health;
-- inventory count and minimum count change for native item identifiers;
-- final health and minimum health change;
-- `state`: simultaneous final inventory bounds/deltas, equipment, learned
-  recipes, minimum health, and a grounded target position with a speed bound.
-
-The separate [encounter evaluator](evaluators/encounter.py) combines those state
-predicates with the identity-bound native damage/death evidence described above.
-
-The `state` evaluator defaults to final health of at least 1 and combines all
-supplied predicates with AND. Position checks use separate horizontal/vertical
-tolerances, not path history. Recipe checks reject ambiguous truncated evidence. These
-checks do not prove crafting/consumption attribution, continuous survival, or
-sustained arrival across multiple observations. The extended fixtures and fixed
-tools still require native qualification before a task suite is certified.
-
-Inventory thresholds `min_count` and `min_delta` are independently optional;
-provide at least one nonnegative integer. Health thresholds `min_health` and
-`min_delta` are also independently optional; provide at least one finite number,
-with a nonnegative `min_health`. A negative health delta explicitly permits a
-bounded loss. Supplied thresholds are combined with AND.
-
-Omitted thresholds impose no constraint (`None` in the Python API). In particular,
-`min_count` alone allows inventory consumption as long as the final count meets
-the goal, and `min_health` alone allows damage. Previously, both implicitly
-required a nonnegative delta; callers that need that condition must now specify
-`min_delta=0`. Empty threshold sets raise instead of succeeding unconditionally.
-Final-state checks still read and validate both endpoints for audit integrity.
-The displacement task keeps its explicit relative-distance and living-at-end
-conditions; no inventory or health-delta constraint is added.
-
-Simple inventory IDs use the native asset string. Composite IDs use sorted,
-compact JSON of the native definition ID; unrelated composite items are not
-discarded or miscounted.
-
-Evidence must have correct endpoint phases, matching session and actor identity, ordered
-capture windows and matching checksums. Missing or corrupted evidence is an
-error, not a task failure or score of zero. Primitive endpoint checks do not prove path length,
-intermediate survival, exact event ordering, crafting provenance or sustained
-resource ownership; those need trajectory/event evaluators.
-These initial evaluators require the same native actor identity at both
-endpoints. Actor replacement is reported as invalid evidence, not silently scored
-as a failed task. Native same-actor respawn does not remove existing no-death goals.
-
-ST exposes `RespawnTool` as a standard recovery operation, including for explicit
-task tool allowlists. It requests the existing native respawn and waits for a
-living client readback; a living player's request is refused. It does not grant
-items, select a respawn location, reset enemies, or restart the episode budget.
-The game retains its waypoint/server-spawn and equipment-durability rules.
-All tasks now retain private native death evidence, even without encounters.
-Independent death counts and original server events are exported to
-`results/metrics.json`; this evidence is never added to public observations.
-
-Use dedicated displays. An explicit desktop may be selected with
-`headless=False, display_name=":..."`; never use that desktop manually during an
-episode. XTest is session-global, not a malicious-Agent security sandbox.
-Recording samples the actual native window including its HUD and UI.
+Prepare the selected Agent and model credentials before launching.
+Use a dedicated virtual display or authorized X11 desktop. Do not interact
+manually with a display under Agent control.
 
 ## Tests
 
-```bash
-export LIVEQUEST_VELOREN_TEST=1
-uv run --locked --extra veloren --group test python -m pytest \
-  tests/test_game/veloren -q -s --headless --recording
+Run offline checks first:
 
-# Prepare the selected Agents using their own READMEs first.
-export LIVEQUEST_LIVE_COPILOT=1
-export LIVEQUEST_COPILOT_TOKEN_FILE=/absolute/path/to/authorized-token.txt
+```bash
 uv run --locked --extra veloren --group test python -m pytest \
-  tests/test_agent/test_agents_veloren.py -q -s --headless --recording
+  tests/test_game/veloren -q
 ```
 
-The game checks prove real VM movement, mouse look, inventory UI and held primary
-input release; all six ST skills (including truthful out-of-range/empty-slot/
-missing-material failures); active-action cutoff, public gates, native update
-progression, private scoring, process cleanup and video decoding. Private native
-frame metadata is used only by these administrative checks, never as VM input.
-The small offline evaluator check covers exact thresholds and corrupted evidence.
-Agent tests use real `gpt-6-astra` calls, the same six integrated Agents, and a
-two-metre displacement task. A task failure may pass engineering acceptance only
-if the actual model, native loop/tool exchange and benchmark-controlled cleanup
-are verified. Missing dependencies/runtimes produce skips, not acceptance.
-The dedicated DeepSeek and GamingAgent stop cases interrupt after the first completed game tool.
-The earlier validated headless run passed its 13 Agent cases and the three game/evaluator
-checks. See the [acceptance record](../../output/survey/veloren_integration_20261022.md)
-for exact source hashes, task outcomes, corrected input defects and retained
-evidence. These results qualify the small integration task, not the full game or
-long-horizon benchmark performance.
+After preparing the runtime, enable native ST/VM lifecycle checks:
 
-Raw game and Agent artifacts are under `output/test/`. They retain model messages,
-real images, interactions, runtime provenance, native journals, endpoint scores,
-boundary timestamps, cleanup reports and optional decoded videos.
+```bash
+LIVEQUEST_VELOREN_TEST=1 \
+uv run --locked --extra veloren --group test python -m pytest \
+  tests/test_game/veloren/test_game.py -q -s --headless --recording
+```
+
+These tests exercise real game interaction, stopping, private scoring and
+recording without model calls. Select the full `tests/test_game/veloren`
+directory for broader checks. Use `--no-recording` to omit videos, or
+`--no-headless` to use an existing desktop.
+
+For real Agent tests, prepare the selected
+[Agent](../../README.md#agents) and authorized Copilot credentials, then enable
+`LIVEQUEST_VELOREN_TEST=1` and `LIVEQUEST_LIVE_COPILOT=1`:
+
+```bash
+uv run --locked --extra veloren --group test python -m pytest \
+  tests/test_agent/test_agents_veloren.py -k tool_calling \
+  -q -s --headless --recording
+```
+
+Model tests consume quota. Replace the selector to test another installed Agent.
+A valid task failure differs from an integration error; skipped tests do not
+verify a working runtime.
+
+## Tasks and fixtures
+
+- [ST task definitions](../../config/veloren/tasks/structured_tools/)
+- [VM task definitions](../../config/veloren/tasks/visual_motor/)
+- [World fixtures](../../config/veloren/fixtures/)
+
+| Selection | Typical objectives |
+| --- | --- |
+| L1 | Movement, pickup, supplied-input crafting, equipment and recovery |
+| L2 | Resource gathering, terrain routes, encounters, gliding and trading |
+| L3 | Preparation under resource constraints, return journeys, companions and contracts |
+
+Levels organize the development catalog, not calibrated difficulty guarantees.
+Each task declares its exact budget, starting state, permitted tools and goal.
+
+### Add a task
+
+1. Copy a task with the desired mode and scoring pattern.
+2. Set a unique ID, public objective and time budget.
+3. Declare the map and initial conditions in `fixture`.
+4. Select evaluator settings and the ST tools, if applicable.
+5. Add the YAML path to an experiment.
+6. Verify native initialization, reachability and scoring in each supported mode.
+
+Coordinates use **x/y horizontally and z vertically**. `fixture.world_path`
+selects a native map, relative to the task YAML or as an absolute path. A map is
+not a complete live-world checkpoint: initial player state, terrain preparation
+and other fixture settings must also be declared.
+
+Choose an existing fixture pattern for platforms, terrain obstacles, stations,
+supplies, encounters or a native settlement. Supplies can expire according to
+native game rules; expose relevant deadlines in the objective rather than
+silently replenishing resources.
+
+For dialogue, trading, skills, gliding or companions, start from a task that
+already admits those features. Do not assume that every task exposes every
+available tool.
+
+### Match scoring to the objective
+
+| Scoring pattern | What it establishes |
+| --- | --- |
+| Displacement | Movement relative to the starting position and final survival |
+| Inventory / health | Declared final values or net changes |
+| State | Simultaneous equipment, recipe, inventory, health and arrival conditions |
+| Encounter | Player contribution, designated native target deaths and declared survival conditions |
+| Expedition / contract | Supported ordered preparation or native contract-completion evidence |
+
+Endpoint inventory does not prove a particular recipe, pickup or transaction.
+Position does not prove the route taken. Use event-backed task patterns for
+goals that require order, ownership or an attributed combat/contract event.
+
+Inventory `min_count` and `min_delta` constraints are independent; specify at
+least one. Health constraints likewise distinguish final health from change.
+Arrival conditions should state horizontal/vertical tolerance, grounding and
+speed where required.
+
+Jump and glide goals use sampled native movement evidence, which can miss
+brief transitions. Do not describe sampled effects as exact server event counts.
+State all measured requirements in the public task and test their physical
+feasibility through the admitted controls.
+
+## Controls and observations
+
+### VM
+
+VM provides the controlled window's current pixels and capture timing, not a
+hidden map, inventory transcription or coordinate feed. Actions are bounded
+keyboard/mouse commands with at most 10 seconds of explicit waits per call.
+Held inputs can persist across calls and model reasoning.
+
+Use the [public control instructions](prompts/) for key bindings and limits.
+Some native keys, including Alt, are outside the permitted keyboard vocabulary;
+do not assume every desktop control is available. No semantic skill is silently
+substituted for an unsupported key.
+
+### ST
+
+ST supplies player position, motion, health/resources, equipment, inventory,
+nearby native entities, known recipes and nearby interactable objects. This is
+local native sensing, not a visual line-of-sight guarantee or a whole-world map.
+
+| Tool family | Purpose |
+| --- | --- |
+| Movement and view | Bounded movement, turning, jumping and aiming |
+| Items and preparation | Pickup, item use, crafting and equipping |
+| Combat | Wielding, bounded attacks, blocking, rolling and stopping |
+| Optional task tools | Dialogue, trading, gliding, skills and pet commands |
+| Respawn | Request native recovery while dead |
+
+Movement and attacks use bounded client updates, whose real duration can vary.
+Tools do not select routes, track targets or complete a combat/trade policy for
+the Agent. Use each task's admitted tool schemas for exact arguments and limits.
+
+Invalid arguments are rejected explicitly. Native refusals, such as missing
+materials or an out-of-range target, are not task successes. Interrupted actions
+may already have effects and must not be assumed safe to retry.
+
+## Death, timing and results
+
+ST exposes `RespawnTool`; VM uses native controls. Respawn is Agent-chosen and
+retains native waypoint/spawn, inventory and equipment-durability rules. It does
+not reset enemies, grant items or restart the Episode budget. Existing no-death
+conditions still apply after recovery.
+
+The world continues during model calls, tool execution and after public control
+ends. Final snapshots are private readbacks, not an atomic server pause. Their
+timing semantics differ from Minecraft's save-boundary protocol.
+
+Results include task scoring, native death counts, request timing and usage,
+with optional transcripts and video. Missing evidence or a changed player
+identity is a measurement error, not a zero score. See the
+[result guide](../../README.md#reading-results).
+
+## Troubleshooting
+
+- **Renderer exits immediately:** inspect its log and confirm graphics drivers
+  and `libxkbcommon-x11-0` are installed.
+- **Missing `xdpyinfo`:** install `x11-utils` before upstream setup.
+- **Runtime mismatch:** use the matching installation and build cache, then
+  rebuild in a separate destination.
+- **No display or Vulkan device:** use an authorized X11 display and a Vulkan
+  driver supported by the renderer; headless mode still needs graphics support.
+- **Fixture initialization fails:** check map availability, coordinates,
+  clearance, initial supplies and native item/recipe identifiers.
+
+For a new Agent or game integration, follow the
+[extension guides](../../README.md#adding-tasks-and-games).

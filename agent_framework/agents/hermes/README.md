@@ -1,71 +1,63 @@
 # Hermes Agent
 
-[`HermesAgent`](agent.py) preserves Hermes' native `AIAgent` conversation loop
-and system prompt. [`worker.py`](worker.py) registers game tools through native
-plugins and forwards model calls through `llm_execution` middleware.
-
-[`config.yaml`](config.yaml) and worker options disable existing user context,
-optional memory, background review, compression, streaming and progressive
-tool discovery. This is a restricted game integration, not the full personal
-assistant with all optional features.
-
-[`source.json`](source.json) pins upstream commit
-`47b23fa048536c413a53ae5ad391f9a911f5d4e5`, records the upstream MIT license,
-and declares an empty patch list. No upstream source patches are needed.
-The checkout is neither vendored nor a submodule. Framework licensing does
-not grant game/asset redistribution rights.
+Use `hermes_agent` as the Agent name in an experiment. This profile uses Hermes
+with the benchmark's public observations and fixed game tools. Personal user
+context, optional memory, background review, compression and progressive tool
+discovery are disabled. It is not the full personal-assistant configuration.
 
 ## Installation
 
-Install Git and uv. From the benchmark repository root:
+Install Git and uv. Set `AGENT_RUNTIME_DIR` to a dedicated installation
+destination, then run from the repository root:
 
 ```bash
 uv run --locked python -m agent_framework.agents.hermes.setup \
-  --root "$PWD/output/runtimes/hermes-agent"
-export LIVEQUEST_HERMES_ROOT="$PWD/output/runtimes/hermes-agent"
+  --root "$AGENT_RUNTIME_DIR"
+export LIVEQUEST_HERMES_ROOT="$AGENT_RUNTIME_DIR"
 ```
 
-Setup may download a managed Python 3.14 runtime and installs upstream's locked
-dependencies into its own environment. The benchmark's runtime is unchanged.
-Existing prepared checkouts remain usable by setting the environment variable
-to their current path. Tests and Agent runs never install dependencies.
-See [shared checkout and process rules](../../../README.md#shared-process-integration)
-for revision checks and trust limitations.
+Setup prepares the pinned runtime and locked dependencies. It may download
+Python 3.14 for Hermes without changing the benchmark's Python environment.
+Keep the environment variable set for tests and experiments.
 
-## Construction and checks
+## Experiment configuration
 
-```python
-from agent_framework.agents.hermes import HermesAgent
-
-agent = HermesAgent(
-    client,
-    output_dir=output_dir,
-    tools=tools,
-    observe=observe,
-    model="gpt-6-astra",
-    reasoning_effort="low",
-    max_output_tokens=4096,
-)
+```yaml
+agents:
+  - id: hermes
+    name: hermes_agent
+    model:
+      provider: github_copilot
+      name: gpt-6-astra
+      reasoning_effort: low
+      max_output_tokens: 4096
 ```
 
-The caller supplies a consistently configured client, restricted bindings and
-`AgentContext`. The experiment Agent name is `hermes_agent`, matching upstream
-Hermes Agent with a lowercase underscore-separated identifier. The Python
-package path and `LIVEQUEST_HERMES_ROOT` environment variable are unchanged.
+Choose a model available to your account. The profile requires tool calling,
+a supported Responses provider and explicit `reasoning_effort`; VM also
+requires image support. See the
+[experiment guide](../../../README.md#running-an-experiment).
 
-Prepare Minecraft and model credentials using the
-[shared live-test instructions](../../../README.md#agent-validation), then run:
+## Tests
+
+Prepare Minecraft and authorized Copilot credentials, then run:
 
 ```bash
 LIVEQUEST_MINECRAFT_TEST=1 LIVEQUEST_LIVE_COPILOT=1 \
 uv run --locked --extra minecraft --group test python -m pytest \
-  tests/test_agent/test_agents_minecraft.py -k hermes --headless --recording -q -s
+  tests/test_agent/test_agents_minecraft.py -k hermes \
+  --headless --recording -q -s
 ```
 
-Both cases run the native Agent with actual Minecraft VM/ST and `gpt-6-astra`.
-They consume model quota; there are no scripted-model Agent tests.
+These tests make real model calls and consume quota. For Veloren, follow
+its [test guide](../../../game/veloren/README.md#tests) with the same selector.
+Task success is scored independently of integration correctness.
 
-The [shared process rules](../../../README.md#shared-process-integration) document
-model/tool mediation, observation-history differences, cancellation, evidence
-and unsupported native features. This restricted integration is not a claim
-of compatibility with every upstream feature or future revision.
+## Extending the integration
+
+Follow the [Agent integration guide](../../../README.md#agent-integration).
+Document any enabled memory or additional capabilities as a distinct profile,
+preserve public game permissions and validate stopping and cleanup.
+
+The pinned source and MIT license information are in
+[source.json](source.json). Game and asset licenses remain separate.

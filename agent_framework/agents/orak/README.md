@@ -1,103 +1,70 @@
-# Orak fixed-tool game extension
+# Orak
 
-[`OrakAgent`](agent.py) retains upstream `BaseRunner.play`,
-`BaselineAgent.__call__`, the `zeroshot_agent` module sequence, local memory
-updates and native `### Actions` parsing. The Wrapper supplies model transport,
-public game prompt modules, observation/action conversion and bounded lifecycle.
-It does not implement a replacement decision loop.
+Use `orak` as the Agent name in an experiment. This integration runs Orak's
+zeroshot profile with the benchmark's fixed VM/ST tools. It is not Orak's
+Minecraft/Voyager code-generation profile.
 
-**This is an Orak fixed-tool extension, not a reproduction of Orak's original
-Minecraft/Voyager profile.** That profile generates programs and uses a different
-environment. This extension runs the native general zeroshot pipeline over the
-benchmark's VM/ST interfaces. No generated code, Mineflayer participant, world
-pause/reset, auxiliary critic/curriculum model or embedding service is admitted.
-Planning, reflection and skill-management variants are not claimed as supported.
+Generated programs, auxiliary critic/curriculum models, embedding services and
+planning/skill-management variants are not enabled.
 
-## Source and installation
+## Installation
 
-[`source.json`](source.json) pins
-`c14e5a01f998c222c76e09da2564aa8b72ebc75e` from `krafton-ai/Orak`.
-Upstream is MIT; the [license notice](patches/LICENSE.txt) accompanies the patch.
-The checkout is external, not a vendored tree or submodule.
-
-The [declared patch](patches/0001-lazy-optional-services.patch) defers optional
-provider imports and embedding/vector-store initialization until those services
-are actually used. The zeroshot path does not use them. This avoids requiring
-unrelated provider credentials or installing every game's dependencies.
-The Agent algorithm and runner are unchanged. This patch does not certify
-Orak's optional service paths; those require their own dependencies and checks.
+Install Git and uv. Set `AGENT_RUNTIME_DIR` to a dedicated installation
+destination, then run from the repository root:
 
 ```bash
 uv run --locked python -m agent_framework.agents.orak.setup \
-  --root "$PWD/output/runtimes/orak"
-export LIVEQUEST_ORAK_ROOT="$PWD/output/runtimes/orak"
+  --root "$AGENT_RUNTIME_DIR"
+export LIVEQUEST_ORAK_ROOT="$AGENT_RUNTIME_DIR"
 ```
 
-Setup installs Python 3.11 and the exact versions in
-[`requirements.lock`](requirements.lock), resolved from
-[`requirements.in`](requirements.in). It applies only the declared patch, rejects
-unexpected source modifications and does not reset existing worktrees.
-The runtime also verifies the entire tracked source against the pin plus patch.
-Runs never install dependencies. Game/runtime binaries have separate licenses.
+Setup prepares the pinned checkout, Python 3.11 dependencies and declared
+compatibility patch. Do not use an unrelated working checkout. Dependencies
+are not installed during Episodes.
 
-To refresh dependency resolution deliberately:
+## Experiment configuration
 
-```bash
-uv pip compile agent_framework/agents/orak/requirements.in \
-  --python-version 3.11 --universal \
-  --output-file agent_framework/agents/orak/requirements.lock
+```yaml
+agents:
+  - id: orak
+    name: orak
+    model:
+      provider: github_copilot
+      name: gpt-6-astra
+      reasoning_effort: low
+      max_output_tokens: 4096
 ```
 
-## Construction and real tests
+Choose a model available to your account. The profile requires tool calling,
+a supported Responses provider and explicit `reasoning_effort`; VM also
+requires image support. See the
+[experiment guide](../../../README.md#running-an-experiment).
 
-```python
-from agent_framework.agents.orak import OrakAgent
+Orak retains its text-based memory rather than the baseline's conversation
+history. VM supplies a current image, not a retained image sequence. The
+benchmark wall-clock budget applies throughout reasoning and actions.
 
-agent = OrakAgent(
-    client, output_dir=output_dir, tools=tools, observe=observe,
-    model="gpt-6-astra", reasoning_effort="low", max_output_tokens=4096,
-)
-```
+## Tests
 
-Follow the [shared preparation and credential instructions](../../../README.md#agent-validation):
+Prepare Minecraft and authorized Copilot credentials, then run:
 
 ```bash
 LIVEQUEST_MINECRAFT_TEST=1 LIVEQUEST_LIVE_COPILOT=1 \
 uv run --locked --extra minecraft --group test python -m pytest \
-  tests/test_agent/test_agents_minecraft.py -k orak --headless --recording -q -s
+  tests/test_agent/test_agents_minecraft.py -k orak \
+  --headless --recording -q -s
 ```
 
-This selects VM, ST and an actual ST operator-stop case. Tests require a real
-configured model, real game tool round trips, world progression, gated access
-after termination and worker cleanup. Task failure is recorded independently;
-communication, model configuration and adapter failures still fail the test.
+These tests consume model quota and cover real VM/ST interaction and stopping.
+For Veloren, use its [test guide](../../../game/veloren/README.md#tests) with the
+same selector. Integration errors and valid task failures are reported separately.
 
-## Disclosed semantics
+## Extending the integration
 
-- The model is injected through the existing `chat_completion` extension.
-  Provider function calls are serialized into the native `### Actions` envelope;
-  the unchanged native parser/memory/runner dispatch the resulting fixed tools.
-  A normal textual response ends the attempt; it is not proof of task success.
-- Game-owned instructions and the task are injected, not copied into Agent
-  prompt files. A generic prompt-module adapter supplies native memory fields:
-  current/previous text state, prior action and last tool results.
-- Text observations enter native memory. The shared bridge attaches a fresh
-  permitted observation to each model request, including exactly one current
-  VM image. Images are not retained in Orak's native history. No hidden state is
-  substituted for images.
-- Native prompt/memory formatting is retained rather than forced into the
-  baseline's full chat history. Previous actions/results are text, not provider
-  reasoning-continuation records. Account for this in comparisons.
-- `GameTransport` is an interface adapter, not an environment simulator: every
-  observation and action uses the parent-owned real game handle. The upstream
-  `evaluate()` hook returns no score and only the Agent's completion flag.
-  Private scoring remains with the benchmark.
-- The native bound is 1,000 steps; the benchmark wall-clock budget usually
-  binds first. Stop gates the real interface before terminating the worker.
-  No game resource is owned or closed by this worker.
-- Native provider pricing/logging is not used. The benchmark retains actual
-  model requests, usage, messages, tool responses and final native memory.
-  No provider keys are passed to the worker.
+Follow the [Agent integration guide](../../../README.md#agent-integration).
+Treat additional Orak variants as separate profiles with explicit model,
+memory and tool permissions; validate their real game behavior before use.
 
-See [shared process semantics](../../../README.md#shared-process-integration)
-for trust boundaries and settings validation.
+The pinned source and declared patches are listed in
+[source.json](source.json). The upstream MIT
+[license notice](patches/LICENSE.txt) is retained. Game licenses are separate.
