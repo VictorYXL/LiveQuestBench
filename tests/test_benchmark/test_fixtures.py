@@ -22,8 +22,9 @@ ROOT = Path(__file__).resolve().parents[2]
 
 @pytest.mark.parametrize("game", ["minecraft", "veloren"])
 @pytest.mark.parametrize("mode", ["structured_tools", "visual_motor"])
-def test_all_experiments_include_exactly_l1_through_l3(game, mode):
-    directory = ROOT / "config" / game / "experiments"
+@pytest.mark.parametrize("model", ["gpt-6-astra", "gpt-5.6-terra", "gpt-5.4-nano"])
+def test_all_experiments_include_exactly_l1_through_l3(game, mode, model):
+    directory = ROOT / "config" / game / "experiments" / f"{model}-low"
     combined = load_experiment(directory / f"{mode}_all.yaml")
     levels = [load_experiment(directory / f"{mode}_L{level}.yaml") for level in (1, 2, 3)]
     expected = {task.source.path: task for level in levels for task in level.tasks}
@@ -31,9 +32,32 @@ def test_all_experiments_include_exactly_l1_through_l3(game, mode):
     assert {task.source.path: task for task in combined.tasks} == expected
     assert all(level.agents == combined.agents for level in levels)
     assert all(level.repetitions == combined.repetitions for level in levels)
+    assert len(combined.agents) == 6
+    assert all(agent.model.name == model and agent.model.reasoning_effort == "low"
+               for agent in combined.agents)
+    assert model.replace(".", "_").replace("-", "_") in combined.id
     if game == "minecraft":
         exploratory = load_task(ROOT / f"config/minecraft/tasks/{mode}/lost_expedition.yaml")
         assert exploratory.source.path not in expected
+
+
+def test_model_profiles_change_only_model_and_identifiers():
+    from dataclasses import asdict
+
+    for game in ("minecraft", "veloren"):
+        directory = ROOT / "config" / game / "experiments"
+        for source in (directory / "gpt-6-astra-low").glob("*.yaml"):
+            baseline = load_experiment(source)
+            for model in ("gpt-5.6-terra", "gpt-5.4-nano"):
+                compared = load_experiment(directory / f"{model}-low" / source.name)
+                assert compared.tasks == baseline.tasks
+                assert compared.repetitions == baseline.repetitions
+                assert [a.name for a in compared.agents] == [a.name for a in baseline.agents]
+                for left, right in zip(baseline.agents, compared.agents, strict=True):
+                    expected, actual = asdict(left), asdict(right)
+                    expected["id"] = actual["id"]
+                    expected["model"]["name"] = model
+                    assert expected == actual
 
 
 def test_world_reset_copies_are_isolated(tmp_path):

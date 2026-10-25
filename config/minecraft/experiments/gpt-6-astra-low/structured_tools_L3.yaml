@@ -1,16 +1,16 @@
-id: veloren_structured_tools_L2
-game: veloren
+id: minecraft_structured_tools_L3_gpt_6_astra_low
+game: minecraft
 tasks:
-- path: ../tasks/structured_tools/glide_and_land.yaml
-- path: ../tasks/structured_tools/workshop_directions.yaml
-- path: ../tasks/structured_tools/merchant_exchange.yaml
-- path: ../tasks/structured_tools/gather_food.yaml
-- path: ../tasks/structured_tools/learn_food.yaml
-- path: ../tasks/structured_tools/craft_equip.yaml
-- path: ../tasks/structured_tools/recover_health.yaml
-- path: ../tasks/structured_tools/staggered_detour.yaml
-- path: ../tasks/structured_tools/elevation_steps.yaml
-- path: ../tasks/structured_tools/defeat_legoom.yaml
+- path: ../../tasks/structured_tools/collect_diamond.yaml
+- path: ../../tasks/structured_tools/build_plank_enclosure_5x5x2.yaml
+- path: ../../tasks/structured_tools/two_outposts_return.yaml
+- path: ../../tasks/structured_tools/trade_outposts_return.yaml
+- path: ../../tasks/structured_tools/crossing_cargo_return.yaml
+- path: ../../tasks/structured_tools/shared_fuel_extraction.yaml
+- path: ../../tasks/structured_tools/mixed_material_shelter.yaml
+- path: ../../tasks/structured_tools/ranged_cache_return.yaml
+- path: ../../tasks/structured_tools/farm_delivery.yaml
+- path: ../../tasks/structured_tools/scout_outposts_return_0.yaml
 repetitions: 10
 agents:
 - id: tool_calling_astra

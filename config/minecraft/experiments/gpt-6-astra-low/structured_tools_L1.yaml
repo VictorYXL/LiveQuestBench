@@ -1,16 +1,16 @@
-id: minecraft_visual_motor_L3
+id: minecraft_structured_tools_L1_gpt_6_astra_low
 game: minecraft
 tasks:
-- path: ../tasks/visual_motor/collect_diamond.yaml
-- path: ../tasks/visual_motor/build_plank_enclosure_5x5x2.yaml
-- path: ../tasks/visual_motor/two_outposts_return.yaml
-- path: ../tasks/visual_motor/trade_outposts_return.yaml
-- path: ../tasks/visual_motor/crossing_cargo_return.yaml
-- path: ../tasks/visual_motor/shared_fuel_extraction.yaml
-- path: ../tasks/visual_motor/mixed_material_shelter.yaml
-- path: ../tasks/visual_motor/ranged_cache_return.yaml
-- path: ../tasks/visual_motor/farm_delivery.yaml
-- path: ../tasks/visual_motor/scout_outposts_return_0.yaml
+- path: ../../tasks/structured_tools/collect_logs.yaml
+- path: ../../tasks/structured_tools/reach_nearby_point.yaml
+- path: ../../tasks/structured_tools/select_pickaxe.yaml
+- path: ../../tasks/structured_tools/place_single_block.yaml
+- path: ../../tasks/structured_tools/restore_hunger.yaml
+- path: ../../tasks/structured_tools/open_chest.yaml
+- path: ../../tasks/structured_tools/take_supplies.yaml
+- path: ../../tasks/structured_tools/obtain_sticks.yaml
+- path: ../../tasks/structured_tools/obtain_emerald.yaml
+- path: ../../tasks/structured_tools/deal_damage.yaml
 repetitions: 10
 agents:
 - id: tool_calling_astra

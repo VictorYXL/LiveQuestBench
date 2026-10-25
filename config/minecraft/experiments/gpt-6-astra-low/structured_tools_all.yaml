@@ -1,0 +1,83 @@
+id: minecraft_structured_tools_all_gpt_6_astra_low
+game: minecraft
+tasks:
+- path: ../../tasks/structured_tools/collect_logs.yaml
+- path: ../../tasks/structured_tools/collect_diamond.yaml
+- path: ../../tasks/structured_tools/craft_wooden_pickaxe.yaml
+- path: ../../tasks/structured_tools/craft_iron_pickaxe.yaml
+- path: ../../tasks/structured_tools/build_plank_wall_2x2.yaml
+- path: ../../tasks/structured_tools/build_plank_enclosure_5x5x2.yaml
+- path: ../../tasks/structured_tools/two_outposts_return.yaml
+- path: ../../tasks/structured_tools/trade_outposts_return.yaml
+- path: ../../tasks/structured_tools/scout_outposts_return_0.yaml
+- path: ../../tasks/structured_tools/reach_nearby_point.yaml
+- path: ../../tasks/structured_tools/select_pickaxe.yaml
+- path: ../../tasks/structured_tools/place_single_block.yaml
+- path: ../../tasks/structured_tools/restore_hunger.yaml
+- path: ../../tasks/structured_tools/open_chest.yaml
+- path: ../../tasks/structured_tools/take_supplies.yaml
+- path: ../../tasks/structured_tools/obtain_sticks.yaml
+- path: ../../tasks/structured_tools/obtain_emerald.yaml
+- path: ../../tasks/structured_tools/deal_damage.yaml
+- path: ../../tasks/structured_tools/coal_funded_axe.yaml
+- path: ../../tasks/structured_tools/supply_loadout.yaml
+- path: ../../tasks/structured_tools/harvest_and_replant.yaml
+- path: ../../tasks/structured_tools/cook_supplied_food.yaml
+- path: ../../tasks/structured_tools/follow_quarry_note.yaml
+- path: ../../tasks/structured_tools/block_and_counter.yaml
+- path: ../../tasks/structured_tools/bridge_small_gap.yaml
+- path: ../../tasks/structured_tools/crossing_cargo_return.yaml
+- path: ../../tasks/structured_tools/shared_fuel_extraction.yaml
+- path: ../../tasks/structured_tools/mixed_material_shelter.yaml
+- path: ../../tasks/structured_tools/ranged_cache_return.yaml
+- path: ../../tasks/structured_tools/farm_delivery.yaml
+repetitions: 10
+agents:
+- id: tool_calling_astra
+  name: tool_calling
+  model:
+    provider: github_copilot
+    name: gpt-6-astra
+    reasoning_effort: low
+    max_output_tokens: 4096
+    max_attempts: 3
+- id: deepseek_harness_astra
+  name: deepseek_harness
+  model:
+    provider: github_copilot
+    name: gpt-6-astra
+    reasoning_effort: low
+    max_output_tokens: 4096
+    max_attempts: 3
+- id: hermes_agent_astra
+  name: hermes_agent
+  model:
+    provider: github_copilot
+    name: gpt-6-astra
+    reasoning_effort: low
+    max_output_tokens: 4096
+    max_attempts: 3
+- id: orak_astra
+  name: orak
+  model:
+    provider: github_copilot
+    name: gpt-6-astra
+    reasoning_effort: low
+    max_output_tokens: 4096
+    max_attempts: 3
+- id: smolagents_astra
+  name: smolagents
+  model:
+    provider: github_copilot
+    name: gpt-6-astra
+    reasoning_effort: low
+    max_output_tokens: 4096
+    max_attempts: 3
+- id: gamingagent_astra
+  name: gamingagent
+  model:
+    provider: github_copilot
+    name: gpt-6-astra
+    reasoning_effort: low
+    max_output_tokens: 4096
+    max_attempts: 3

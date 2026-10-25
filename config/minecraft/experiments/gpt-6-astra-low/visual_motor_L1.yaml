@@ -1,16 +1,16 @@
-id: veloren_visual_motor_L2
-game: veloren
+id: minecraft_visual_motor_L1_gpt_6_astra_low
+game: minecraft
 tasks:
-- path: ../tasks/visual_motor/glide_and_land.yaml
-- path: ../tasks/visual_motor/workshop_directions.yaml
-- path: ../tasks/visual_motor/merchant_exchange.yaml
-- path: ../tasks/visual_motor/gather_food.yaml
-- path: ../tasks/visual_motor/learn_food.yaml
-- path: ../tasks/visual_motor/craft_equip.yaml
-- path: ../tasks/visual_motor/recover_health.yaml
-- path: ../tasks/visual_motor/staggered_detour.yaml
-- path: ../tasks/visual_motor/elevation_steps.yaml
-- path: ../tasks/visual_motor/defeat_legoom.yaml
+- path: ../../tasks/visual_motor/collect_logs.yaml
+- path: ../../tasks/visual_motor/reach_nearby_point.yaml
+- path: ../../tasks/visual_motor/select_pickaxe.yaml
+- path: ../../tasks/visual_motor/place_single_block.yaml
+- path: ../../tasks/visual_motor/restore_hunger.yaml
+- path: ../../tasks/visual_motor/open_chest.yaml
+- path: ../../tasks/visual_motor/take_supplies.yaml
+- path: ../../tasks/visual_motor/obtain_sticks.yaml
+- path: ../../tasks/visual_motor/obtain_emerald.yaml
+- path: ../../tasks/visual_motor/deal_damage.yaml
 repetitions: 10
 agents:
 - id: tool_calling_astra

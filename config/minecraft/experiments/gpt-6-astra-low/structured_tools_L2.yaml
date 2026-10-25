@@ -1,16 +1,16 @@
-id: minecraft_structured_tools_L1
+id: minecraft_structured_tools_L2_gpt_6_astra_low
 game: minecraft
 tasks:
-- path: ../tasks/structured_tools/collect_logs.yaml
-- path: ../tasks/structured_tools/reach_nearby_point.yaml
-- path: ../tasks/structured_tools/select_pickaxe.yaml
-- path: ../tasks/structured_tools/place_single_block.yaml
-- path: ../tasks/structured_tools/restore_hunger.yaml
-- path: ../tasks/structured_tools/open_chest.yaml
-- path: ../tasks/structured_tools/take_supplies.yaml
-- path: ../tasks/structured_tools/obtain_sticks.yaml
-- path: ../tasks/structured_tools/obtain_emerald.yaml
-- path: ../tasks/structured_tools/deal_damage.yaml
+- path: ../../tasks/structured_tools/craft_wooden_pickaxe.yaml
+- path: ../../tasks/structured_tools/craft_iron_pickaxe.yaml
+- path: ../../tasks/structured_tools/build_plank_wall_2x2.yaml
+- path: ../../tasks/structured_tools/coal_funded_axe.yaml
+- path: ../../tasks/structured_tools/supply_loadout.yaml
+- path: ../../tasks/structured_tools/harvest_and_replant.yaml
+- path: ../../tasks/structured_tools/cook_supplied_food.yaml
+- path: ../../tasks/structured_tools/follow_quarry_note.yaml
+- path: ../../tasks/structured_tools/block_and_counter.yaml
+- path: ../../tasks/structured_tools/bridge_small_gap.yaml
 repetitions: 10
 agents:
 - id: tool_calling_astra

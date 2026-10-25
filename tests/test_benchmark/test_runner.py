@@ -310,7 +310,7 @@ def test_failed_admission_preserves_each_launch(tmp_path):
 
 @pytest.mark.parametrize("fail_first", [False, True])
 def test_agent_task_repetition_matrix_is_serial_and_separately_summarized(tmp_path, monkeypatch, fail_first):
-    config = load_experiment(ROOT / "config/veloren/experiments/visual_motor_all.yaml")
+    config = load_experiment(ROOT / "config/veloren/experiments/gpt-6-astra-low/visual_motor_all.yaml")
     first = config.agents[0]
     second = replace(first, id="second", model=replace(first.model, name="another-model"))
     tasks = (config.tasks[0], replace(config.tasks[0], task_type="structured_tool"))
@@ -416,7 +416,7 @@ def test_resume_protects_conflicts_and_active_output(tmp_path):
 
 
 def test_episode_faults_preserve_evidence_and_cleanup(tmp_path, monkeypatch):
-    config = load_experiment(ROOT / "config/veloren/experiments/visual_motor_all.yaml")
+    config = load_experiment(ROOT / "config/veloren/experiments/gpt-6-astra-low/visual_motor_all.yaml")
     for fault in ("execution", "measurement", "metrics", "cleanup", "context_success", "context_failure"):
         events = []
 

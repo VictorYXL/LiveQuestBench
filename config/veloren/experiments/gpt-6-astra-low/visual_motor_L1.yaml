@@ -1,16 +1,16 @@
-id: veloren_structured_tools_L1
+id: veloren_visual_motor_L1_gpt_6_astra_low
 game: veloren
 tasks:
-- path: ../tasks/structured_tools/move_2_metres.yaml
-- path: ../tasks/structured_tools/known_food.yaml
-- path: ../tasks/structured_tools/pickup_supplies.yaml
-- path: ../tasks/structured_tools/equip_supplied_armor.yaml
-- path: ../tasks/structured_tools/learn_recipe.yaml
-- path: ../tasks/structured_tools/restore_health.yaml
-- path: ../tasks/structured_tools/jump_and_land.yaml
-- path: ../tasks/structured_tools/dodge_roll.yaml
-- path: ../tasks/structured_tools/draw_weapon.yaml
-- path: ../tasks/structured_tools/deal_damage.yaml
+- path: ../../tasks/visual_motor/move_2_metres.yaml
+- path: ../../tasks/visual_motor/known_food.yaml
+- path: ../../tasks/visual_motor/pickup_supplies.yaml
+- path: ../../tasks/visual_motor/equip_supplied_armor.yaml
+- path: ../../tasks/visual_motor/learn_recipe.yaml
+- path: ../../tasks/visual_motor/restore_health.yaml
+- path: ../../tasks/visual_motor/jump_and_land.yaml
+- path: ../../tasks/visual_motor/dodge_roll.yaml
+- path: ../../tasks/visual_motor/draw_weapon.yaml
+- path: ../../tasks/visual_motor/deal_damage.yaml
 repetitions: 10
 agents:
 - id: tool_calling_astra

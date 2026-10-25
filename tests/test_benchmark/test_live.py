@@ -29,7 +29,7 @@ def test_cli_lifecycle(case, headless, recording):
         (ROOT / "config/veloren/tasks/structured_tools" / task["fixture"]["world_path"]).resolve()
     )
     task["tools"] = ["MoveTool"]
-    experiment = yaml.safe_load((ROOT / "config/veloren/experiments/visual_motor_all.yaml").read_text())
+    experiment = yaml.safe_load((ROOT / "config/veloren/experiments/gpt-6-astra-low/visual_motor_all.yaml").read_text())
     experiment["tasks"] = [{"path": "task.yaml"}]
     experiment["repetitions"] = 1
     if case == "native":
