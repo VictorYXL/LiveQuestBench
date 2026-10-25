@@ -7,8 +7,9 @@ from pathlib import Path
 
 def snapshot_rows(
     path: Path, run_id: str, *, after_sequence: int | None = None, encounters: bool = False,
+    contracts: bool = False,
 ) -> list[dict]:
-    """Validate every complete row, retaining only evidence used by the snapshot."""
+    """Validate every row; contracts require full UID-lifetime and reward history."""
     retained = {}
     latest_binding = last = None
     sequence = 0
@@ -35,7 +36,7 @@ def snapshot_rows(
                 raise ValueError("multiple native processes in private journal")
             if row["event"] == "combat_entity_bindings":
                 latest_binding = row
-            if after_sequence is not None and sequence > after_sequence and (
+            if contracts or after_sequence is not None and sequence > after_sequence and (
                 row["event"] == "native_entity_death"
                 or encounters and row["event"] in ("combat_entity_bindings", "health_effect_applied")
             ):

@@ -187,6 +187,7 @@ class Session:
                 self.output / "private-native-oracle.ndjson", self.output.name,
                 after_sequence=registry["opening_sequence"] if registry is not None else None,
                 encounters=bool(self.initialized["encounters"]),
+                contracts=self.initialized.get("contract") is not None,
             )
             observation["private_death_evidence"] = death_snapshot(
                 rows, observation["self_identity"], registry,

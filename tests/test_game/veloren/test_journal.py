@@ -57,6 +57,19 @@ def test_terminal_preserves_deaths_and_encounter_history(tmp_path, encounters):
         ]
 
 
+@pytest.mark.parametrize("after_sequence", [None, 3])
+def test_contracts_preserve_complete_helper_history(tmp_path, after_sequence):
+    rows = journal_rows()
+    for index, event in enumerate((
+        "loaded_actor_bindings", "quest_states", "quest_settlement", "quest_reward_created",
+        "dialogue_sender_removal", "dialogue_item_transfer", "quest_reward_delivery_rejected",
+    ), 1):
+        rows[index]["event"] = event
+    path = tmp_path / "journal.ndjson"
+    write_rows(path, rows)
+    assert snapshot_rows(path, "game", after_sequence=after_sequence, contracts=True) == rows
+
+
 @pytest.mark.parametrize("field,value", [
     ("schema", "wrong"), ("version", "1.0"), ("private", False), ("sequence", 99),
     ("event", "opened"),
