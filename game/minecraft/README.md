@@ -113,10 +113,6 @@ Task definitions are grouped by mode:
 | L3 | Resource-constrained production, cargo return and multi-encounter expeditions |
 | Exploratory L4 | Exploration and recovery of expedition records |
 
-The `all` experiments include only the 30 L1–L3 tasks in each mode.
-Exploratory L4 task definitions remain available for explicitly configured
-experiments but are excluded from `all`.
-
 Levels organize the development catalog; they are not a guarantee of calibrated
 difficulty. Exact supplies, budgets, tools and success conditions are declared
 in each task.

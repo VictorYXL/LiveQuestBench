@@ -82,10 +82,8 @@ Choose an experiment from:
 - [Minecraft experiments](config/minecraft/experiments/)
 - [Veloren experiments](config/veloren/experiments/)
 
-The `all` configurations include the 30 L1–L3 tasks for each game and mode;
-`L1`, `L2` and `L3` configurations select task subsets. Exploratory L4 tasks
-are excluded from `all` and require an explicitly configured experiment.
-Bundled experiments specify six Agents and
+The `all` configurations include the full catalog; `L1`, `L2` and `L3`
+configurations select task subsets. Bundled experiments specify six Agents and
 **10 repetitions**. Inspect the configuration before launching a large run.
 
 For a smoke test, create a separate experiment with one task and one repetition:
