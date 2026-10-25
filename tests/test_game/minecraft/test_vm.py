@@ -22,6 +22,58 @@ from game.backends.x11.interface import execute_actions
 from game.base_game import AgentAccessClosed
 
 
+@pytest.mark.parametrize("outcome", ["completed", "timeout", "failed"])
+def test_startup_thread_diagnostic_is_bounded_and_preserves_client(tmp_path, monkeypatch, outcome):
+    import signal
+    from types import SimpleNamespace
+    from game.minecraft.runtime.session import MinecraftSession
+
+    log = tmp_path / "client.log"
+    log.write_text("Original startup log\n")
+    client = SimpleNamespace(pid=1234, returncode=None)
+    calls = []
+
+    def send_signal(value):
+        assert value == signal.SIGQUIT
+        calls.append(value)
+        if outcome == "failed":
+            raise ProcessLookupError("Client already exited")
+        if outcome == "completed":
+            with log.open("a") as stream:
+                stream.write("Full thread dump\nJNI global refs: 10\n")
+
+    async def sleep(seconds):
+        assert seconds == .1
+        raise TimeoutError
+
+    client.send_signal = send_signal
+    monkeypatch.setattr(asyncio, "sleep", sleep)
+    session = SimpleNamespace(
+        config=SimpleNamespace(authentication="offline"), _client=client,
+        output=tmp_path, _client_errors=[],
+    )
+    asyncio.run(MinecraftSession._capture_client_threads(session))
+    record = json.loads((tmp_path / "client-startup-diagnostic.json").read_text())
+    assert record["status"] == outcome
+    assert record["timeout_seconds"] == 10
+    assert client.returncode is None
+    assert calls == [signal.SIGQUIT]
+    assert "Original startup log" not in (tmp_path / "client-startup-threads.log").read_text()
+    assert session._client_errors
+
+
+@pytest.mark.parametrize(("authentication", "returncode"), [("online", None), ("offline", 0)])
+def test_startup_diagnostic_does_not_signal_launchers_or_exited_clients(tmp_path, authentication, returncode):
+    from types import SimpleNamespace
+    from game.minecraft.runtime.session import MinecraftSession
+
+    client = SimpleNamespace(pid=1234, returncode=returncode)
+    session = SimpleNamespace(config=SimpleNamespace(authentication=authentication),
+                              _client=client, output=tmp_path)
+    asyncio.run(MinecraftSession._capture_client_threads(session))
+    assert not list(tmp_path.iterdir())
+
+
 def test_motor_argument_rejection_and_execution_failures(caplog):
     async def run():
         calls = []

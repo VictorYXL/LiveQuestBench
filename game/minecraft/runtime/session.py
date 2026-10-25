@@ -319,6 +319,7 @@ class MinecraftSession:
         try:
             await self._start_client(port)
         except TimeoutError as exc:
+            await self._capture_client_threads()
             raise TimeoutError(
                 "The client did not produce a connected Minecraft window before startup_timeout. "
                 "Check client.log for native launch or the Prism instance for authenticated launch. "
@@ -494,6 +495,33 @@ class MinecraftSession:
                     self.capture.capture(self.window_id)
                     return
                 await asyncio.sleep(0.5)
+
+    async def _capture_client_threads(self) -> None:
+        if (self.config.authentication != "offline" or self._client is None
+                or self._client.returncode is not None):
+            return
+        record = {"client_pid": self._client.pid, "status": "failed", "timeout_seconds": 10,
+                  "method": "SIGQUIT"}
+        data = b""
+        try:
+            with (self.output / "client.log").open("rb") as log:
+                log.seek(0, os.SEEK_END)
+                self._client.send_signal(signal.SIGQUIT)
+                async with asyncio.timeout(10):
+                    while True:
+                        data += log.read()
+                        if b"Full thread dump" in data and b"JNI global refs:" in data:
+                            record["status"] = "completed"
+                            break
+                        await asyncio.sleep(.1)
+        except TimeoutError:
+            record["status"] = "timeout"
+        except OSError as error:
+            record.update(status="failed", error=str(error))
+        finally:
+            (self.output / "client-startup-threads.log").write_bytes(data)
+            (self.output / "client-startup-diagnostic.json").write_text(json.dumps(record, indent=2) + "\n")
+            self._client_errors.append(f"Startup thread diagnostic: {record['status']}; see client-startup-diagnostic.json")
 
     async def _read_client_errors(self) -> None:
         assert self._client is not None
