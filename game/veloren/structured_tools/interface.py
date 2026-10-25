@@ -16,6 +16,12 @@ FIELDS = (
     "nearby_entities", "known_recipes", "nearby_interactable_sprites",
 )
 SPECS = {
+    "RespawnTool": (
+        "Request ordinary native respawn only when dead, and wait for observed revival. "
+        "Uses the native waypoint or server spawn; no teleport to task start, equipment grant, "
+        "enemy reset or new time budget. Existing no-death goals still fail after death.",
+        "respawn", {},
+    ),
     "MoveTool": ("Move in a camera-relative direction for bounded native client updates, not fixed seconds.",
                  "move", {"direction": {"type": "string", "enum": ["forward", "backward", "left", "right"]},
                           "duration_ticks": {"type": "integer", "minimum": 1, "maximum": 120}}),

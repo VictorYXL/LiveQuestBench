@@ -35,6 +35,34 @@ exactly 64 oak planks in slot 0. ST tasks expose the existing game-provided tool
 profile's original tool set by default; the later combat additions are not
 silently granted to these migrated tasks.
 
+### Standard native recovery and private deaths
+
+Every ST task admits `RespawnTool`, including tasks with explicit tool allowlists.
+It is a no-argument, agent-chosen recovery operation: while dead it submits one
+native client `requestRespawn()` and waits at most ten seconds for actual alive
+confirmation. While alive it refuses without sending a respawn request. Ordinary
+actions still stop on death; recovery is never automatic.
+
+Vanilla chooses the spawn and applies its normal inventory-loss/world rules.
+The tool does not teleport, restore items, reset enemies or reset the episode
+clock. Existing no-death scoring requirements remain unchanged after recovery.
+Private episode metrics record `metrics.deaths.count` as the before/after delta
+of the player's saved `minecraft:custom/minecraft:deaths` statistic, including
+deaths without a respawn. Evidence includes the native source, player UUID and
+endpoint counts; it is not added to agent observations or inferred from tool
+calls. A statistics file absent from the original snapshot manifest means zero,
+as in vanilla initialization. Missing or changed recorded statistics, mismatched
+snapshot identities, malformed counts and decreasing counts are rejected.
+
+Existing prepared clients must be rebuilt to support `RespawnTool`; updating
+Python alone is insufficient. Run
+`game/minecraft/setup.sh --track structured_tool` before running ST episodes.
+Setup and execution both select their native installation through
+`LIVEQUEST_MINECRAFT_HOME`, defaulting to
+`~/.local/share/livequestbench/minecraft` when unset. To keep another installation
+unchanged, explicitly select a separate prepared runtime with that variable
+for each command; a diagnostic rebuild does not switch the default runtime.
+
 ## Basic L1 tasks
 
 The paired L1 catalog covers log collection, nearby grounded positioning, hotbar

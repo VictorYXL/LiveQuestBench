@@ -205,6 +205,16 @@ async def run_episode(
                 await binding.game.save_snapshot(root / "after")
             except Exception as error:
                 record_error(error, "final_evidence")
+        if (binding is not None and binding.metrics is not None
+                and (root / "before").is_dir() and (root / "after").is_dir()):
+            try:
+                result["metrics"] = await asyncio.to_thread(
+                    binding.metrics, root / "before", root / "after",
+                )
+                write_json(results / "metrics.json", result["metrics"])
+            except Exception as error:
+                record_error(error, "metrics")
+                result["measurement"] = "invalid"
         if agent is not None:
             try:
                 await asyncio.wait_for(agent.close(), timeout=30)
@@ -298,6 +308,10 @@ def prepare_episode(output: Path, row: dict) -> bool:
                 or previous.get("task_outcome") != ("success" if evaluation["success"] else "failure")
                 or previous.get("errors") or not previous.get("finished_at_ns")):
             raise ValueError(f"Inconsistent completed measurement: {root}")
+        if "metrics" in previous:
+            metrics_path = results / "metrics.json"
+            if not metrics_path.is_file() or json.loads(metrics_path.read_text()) != previous["metrics"]:
+                raise ValueError(f"Inconsistent completed metrics: {root}")
         print(f"Skipping completed {row['episode_id']}", flush=True)
         row.update(previous)
         return True

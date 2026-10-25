@@ -46,12 +46,11 @@ async def fixture_server(output: Path, record: dict, native: NativeConfig, fixtu
     }
     environment.pop("VELOREN_PRIVATE_NATIVE_FIXTURE", None)
     environment.pop("VELOREN_PRIVATE_ORACLE_PATH", None)
-    if fixture.get("encounters") or "contract" in fixture:
-        environment.update(
-            VELOREN_PRIVATE_ORACLE_PATH=str(output / "private-native-oracle.ndjson"),
-            VELOREN_SESSION_ID=output.name,
-        )
-        record["private_oracle"] = "Server-owner encounter/contract evidence; never public Agent input."
+    environment.update(
+        VELOREN_PRIVATE_ORACLE_PATH=str(output / "private-native-oracle.ndjson"),
+        VELOREN_SESSION_ID=output.name,
+    )
+    record["private_oracle"] = "Server-owner death/encounter/contract evidence; never public Agent input."
     provision = await asyncio.create_subprocess_exec(
         str(native.server), "--no-auth", "admin", "add", record["username"], "admin",
         cwd=native.root, env=environment, stdout=asyncio.subprocess.DEVNULL, stderr=asyncio.subprocess.PIPE,

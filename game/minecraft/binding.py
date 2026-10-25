@@ -6,6 +6,7 @@ from pathlib import Path
 
 from agent_framework.utils.tools import Tool
 from game.bindings import Controls, GameBinding, bind_controls, validate_tools
+from game.minecraft.evaluators.deaths import evaluate_deaths
 from game.minecraft.evaluators.inventory import evaluate_inventory, inventory, validate_requirements
 from game.minecraft.evaluators.structure import evaluate_structure, validate_config
 from game.minecraft.evaluators.state import action_events, evaluate_state, validate_state
@@ -53,6 +54,8 @@ def create_binding(
             else:
                 tools = st.TRADING_TOOLS
         validate_tools(st.agent_tools(), tools)
+        if "RespawnTool" not in tools:
+            tools = (*tools, "RespawnTool")
     elif tools is not None:
         raise ValueError("Tool allowlists are only supported for structured_tool tasks")
     if evaluator == "inventory":
@@ -98,4 +101,8 @@ def create_binding(
         assert game.player_uuid is not None
         return score(before, after, game.player_uuid, **parameters)
 
-    return GameBinding(game, controls, evaluate, verify_initial)
+    def metrics(before: Path, after: Path) -> dict:
+        assert game.player_uuid is not None
+        return evaluate_deaths(before, after, game.player_uuid)
+
+    return GameBinding(game, controls, evaluate, verify_initial, metrics=metrics)

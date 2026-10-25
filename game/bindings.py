@@ -57,3 +57,4 @@ class GameBinding:
     controls: Callable[[], tuple[Controls, list[Tool[Controls]]]]
     evaluate: Callable[[Path, Path], dict]
     verify_initial: Callable[[Path], None]
+    metrics: Callable[[Path, Path], dict] | None = None

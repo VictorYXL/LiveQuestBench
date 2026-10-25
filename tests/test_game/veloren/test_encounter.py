@@ -10,6 +10,50 @@ from game.veloren.fixture import validate_fixture
 from game.veloren.structured_tools.interface import COMBAT_TOOLS, FIELDS, validate_tool, project
 from benchmark.config import load_task
 from pathlib import Path
+from game.veloren.evaluators.deaths import death_snapshot, death_metrics
+
+
+def test_native_death_accounting_counts_repeated_deaths_not_other_actors():
+    identity = {"uid": 1, "native_character_id": 7}
+    rows = [
+        {"event": "opened", "sequence": 0, "data": {"run_id": "run", "nonce": "nonce"}},
+        {"event": "combat_entity_bindings", "sequence": 1, "data": {"bindings": [
+            {"uid": 1, "server_entity": "player", "health": 100, "dead": False},
+        ]}},
+    ]
+    initial = {"self_identity": identity, "private_death_evidence": death_snapshot(rows, identity)}
+    for sequence, uid in ((2, 1), (3, 99), (4, 1)):
+        rows.append({"schema": "rpg-native-oracle", "version": "1.1", "private": True,
+                     "event": "native_entity_death", "sequence": sequence,
+                     "host_unix_ns": str(1000000000 + sequence),
+                     "data": {"uid": uid, "entity": "player" if uid == 1 else "enemy"}})
+    registry = initial["private_death_evidence"]["registry"]
+    final = {"self_identity": identity, "private_death_evidence": death_snapshot(rows, identity, registry)}
+    assert death_metrics(initial, final)["deaths"]["count"] == 2
+    assert death_metrics(initial, initial)["deaths"]["count"] == 0
+    for mutate in (
+        lambda evidence: evidence["events"].reverse(),
+        lambda evidence: evidence["events"][0]["data"].update(entity="replacement"),
+        lambda evidence: evidence["events"][0].update(host_unix_ns=None),
+        lambda evidence: evidence.update(through_sequence=1),
+    ):
+        changed = deepcopy(final)
+        mutate(changed["private_death_evidence"])
+        with pytest.raises(ValueError):
+            death_metrics(initial, changed)
+    with pytest.raises(ValueError, match="identity changed"):
+        death_snapshot(rows, {"uid": 1, "native_character_id": 8}, registry)
+    rows[1]["data"]["bindings"][0]["server_entity"] = "replacement"
+    with pytest.raises(ValueError, match="identity changed"):
+        death_snapshot(rows, identity, registry)
+
+
+def test_respawn_is_native_parameter_free_and_death_evidence_is_private():
+    assert validate_tool("RespawnTool", {}) == ("respawn", {})
+    with pytest.raises(ValueError):
+        validate_tool("RespawnTool", {"position": [0, 0, 0]})
+    assert "RespawnTool" in COMBAT_TOOLS
+    assert "private_death_evidence" not in FIELDS
 
 
 def evidence():

@@ -194,6 +194,11 @@ against the same output root. The decision is made **per Episode**:
 
 A completed evaluation means consistent `results/result.json` and
 `results/evaluation.json`, with completed measurement and cleanup.
+New Minecraft and Veloren runs also save independent private death accounting in
+`results/metrics.json` and `result.json.metrics`. Counts span the initial and
+terminal snapshots, not a new life after respawn; they do not change task success.
+Minecraft uses native death-statistic differences; Veloren retains identity-bound
+native death events and server timestamps. Missing evidence is an error, not zero.
 Merely having `results/result.json` is not enough: it also exists during
 execution and after errors. Corrupt/inconsistent
 completed evidence raises an error instead of silently being accepted.

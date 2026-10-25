@@ -161,6 +161,13 @@ class Session:
             if self.running:
                 raise RuntimeError("Snapshot requires a closed public gate")
             observation = await recipe_observation(self.actor, self.fixture)
+            from scripts.rpg_benchmark import native_outcomes
+            from game.veloren.evaluators.deaths import death_snapshot
+            rows = native_outcomes.read(self.output / "private-native-oracle.ndjson", self.output.name)
+            observation["private_death_evidence"] = death_snapshot(
+                rows, observation["self_identity"], getattr(self, "death_registry", None),
+            )
+            self.death_registry = observation["private_death_evidence"]["registry"]
             if not hasattr(self, "supplies_opening"):
                 from game.veloren.fixture import verify_aged_supplies
                 verify_aged_supplies(self.initialized, observation)
@@ -175,8 +182,6 @@ class Session:
                     await self.frame_fence(), origin="private-validation",
                 )
             if self.initialized["encounters"]:
-                from scripts.rpg_benchmark import native_outcomes
-                rows = native_outcomes.read(self.output / "private-native-oracle.ndjson", self.output.name)
                 targets = self.initialized["encounters"]
                 if not hasattr(self, "encounter_registry"):
                     verify_player(self.fixture, observation)
@@ -257,7 +262,7 @@ class Session:
                 "look_at", "attack_primary", "attack_secondary", "toggle_wield", "block", "roll", "stop",
                 "aimed_attack", "glide", "context_interact", "social_action", "dialogue_action", "trade_action",
                 "unlock_skill", "configure_auxiliary_ability", "attack_auxiliary",
-                "companion_action",
+                "companion_action", "respawn",
             ):
                 raise PermissionError("Native action is not in the fixed public skill set")
             rpg_actions = {

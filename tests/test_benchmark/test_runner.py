@@ -401,11 +401,23 @@ def test_resume_protects_conflicts_and_active_output(tmp_path):
                 pytest.fail("Concurrent output writer admitted")
     with output_lock(tmp_path):
         pass
+    completed = {**row, "status": "completed", "measurement": "valid",
+                 "task_outcome": "failure", "errors": [], "finished_at_ns": 1,
+                 "metrics": {"deaths": {"count": 1}}}
+    (root / "result.json").write_text(json.dumps(completed))
+    (root / "evaluation.json").write_text(json.dumps({"success": False}))
+    with pytest.raises(ValueError, match="completed metrics"):
+        prepare_episode(tmp_path, row)
+    (root / "metrics.json").write_text(json.dumps({"deaths": {"count": 0}}))
+    with pytest.raises(ValueError, match="completed metrics"):
+        prepare_episode(tmp_path, row)
+    (root / "metrics.json").write_text(json.dumps(completed["metrics"]))
+    assert prepare_episode(tmp_path, row) is True
 
 
 def test_episode_faults_preserve_evidence_and_cleanup(tmp_path, monkeypatch):
     config = load_experiment(ROOT / "config/veloren/experiments/visual_motor_all.yaml")
-    for fault in ("execution", "measurement", "cleanup", "context_success", "context_failure"):
+    for fault in ("execution", "measurement", "metrics", "cleanup", "context_success", "context_failure"):
         events = []
 
         async def observe() -> str:
@@ -474,7 +486,13 @@ def test_episode_faults_preserve_evidence_and_cleanup(tmp_path, monkeypatch):
             return {"success": fault == "context_success"}
 
         game = Game()
-        binding = GameBinding(game, lambda: (controls, []), evaluate, lambda before: None)
+        def metrics(before, after):
+            assert before.is_dir() and after.is_dir()
+            if fault == "metrics":
+                raise ValueError("metrics probe")
+            return {"deaths": {"count": 2}}
+
+        binding = GameBinding(game, lambda: (controls, []), evaluate, lambda before: None, metrics)
         monkeypatch.setattr("benchmark.runner.make_game", lambda *args, **kwargs: binding)
         monkeypatch.setattr("benchmark.runner.make_client", lambda *args: Client())
         monkeypatch.setattr("benchmark.runner.make_agent", lambda config, client, *args: (
@@ -489,6 +507,12 @@ def test_episode_faults_preserve_evidence_and_cleanup(tmp_path, monkeypatch):
             headless=True, recording=False, recording_fps=10,
         ))
         assert (output / "after").is_dir()
+        if fault != "metrics":
+            assert result["metrics"] == {"deaths": {"count": 2}}
+            assert json.loads((output / "results/metrics.json").read_text()) == result["metrics"]
+        else:
+            assert result["measurement"] == "invalid"
+            assert any(error["stage"] == "metrics" for error in result["errors"])
         assert events.index("end") < events.index("after") < events.index("game_close")
         if fault.startswith("context_"):
             assert result["status"] == "completed" and result["measurement"] == "valid"

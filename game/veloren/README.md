@@ -552,8 +552,17 @@ error, not a task failure or score of zero. Primitive endpoint checks do not pro
 intermediate survival, exact event ordering, crafting provenance or sustained
 resource ownership; those need trajectory/event evaluators.
 These initial evaluators require the same native actor identity at both
-endpoints. Cross-respawn/actor-replacement scoring is not qualified; an identity
-change is reported as invalid evidence, not silently scored as a failed task.
+endpoints. Actor replacement is reported as invalid evidence, not silently scored
+as a failed task. Native same-actor respawn does not remove existing no-death goals.
+
+ST exposes `RespawnTool` as a standard recovery operation, including for explicit
+task tool allowlists. It requests the existing native respawn and waits for a
+living client readback; a living player's request is refused. It does not grant
+items, select a respawn location, reset enemies, or restart the episode budget.
+The game retains its waypoint/server-spawn and equipment-durability rules.
+All tasks now retain private native death evidence, even without encounters.
+Independent death counts and original server events are exported to
+`results/metrics.json`; this evidence is never added to public observations.
 
 Use dedicated displays. An explicit desktop may be selected with
 `headless=False, display_name=":..."`; never use that desktop manually during an

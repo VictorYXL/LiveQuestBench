@@ -13,6 +13,7 @@ from game.veloren.evaluators.endpoints import evaluate_state, validate_state
 from game.veloren.evaluators.encounter import evaluate_damage, evaluate_encounter, validate_encounter
 from game.veloren.evaluators.expedition import evaluate_expedition, validate_expedition
 from game.veloren.evaluators.contract import evaluate_contract, validate_contract
+from game.veloren.evaluators.deaths import evaluate_deaths
 from game.veloren.game import VelorenGame
 from game.veloren.structured_tools import interface as st
 from game.veloren.visual_motor import interface as vm
@@ -32,6 +33,8 @@ def create_binding(
             tools = (st.EXPEDITION_TOOLS if evaluator == "expedition" else
                      st.COMBAT_TOOLS if fixture.get("encounters") else st.BASE_TOOLS)
         validate_tools(st.agent_tools(), tools)
+        if "RespawnTool" not in tools:
+            tools = (*tools, "RespawnTool")
     elif tools is not None:
         raise ValueError("Tool allowlists are only supported for structured_tool tasks")
     evaluators: dict[str, Callable[..., dict]] = {
@@ -86,4 +89,4 @@ def create_binding(
         )["dialogue_markers"]:
             raise RuntimeError("Dialogue marker task must start without received directions")
 
-    return GameBinding(game, controls, evaluate, verify_initial)
+    return GameBinding(game, controls, evaluate, verify_initial, metrics=evaluate_deaths)

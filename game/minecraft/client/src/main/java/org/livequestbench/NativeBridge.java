@@ -37,7 +37,10 @@ public class NativeBridge implements ClientModInitializer {
     private static long deadline;
     private static long ticks;
 
-    interface Job { JsonObject step(); }
+    interface Job {
+        JsonObject step();
+        default boolean allowsDeadPlayer() { return false; }
+    }
 
     @Override
     public void onInitializeClient() {
@@ -119,10 +122,13 @@ public class NativeBridge implements ClientModInitializer {
                     reply(request, NativeInventory.recipes(params));
                 } else if (method.equals("action")) {
                     if (active != null) { error(request, "busy", "Another tool is active"); continue; }
-                    if (!client().player.isAlive()) { reply(request, fail("Player is dead; no automatic respawn")); continue; }
+                    String name = params.get("name").getAsString();
+                    if (!client().player.isAlive() && !name.equals("respawn")) {
+                        reply(request, fail("Player is dead; use RespawnTool for native recovery")); continue;
+                    }
                     activeRequest = request;
                     deadline = System.nanoTime() + request.get("timeout_ms").getAsLong() * 1_000_000L;
-                    active = action(params.get("name").getAsString(), params.getAsJsonObject("parameters"));
+                    active = action(name, params.getAsJsonObject("parameters"));
                 } else {
                     error(request, "invalid_method", "Unsupported native bridge method");
                 }
@@ -140,7 +146,7 @@ public class NativeBridge implements ClientModInitializer {
                 } else if (client().player == null || client().world == null) {
                     error(activeRequest, "not_connected", "Native participant disconnected");
                     release(); active = null; activeRequest = null;
-                } else if (!client().player.isAlive()) {
+                } else if (!client().player.isAlive() && !active.allowsDeadPlayer()) {
                     reply(activeRequest, fail("Player died; operation stopped without respawn"));
                     release(); active = null; activeRequest = null;
                 } else {
@@ -243,6 +249,24 @@ public class NativeBridge implements ClientModInitializer {
     }
     private static Job action(String name, JsonObject params) {
         MinecraftClient mc = client();
+        if (name.equals("respawn")) {
+            if (mc.player.isAlive()) return () -> fail("Player is already alive; no respawn requested");
+            release();
+            mc.player.requestRespawn();
+            long submittedAt = ticks;
+            long confirmUntil = System.nanoTime() + 10_000_000_000L;
+            return new Job() {
+                public boolean allowsDeadPlayer() { return true; }
+                public JsonObject step() {
+                    if (ticks > submittedAt && mc.player.isAlive() && mc.player.getHealth() > 0)
+                        return ok("respawned", true, "health", mc.player.getHealth(),
+                                "position", vector(mc.player.getPos()));
+                    if (System.nanoTime() >= confirmUntil)
+                        return fail("Native respawn was not confirmed alive within 10 seconds; request effects persist");
+                    return null;
+                }
+            };
+        }
         if (!name.equals("craft") && !name.equals("smelt") && !name.equals("container_take")
                 && !name.equals("merchant_inspect") && !name.equals("merchant_trade")
                 && !name.equals("furnace_inspect") && !name.equals("furnace_click")

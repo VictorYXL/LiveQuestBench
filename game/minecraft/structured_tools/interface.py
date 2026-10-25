@@ -38,6 +38,9 @@ SCHEMAS = [
     tool("LookAtPositionTool", "Turn toward a world point.", POSITION, ["x", "y", "z"]),
     tool("SelectTool", "Select hotbar slot 1-9.", {"slot": SLOT}, ["slot"]),
     tool("StopTool", "Release controls. Does not roll back effects.", {}, []),
+    tool("RespawnTool", "When dead, request one ordinary native respawn and wait up to 10 seconds for "
+         "alive confirmation. Refused while alive. Native spawn, item loss and world rules apply; "
+         "does not reset the episode, enemies or clock.", {}, []),
     tool("JumpTool", "Perform a short jump pulse.", {"duration": {"type": "number", "minimum": 0, "maximum": 10}}, []),
     tool("GoToPositionTool", "Walk to the center of a loaded standable target block within 64 blocks, using bounded grid search (4096 expansions), steps/jumps of one block; no digging, building or parkour.", POSITION, ["x", "y", "z"]),
     tool("DigTool", "Aim at and dig one reachable block. Does not navigate, select equipment or guarantee pickup.", POSITION, ["x", "y", "z"]),
@@ -191,7 +194,7 @@ async def execute_tool(bridge: NativeBridge, name: str, arguments: dict) -> dict
         return await bridge.request("recipes", arguments)
     action = {
         "MoveTool": "move_" + arguments.get("direction", ""),
-        "LookAtPositionTool": "look", "SelectTool": "select", "StopTool": "stop",
+        "LookAtPositionTool": "look", "SelectTool": "select", "StopTool": "stop", "RespawnTool": "respawn",
         "JumpTool": "jump", "GoToPositionTool": "go_to_position",
         "StrikeTool": "strike",
         "InspectContainerTool": "container_inspect", "TakeContainerItemTool": "container_take",
