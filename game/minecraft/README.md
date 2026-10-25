@@ -224,6 +224,12 @@ game failure from execution or measurement errors.
   desktop for visible execution.
 - **Incomplete assets or libraries:** rerun setup with network access and
   inspect the reported client log.
+- **Native startup freezes in `SharedLibraryUtil.getLibraryPath`:** inspect
+  `client-startup-threads.log`. The Fabric client backports the `dlinfo`
+  resolution strategy from [LWJGL/lwjgl3#1148](https://github.com/LWJGL/lwjgl3/issues/1148)
+  through Minecraft's existing JNA dependency, avoiding the concurrent
+  `dl_iterate_phdr`/`dlopen` loader-lock inversion. The pinned rendering libraries
+  and startup deadline are unchanged; rerun setup to rebuild an older client.
 - **Unexpected results from a custom world:** verify the initial player state,
   world rules, resource availability and evaluator requirements.
 

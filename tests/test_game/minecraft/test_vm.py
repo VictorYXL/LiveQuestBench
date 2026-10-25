@@ -173,6 +173,7 @@ def test_vm_observation_and_movement(
     monkeypatch: pytest.MonkeyPatch, headless: bool, recording: bool, minecraft_world_path: Path,
 ) -> None:
     monkeypatch.setenv("MINECRAFT_PRISM_ROOT", "/nonexistent-livequest-prism")
+    monkeypatch.setenv("JAVA_TOOL_OPTIONS", os.environ.get("JAVA_TOOL_OPTIONS", "") + " -Dmixin.debug.export=true")
     root = Path(os.environ.get(
         "MINECRAFT_TEST_OUTPUT", str(Path(__file__).resolve().parents[3] / "output" / "test"),
     )).resolve()
@@ -190,6 +191,9 @@ def test_vm_observation_and_movement(
     async def run() -> None:
         try:
             await game.start()
+            transformed = list(output.rglob("LinuxLibrary.class"))
+            assert len(transformed) == 1
+            assert b"org/livequestbench/LinuxLibraryPath" in transformed[0].read_bytes()
             interface = game.get_agent_interface()
             assert isinstance(interface, MotorInterface)
             assert set(interface.__dataclass_fields__) == {"observe", "act"}
