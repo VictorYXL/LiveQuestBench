@@ -10,7 +10,6 @@ tasks:
 - path: ../tasks/visual_motor/two_outposts_return.yaml
 - path: ../tasks/visual_motor/trade_outposts_return.yaml
 - path: ../tasks/visual_motor/scout_outposts_return_0.yaml
-- path: ../tasks/visual_motor/lost_expedition.yaml
 - path: ../tasks/visual_motor/reach_nearby_point.yaml
 - path: ../tasks/visual_motor/select_pickaxe.yaml
 - path: ../tasks/visual_motor/place_single_block.yaml

@@ -13,11 +13,27 @@ from uuid import UUID, uuid4
 
 import pytest
 
-from benchmark.config import load_task
+from benchmark.config import load_experiment, load_task
 from game.veloren.fixture import verify_player
 
 
 ROOT = Path(__file__).resolve().parents[2]
+
+
+@pytest.mark.parametrize("game", ["minecraft", "veloren"])
+@pytest.mark.parametrize("mode", ["structured_tools", "visual_motor"])
+def test_all_experiments_include_exactly_l1_through_l3(game, mode):
+    directory = ROOT / "config" / game / "experiments"
+    combined = load_experiment(directory / f"{mode}_all.yaml")
+    levels = [load_experiment(directory / f"{mode}_L{level}.yaml") for level in (1, 2, 3)]
+    expected = {task.source.path: task for level in levels for task in level.tasks}
+    assert len(combined.tasks) == len(expected) == 30
+    assert {task.source.path: task for task in combined.tasks} == expected
+    assert all(level.agents == combined.agents for level in levels)
+    assert all(level.repetitions == combined.repetitions for level in levels)
+    if game == "minecraft":
+        exploratory = load_task(ROOT / f"config/minecraft/tasks/{mode}/lost_expedition.yaml")
+        assert exploratory.source.path not in expected
 
 
 def test_world_reset_copies_are_isolated(tmp_path):

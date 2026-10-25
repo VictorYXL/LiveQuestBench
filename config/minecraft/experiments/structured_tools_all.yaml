@@ -10,7 +10,6 @@ tasks:
 - path: ../tasks/structured_tools/two_outposts_return.yaml
 - path: ../tasks/structured_tools/trade_outposts_return.yaml
 - path: ../tasks/structured_tools/scout_outposts_return_0.yaml
-- path: ../tasks/structured_tools/lost_expedition.yaml
 - path: ../tasks/structured_tools/reach_nearby_point.yaml
 - path: ../tasks/structured_tools/select_pickaxe.yaml
 - path: ../tasks/structured_tools/place_single_block.yaml
