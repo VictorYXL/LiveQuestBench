@@ -148,6 +148,7 @@ async def run_episode(
         binding = make_game(task, root / "game", headless=headless, recording=recording,
                             recording_fps=recording_fps, recording_path=root / "recording" / "video.mp4")
         client = make_client(agent_config.model, log.request)
+        result["model_history_policy"] = client.history_policy
         client.on_query = log.query if record_chat else None
         await binding.game.start()
         before = await binding.game.save_snapshot(root / "before")

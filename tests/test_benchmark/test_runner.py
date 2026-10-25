@@ -506,6 +506,7 @@ def test_episode_faults_preserve_evidence_and_cleanup(tmp_path, monkeypatch):
             config.agents[0], config.tasks[0], output, {"episode_id": fault},
             headless=True, recording=False, recording_fps=10,
         ))
+        assert result["model_history_policy"] == Client.history_policy
         assert (output / "after").is_dir()
         if fault != "metrics":
             assert result["metrics"] == {"deaths": {"count": 2}}

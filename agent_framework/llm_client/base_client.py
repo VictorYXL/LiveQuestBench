@@ -20,10 +20,10 @@ class Message:
 
     Content blocks contain text or encoded image bytes plus a MIME type.
     Tool calls contain id, name and parsed arguments; tool_call_id links results.
-    Keep provider-specific state intact when appending an assistant response.
+    Keep provider-specific evidence intact; clients declare what history is replayed.
     """
 
-    role: Literal["system", "user", "assistant", "tool"]
+    role: Literal["system", "developer", "user", "assistant", "tool"]
     content: str | list[dict[str, object]] | None = ""
     tool_calls: list[dict[str, object]] = field(default_factory=list)
     tool_call_id: str | None = None
@@ -47,11 +47,13 @@ class ClientError(RuntimeError):
     def __init__(
         self, code: str, *, status: int | None = None,
         usage: dict[str, object] | None = None,
+        response_details: dict[str, object] | None = None,
     ) -> None:
         super().__init__(f"Model request failed: {code} (HTTP status: {status})")
         self.code = code
         self.status = status
         self.usage = usage
+        self.response_details = response_details
 
 
 @dataclass(frozen=True)
@@ -71,6 +73,8 @@ class BaseLLMClient(ABC):
     External Agents are not required to use this client. Transport retries may
     duplicate remote inference/cost, but never replay executed game actions.
     """
+
+    history_policy = "provider-native-v1"
 
     def __init__(
         self, *, timeout: float = 120, max_attempts: int = 3,
@@ -97,7 +101,7 @@ class BaseLLMClient(ABC):
         tools: Sequence[dict[str, object]] | None = None,
         tool_choice: str | None = None,
     ) -> LLMResponse:
-        """Retry transport failures, incomplete generations and invalid JSON only."""
+        """Retry transport failures, empty/incomplete generations and invalid JSON."""
         self._query_index += 1
         query_id = self._query_index
         for attempt in range(1, self.max_attempts + 1):
@@ -105,6 +109,7 @@ class BaseLLMClient(ABC):
                 self.on_query("prompt", {
                     "query_id": query_id, "attempt": attempt, "messages": list(messages),
                     "tools": list(tools) if tools is not None else None, "tool_choice": tool_choice,
+                    "history_policy": self.history_policy,
                 })
             started = time.monotonic()
             response = None
@@ -128,6 +133,7 @@ class BaseLLMClient(ABC):
                     and (exc.status in {408, 429, 500, 502, 503, 504}
                          or exc.code in {
                              "stream_ended_without_response", "incomplete_response", "invalid_json_response",
+                             "empty_response",
                          })
                 )
                 if not retryable or attempt == self.max_attempts:
@@ -155,6 +161,7 @@ class BaseLLMClient(ABC):
                         "request": event,
                         "error_code": error.code if isinstance(error, ClientError) else None,
                         "http_status": error.status if isinstance(error, ClientError) else None,
+                        "response_details": error.response_details if isinstance(error, ClientError) else None,
                     })
             await asyncio.sleep(self.retry_backoff * 2 ** (attempt - 1))
         raise RuntimeError("No request attempt was made")

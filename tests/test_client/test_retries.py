@@ -35,6 +35,7 @@ class ProbeClient(BaseLLMClient):
     ClientError("stream_ended_without_response"),
     ClientError("incomplete_response", usage={"output_tokens": 3}),
     ClientError("invalid_json_response", usage={"output_tokens": 3}),
+    ClientError("empty_response", usage={"output_tokens": 18}),
     json.JSONDecodeError("invalid", "{", 1),
 ])
 def test_transient_failures_retry_same_request_with_accounting(error):
@@ -55,7 +56,7 @@ def test_transient_failures_retry_same_request_with_accounting(error):
     ClientError("insufficient_quota", status=429),
     ClientError("billing_hard_limit_reached", status=503),
     *[ClientError(code, usage={"output_tokens": 3}) for code in (
-        "empty_response", "invalid_response", "invalid_finish_reason",
+        "invalid_response", "invalid_finish_reason",
         "invalid_tool_calls", "failed_response", "stream_error",
     )],
     ValueError("tool arguments have the wrong shape"),
@@ -73,11 +74,33 @@ def test_permanent_output_and_cancellation_failures_do_not_retry(error):
 
 @pytest.mark.parametrize("attempts", [1, 3])
 def test_attempt_limit_is_total_not_additional(attempts):
-    error = httpx.ReadError("offline")
+    error = ClientError("empty_response", usage={"output_tokens": 18})
     client = ProbeClient([error] * 4, max_attempts=attempts)
-    with pytest.raises(httpx.ReadError):
+    with pytest.raises(ClientError, match="empty_response"):
         asyncio.run(client.chat([Message("user", "Observe")]))
     assert len(client.requests) == len(client.events) == attempts
+
+
+def test_empty_response_diagnostics_survive_retry_and_outer_cancellation():
+    details = {"status": "completed", "output_types": ["reasoning"], "text_parts": 0, "tool_calls": 0}
+    error = ClientError("empty_response", usage={"output_tokens": 18}, response_details=details)
+
+    async def scenario():
+        client = ProbeClient([error, LLMResponse(content="done")])
+        queries = []
+        client.on_query = lambda kind, data: queries.append((kind, data))
+        assert (await client.chat([Message("user", "Observe")])).content == "done"
+        assert queries[1][0] == "error"
+        assert queries[1][1]["response_details"] == details
+        assert queries[1][1]["request"].usage == {"output_tokens": 18}
+        client = ProbeClient([error, LLMResponse(content="must not run")])
+        client.retry_backoff = 10
+        with pytest.raises(TimeoutError):
+            async with asyncio.timeout(.02):
+                await client.chat([Message("user", "Observe")])
+        assert len(client.requests) == 1
+
+    asyncio.run(scenario())
 
 
 def test_request_timeout_retries_but_outer_deadline_cancels_backoff():
@@ -106,7 +129,7 @@ def test_request_timeout_retries_but_outer_deadline_cancels_backoff():
 @pytest.mark.parametrize("protocol", ["responses", "responses_stream", "chat"])
 @pytest.mark.parametrize("failure,retry", [
     ("json_body", True), ("json_arguments", True), ("incomplete", True),
-    ("empty", False), ("argument_shape", False), ("refusal", False),
+    ("empty", True), ("argument_shape", False), ("refusal", False),
 ])
 def test_provider_parsing_drives_resends_without_executing_tools(protocol, failure, retry):
     from agent_framework.llm_client.responses import ResponsesClient

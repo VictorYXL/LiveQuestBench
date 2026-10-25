@@ -9,7 +9,7 @@ import shutil
 import subprocess
 from zipfile import ZipFile
 
-from game.minecraft.runtime.install import check_java, data_root, download
+from game.minecraft.runtime.install import MINECRAFT_VERSION, MOJANG_HOSTS, check_java, data_root, download, version_metadata
 
 
 GRADLE_VERSION = "8.6"
@@ -57,6 +57,31 @@ def check_client() -> dict:
     return launch
 
 
+def prepare_shared_assets() -> None:
+    """Precache aliases by hash before Loom downloads asset names concurrently."""
+    index = version_metadata()["assetIndex"]
+    path = data_root() / "downloads" / f"assets-{MINECRAFT_VERSION}.json"
+    download(index["url"], path, algorithm="sha1", digest=index["sha1"],
+             size=index["size"], hosts=MOJANG_HOSTS)
+    sizes: dict[str, int] = {}
+    duplicates: set[str] = set()
+    for asset in json.loads(path.read_text())["objects"].values():
+        digest, size = asset["hash"], asset["size"]
+        if digest in sizes:
+            if sizes[digest] != size:
+                raise ValueError("Asset aliases disagree on the object size")
+            duplicates.add(digest)
+        sizes[digest] = size
+    for digest in sorted(duplicates):
+        relative = f"{digest[:2]}/{digest}"
+        download(
+            f"https://resources.download.minecraft.net/{relative}",
+            data_root() / "gradle/caches/fabric-loom/assets/objects" / relative,
+            algorithm="sha1", digest=digest, size=sizes[digest],
+            hosts={"resources.download.minecraft.net"},
+        )
+
+
 def install_client() -> None:
     root = client_root()
     root.mkdir(parents=True, exist_ok=True)
@@ -87,6 +112,7 @@ def install_client() -> None:
         modules = subprocess.run([java, "--list-modules"], capture_output=True, text=True, check=True, timeout=10).stdout
         if not any(line.startswith("jdk.compiler@") for line in modules.splitlines()):
             raise RuntimeError("Native client setup requires the Java 21 compiler module; install a JDK and set MINECRAFT_JAVA")
+        prepare_shared_assets()
         subprocess.run(
             [str(executable), "--no-daemon", "--console=plain", "clean", "prepareClient"],
             cwd=root,

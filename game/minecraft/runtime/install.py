@@ -118,7 +118,7 @@ def download(
         temporary.replace(target)
 
 
-def server_artifact() -> dict:
+def version_metadata() -> dict:
     with open_download(MANIFEST_URL, MOJANG_HOSTS) as response:
         manifest = json.loads(response.read(8 * 1024 * 1024))
     entry = next(
@@ -132,7 +132,11 @@ def server_artifact() -> dict:
     metadata = json.loads(metadata_bytes)
     if metadata["id"] != MINECRAFT_VERSION:
         raise ValueError("Minecraft version mismatch.")
-    return metadata["downloads"]["server"]
+    return metadata
+
+
+def server_artifact() -> dict:
+    return version_metadata()["downloads"]["server"]
 
 
 def install_server(root: Path) -> Path:

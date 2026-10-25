@@ -258,7 +258,7 @@ class ProcessAgent(BaseAgent[InterfaceT], Generic[InterfaceT]):
         for raw in array(request.get("messages")):
             item = obj(raw)
             role = item.get("role")
-            if role not in ("system", "user", "assistant", "tool"):
+            if role not in ("system", "developer", "user", "assistant", "tool"):
                 raise IntegrationIncompatible(f"Unsupported native message role: {role}")
             raw_content = item.get("content")
             content: str | list[dict[str, object]] | None

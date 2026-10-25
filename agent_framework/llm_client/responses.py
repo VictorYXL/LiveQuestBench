@@ -64,7 +64,7 @@ def serialize_messages(
     pending: set[str] = set()
     seen: set[str] = set()
     for message in messages:
-        if message.role not in ("system", "user", "assistant", "tool"):
+        if message.role not in ("system", "developer", "user", "assistant", "tool"):
             raise ValueError("Unsupported message role")
         if message.role != "tool" and pending:
             raise ValueError("All tool calls require results before the next message")
@@ -94,7 +94,8 @@ def serialize_messages(
                 ]
                 if native_calls != message.tool_calls:
                     raise ValueError("Replayed output and tool_calls disagree")
-                items.extend(copy.deepcopy(native))
+                # Preserve visible output/tool IDs, but never replay hidden reasoning.
+                items.extend(copy.deepcopy(item) for item in native if item.get("type") != "reasoning")
                 continue
             if any(part["type"] != "input_text" for part in parts):
                 raise ValueError("Assistant image output is not supported")
@@ -123,8 +124,8 @@ def serialize_messages(
                     *images,
                 ]})
         else:
-            if message.role == "system" and any(p["type"] == "input_image" for p in parts):
-                raise ValueError("System messages cannot contain images")
+            if message.role in ("system", "developer") and any(p["type"] == "input_image" for p in parts):
+                raise ValueError("System/developer messages cannot contain images")
             items.append({"role": message.role, "content": parts})
     if pending:
         raise ValueError("Missing tool results")
@@ -197,7 +198,10 @@ def _parse_output(
     if any(not call["id"] or not call["name"] for call in calls) or len(set(ids)) != len(ids):
         raise ClientError("invalid_tool_calls", usage=usage)
     if not any(texts) and not calls:
-        raise ClientError("empty_response", usage=usage)
+        raise ClientError("empty_response", usage=usage, response_details={
+            "status": status, "output_types": [obj(item).get("type") for item in output],
+            "text_parts": len(texts), "tool_calls": len(calls),
+        })
     return LLMResponse(
         content="".join(texts) or None, tool_calls=calls,
         finish_reason="content_filter" if refused else ("tool_calls" if calls else "stop"),
@@ -209,7 +213,14 @@ def _parse_output(
 
 
 class ResponsesClient(BaseLLMClient):
+    """Replay visible history only, consistently across models and native Agents.
+
+    Raw provider output remains available as evidence, not as hidden next-turn
+    memory. Reasoning effort still controls each new generation.
+    """
+
     provider = ""
+    history_policy = "responses-visible-history-v1"
 
     def __init__(
         self, model: str, *, max_output_tokens: int = 4096,
@@ -245,7 +256,6 @@ class ResponsesClient(BaseLLMClient):
             "model": self.model, "input": serialize_messages(messages, self.provider, self.model),
             "store": False, "stream": stream, "truncation": "disabled",
             "max_output_tokens": self.max_output_tokens,
-            "include": ["reasoning.encrypted_content"],
         }
         if tools:
             definitions = []

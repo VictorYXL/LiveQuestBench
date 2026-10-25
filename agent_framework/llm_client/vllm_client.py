@@ -55,7 +55,7 @@ class VLLMClient(BaseLLMClient):
         pending: set[str] = set()
         seen: set[str] = set()
         for message in messages:
-            if message.role not in ("system", "user", "assistant", "tool"):
+            if message.role not in ("system", "developer", "user", "assistant", "tool"):
                 raise ValueError("Unsupported message role")
             if message.role != "tool" and pending:
                 raise ValueError("Missing tool results")
@@ -75,7 +75,7 @@ class VLLMClient(BaseLLMClient):
                     "function": {"name": name, "arguments": json.dumps(obj(call.get("arguments")))},
                 })
             parts = content_parts(message.content)
-            if message.role in ("assistant", "system", "tool") and any(
+            if message.role in ("assistant", "system", "developer", "tool") and any(
                 part["type"] == "input_image" for part in parts
             ):
                 raise ValueError("This vLLM integration accepts images in user messages only")

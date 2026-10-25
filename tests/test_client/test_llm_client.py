@@ -3,6 +3,7 @@
 import asyncio
 import json
 import os
+from copy import deepcopy
 from dataclasses import asdict
 from pathlib import Path
 
@@ -14,6 +15,98 @@ from agent_framework.llm_client.github_copilot_client import GitHubCopilotClient
 from agent_framework.llm_client.openai_client import OpenAIClient
 from agent_framework.llm_client.vllm_client import VLLMClient
 from agent_framework.llm_client.responses import ResponsesClient, parse_response
+
+
+def test_developer_messages_preserve_role_and_instruction_restrictions(black_png):
+    from agent_framework.llm_client.responses import serialize_messages
+
+    async def scenario():
+        async with VLLMClient("test") as chat:
+            message = Message("developer", "Follow the public task instructions.")
+            assert serialize_messages([message], "test", "test")[0]["role"] == "developer"
+            assert chat._messages([message])[0]["role"] == "developer"
+            for invalid in (
+                Message("developer", [{"type": "image", "data": black_png, "mime_type": "image/png"}]),
+                Message("developer", "", tool_calls=[{"id": "a", "name": "move", "arguments": {}}]),
+                Message("developer", "", tool_call_id="a"),
+            ):
+                with pytest.raises(ValueError):
+                    serialize_messages([invalid], "test", "test")
+                with pytest.raises(ValueError):
+                    chat._messages([invalid])
+
+    asyncio.run(scenario())
+
+
+def test_reasoning_only_response_retains_safe_failure_details():
+    usage = {"input_tokens": 17332, "output_tokens": 18,
+             "output_tokens_details": {"reasoning_tokens": 12}}
+    with pytest.raises(ClientError, match="empty_response") as raised:
+        parse_response({
+            "status": "completed", "usage": usage,
+            "output": [{"type": "reasoning", "encrypted_content": "must-not-log", "summary": []}],
+        }, "test", "test")
+    assert raised.value.usage == usage
+    assert raised.value.response_details == {
+        "status": "completed", "output_types": ["reasoning"], "text_parts": 0, "tool_calls": 0,
+    }
+    assert "must-not-log" not in str(raised.value.response_details)
+
+
+@pytest.mark.parametrize("model", ["gpt-6-astra", "gpt-5.6-terra", "gpt-5.4-nano"])
+def test_visible_history_removes_only_reasoning_without_mutating_evidence(model, black_png):
+    from agent_framework.llm_client.responses import serialize_messages
+
+    output = [
+        {"type": "reasoning", "id": "reasoning_1", "encrypted_content": "hidden-memory", "summary": []},
+        {"type": "message", "id": "message_1", "role": "assistant",
+         "content": [{"type": "output_text", "text": "Moving now."}]},
+        {"type": "function_call", "id": "item_1", "call_id": "call_1", "name": "move",
+         "arguments": '{"direction":"right"}'},
+    ]
+    response = parse_response({"status": "completed", "output": output}, "test", model)
+    evidence = deepcopy(response.provider_data)
+    history = [
+        Message("developer", "Use public tools."),
+        Message("assistant", response.content, response.tool_calls, provider_data=response.provider_data),
+        Message("tool", [{"type": "text", "text": "Moved"},
+                         {"type": "image", "mime_type": "image/png", "data": black_png}], tool_call_id="call_1"),
+    ]
+    items = serialize_messages(history, "test", model)
+    assert items[1:3] == output[1:]
+    assert items[3] == {"type": "function_call_output", "call_id": "call_1", "output": "Moved"}
+    assert items[4]["role"] == "user" and items[4]["content"][1]["type"] == "input_image"
+    assert "hidden-memory" not in json.dumps(items)
+    assert not any(item.get("type") == "reasoning" for item in items)
+    assert response.provider_data == evidence
+    items[1]["content"][0]["text"] = "Changed serialized request"
+    assert response.provider_data == evidence
+    with pytest.raises(ValueError, match="across providers or models"):
+        serialize_messages(history, "other-provider", model)
+    response.provider_data["responses_output"][-1]["call_id"] = "different"
+    with pytest.raises(ValueError, match="tool_calls disagree"):
+        serialize_messages(history, "test", model)
+
+
+def test_history_policy_logged_and_hidden_reasoning_not_requested():
+    class Client(ResponsesClient):
+        async def _request_impl(self, messages, *, tools, tool_choice):
+            body = self.body(messages, tools, tool_choice, stream=True)
+            assert "include" not in body
+            assert body["reasoning"] == {"effort": "low"}
+            assert body["max_output_tokens"] == 4096
+            return parse_response({"status": "completed", "output": [
+                {"type": "message", "content": [{"type": "output_text", "text": "done"}]},
+            ]}, "test", self.model)
+
+    async def scenario():
+        queries = []
+        async with Client("test", reasoning_effort="low") as client:
+            client.on_query = lambda kind, data: queries.append((kind, data))
+            await client.chat([Message("user", "Observe")])
+        assert queries[0][1]["history_policy"] == "responses-visible-history-v1"
+
+    asyncio.run(scenario())
 
 
 @pytest.mark.parametrize("error,expected", [
