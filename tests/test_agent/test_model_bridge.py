@@ -22,7 +22,7 @@ class BridgeAgent(ProcessAgent):
         raise AssertionError("Offline bridge check must not launch a worker")
 
 
-@pytest.mark.parametrize("model", ["gpt-6-astra", "gpt-5.6-terra", "gpt-5.4-nano"])
+@pytest.mark.parametrize("model", ["gpt-6-astra", "gpt-5.6-terra", "gpt-5.6-sol", "gpt-5.4-nano"])
 @pytest.mark.parametrize("role", ["system", "developer", "unapproved"])
 def test_native_instruction_roles_preserved_end_to_end(tmp_path, model, role):
     bodies = []

@@ -75,6 +75,12 @@ The baseline supports all three providers. External Agent profiles require a
 Responses-compatible hosted provider and explicit `reasoning_effort`. Choose a
 model with tool calling and, for VM, image input support.
 
+Development profiles cover `gpt-6-astra`, `gpt-5.6-sol` and `gpt-5.4-nano`,
+each with `reasoning_effort: low`. These are intended model-selection tiers,
+not an established gameplay ranking. Historical `gpt-5.6-terra` profiles remain
+available for provenance; replacement runs use distinct Sol configurations and
+result directories rather than relabeling Terra outputs.
+
 ## Running an experiment
 
 Choose an experiment from:

@@ -53,7 +53,7 @@ def test_reasoning_only_response_retains_safe_failure_details():
     assert "must-not-log" not in str(raised.value.response_details)
 
 
-@pytest.mark.parametrize("model", ["gpt-6-astra", "gpt-5.6-terra", "gpt-5.4-nano"])
+@pytest.mark.parametrize("model", ["gpt-6-astra", "gpt-5.6-terra", "gpt-5.6-sol", "gpt-5.4-nano"])
 def test_visible_history_removes_only_reasoning_without_mutating_evidence(model, black_png):
     from agent_framework.llm_client.responses import serialize_messages
 

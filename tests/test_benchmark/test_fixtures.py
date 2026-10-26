@@ -22,7 +22,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 @pytest.mark.parametrize("game", ["minecraft", "veloren"])
 @pytest.mark.parametrize("mode", ["structured_tools", "visual_motor"])
-@pytest.mark.parametrize("model", ["gpt-6-astra", "gpt-5.6-terra", "gpt-5.4-nano"])
+@pytest.mark.parametrize("model", ["gpt-6-astra", "gpt-5.6-terra", "gpt-5.6-sol", "gpt-5.4-nano"])
 def test_all_experiments_include_exactly_l1_through_l3(game, mode, model):
     directory = ROOT / "config" / game / "experiments" / f"{model}-low"
     combined = load_experiment(directory / f"{mode}_all.yaml")
@@ -48,7 +48,7 @@ def test_model_profiles_change_only_model_and_identifiers():
         directory = ROOT / "config" / game / "experiments"
         for source in (directory / "gpt-6-astra-low").glob("*.yaml"):
             baseline = load_experiment(source)
-            for model in ("gpt-5.6-terra", "gpt-5.4-nano"):
+            for model in ("gpt-5.6-terra", "gpt-5.6-sol", "gpt-5.4-nano"):
                 compared = load_experiment(directory / f"{model}-low" / source.name)
                 assert compared.tasks == baseline.tasks
                 assert compared.repetitions == baseline.repetitions
