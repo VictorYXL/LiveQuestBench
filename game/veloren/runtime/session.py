@@ -16,6 +16,8 @@ class VelorenSession:
         self.reader: asyncio.Task | None = None
         self.pending: dict[str, asyncio.Future] = {}
         self.log = None
+        self.team_role: str | None = None
+        self.attachment: dict | None = None
 
     async def start(self) -> dict:
         selected = os.environ.get("LIVEQUEST_VELOREN_RUNTIME")
@@ -30,7 +32,10 @@ class VelorenSession:
         environment.update(PYTHONUNBUFFERED="1", DISPLAY=self.display)
         self.log = (self.output / "worker.log").open("xb")
         fixture_path = self.output / "fixture-input.json"
-        fixture_path.write_text(json.dumps(self.fixture, indent=2, allow_nan=False) + "\n")
+        fixture_path.write_text(json.dumps(
+            {"fixture": self.fixture, "team_role": self.team_role, "attachment": self.attachment}
+            if self.team_role is not None else self.fixture, indent=2, allow_nan=False,
+        ) + "\n")
         self.process = await asyncio.create_subprocess_exec(
             runtime["python"], str(Path(__file__).with_name("worker.py")),
             str(runtime_path), str(self.output), self.track, str(fixture_path),

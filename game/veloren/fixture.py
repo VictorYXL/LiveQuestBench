@@ -434,13 +434,15 @@ async def initialize_companion(admin, actor, fixture: dict) -> dict:
             "initial_public": pet, "native_ai": True, "tethered": False}
 
 
-async def initialize_fixture(admin, actor, fixture: dict) -> dict:
+async def initialize_fixture(admin, actor, fixture: dict, *, shared_world: bool = False) -> dict:
     """Author absolute geometry, set player/time fields and verify native readback."""
     from scripts.rpg_benchmark import setup
 
     fixture = validate_fixture(fixture)
     await setup.ready_observation(actor)
-    if "native_site" in fixture:
+    if shared_world:
+        construction = {"constructed": False, "shared_world": True}
+    elif "native_site" in fixture:
         construction = {"constructed": False, "native_site": fixture["native_site"],
                         "ambient_npcs_removed": False, "safezone_created": False}
     else:
@@ -449,10 +451,10 @@ async def initialize_fixture(admin, actor, fixture: dict) -> dict:
             admin, actor, "flat", {"flat_origin": platform["origin"]}, size=tuple(platform["size"]),
         )
     base = solid_voxels({**fixture, "blocks": []})
-    additional = solid_voxels(fixture) - base
+    additional = set() if shared_world else solid_voxels(fixture) - base
     blocks = await setup.author_voxels(admin, [list(point) for point in sorted(additional)]) if additional else []
     stations = []
-    for station in fixture.get("stations", []):
+    for station in (() if shared_world else fixture.get("stations", [])):
         stations.append(await setup.station(admin, station["position"], station["sprite"], "flat"))
     for group in fixture.get("recipe_groups", []):
         await setup.learn(admin, actor, group)
@@ -475,7 +477,7 @@ async def initialize_fixture(admin, actor, fixture: dict) -> dict:
             for group in row["skill_tree"]["groups"]
         ), "declared unspent native Sword points")
     supplies = []
-    for supply in fixture.get("supplies", []):
+    for supply in (() if shared_world else fixture.get("supplies", [])):
         if inventory_counts(await admin.request("observe")).get(supply["item"], 0):
             origin = (await setup.ready_observation(admin))["position"]
             await setup.goto(admin, admin, [value + 100 for value in origin], settle=False)
@@ -494,7 +496,7 @@ async def initialize_fixture(admin, actor, fixture: dict) -> dict:
         if supply.get("pre_age_seconds"):
             await asyncio.sleep(supply["pre_age_seconds"])
     merchant = None
-    if "merchant" in fixture:
+    if "merchant" in fixture and not shared_world:
         from game.veloren.settlement import initialize_merchant
         merchant = await initialize_merchant(admin, actor, fixture)
     contract = None
@@ -503,13 +505,13 @@ async def initialize_fixture(admin, actor, fixture: dict) -> dict:
         await setup.goto(admin, admin, [point[0] + 12, point[1], point[2]], settle=False)
     await setup.goto(admin, actor, fixture["player_state"]["position"])
     companion = None
-    if "companion" in fixture:
+    if "companion" in fixture and not shared_world:
         companion = await initialize_companion(admin, actor, fixture)
         await setup.goto(admin, actor, fixture["player_state"]["position"])
     await setup.command(admin, "time", fixture["time_of_day"])
     await setup.command(admin, "sudo", actor.name, "health", fixture["player_state"]["health"])
     opening = await wait_player(actor, fixture, await setup.ready_observation(actor))
-    if any(row.get("pre_age_seconds") for row in fixture.get("supplies", [])):
+    if not shared_world and any(row.get("pre_age_seconds") for row in fixture.get("supplies", [])):
         current = {row["uid"]: row for row in opening["nearby_entities"]}
         for supply in supplies:
             entity = current.get(supply["uid"])
@@ -520,12 +522,12 @@ async def initialize_fixture(admin, actor, fixture: dict) -> dict:
     if merchant is not None:
         from game.veloren.settlement import bind_merchant
         merchant = bind_merchant(opening, merchant)
-    if "contract" in fixture:
+    if "contract" in fixture and not shared_world:
         from game.veloren.contracts import initialize_contract
         contract = await initialize_contract(admin, actor, fixture)
     encounters = []
     source = None
-    if fixture.get("encounters") or contract is not None:
+    if not shared_world and (fixture.get("encounters") or contract is not None):
         from scripts.rpg_benchmark.combat_support import native_binding
         if contract is not None:
             encounters.append({

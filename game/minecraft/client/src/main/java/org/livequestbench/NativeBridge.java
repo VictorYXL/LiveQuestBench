@@ -17,6 +17,7 @@ import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.*;
+import org.livequestbench.mixin.ChatHudAccessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,6 +117,24 @@ public class NativeBridge implements ClientModInitializer {
                     error(request, "not_connected", "Native client is not in a world");
                 } else if (method.equals("observe")) {
                     reply(request, observe());
+                } else if (method.equals("chat_inbox")) {
+                    var messages = ((ChatHudAccessor) client().inGameHud.getChatHud()).livequestMessages();
+                    List<JsonObject> rows = new ArrayList<>();
+                    for (var line : messages)
+                        rows.add(object("client_tick", line.creationTick(), "text", line.content().getString()));
+                    Collections.reverse(rows);
+                    reply(request, object("messages", rows, "scope", "own_native_chat_hud",
+                            "history_limit", 100, "history_at_capacity", messages.size() >= 100));
+                } else if (method.equals("chat_send")) {
+                    String message = params.get("message").getAsString();
+                    String recipient = text(params, "recipient", "");
+                    if (message.isBlank() || message.length() > 200 || message.startsWith("/")
+                            || message.chars().anyMatch(Character::isISOControl)
+                            || !recipient.isEmpty() && !recipient.matches("[A-Za-z][A-Za-z0-9_]{0,15}"))
+                        throw new IllegalArgumentException("Invalid ordinary chat message or player name");
+                    if (recipient.isEmpty()) client().getNetworkHandler().sendChatMessage(message);
+                    else client().getNetworkHandler().sendChatCommand("tell " + recipient + " " + message);
+                    reply(request, object("submitted_to_server", true, "delivery_confirmed", null));
                 } else if (method.equals("resume")) {
                     reply(request, object("ready", true));
                 } else if (method.equals("recipes")) {

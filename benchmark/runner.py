@@ -153,10 +153,23 @@ async def run_episode(
         await binding.game.start()
         before = await binding.game.save_snapshot(root / "before")
         binding.verify_initial(before)
-        public, tools = binding.controls()
-        public = logged_controls(public, log)
-        result["tools"] = [tool.schema() for tool in tools]
-        agent = make_agent(agent_config, client, tools, root / "agent", log.message)
+        if task.participants:
+            from benchmark.team import TeamAgent
+            from game.team import TeamGame
+            assert isinstance(binding.game, TeamGame)
+
+            async def no_shared_access(*args):
+                raise PermissionError("Only role-scoped team controls are available")
+
+            public = Controls(no_shared_access, no_shared_access)
+            result["team_profile"] = "native-peer-team-v1"
+            result["participants"] = [role.id for role in task.participants]
+            agent = TeamAgent(agent_config, binding.game, root, log, record_chat=record_chat)
+        else:
+            public, tools = binding.controls()
+            public = logged_controls(public, log)
+            result["tools"] = [tool.schema() for tool in tools]
+            agent = make_agent(agent_config, client, tools, root / "agent", log.message)
         if isinstance(agent, ProcessAgent):
             result["agent_source"] = agent.source
         stage = "execution"
@@ -228,7 +241,7 @@ async def run_episode(
                 result["measurement"] = "invalid"
         if agent is not None:
             try:
-                await asyncio.wait_for(agent.close(), timeout=30)
+                await asyncio.wait_for(agent.close(), timeout=60 if task.participants else 30)
             except Exception as error:
                 record_error(error, "agent_cleanup")
             if isinstance(agent, ProcessAgent):
@@ -388,7 +401,7 @@ async def _run_experiment(
                         f"{agent_config.id}.{task.game}.{task.id}.{task.task_type}.{repetition:04d}"
                     )
                     episode_path = Path(agent_config.id) / f"{task.id}.{task.task_type}" / f"episode_{repetition}"
-                    task_settings = asdict(task)
+                    task_settings = task.resolved()
                     task_settings.pop("source")
                     configuration = {
                         "task": task_settings, "agent": agent_config.resolved(),

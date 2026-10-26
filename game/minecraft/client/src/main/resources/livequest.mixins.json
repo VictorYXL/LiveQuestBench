@@ -2,6 +2,6 @@
   "required": true,
   "package": "org.livequestbench.mixin",
   "compatibilityLevel": "JAVA_21",
-  "client": ["ClientTickMixin", "LinuxLibraryMixin"],
+  "client": ["ClientTickMixin", "LinuxLibraryMixin", "ChatHudAccessor"],
   "injectors": {"defaultRequire": 1}
 }

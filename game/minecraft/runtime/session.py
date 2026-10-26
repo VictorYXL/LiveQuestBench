@@ -172,12 +172,18 @@ def prism_instances() -> list[str]:
 
 
 class MinecraftSession:
-    def __init__(self, output: Path, config: SessionConfig, state: PlayerState, *, world: Path):
+    def __init__(self, output: Path, config: SessionConfig, state: PlayerState, *, world: Path,
+                 shared_server: MinecraftServer | None = None, max_players: int = 1):
+        if type(max_players) is not int or max_players < 1:
+            raise ValueError("max_players must be a positive integer")
         self.output, self.config, self.state = output, config, state
         self.world = world.resolve()
-        if self.world.parent != output.resolve() or not re.fullmatch(r"[A-Za-z0-9_.-]+", self.world.name):
+        if (shared_server is None and self.world.parent != output.resolve()
+                or not re.fullmatch(r"[A-Za-z0-9_.-]+", self.world.name)):
             raise ValueError("The running world must be a named directory directly inside output_dir")
-        self.server: MinecraftServer | None = None
+        self.server = shared_server
+        self.shared_server = shared_server is not None
+        self.max_players = max_players
         self.capture: WindowCapture | None = None
         self.actions: WindowActions | None = None
         self.window_id: int | None = None
@@ -290,7 +296,7 @@ class MinecraftSession:
             "online-mode": str(self.config.authentication == "online").lower(),
             "enforce-secure-profile": str(self.config.authentication == "online").lower(),
             "enable-rcon": "false", "enable-query": "false", "level-name": self.world.name,
-            "max-players": "1",
+            "max-players": str(self.max_players),
             "gamemode": self.state.gamemode, "force-gamemode": "false",
             "difficulty": self.config.difficulty, "spawn-protection": "0", "view-distance": "6",
             "simulation-distance": "6", "broadcast-console-to-ops": "false",
@@ -302,16 +308,19 @@ class MinecraftSession:
         return port
 
     async def start(self) -> None:
-        port = self._prepare_server()
-        self.server = MinecraftServer(
-            self.output, self._jar, self._java, self.config.memory_mb, port,
-            self.config.startup_timeout, self.config.stop_timeout,
-        )
-        self._stack.push_async_callback(self.server.stop)
-        await self.server.start()
-        feedback = await self.server.command("tick freeze")
-        if not any("The game is frozen" in line for line in feedback):
-            raise RuntimeError("Could not verify freezing the experiment during initialization")
+        if not self.shared_server:
+            port = self._prepare_server()
+            self.server = MinecraftServer(
+                self.output, self._jar, self._java, self.config.memory_mb, port,
+                self.config.startup_timeout, self.config.stop_timeout,
+            )
+            self._stack.push_async_callback(self.server.stop)
+            await self.server.start()
+            feedback = await self.server.command("tick freeze")
+            if not any("The game is frozen" in line for line in feedback):
+                raise RuntimeError("Could not verify freezing the experiment during initialization")
+        assert self.server is not None
+        port = self.server.port
         self.capture = self._stack.enter_context(WindowCapture(
             self.config.display, title_prefix="Minecraft", class_tokens=("minecraft", "lwjgl"),
         ))
@@ -336,7 +345,7 @@ class MinecraftSession:
                     await asyncio.sleep(0.1)
         await self._verify_input_ready()
         await self._verify_player()
-        if (self.world / "livequest-expedition.json").is_file():
+        if not self.shared_server and (self.world / "livequest-expedition.json").is_file():
             from game.minecraft.evaluators.expedition import registry
             from game.minecraft.fixtures.forge_hunt import targets_for, uuid_parts
             expected = registry(self.world)
@@ -549,14 +558,15 @@ class MinecraftSession:
             raise RuntimeError("Player disappeared before initialization verification")
         self.state.verify(actual, self.config.player_uuid)
 
-    async def begin_task(self) -> None:
+    async def begin_task(self, *, unfreeze: bool = True) -> None:
         assert self.server is not None
         await self._verify_player()
         if self.bridge is not None:
             await self.bridge.request("resume", {})
-        feedback = await self.server.command("tick unfreeze")
-        if not any("The game runs normally" in line for line in feedback):
-            raise RuntimeError("Could not verify unfreezing the experiment")
+        if unfreeze:
+            feedback = await self.server.command("tick unfreeze")
+            if not any("The game runs normally" in line for line in feedback):
+                raise RuntimeError("Could not verify unfreezing the experiment")
 
     async def stop_participant(self) -> None:
         if self.bridge is None:

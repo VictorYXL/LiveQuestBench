@@ -30,6 +30,11 @@ def make_game(
     task: TaskConfig, output: Path, *, headless: bool, recording: bool, recording_fps: int,
     recording_path: Path | None = None,
 ) -> GameBinding:
+    if task.participants:
+        from game.team import create_team_binding
+        return create_team_binding(
+            task, output, headless=headless, recording=recording, recording_fps=recording_fps,
+        )
     if task.game == "minecraft":
         from game.minecraft.binding import create_binding
     elif task.game == "veloren":

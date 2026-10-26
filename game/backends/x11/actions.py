@@ -19,6 +19,9 @@ KEYS.update({
     "home": "Home", "end": "End", "page_up": "Prior", "page_down": "Next",
     "left_shift": "Shift_L", "right_shift": "Shift_R",
     "left_ctrl": "Control_L", "right_ctrl": "Control_R",
+    "slash": "slash", "backslash": "backslash", "comma": "comma", "period": "period",
+    "minus": "minus", "equal": "equal", "semicolon": "semicolon", "apostrophe": "apostrophe",
+    "left_bracket": "bracketleft", "right_bracket": "bracketright", "grave": "grave",
 })
 BUTTONS = {"left": 1, "middle": 2, "right": 3}
 X_FAILURES = (error.XError, error.DisplayError, error.ConnectionClosedError, OSError)

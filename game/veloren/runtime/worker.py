@@ -1,6 +1,7 @@
 """Private VelorenBench runtime reuse, isolated from public Agent interfaces."""
 
 import asyncio
+from collections import deque
 from contextlib import AsyncExitStack, redirect_stdout
 import hashlib
 import json
@@ -77,12 +78,20 @@ class LocalRenderer(RendererBridge):
 
 
 class Session:
-    def __init__(self, config: dict, output: Path, track: str, fixture: dict):
+    def __init__(self, config: dict, output: Path, track: str, fixture: dict,
+                 team_role: str | None = None, attachment: dict | None = None):
         self.config, self.output, self.track, self.fixture = config, output, track, validate_fixture(fixture)
         self.stack = AsyncExitStack()
         self.started = False
         self.running = False
         self.record = {"username": "Admin" + uuid4().hex[:10]}
+        self.team_role, self.attachment = team_role, attachment
+        self.oracle_output = Path(attachment["output"]) if attachment else output
+        if attachment:
+            self.record["username"] = attachment["username"]
+        self.chat_after_seq = 0
+        self.chat_history = deque(maxlen=100)
+        self.chat_history_truncated = False
 
     async def start(self) -> dict:
         if self.started:
@@ -111,7 +120,12 @@ class Session:
         )
         journal = Journal(self.output / "native.jsonl")
         self.stack.callback(journal.close)
-        port, userdata = await self.stack.enter_async_context(fixture_server(self.output, self.record, native, self.fixture))
+        if self.attachment:
+            port, userdata = self.attachment["port"], Path(self.attachment["userdata"])
+            self.record["world_fixture"] = self.attachment["world_fixture"]
+        else:
+            port, userdata = await self.stack.enter_async_context(
+                fixture_server(self.output, self.record, native, self.fixture))
         admin = NativeBridge(self.output, self.record["username"], port, userdata, journal, native)
         administrator = await self.stack.enter_async_context(AsyncExitStack())
         administrator.push_async_callback(admin.close)
@@ -121,12 +135,12 @@ class Session:
         self.record["setup_admin_protection"] = protected["survival"]["buffs"]
         os.environ["LIVEQUEST_PHYSICAL_INPUT"] = "1" if self.track == "visual_motor" else "0"
         self.actor = LocalRenderer(
-            self.output, "Player" + uuid4().hex[:10], port, userdata, journal, native,
+            self.output, self.team_role or "Player" + uuid4().hex[:10], port, userdata, journal, native,
             renderer=renderer, frames=self.output / "frames",
         )
         self.stack.push_async_callback(self.actor.close)
         await self.actor.start()
-        initialized = await initialize_fixture(admin, self.actor, self.fixture)
+        initialized = await initialize_fixture(admin, self.actor, self.fixture, shared_world=bool(self.attachment))
         await administrator.aclose()
         opening = await setup.wait_observation(
             self.actor,
@@ -150,7 +164,9 @@ class Session:
             **initialized, "world": self.record["world_fixture"],
         }, indent=2) + "\n")
         return {"renderer_pid": self.actor.process.pid, "actor": self.actor.ready.result(),
-                "runtime": cfg, "display": os.environ["DISPLAY"]}
+                "runtime": cfg, "display": os.environ["DISPLAY"],
+                "shared_world": {"port": port, "userdata": str(userdata), "output": str(self.oracle_output),
+                                 "username": self.record["username"], "world_fixture": self.record["world_fixture"]}}
 
     async def frame_fence(self) -> dict:
         current = await self.actor.request("observe", origin="lifecycle")
@@ -166,6 +182,9 @@ class Session:
         if operation == "start":
             return await self.start()
         if operation == "begin":
+            if self.team_role:
+                batch = await self.actor.request("events", {"after_seq": 0, "limit": 1}, origin="lifecycle")
+                self.chat_after_seq = batch["next_seq"] - 1
             if self.track == "visual_motor":
                 await self.physical(True)
             self.running = True
@@ -184,7 +203,7 @@ class Session:
             from game.veloren.runtime.journal import snapshot_rows
             registry = getattr(self, "death_registry", None)
             rows = snapshot_rows(
-                self.output / "private-native-oracle.ndjson", self.output.name,
+                self.oracle_output / "private-native-oracle.ndjson", self.oracle_output.name,
                 after_sequence=registry["opening_sequence"] if registry is not None else None,
                 encounters=bool(self.initialized["encounters"]),
                 contracts=self.initialized.get("contract") is not None,
@@ -193,7 +212,7 @@ class Session:
                 rows, observation["self_identity"], registry,
             )
             self.death_registry = observation["private_death_evidence"]["registry"]
-            if not hasattr(self, "supplies_opening"):
+            if not self.attachment and not hasattr(self, "supplies_opening"):
                 from game.veloren.fixture import verify_aged_supplies
                 verify_aged_supplies(self.initialized, observation)
                 self.supplies_opening = True
@@ -273,6 +292,28 @@ class Session:
             return await self.actor.request("frame", await self.frame_fence(), origin="private-validation")
         if not self.running:
             raise RuntimeError("Public native operation outside running boundary")
+        if operation in ("chat_send", "chat_inbox"):
+            if self.track != "structured_tool" or not self.team_role:
+                raise PermissionError("Native chat RPC requires a structured team participant")
+            if operation == "chat_send":
+                action = ({"action_type": "private_chat", "recipient": args["recipient"]}
+                          if args.get("recipient") else {"action_type": "chat_channel", "channel": "world"})
+                return await setup.action(self.actor, origin="agent", require_completed=False,
+                                          **action, message=args["message"])
+            while True:
+                batch = await self.actor.request(
+                    "events", {"after_seq": self.chat_after_seq, "limit": 256}, origin="agent")
+                self.chat_history_truncated |= batch["truncated"]
+                for event in batch["events"]:
+                    self.chat_after_seq = event["seq"]
+                    if event["event"] == "chat":
+                        self.chat_history_truncated |= len(self.chat_history) == self.chat_history.maxlen
+                        self.chat_history.append(event)
+                if not batch["has_more"]:
+                    break
+            return {"messages": list(self.chat_history), "history_truncated": self.chat_history_truncated,
+                    "through_seq": self.chat_after_seq, "history_limit": 100,
+                    "scope": "own_native_received_chat"}
         if operation == "observe":
             return await self.actor.request("observe", origin="agent")
         if operation == "action":
@@ -362,7 +403,10 @@ class Session:
 
 async def main() -> None:
     config_path, output, track, fixture = sys.argv[1:]
-    session = Session(json.loads(Path(config_path).read_text()), Path(output), track, json.loads(Path(fixture).read_text()))
+    values = json.loads(Path(fixture).read_text())
+    session = Session(json.loads(Path(config_path).read_text()), Path(output), track,
+                      values["fixture"] if "team_role" in values else values,
+                      values.get("team_role"), values.get("attachment"))
     output_stream = sys.stdout
     pending = set()
     stop = asyncio.Event()

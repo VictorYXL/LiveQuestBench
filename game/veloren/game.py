@@ -52,6 +52,9 @@ class VelorenGame(BaseGame[MotorInterface | StructuredInterface]):
         self._window_id: int | None = None
         self._interface = (MotorInterface(self._observe, self._act) if track == "visual_motor"
                            else StructuredInterface(self._observe_structured, self._call_tool))
+        self.team_role: str | None = None
+        self.shared_owner: VelorenGame | None = None
+        self.shared_world: dict | None = None
 
     def _write(self, name: str, value: dict) -> None:
         (self.output_dir / name).write_text(json.dumps(value, indent=2, allow_nan=False) + "\n")
@@ -72,8 +75,11 @@ class VelorenGame(BaseGame[MotorInterface | StructuredInterface]):
                 if not self.display_name:
                     raise RuntimeError("Desktop mode requires an authorized DISPLAY")
                 self._session = VelorenSession(self.output_dir, self.display_name, self.track, self.fixture)
+                self._session.team_role = self.team_role
+                self._session.attachment = self.shared_owner.shared_world if self.shared_owner else None
                 self._stack.push_async_callback(self._session.close)
                 ready = await self._session.start()
+                self.shared_world = ready["shared_world"]
                 self._capture = WindowCapture(self.display_name, title_prefix="Veloren")
                 self._stack.callback(self._capture.close)
                 connection = display.Display(self.display_name)

@@ -70,6 +70,9 @@ class MinecraftGame(BaseGame[MotorInterface | StructuredInterface]):
             else StructuredInterface(self._observe_structured, self._call_tool, tool_schemas)
         )
         self._active_tool: asyncio.Task | None = None
+        self.team = False
+        self.shared_owner: MinecraftGame | None = None
+        self.team_states: dict[str, PlayerState] = {}
 
     async def start(self) -> None:
         async with self._lifecycle:
@@ -109,8 +112,15 @@ class MinecraftGame(BaseGame[MotorInterface | StructuredInterface]):
                         "view": "native-player",
                     },
                 })
-                world = self.output_dir / "world"
-                copy_world(self.world_path, world, self.player_state, self.player_uuid)
+                if self.shared_owner is None:
+                    world = self.output_dir / "world"
+                    copy_world(self.world_path, world, self.player_state, self.player_uuid)
+                    for name, state in self.team_states.items():
+                        if name != self.player_name:
+                            state.write(world, UUID(offline_identity(name)["player_uuid"]))
+                else:
+                    assert self.shared_owner._session is not None
+                    world = self.shared_owner._session.world
                 self._write_json("fixture.json", {
                     "world_path": str(self.world_path.resolve()),
                     "sha256": {
@@ -125,6 +135,8 @@ class MinecraftGame(BaseGame[MotorInterface | StructuredInterface]):
                     config.display = await virtual.start(self.output_dir / "xvfb.log")
                 self._session = MinecraftSession(
                     self.output_dir, config, self.player_state, world=world,
+                    shared_server=self.shared_owner._session.server if self.shared_owner else None,
+                    max_players=max(1, len(self.team_states)),
                 )
                 self._stack.push_async_callback(self._session.close)
                 self._session.preflight()
@@ -219,7 +231,7 @@ class MinecraftGame(BaseGame[MotorInterface | StructuredInterface]):
                 self._stack.push_async_callback(self._recorder.stop)
                 await self._recorder.start()
             self._boundary["begin_requested_at_ns"] = time.monotonic_ns()
-            await self._session.begin_task()
+            await self._session.begin_task(unfreeze=not self.team)
             self._boundary["begin_acknowledged_at_ns"] = time.monotonic_ns()
             self.phase = "running"
             self._write_json("boundaries.json", self._boundary)
@@ -237,12 +249,17 @@ class MinecraftGame(BaseGame[MotorInterface | StructuredInterface]):
             async with self._io:
                 assert self._session.server is not None
                 await self._session.stop_participant()
-                feedback = await self._session.server.command("tick freeze")
-                if not any("The game is frozen" in line for line in feedback):
-                    raise RuntimeError("Could not confirm final world freeze")
+                if not self.team:
+                    await self.freeze()
             self._boundary["end_acknowledged_at_ns"] = time.monotonic_ns()
             self.phase = "ended"
             self._write_json("boundaries.json", self._boundary)
+
+    async def freeze(self) -> None:
+        assert self._session is not None and self._session.server is not None
+        feedback = await self._session.server.command("tick freeze")
+        if not any("The game is frozen" in line for line in feedback):
+            raise RuntimeError("Could not confirm final world freeze")
 
     async def save_snapshot(self, destination: Path) -> Path:
         async with self._lifecycle:

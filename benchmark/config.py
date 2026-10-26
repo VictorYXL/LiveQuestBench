@@ -95,6 +95,12 @@ def read(path: Path) -> tuple[dict[str, object], Source]:
 
 
 @dataclass(frozen=True)
+class ParticipantConfig:
+    id: str
+    player_state: dict[str, object]
+
+
+@dataclass(frozen=True)
 class TaskConfig:
     id: str
     game: str
@@ -106,6 +112,13 @@ class TaskConfig:
     evaluator_parameters: dict[str, object]
     tools: tuple[str, ...] | None
     source: Source
+    participants: tuple[ParticipantConfig, ...] = ()
+
+    def resolved(self) -> dict:
+        result = asdict(self)
+        if not self.participants:
+            result.pop("participants")
+        return result
 
 
 @dataclass(frozen=True)
@@ -149,13 +162,14 @@ class ExperimentConfig:
     def resolved(self) -> dict:
         result = asdict(self)
         result["agents"] = [agent.resolved() for agent in self.agents]
+        result["tasks"] = [task.resolved() for task in self.tasks]
         return result
 
 
 def load_task(path: Path) -> TaskConfig:
     data, source = read(path)
     required = {"id", "game", "task_type", "task", "time_limit_seconds", "fixture", "evaluator"}
-    fields(data, required | {"tools"}, required, "task")
+    fields(data, required | {"tools", "participants"}, required, "task")
     mode = text(data["task_type"], "task_type")
     if mode not in ("visual_motor", "structured_tool"):
         raise ConfigError("task_type must be visual_motor or structured_tool")
@@ -168,11 +182,28 @@ def load_task(path: Path) -> TaskConfig:
         fixture["world_path"] = str(resolve(text(fixture["world_path"], "world_path"), Path(source.path)))
     evaluator = mapping(data["evaluator"], "evaluator")
     fields(evaluator, {"name", "parameters"}, {"name", "parameters"}, "evaluator")
+    participants = []
+    if "participants" in data:
+        if not isinstance(data["participants"], list) or not data["participants"]:
+            raise ConfigError("participants must be a nonempty list")
+        for entry in data["participants"]:
+            row = mapping(entry, "participant")
+            fields(row, {"id", "player_state"}, {"id", "player_state"}, "participant")
+            name = identifier(row["id"], "participant id")
+            if not re.fullmatch(r"[A-Za-z][A-Za-z0-9_]{0,15}", name):
+                raise ConfigError("Participant IDs must be native player names: 1-16 ASCII letters/digits/underscores")
+            participants.append(ParticipantConfig(name, mapping(row["player_state"], "participant player_state")))
+        if len({p.id.casefold() for p in participants}) != len(participants):
+            raise ConfigError("Participant IDs must be unique ignoring case")
+        if "player_state" in fixture:
+            raise ConfigError("Declare player_state either in fixture or in participants, not both")
+        if evaluator["name"] != "team":
+            raise ConfigError("Explicit participants require a team evaluator, including a one-member team")
     return TaskConfig(
         identifier(data["id"], "task id"), game, mode, text(data["task"], "task"),
         positive(data["time_limit_seconds"], "time_limit_seconds"), fixture,
         text(evaluator["name"], "evaluator name"), mapping(evaluator["parameters"], "evaluator parameters"),
-        tools, source,
+        tools, source, tuple(participants),
     )
 
 
