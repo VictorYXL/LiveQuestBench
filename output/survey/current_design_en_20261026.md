@@ -4,12 +4,31 @@
 
 **Chinese companion:** [Current design in Chinese](current_design_zh_CN_20261026.md).
 
+**Latest status:** all legacy runnable configurations have been moved from the
+root `config/` to the [configuration archive](../back/legacy-config-20261026/README.md).
+The seventy-candidate draft is not an accepted final task set: several focused
+items are too close to mechanism checks. The next design focus is six substantive
+focused anchors, using former L2 as a minimum content reference and normally L3,
+with intended 5-30 minute completion times subject to empirical calibration.
+This does not restore five difficulty tiers. No anchor implementation or
+model/Agent discrimination result exists; design is paused for the archival step.
+
 **Decision:** replace the five-level organizing framework with six capability
 dimensions. L1–L5 remain historical labels, not current selection quotas,
 capability axes, or difficulty bands. Preserve old configurations and results.
 The dimensions and reuse-first direction are accepted; candidate families,
 metadata names, scoring weights, and release size below remain proposals.
 This documentation revision does not change tasks, budgets, scorers, or runs.
+
+**Subsequent task-design decisions:** use two formal categories, focused and
+integrated, without manual difficulty tiers. The requested design worklist is
+ten focused candidates per dimension
+([sixty-candidate catalog and combined counts](focused_task_catalog_60_20261026.md)) plus
+[ten integrated candidates grounded in native goals](integrated_task_catalog_10_20261026.md).
+The combined worklist contains 35 objectives per game, targeting 140 VM/ST
+combinations, not 140 qualified configurations.
+The earlier eight-family slice below remains a reference for incremental
+development, not the current catalog size or a frozen release quota.
 
 ## 1. Research focus and unchanged boundaries
 
@@ -64,12 +83,14 @@ cross-Episode training, or model-parameter update is required.
 
 Keep `config/<game>/tasks/{structured_tools,visual_motor}/`. Do not create six
 capability directories, duplicate a task across them, or infer scores from file
-placement. Use three complementary evaluation roles:
+placement. Use two formal task categories:
 
-- **Diagnostic:** basic controls, interfaces and individual mechanics.
 - **Focused:** a primary capability demand, supported by matched conditions.
 - **Integrated:** a coherent long objective with meaningful dependencies across
   several dimensions, evaluated separately from focused-axis scores.
+
+Basic control, interface and transport diagnostics support engineering and
+interpretation; they are not a third formal scored task category.
 
 Proposed descriptive fields, **not accepted by the current strict loader yet**:
 
@@ -121,7 +142,7 @@ received markers. `scout_outposts_return_0` explicitly warns that successive
 passages need not share the same opening: it is not evidence of a hidden stable
 rule learned between walls.
 
-## 5. Compact first development slice: six focused families plus two integrated
+## 5. Earlier compact development slice: six focused families plus two integrated
 
 The following **eight-family proposal** is a starting worklist, not eight frozen
 YAMLs, a mandatory rectangular game-by-dimension matrix, or a final release size.
@@ -222,8 +243,9 @@ See [protocol](native_peer_team_v1.md) and
 1. Inventory existing tasks against the six demands, actual scoring evidence,
    native mechanisms, tool assistance and per-track gaps; choose reuse, adjust,
    diagnostic-only or hold. Preserve historical IDs/results.
-2. Review the eight-family development worklist and the claims each family can
-   actually support. Prioritize F5/F6 gaps alongside reused F1–F4 and I1.
+2. Review the sixty-focused/ten-integrated candidate worklist and the claims each
+   family can support. Use the earlier compact slice to prioritize implementation,
+   including F5/F6 gaps, rather than committing to implement every candidate.
 3. Add the minimal metadata/selection schema once reviewed; do not change game
    lifecycles or move tasks into capability directories.
 4. Implement missing variants and evidence only where needed. Review proposed

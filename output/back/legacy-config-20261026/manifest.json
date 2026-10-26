@@ -1,0 +1,2015 @@
+{
+  "schema": "livequest-config-archive/1",
+  "archive_date": "2026-10-26",
+  "source_git_head": "3917b89d2df01175fbc1dd0174b89fa145a583d8",
+  "operation": "Entire tracked config directory moved intact to this archive at user request.",
+  "original_config_removed": true,
+  "file_count": 401,
+  "files": [
+    {
+      "path": "config/minecraft/experiments/gpt-5.4-nano-low/structured_tools_L1.yaml",
+      "bytes": 1731,
+      "sha256": "3590db4954806997ce745ff86332d271ef2d86a7a1021cfa45bc90a1f2b68767"
+    },
+    {
+      "path": "config/minecraft/experiments/gpt-5.4-nano-low/structured_tools_L2.yaml",
+      "bytes": 1769,
+      "sha256": "eec7749722f942206d726fbda6f4927f63073a7114072befe7466980edb7ac03"
+    },
+    {
+      "path": "config/minecraft/experiments/gpt-5.4-nano-low/structured_tools_L3.yaml",
+      "bytes": 1796,
+      "sha256": "e02330926766ee00ce9c20646da1d11d264493a1d63f0ebe1a06ada1309eb0b3"
+    },
+    {
+      "path": "config/minecraft/experiments/gpt-5.4-nano-low/structured_tools_all.yaml",
+      "bytes": 2969,
+      "sha256": "8e3b18bd30e348fc18692960aa061916953891a948a429d8eed5ede88d0d1818"
+    },
+    {
+      "path": "config/minecraft/experiments/gpt-5.4-nano-low/visual_motor_L1.yaml",
+      "bytes": 1687,
+      "sha256": "760d4cc3779fee921a7d20e1426a85ceff679bdc194bf09b4ccd70c022dec98d"
+    },
+    {
+      "path": "config/minecraft/experiments/gpt-5.4-nano-low/visual_motor_L2.yaml",
+      "bytes": 1725,
+      "sha256": "e5a06e5020abe44f68cb11248709daeb7744dc88c038376b433eb72b79b54586"
+    },
+    {
+      "path": "config/minecraft/experiments/gpt-5.4-nano-low/visual_motor_L3.yaml",
+      "bytes": 1752,
+      "sha256": "bd0b6be0bc598a2fdba992df61b14f083449ec4159f616831d81dac83ce29dd1"
+    },
+    {
+      "path": "config/minecraft/experiments/gpt-5.4-nano-low/visual_motor_all.yaml",
+      "bytes": 2845,
+      "sha256": "689cf7fe2a59a6ec358621bb9f653157d3dc52406bff7d3374ee557c2a9b37ca"
+    },
+    {
+      "path": "config/minecraft/experiments/gpt-5.6-sol-low/structured_tools_L1.yaml",
+      "bytes": 1718,
+      "sha256": "2e45c181a5c4a3903d5d6d65afa336a13c7c8eb0b173999bbfde967acca68597"
+    },
+    {
+      "path": "config/minecraft/experiments/gpt-5.6-sol-low/structured_tools_L2.yaml",
+      "bytes": 1756,
+      "sha256": "a68aacf42913c198ca4f821c2a105b53f18414e660abe6cc4aad83111465b8f1"
+    },
+    {
+      "path": "config/minecraft/experiments/gpt-5.6-sol-low/structured_tools_L3.yaml",
+      "bytes": 1783,
+      "sha256": "36cc827cedc47cc852776f2a6b4ec5f9119b54a015aeba1b9368d4746d13f765"
+    },
+    {
+      "path": "config/minecraft/experiments/gpt-5.6-sol-low/structured_tools_all.yaml",
+      "bytes": 2956,
+      "sha256": "ce6c670cdaa093432390b547f117bf98bc7acbacf3e3068f2d0df60845425b6c"
+    },
+    {
+      "path": "config/minecraft/experiments/gpt-5.6-sol-low/visual_motor_L1.yaml",
+      "bytes": 1674,
+      "sha256": "f23b6c583661471847f49d13db390212a7601b6835861199ad0789c7d2e7a28f"
+    },
+    {
+      "path": "config/minecraft/experiments/gpt-5.6-sol-low/visual_motor_L2.yaml",
+      "bytes": 1712,
+      "sha256": "63f64ea57c343948bee5bb8fc220e671cc7b44c9777175549b8f78ba60c6168e"
+    },
+    {
+      "path": "config/minecraft/experiments/gpt-5.6-sol-low/visual_motor_L3.yaml",
+      "bytes": 1739,
+      "sha256": "619ca3f29df21835aeb0a91f29a5f5d81bb9b44974a699aa2cdfa1fad5e38d2c"
+    },
+    {
+      "path": "config/minecraft/experiments/gpt-5.6-sol-low/visual_motor_all.yaml",
+      "bytes": 2832,
+      "sha256": "d3f20f115c304ac5d57fe6a1b742718ba464c8e9040f97586f04e048a29b4fbf"
+    },
+    {
+      "path": "config/minecraft/experiments/gpt-6-astra-low/structured_tools_L1.yaml",
+      "bytes": 1730,
+      "sha256": "2a63a3cf38036ad78ef81f88b65071f5b1411003bb410a2ece2a5f8154f937fe"
+    },
+    {
+      "path": "config/minecraft/experiments/gpt-6-astra-low/structured_tools_L2.yaml",
+      "bytes": 1768,
+      "sha256": "f522006b193d20e38490592e84fde4ea14cdf9866aab8f51a719876315fefeae"
+    },
+    {
+      "path": "config/minecraft/experiments/gpt-6-astra-low/structured_tools_L3.yaml",
+      "bytes": 1795,
+      "sha256": "0029a31053eea8727ac07b43527b68985ccd2fe13392595c2082bf15b7f5f2b0"
+    },
+    {
+      "path": "config/minecraft/experiments/gpt-6-astra-low/structured_tools_all.yaml",
+      "bytes": 2968,
+      "sha256": "68b71e1417028d5cbba20fa42357fa8efd5a1ee33aa8ed4396339a9dd46ac218"
+    },
+    {
+      "path": "config/minecraft/experiments/gpt-6-astra-low/visual_motor_L1.yaml",
+      "bytes": 1686,
+      "sha256": "49935b731544d9449e88db88ec89d878acbcbb26229805ff4d778a7512838114"
+    },
+    {
+      "path": "config/minecraft/experiments/gpt-6-astra-low/visual_motor_L2.yaml",
+      "bytes": 1724,
+      "sha256": "ad98ecb0a5616e5aba863077f2f42f6e35dbcd2cb959b973cfc0b942ab13524d"
+    },
+    {
+      "path": "config/minecraft/experiments/gpt-6-astra-low/visual_motor_L3.yaml",
+      "bytes": 1751,
+      "sha256": "c6adb85294b978e311bfe6df780f14ba0689a4a0120c8918f0b2799ca92f3e17"
+    },
+    {
+      "path": "config/minecraft/experiments/gpt-6-astra-low/visual_motor_all.yaml",
+      "bytes": 2844,
+      "sha256": "7fc01cfa21bb0ec85a4b6906477bde2a3ce5c4ec55e19e7bf5323da1b40c69c0"
+    },
+    {
+      "path": "config/minecraft/fixtures/forge_hunt/DIM-1/data/raids.dat",
+      "bytes": 88,
+      "sha256": "d67faf5e1dc4f5c7b4da09aaf04f6b596efef409e19232102bf47bc3d63ad7b6"
+    },
+    {
+      "path": "config/minecraft/fixtures/forge_hunt/DIM1/data/raids_end.dat",
+      "bytes": 88,
+      "sha256": "d67faf5e1dc4f5c7b4da09aaf04f6b596efef409e19232102bf47bc3d63ad7b6"
+    },
+    {
+      "path": "config/minecraft/fixtures/forge_hunt/data/chunks.dat",
+      "bytes": 82,
+      "sha256": "8950b862ddc2af70da3894f6b485ffbacf94b6355bb15c0cdb4ca2e4af143946"
+    },
+    {
+      "path": "config/minecraft/fixtures/forge_hunt/data/command_storage_gameagent.dat",
+      "bytes": 108,
+      "sha256": "d044eb58ae4b61860c952087beead237ad59cf3af90ae381b55c2a1d2f1a83ed"
+    },
+    {
+      "path": "config/minecraft/fixtures/forge_hunt/data/command_storage_livequest.dat",
+      "bytes": 156,
+      "sha256": "15ce2bb24993de64190e17f69ea21932646021116807fc393943ef695cb78af7"
+    },
+    {
+      "path": "config/minecraft/fixtures/forge_hunt/data/raids.dat",
+      "bytes": 88,
+      "sha256": "d67faf5e1dc4f5c7b4da09aaf04f6b596efef409e19232102bf47bc3d63ad7b6"
+    },
+    {
+      "path": "config/minecraft/fixtures/forge_hunt/data/scoreboard.dat",
+      "bytes": 214,
+      "sha256": "3295d99d5ffeba0a202c5fe5af5ff3b293a96e885ef974900b7d0f446848a661"
+    },
+    {
+      "path": "config/minecraft/fixtures/forge_hunt/datapacks/livequest_forge/data/livequest/advancements/sentinel.json",
+      "bytes": 322,
+      "sha256": "5112fcdd8775eac10a8893d0688989f69bb2c09a705f2aab94ccf24ffb118a6f"
+    },
+    {
+      "path": "config/minecraft/fixtures/forge_hunt/datapacks/livequest_forge/data/livequest/functions/sentinel.mcfunction",
+      "bytes": 663,
+      "sha256": "f9a15293f4cb1d51add63169cf1203f6eb71a4dfbd750791418b5e10383bee6c"
+    },
+    {
+      "path": "config/minecraft/fixtures/forge_hunt/datapacks/livequest_forge/pack.mcmeta",
+      "bytes": 104,
+      "sha256": "f8278c827211eff0ff8298b468a8c74587562f86c391730f4381d53d0af69c24"
+    },
+    {
+      "path": "config/minecraft/fixtures/forge_hunt/entities/r.-1.-1.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/forge_hunt/entities/r.-1.0.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/forge_hunt/entities/r.0.-1.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/forge_hunt/entities/r.0.0.mca",
+      "bytes": 16384,
+      "sha256": "0681018d91fca238d4b62a00a16b9e88332782de2fba2227721b04f063370c9b"
+    },
+    {
+      "path": "config/minecraft/fixtures/forge_hunt/level.dat",
+      "bytes": 1632,
+      "sha256": "56cbdde2688cc23bddf344d53f11bad0303c7ffed68da18edd2dcfb4c70a0787"
+    },
+    {
+      "path": "config/minecraft/fixtures/forge_hunt/livequest-expedition.json",
+      "bytes": 587,
+      "sha256": "6c86e88394806bd62fc7a82d4ff22184f8d9cac2a5762ac256bcc9e1ff5c7fbd"
+    },
+    {
+      "path": "config/minecraft/fixtures/forge_hunt/poi/r.-1.-1.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/forge_hunt/poi/r.-1.0.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/forge_hunt/poi/r.0.-1.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/forge_hunt/poi/r.0.0.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/forge_hunt/region/r.-1.-1.mca",
+      "bytes": 2088960,
+      "sha256": "1574237459ac8e62331506818730b3d0c6a37910be61072520ff50cd60024dd0"
+    },
+    {
+      "path": "config/minecraft/fixtures/forge_hunt/region/r.-1.0.mca",
+      "bytes": 2080768,
+      "sha256": "ecb79ce0f0de67bdaa00a26150d3c66da4f2c2e4a4e85c7b2ac4af7ed148ba5e"
+    },
+    {
+      "path": "config/minecraft/fixtures/forge_hunt/region/r.0.-1.mca",
+      "bytes": 2088960,
+      "sha256": "75ab6ef94a4dfea94e9f6714909701066e587c03a0267205b086d105bdacb804"
+    },
+    {
+      "path": "config/minecraft/fixtures/forge_hunt/region/r.0.0.mca",
+      "bytes": 2260992,
+      "sha256": "4d645a1eccf8d51731388f231c4f5ee34c01571fb7dc9b8631d36919bfaa9ebd"
+    },
+    {
+      "path": "config/minecraft/fixtures/forge_hunt.source.json",
+      "bytes": 5426,
+      "sha256": "f93336d90988da6e619a7562b08932ed1e2570d2462e896dee6afbc3d90f378e"
+    },
+    {
+      "path": "config/minecraft/fixtures/island/level.dat",
+      "bytes": 1596,
+      "sha256": "5e9e5889a2f51717c1d925cce4a1fd03f9b7d5dd24663ec1f11ce67d100c2bbc"
+    },
+    {
+      "path": "config/minecraft/fixtures/island/region/r.-1.-1.mca",
+      "bytes": 692224,
+      "sha256": "44627559533186034fe0a754436816b875e25549af1bb2d0a05258669e76c100"
+    },
+    {
+      "path": "config/minecraft/fixtures/island/region/r.-1.0.mca",
+      "bytes": 630784,
+      "sha256": "877ac9a734286c06655b906c922756f9276811181ca4a2502488d1e07e3e15ad"
+    },
+    {
+      "path": "config/minecraft/fixtures/island/region/r.0.-1.mca",
+      "bytes": 634880,
+      "sha256": "65c904965ca622ff77403db78593a7ddd460145ca5376087b85ebcd3f0d415fe"
+    },
+    {
+      "path": "config/minecraft/fixtures/island/region/r.0.0.mca",
+      "bytes": 774144,
+      "sha256": "da083a70a480df55a1000012e58c427bc874738787bc8ed1bcb0af68fd534040"
+    },
+    {
+      "path": "config/minecraft/fixtures/island.source.json",
+      "bytes": 9093,
+      "sha256": "be50f596806616c3353c70dfa55982260fd2ad57bee7c52a73435d3cda892b2a"
+    },
+    {
+      "path": "config/minecraft/fixtures/lost_expedition/DIM-1/data/raids.dat",
+      "bytes": 88,
+      "sha256": "d67faf5e1dc4f5c7b4da09aaf04f6b596efef409e19232102bf47bc3d63ad7b6"
+    },
+    {
+      "path": "config/minecraft/fixtures/lost_expedition/DIM1/data/raids_end.dat",
+      "bytes": 88,
+      "sha256": "d67faf5e1dc4f5c7b4da09aaf04f6b596efef409e19232102bf47bc3d63ad7b6"
+    },
+    {
+      "path": "config/minecraft/fixtures/lost_expedition/data/chunks.dat",
+      "bytes": 268,
+      "sha256": "53c7365e142d01730df2846e1b3e3ce7e913efe62b37500b4480750e85abceba"
+    },
+    {
+      "path": "config/minecraft/fixtures/lost_expedition/data/command_storage_gameagent.dat",
+      "bytes": 108,
+      "sha256": "5036dbbf2da6bb0637e128382a8458e961765265e4ea1d30747ff6dfa9f3326a"
+    },
+    {
+      "path": "config/minecraft/fixtures/lost_expedition/data/command_storage_livequest.dat",
+      "bytes": 154,
+      "sha256": "826e58141314a7f398413f080c830e3860ef4b18fc0affba3b952557c5bba572"
+    },
+    {
+      "path": "config/minecraft/fixtures/lost_expedition/data/raids.dat",
+      "bytes": 88,
+      "sha256": "d67faf5e1dc4f5c7b4da09aaf04f6b596efef409e19232102bf47bc3d63ad7b6"
+    },
+    {
+      "path": "config/minecraft/fixtures/lost_expedition/data/scoreboard.dat",
+      "bytes": 214,
+      "sha256": "3295d99d5ffeba0a202c5fe5af5ff3b293a96e885ef974900b7d0f446848a661"
+    },
+    {
+      "path": "config/minecraft/fixtures/lost_expedition/datapacks/livequest_forge/data/livequest/advancements/sentinel.json",
+      "bytes": 322,
+      "sha256": "5112fcdd8775eac10a8893d0688989f69bb2c09a705f2aab94ccf24ffb118a6f"
+    },
+    {
+      "path": "config/minecraft/fixtures/lost_expedition/datapacks/livequest_forge/data/livequest/functions/sentinel.mcfunction",
+      "bytes": 663,
+      "sha256": "f9a15293f4cb1d51add63169cf1203f6eb71a4dfbd750791418b5e10383bee6c"
+    },
+    {
+      "path": "config/minecraft/fixtures/lost_expedition/datapacks/livequest_forge/pack.mcmeta",
+      "bytes": 104,
+      "sha256": "f8278c827211eff0ff8298b468a8c74587562f86c391730f4381d53d0af69c24"
+    },
+    {
+      "path": "config/minecraft/fixtures/lost_expedition/entities/r.-1.-1.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/lost_expedition/entities/r.-1.0.mca",
+      "bytes": 16384,
+      "sha256": "968a94ebb459ebb4ea0036c67ab4d02329d04aadf7e20e6b32884e7185873448"
+    },
+    {
+      "path": "config/minecraft/fixtures/lost_expedition/entities/r.0.-1.mca",
+      "bytes": 16384,
+      "sha256": "2d8bda08f5ac6167cee1a95d3a1a479839dd23762b484e7cceaec0a090932d21"
+    },
+    {
+      "path": "config/minecraft/fixtures/lost_expedition/entities/r.0.0.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/lost_expedition/level.dat",
+      "bytes": 1632,
+      "sha256": "39805bc08778727e723aa92494172a232b81f6ee616a182ea0b0f2456ec8a52d"
+    },
+    {
+      "path": "config/minecraft/fixtures/lost_expedition/livequest-expedition.json",
+      "bytes": 1364,
+      "sha256": "84f2ec5b0cca1b4b8df5fd12610e774d0546609d3bd1300d6da1d33c10456ed3"
+    },
+    {
+      "path": "config/minecraft/fixtures/lost_expedition/poi/r.-1.-1.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/lost_expedition/poi/r.-1.0.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/lost_expedition/poi/r.0.-1.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/lost_expedition/poi/r.0.0.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/lost_expedition/region/r.-1.-1.mca",
+      "bytes": 2088960,
+      "sha256": "a9a866ef07476d52372f15931d94b5d6a281b5be077e07eabb0281b420ed2d78"
+    },
+    {
+      "path": "config/minecraft/fixtures/lost_expedition/region/r.-1.0.mca",
+      "bytes": 2080768,
+      "sha256": "9e902a03c7ba3a4ec0d4c22a422bb9ca0cb5b0378895caa2eccb3fb5714484be"
+    },
+    {
+      "path": "config/minecraft/fixtures/lost_expedition/region/r.0.-1.mca",
+      "bytes": 2084864,
+      "sha256": "e3e85bf3986760e2b28c5a92918cf998381ff874a1a7fb716f795c5600da2963"
+    },
+    {
+      "path": "config/minecraft/fixtures/lost_expedition/region/r.0.0.mca",
+      "bytes": 2260992,
+      "sha256": "07acd1ec0d64348bb4d3ee8fe5897d07dc63938112c9a43f827fe17605fdcdb3"
+    },
+    {
+      "path": "config/minecraft/fixtures/lost_expedition.source.json",
+      "bytes": 15986,
+      "sha256": "7506046a6d6e349cb26397a4e3b1c888c937b4c703e93505ddad7f92890586e3"
+    },
+    {
+      "path": "config/minecraft/fixtures/planning_workshop/DIM-1/data/raids.dat",
+      "bytes": 88,
+      "sha256": "5d70af1e31fa1d09727363dbe4097cafd41b818ca7ee98100866a2ae291809a1"
+    },
+    {
+      "path": "config/minecraft/fixtures/planning_workshop/DIM1/data/raids_end.dat",
+      "bytes": 88,
+      "sha256": "5d70af1e31fa1d09727363dbe4097cafd41b818ca7ee98100866a2ae291809a1"
+    },
+    {
+      "path": "config/minecraft/fixtures/planning_workshop/data/chunks.dat",
+      "bytes": 128,
+      "sha256": "9292566eb780784d6b0f9587a0778f3387bfd643c0f31a1c9c829a0ed70efb76"
+    },
+    {
+      "path": "config/minecraft/fixtures/planning_workshop/data/command_storage_gameagent.dat",
+      "bytes": 108,
+      "sha256": "8c208335490c5cfb7e869a6b8e07c91553ace91190cb1fe0be4ce8541d301234"
+    },
+    {
+      "path": "config/minecraft/fixtures/planning_workshop/data/command_storage_livequest.dat",
+      "bytes": 184,
+      "sha256": "7160feeb581186f6040a57c587a0ad4d8433e903f776ae0e06adbea15ff2b71b"
+    },
+    {
+      "path": "config/minecraft/fixtures/planning_workshop/data/raids.dat",
+      "bytes": 88,
+      "sha256": "5d70af1e31fa1d09727363dbe4097cafd41b818ca7ee98100866a2ae291809a1"
+    },
+    {
+      "path": "config/minecraft/fixtures/planning_workshop/data/scoreboard.dat",
+      "bytes": 214,
+      "sha256": "3295d99d5ffeba0a202c5fe5af5ff3b293a96e885ef974900b7d0f446848a661"
+    },
+    {
+      "path": "config/minecraft/fixtures/planning_workshop/datapacks/livequest_actions/data/livequest_actions/advancements/block.json",
+      "bytes": 360,
+      "sha256": "5ebed8d1460765ba215c73168411c2d44dd61d0c55e4fa9528b7275354ec4889"
+    },
+    {
+      "path": "config/minecraft/fixtures/planning_workshop/datapacks/livequest_actions/data/livequest_actions/advancements/damage.json",
+      "bytes": 340,
+      "sha256": "5a5199eba0609401d271c94894a05f0ddea9b852690371a978d6915d0b2c84e1"
+    },
+    {
+      "path": "config/minecraft/fixtures/planning_workshop/datapacks/livequest_actions/data/livequest_actions/functions/block.mcfunction",
+      "bytes": 298,
+      "sha256": "d50599665a5dcbc9348f5336fc5374ac568741f251387bb8d7147e908a0ed7f1"
+    },
+    {
+      "path": "config/minecraft/fixtures/planning_workshop/datapacks/livequest_actions/data/livequest_actions/functions/damage.mcfunction",
+      "bytes": 300,
+      "sha256": "0cabc5faec6086d4a103fe4d04fa7f539e8e7c9277b6297a0d86fb230bc277da"
+    },
+    {
+      "path": "config/minecraft/fixtures/planning_workshop/datapacks/livequest_actions/pack.mcmeta",
+      "bytes": 105,
+      "sha256": "e4625ad09c54beddf9ac5312bcb36499e302b208084421bc63fca75bab3951de"
+    },
+    {
+      "path": "config/minecraft/fixtures/planning_workshop/datapacks/livequest_forge/data/livequest/advancements/sentinel.json",
+      "bytes": 322,
+      "sha256": "5112fcdd8775eac10a8893d0688989f69bb2c09a705f2aab94ccf24ffb118a6f"
+    },
+    {
+      "path": "config/minecraft/fixtures/planning_workshop/datapacks/livequest_forge/data/livequest/functions/sentinel.mcfunction",
+      "bytes": 663,
+      "sha256": "f9a15293f4cb1d51add63169cf1203f6eb71a4dfbd750791418b5e10383bee6c"
+    },
+    {
+      "path": "config/minecraft/fixtures/planning_workshop/datapacks/livequest_forge/pack.mcmeta",
+      "bytes": 104,
+      "sha256": "f8278c827211eff0ff8298b468a8c74587562f86c391730f4381d53d0af69c24"
+    },
+    {
+      "path": "config/minecraft/fixtures/planning_workshop/entities/r.-1.-1.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/planning_workshop/entities/r.-1.0.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/planning_workshop/entities/r.0.-1.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/planning_workshop/entities/r.0.0.mca",
+      "bytes": 20480,
+      "sha256": "52414bbcc95edd204a334510506bc771491a4e3b2a4b7a5f439252e1192c2ccd"
+    },
+    {
+      "path": "config/minecraft/fixtures/planning_workshop/level.dat",
+      "bytes": 1639,
+      "sha256": "add6bb56b2034b62ab4b60bf9b2c9d9be832bf6252b02ff9c5d3f019709da678"
+    },
+    {
+      "path": "config/minecraft/fixtures/planning_workshop/livequest-action-evidence.json",
+      "bytes": 652,
+      "sha256": "de1a8ea6774576a311438080ffc7c8d4491476dfcb23ff41dc8d6b7ab89f4ffd"
+    },
+    {
+      "path": "config/minecraft/fixtures/planning_workshop/livequest-expedition.json",
+      "bytes": 587,
+      "sha256": "6c86e88394806bd62fc7a82d4ff22184f8d9cac2a5762ac256bcc9e1ff5c7fbd"
+    },
+    {
+      "path": "config/minecraft/fixtures/planning_workshop/poi/r.-1.-1.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/planning_workshop/poi/r.-1.0.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/planning_workshop/poi/r.0.-1.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/planning_workshop/poi/r.0.0.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/planning_workshop/region/r.-1.-1.mca",
+      "bytes": 2093056,
+      "sha256": "f6d5ebd80d107bfb247770a96be04a5f576a8f6a665cc4e175f010ccf6f8eac4"
+    },
+    {
+      "path": "config/minecraft/fixtures/planning_workshop/region/r.-1.0.mca",
+      "bytes": 2084864,
+      "sha256": "35f262d5d49dfa1d2a1f080bece1a8ad809670e2ae4668643843a3b6dde3ceb3"
+    },
+    {
+      "path": "config/minecraft/fixtures/planning_workshop/region/r.0.-1.mca",
+      "bytes": 2101248,
+      "sha256": "59f4e8c277c16bb409156d9d5d764d9d4bfccfa2803a71d0095b512b199e1376"
+    },
+    {
+      "path": "config/minecraft/fixtures/planning_workshop/region/r.0.0.mca",
+      "bytes": 2265088,
+      "sha256": "003e592114c77e0cbbc25098ecf31fde04cdaa81080eac15aa4a2fe6807738ac"
+    },
+    {
+      "path": "config/minecraft/fixtures/planning_workshop.source.json",
+      "bytes": 31766,
+      "sha256": "61240f452cb71d2eacd5dba7e69cd874d847d72765da06e58784135236e5da19"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_0/DIM-1/data/raids.dat",
+      "bytes": 88,
+      "sha256": "d67faf5e1dc4f5c7b4da09aaf04f6b596efef409e19232102bf47bc3d63ad7b6"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_0/DIM1/data/raids_end.dat",
+      "bytes": 88,
+      "sha256": "d67faf5e1dc4f5c7b4da09aaf04f6b596efef409e19232102bf47bc3d63ad7b6"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_0/data/chunks.dat",
+      "bytes": 94,
+      "sha256": "3e4ca68cfbf45918226a1cf3f3ec93f9fa09101cff45f571d89b9be2ac4779ba"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_0/data/command_storage_gameagent.dat",
+      "bytes": 109,
+      "sha256": "407c4e18dff1fc41f2765252fbb3b23cd1b7e3227367a42aad706da20a82aa28"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_0/data/command_storage_livequest.dat",
+      "bytes": 156,
+      "sha256": "5ad595845292c99c9d46a390bea658da168a56e983cb6f77230c6a5f549fbdc0"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_0/data/raids.dat",
+      "bytes": 88,
+      "sha256": "d67faf5e1dc4f5c7b4da09aaf04f6b596efef409e19232102bf47bc3d63ad7b6"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_0/data/scoreboard.dat",
+      "bytes": 214,
+      "sha256": "3295d99d5ffeba0a202c5fe5af5ff3b293a96e885ef974900b7d0f446848a661"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_0/datapacks/livequest_forge/data/livequest/advancements/sentinel.json",
+      "bytes": 322,
+      "sha256": "5112fcdd8775eac10a8893d0688989f69bb2c09a705f2aab94ccf24ffb118a6f"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_0/datapacks/livequest_forge/data/livequest/advancements/spider.json",
+      "bytes": 325,
+      "sha256": "4954f1d77d52b8f75fd63563289b59a3911eb97582f2edf5467a952a0f2c1143"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_0/datapacks/livequest_forge/data/livequest/functions/sentinel.mcfunction",
+      "bytes": 663,
+      "sha256": "f9a15293f4cb1d51add63169cf1203f6eb71a4dfbd750791418b5e10383bee6c"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_0/datapacks/livequest_forge/data/livequest/functions/spider.mcfunction",
+      "bytes": 661,
+      "sha256": "087d162f3dc92abe9de2721a20f913839507a0ce250afc96b26f0a6c5548a78a"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_0/datapacks/livequest_forge/pack.mcmeta",
+      "bytes": 104,
+      "sha256": "f8278c827211eff0ff8298b468a8c74587562f86c391730f4381d53d0af69c24"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_0/entities/r.-1.-1.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_0/entities/r.-1.0.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_0/entities/r.0.-1.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_0/entities/r.0.0.mca",
+      "bytes": 20480,
+      "sha256": "a34a6339d69db1756dfe57bb0d907a43fd2d9cb0caa8d4ae1e122b89e11bf330"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_0/level.dat",
+      "bytes": 1636,
+      "sha256": "3a6d7c45600755ffb84a38adf39bb3e08115da62ff645aa036fb05ac1add5260"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_0/livequest-expedition.json",
+      "bytes": 1476,
+      "sha256": "a7cd2ab0735b7aae089a7eb35b1581c2f06dd166f02c87b5ec489d6524251282"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_0/poi/r.-1.-1.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_0/poi/r.-1.0.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_0/poi/r.0.-1.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_0/poi/r.0.0.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_0/region/r.-1.-1.mca",
+      "bytes": 2088960,
+      "sha256": "9f009d18d5c7698cc7143b238e9c7cf12ea43d76e4e3b57e3a1e0497728f4cfa"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_0/region/r.-1.0.mca",
+      "bytes": 2080768,
+      "sha256": "9d0939a5dcab0388ed90bde694c861bc6ec0ccfe68fb9f728dd7e22f9f050ffa"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_0/region/r.0.-1.mca",
+      "bytes": 2093056,
+      "sha256": "d4a4f6daa04ccc1b7b4f4412cedbdf78ee6ec573b59e2ea213bac05b2b73cf5d"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_0/region/r.0.0.mca",
+      "bytes": 2265088,
+      "sha256": "94a167280c7132e50b360192c6fc219fd8e74859b0ebeb54b7101ad2bfa9a6ab"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_0.source.json",
+      "bytes": 19770,
+      "sha256": "f8226bcf67a0b84d646ac183e1e15d7fa2efdba03bbe885a19c2d4751b58ccb5"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_1/DIM-1/data/raids.dat",
+      "bytes": 88,
+      "sha256": "d67faf5e1dc4f5c7b4da09aaf04f6b596efef409e19232102bf47bc3d63ad7b6"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_1/DIM1/data/raids_end.dat",
+      "bytes": 88,
+      "sha256": "d67faf5e1dc4f5c7b4da09aaf04f6b596efef409e19232102bf47bc3d63ad7b6"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_1/data/chunks.dat",
+      "bytes": 94,
+      "sha256": "3e4ca68cfbf45918226a1cf3f3ec93f9fa09101cff45f571d89b9be2ac4779ba"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_1/data/command_storage_gameagent.dat",
+      "bytes": 107,
+      "sha256": "cb97891a7e0ed12908e7961e58e4c9458635f0e760001795920f69695eaea68b"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_1/data/command_storage_livequest.dat",
+      "bytes": 156,
+      "sha256": "5ad595845292c99c9d46a390bea658da168a56e983cb6f77230c6a5f549fbdc0"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_1/data/raids.dat",
+      "bytes": 88,
+      "sha256": "d67faf5e1dc4f5c7b4da09aaf04f6b596efef409e19232102bf47bc3d63ad7b6"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_1/data/scoreboard.dat",
+      "bytes": 214,
+      "sha256": "3295d99d5ffeba0a202c5fe5af5ff3b293a96e885ef974900b7d0f446848a661"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_1/datapacks/livequest_forge/data/livequest/advancements/sentinel.json",
+      "bytes": 322,
+      "sha256": "5112fcdd8775eac10a8893d0688989f69bb2c09a705f2aab94ccf24ffb118a6f"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_1/datapacks/livequest_forge/data/livequest/advancements/spider.json",
+      "bytes": 325,
+      "sha256": "4954f1d77d52b8f75fd63563289b59a3911eb97582f2edf5467a952a0f2c1143"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_1/datapacks/livequest_forge/data/livequest/functions/sentinel.mcfunction",
+      "bytes": 663,
+      "sha256": "f9a15293f4cb1d51add63169cf1203f6eb71a4dfbd750791418b5e10383bee6c"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_1/datapacks/livequest_forge/data/livequest/functions/spider.mcfunction",
+      "bytes": 661,
+      "sha256": "087d162f3dc92abe9de2721a20f913839507a0ce250afc96b26f0a6c5548a78a"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_1/datapacks/livequest_forge/pack.mcmeta",
+      "bytes": 104,
+      "sha256": "f8278c827211eff0ff8298b468a8c74587562f86c391730f4381d53d0af69c24"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_1/entities/r.-1.-1.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_1/entities/r.-1.0.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_1/entities/r.0.-1.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_1/entities/r.0.0.mca",
+      "bytes": 20480,
+      "sha256": "42b8ffafeec43825ac9f02593352cc29da5ebb5e7ecd14e079eaafa9a4332736"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_1/level.dat",
+      "bytes": 1637,
+      "sha256": "d2f2fb7cbd12fb77388f13f68a01df677e97beecbe2affb33e3e0e9655204a82"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_1/livequest-expedition.json",
+      "bytes": 1476,
+      "sha256": "0349156b10ddd1a58223da488a7e07e2754a153695b5e91fbfdcf6d4f132fa35"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_1/poi/r.-1.-1.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_1/poi/r.-1.0.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_1/poi/r.0.-1.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_1/poi/r.0.0.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_1/region/r.-1.-1.mca",
+      "bytes": 2088960,
+      "sha256": "5c0c5e71ae74cdc4071b8dc02079a6f2824eeae812abfe0f5039cbad6e8f6fc1"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_1/region/r.-1.0.mca",
+      "bytes": 2080768,
+      "sha256": "870c01ef262dbfa0284e3e8e55831868e34d2a02988541a60d02052edeaf65f6"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_1/region/r.0.-1.mca",
+      "bytes": 2093056,
+      "sha256": "1306d95bcd2b19a17e830b838a42bc9e88db6b9bf2f66d3615f6e054e6d057ea"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_1/region/r.0.0.mca",
+      "bytes": 2265088,
+      "sha256": "835e884b915fccb56f821d9c689cdd5c999c38313fb5e811e0963015f4aedb41"
+    },
+    {
+      "path": "config/minecraft/fixtures/scout_outposts_1.source.json",
+      "bytes": 19770,
+      "sha256": "cdff810f8c1e9edd5c1a0f7c6803747a2504bc8f886f17cdaae2bd7a007bf888"
+    },
+    {
+      "path": "config/minecraft/fixtures/trade_outposts_courtyard/DIM-1/data/raids.dat",
+      "bytes": 89,
+      "sha256": "bec563aa76ffb60a69c0b1f3e86c5ccf7d3112de475f0f9c6586593e11af9602"
+    },
+    {
+      "path": "config/minecraft/fixtures/trade_outposts_courtyard/DIM1/data/raids_end.dat",
+      "bytes": 89,
+      "sha256": "bec563aa76ffb60a69c0b1f3e86c5ccf7d3112de475f0f9c6586593e11af9602"
+    },
+    {
+      "path": "config/minecraft/fixtures/trade_outposts_courtyard/data/chunks.dat",
+      "bytes": 94,
+      "sha256": "3e4ca68cfbf45918226a1cf3f3ec93f9fa09101cff45f571d89b9be2ac4779ba"
+    },
+    {
+      "path": "config/minecraft/fixtures/trade_outposts_courtyard/data/command_storage_gameagent.dat",
+      "bytes": 108,
+      "sha256": "6d3cd1c68c674275ba85a082a451b2db6a2a11d9397e8944ea43b6d45384b03d"
+    },
+    {
+      "path": "config/minecraft/fixtures/trade_outposts_courtyard/data/command_storage_livequest.dat",
+      "bytes": 165,
+      "sha256": "99989ae568d83040dd7c0680ec7b5fbc6220f96852ad1ea5dd6f138ddb8855e1"
+    },
+    {
+      "path": "config/minecraft/fixtures/trade_outposts_courtyard/data/raids.dat",
+      "bytes": 89,
+      "sha256": "bec563aa76ffb60a69c0b1f3e86c5ccf7d3112de475f0f9c6586593e11af9602"
+    },
+    {
+      "path": "config/minecraft/fixtures/trade_outposts_courtyard/data/scoreboard.dat",
+      "bytes": 262,
+      "sha256": "64739252b6ad357fa9b0e7e8aea457bb60c7afce600286f4818fdc5181cc0316"
+    },
+    {
+      "path": "config/minecraft/fixtures/trade_outposts_courtyard/datapacks/livequest_forge/data/livequest/advancements/sentinel.json",
+      "bytes": 322,
+      "sha256": "5112fcdd8775eac10a8893d0688989f69bb2c09a705f2aab94ccf24ffb118a6f"
+    },
+    {
+      "path": "config/minecraft/fixtures/trade_outposts_courtyard/datapacks/livequest_forge/data/livequest/advancements/spider.json",
+      "bytes": 325,
+      "sha256": "4954f1d77d52b8f75fd63563289b59a3911eb97582f2edf5467a952a0f2c1143"
+    },
+    {
+      "path": "config/minecraft/fixtures/trade_outposts_courtyard/datapacks/livequest_forge/data/livequest/advancements/weapon_purchase.json",
+      "bytes": 430,
+      "sha256": "45b04b78f12263bf361496dc057cc18c8c68fea9330f45495b6b12c3b90dc656"
+    },
+    {
+      "path": "config/minecraft/fixtures/trade_outposts_courtyard/datapacks/livequest_forge/data/livequest/functions/sentinel.mcfunction",
+      "bytes": 828,
+      "sha256": "47f42119d09e545a4b1361c29226c0290875c3fb8f3879627a4252ec5271be53"
+    },
+    {
+      "path": "config/minecraft/fixtures/trade_outposts_courtyard/datapacks/livequest_forge/data/livequest/functions/spider.mcfunction",
+      "bytes": 826,
+      "sha256": "eb4cd5c7806b08c4148b8cd982bfd92cfe58fd1aa9506130e3ef4a16a19ac7ca"
+    },
+    {
+      "path": "config/minecraft/fixtures/trade_outposts_courtyard/datapacks/livequest_forge/data/livequest/functions/weapon_purchase.mcfunction",
+      "bytes": 495,
+      "sha256": "e5912c773acc8100896b0324ff862d00c9b4d679e9c58a998e20d59ebafac120"
+    },
+    {
+      "path": "config/minecraft/fixtures/trade_outposts_courtyard/datapacks/livequest_forge/pack.mcmeta",
+      "bytes": 104,
+      "sha256": "f8278c827211eff0ff8298b468a8c74587562f86c391730f4381d53d0af69c24"
+    },
+    {
+      "path": "config/minecraft/fixtures/trade_outposts_courtyard/entities/r.-1.-1.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/trade_outposts_courtyard/entities/r.-1.0.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/trade_outposts_courtyard/entities/r.0.-1.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/trade_outposts_courtyard/entities/r.0.0.mca",
+      "bytes": 24576,
+      "sha256": "9b75e34a068c87dfd11b71d5ed4f0fd0beeba69fdd75abc2db97895927914562"
+    },
+    {
+      "path": "config/minecraft/fixtures/trade_outposts_courtyard/level.dat",
+      "bytes": 1636,
+      "sha256": "1e03d26ec977400b49659c80b43398fe347022253c8b2262df3fa0b776d41f1b"
+    },
+    {
+      "path": "config/minecraft/fixtures/trade_outposts_courtyard/livequest-expedition.json",
+      "bytes": 1992,
+      "sha256": "bdde1b6f35ff0c43378762b4ffd9947e012d3bdec6cf7204b3c3a512d57c7894"
+    },
+    {
+      "path": "config/minecraft/fixtures/trade_outposts_courtyard/poi/r.-1.-1.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/trade_outposts_courtyard/poi/r.-1.0.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/trade_outposts_courtyard/poi/r.0.-1.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/trade_outposts_courtyard/poi/r.0.0.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/trade_outposts_courtyard/region/r.-1.-1.mca",
+      "bytes": 2093056,
+      "sha256": "9fad0e621aab0429c2f19cbd6f263dcbbf1dc3aa3c6a104e5025e9bd48d6188e"
+    },
+    {
+      "path": "config/minecraft/fixtures/trade_outposts_courtyard/region/r.-1.0.mca",
+      "bytes": 2084864,
+      "sha256": "261667e711a0728d88d924a296ebcb0b61abe74487f31d216cc01534f7db6f45"
+    },
+    {
+      "path": "config/minecraft/fixtures/trade_outposts_courtyard/region/r.0.-1.mca",
+      "bytes": 2101248,
+      "sha256": "afcb6d9228c9d542a5e285a3925c62e13f565ce6e7d69ae1f9a50ae841db827b"
+    },
+    {
+      "path": "config/minecraft/fixtures/trade_outposts_courtyard/region/r.0.0.mca",
+      "bytes": 2265088,
+      "sha256": "601f2a17232a4cffb8042a429216ddd6404e5fa0127f006640b7fa0dddd4aa52"
+    },
+    {
+      "path": "config/minecraft/fixtures/trade_outposts_courtyard.source.json",
+      "bytes": 10567,
+      "sha256": "cab31353bfa965375b47aafe05d6a0a819690cb812ffeb2d1cb26338fb0097f7"
+    },
+    {
+      "path": "config/minecraft/fixtures/two_outposts_courtyard/DIM-1/data/raids.dat",
+      "bytes": 88,
+      "sha256": "d67faf5e1dc4f5c7b4da09aaf04f6b596efef409e19232102bf47bc3d63ad7b6"
+    },
+    {
+      "path": "config/minecraft/fixtures/two_outposts_courtyard/DIM1/data/raids_end.dat",
+      "bytes": 88,
+      "sha256": "d67faf5e1dc4f5c7b4da09aaf04f6b596efef409e19232102bf47bc3d63ad7b6"
+    },
+    {
+      "path": "config/minecraft/fixtures/two_outposts_courtyard/data/chunks.dat",
+      "bytes": 94,
+      "sha256": "3e4ca68cfbf45918226a1cf3f3ec93f9fa09101cff45f571d89b9be2ac4779ba"
+    },
+    {
+      "path": "config/minecraft/fixtures/two_outposts_courtyard/data/command_storage_gameagent.dat",
+      "bytes": 108,
+      "sha256": "e35f61f9e4e2e4b658af255467b7745ef248340ec0f6e0ab219eebb9d84c3ea9"
+    },
+    {
+      "path": "config/minecraft/fixtures/two_outposts_courtyard/data/command_storage_livequest.dat",
+      "bytes": 156,
+      "sha256": "5ad595845292c99c9d46a390bea658da168a56e983cb6f77230c6a5f549fbdc0"
+    },
+    {
+      "path": "config/minecraft/fixtures/two_outposts_courtyard/data/raids.dat",
+      "bytes": 88,
+      "sha256": "d67faf5e1dc4f5c7b4da09aaf04f6b596efef409e19232102bf47bc3d63ad7b6"
+    },
+    {
+      "path": "config/minecraft/fixtures/two_outposts_courtyard/data/scoreboard.dat",
+      "bytes": 214,
+      "sha256": "3295d99d5ffeba0a202c5fe5af5ff3b293a96e885ef974900b7d0f446848a661"
+    },
+    {
+      "path": "config/minecraft/fixtures/two_outposts_courtyard/datapacks/livequest_forge/data/livequest/advancements/sentinel.json",
+      "bytes": 322,
+      "sha256": "5112fcdd8775eac10a8893d0688989f69bb2c09a705f2aab94ccf24ffb118a6f"
+    },
+    {
+      "path": "config/minecraft/fixtures/two_outposts_courtyard/datapacks/livequest_forge/data/livequest/advancements/spider.json",
+      "bytes": 325,
+      "sha256": "4954f1d77d52b8f75fd63563289b59a3911eb97582f2edf5467a952a0f2c1143"
+    },
+    {
+      "path": "config/minecraft/fixtures/two_outposts_courtyard/datapacks/livequest_forge/data/livequest/functions/sentinel.mcfunction",
+      "bytes": 663,
+      "sha256": "f9a15293f4cb1d51add63169cf1203f6eb71a4dfbd750791418b5e10383bee6c"
+    },
+    {
+      "path": "config/minecraft/fixtures/two_outposts_courtyard/datapacks/livequest_forge/data/livequest/functions/spider.mcfunction",
+      "bytes": 661,
+      "sha256": "087d162f3dc92abe9de2721a20f913839507a0ce250afc96b26f0a6c5548a78a"
+    },
+    {
+      "path": "config/minecraft/fixtures/two_outposts_courtyard/datapacks/livequest_forge/pack.mcmeta",
+      "bytes": 104,
+      "sha256": "f8278c827211eff0ff8298b468a8c74587562f86c391730f4381d53d0af69c24"
+    },
+    {
+      "path": "config/minecraft/fixtures/two_outposts_courtyard/entities/r.-1.-1.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/two_outposts_courtyard/entities/r.-1.0.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/two_outposts_courtyard/entities/r.0.-1.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/two_outposts_courtyard/entities/r.0.0.mca",
+      "bytes": 20480,
+      "sha256": "24885685d1f44eb8db32c3a657b2f6cb4683b712f6936a417d36a84cfce149fe"
+    },
+    {
+      "path": "config/minecraft/fixtures/two_outposts_courtyard/level.dat",
+      "bytes": 1636,
+      "sha256": "248f6139b730c3e627bb399597d28ff8b8110e88af1ece894ef00e017c1fa165"
+    },
+    {
+      "path": "config/minecraft/fixtures/two_outposts_courtyard/livequest-expedition.json",
+      "bytes": 1293,
+      "sha256": "3cb71ef07bad8434fc47404cdeebdb06cf28f9c81cf58b24b48407b223f24f9d"
+    },
+    {
+      "path": "config/minecraft/fixtures/two_outposts_courtyard/poi/r.-1.-1.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/two_outposts_courtyard/poi/r.-1.0.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/two_outposts_courtyard/poi/r.0.-1.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/two_outposts_courtyard/poi/r.0.0.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/two_outposts_courtyard/region/r.-1.-1.mca",
+      "bytes": 2088960,
+      "sha256": "9c7cb061c4132c4f3a7d9d6b880402e85a957366ebce1d1a5ce2f6bd105bd656"
+    },
+    {
+      "path": "config/minecraft/fixtures/two_outposts_courtyard/region/r.-1.0.mca",
+      "bytes": 2080768,
+      "sha256": "b578b9c8237cc9ddefe6eae81914d2cb871b6ec19e05572767a01f0fe6d4a496"
+    },
+    {
+      "path": "config/minecraft/fixtures/two_outposts_courtyard/region/r.0.-1.mca",
+      "bytes": 2088960,
+      "sha256": "8e6e065ad013d30c18a751efd8ddcb0a599ae12c65cd1e1c3fa2c41e16e04d2b"
+    },
+    {
+      "path": "config/minecraft/fixtures/two_outposts_courtyard/region/r.0.0.mca",
+      "bytes": 2260992,
+      "sha256": "af96074e8ab4a98c68f5418c60e6daf3d9232c46a89dc6cdd14643000b7b8f9f"
+    },
+    {
+      "path": "config/minecraft/fixtures/two_outposts_courtyard.source.json",
+      "bytes": 7334,
+      "sha256": "cca3e5cca66833c8d80668b6fa7e0a0e52c5566b2ff41ce218299c20a9263b1b"
+    },
+    {
+      "path": "config/minecraft/fixtures/workshop/DIM-1/data/raids.dat",
+      "bytes": 88,
+      "sha256": "5d70af1e31fa1d09727363dbe4097cafd41b818ca7ee98100866a2ae291809a1"
+    },
+    {
+      "path": "config/minecraft/fixtures/workshop/DIM1/data/raids_end.dat",
+      "bytes": 88,
+      "sha256": "5d70af1e31fa1d09727363dbe4097cafd41b818ca7ee98100866a2ae291809a1"
+    },
+    {
+      "path": "config/minecraft/fixtures/workshop/data/chunks.dat",
+      "bytes": 89,
+      "sha256": "05cd1dd6c68630e758e0d5fa6a51c11119eaf3fc748b1ad543e14ce26bdba468"
+    },
+    {
+      "path": "config/minecraft/fixtures/workshop/data/command_storage_gameagent.dat",
+      "bytes": 108,
+      "sha256": "4e6b98d97f6c6c304a5702fcf37e485950184bd6f78fc6450a1ef910f2ff8cd9"
+    },
+    {
+      "path": "config/minecraft/fixtures/workshop/data/command_storage_livequest.dat",
+      "bytes": 184,
+      "sha256": "7160feeb581186f6040a57c587a0ad4d8433e903f776ae0e06adbea15ff2b71b"
+    },
+    {
+      "path": "config/minecraft/fixtures/workshop/data/raids.dat",
+      "bytes": 88,
+      "sha256": "5d70af1e31fa1d09727363dbe4097cafd41b818ca7ee98100866a2ae291809a1"
+    },
+    {
+      "path": "config/minecraft/fixtures/workshop/data/scoreboard.dat",
+      "bytes": 214,
+      "sha256": "3295d99d5ffeba0a202c5fe5af5ff3b293a96e885ef974900b7d0f446848a661"
+    },
+    {
+      "path": "config/minecraft/fixtures/workshop/datapacks/livequest_actions/data/livequest_actions/advancements/block.json",
+      "bytes": 360,
+      "sha256": "5ebed8d1460765ba215c73168411c2d44dd61d0c55e4fa9528b7275354ec4889"
+    },
+    {
+      "path": "config/minecraft/fixtures/workshop/datapacks/livequest_actions/data/livequest_actions/advancements/damage.json",
+      "bytes": 340,
+      "sha256": "5a5199eba0609401d271c94894a05f0ddea9b852690371a978d6915d0b2c84e1"
+    },
+    {
+      "path": "config/minecraft/fixtures/workshop/datapacks/livequest_actions/data/livequest_actions/functions/block.mcfunction",
+      "bytes": 298,
+      "sha256": "d50599665a5dcbc9348f5336fc5374ac568741f251387bb8d7147e908a0ed7f1"
+    },
+    {
+      "path": "config/minecraft/fixtures/workshop/datapacks/livequest_actions/data/livequest_actions/functions/damage.mcfunction",
+      "bytes": 300,
+      "sha256": "0cabc5faec6086d4a103fe4d04fa7f539e8e7c9277b6297a0d86fb230bc277da"
+    },
+    {
+      "path": "config/minecraft/fixtures/workshop/datapacks/livequest_actions/pack.mcmeta",
+      "bytes": 105,
+      "sha256": "e4625ad09c54beddf9ac5312bcb36499e302b208084421bc63fca75bab3951de"
+    },
+    {
+      "path": "config/minecraft/fixtures/workshop/datapacks/livequest_forge/data/livequest/advancements/sentinel.json",
+      "bytes": 322,
+      "sha256": "5112fcdd8775eac10a8893d0688989f69bb2c09a705f2aab94ccf24ffb118a6f"
+    },
+    {
+      "path": "config/minecraft/fixtures/workshop/datapacks/livequest_forge/data/livequest/functions/sentinel.mcfunction",
+      "bytes": 663,
+      "sha256": "f9a15293f4cb1d51add63169cf1203f6eb71a4dfbd750791418b5e10383bee6c"
+    },
+    {
+      "path": "config/minecraft/fixtures/workshop/datapacks/livequest_forge/pack.mcmeta",
+      "bytes": 104,
+      "sha256": "f8278c827211eff0ff8298b468a8c74587562f86c391730f4381d53d0af69c24"
+    },
+    {
+      "path": "config/minecraft/fixtures/workshop/entities/r.-1.-1.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/workshop/entities/r.-1.0.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/workshop/entities/r.0.-1.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/workshop/entities/r.0.0.mca",
+      "bytes": 16384,
+      "sha256": "b6d4589c47e05dfb7def7fd02bbbc2649aeedfea38f5f83b7dc54419004d3c1f"
+    },
+    {
+      "path": "config/minecraft/fixtures/workshop/level.dat",
+      "bytes": 1637,
+      "sha256": "55e0740abc15a97eefdc044a23799411942d31aafac952b7da7667332a13e314"
+    },
+    {
+      "path": "config/minecraft/fixtures/workshop/livequest-action-evidence.json",
+      "bytes": 652,
+      "sha256": "de1a8ea6774576a311438080ffc7c8d4491476dfcb23ff41dc8d6b7ab89f4ffd"
+    },
+    {
+      "path": "config/minecraft/fixtures/workshop/livequest-expedition.json",
+      "bytes": 587,
+      "sha256": "6c86e88394806bd62fc7a82d4ff22184f8d9cac2a5762ac256bcc9e1ff5c7fbd"
+    },
+    {
+      "path": "config/minecraft/fixtures/workshop/poi/r.-1.-1.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/workshop/poi/r.-1.0.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/workshop/poi/r.0.-1.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/workshop/poi/r.0.0.mca",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "config/minecraft/fixtures/workshop/region/r.-1.-1.mca",
+      "bytes": 2093056,
+      "sha256": "6c35c54b28ca00c7625651eb994080ff98426f8722f71748bb5d1cd2edb7f47b"
+    },
+    {
+      "path": "config/minecraft/fixtures/workshop/region/r.-1.0.mca",
+      "bytes": 2084864,
+      "sha256": "139fb0c3fda3bfc3574c0b946df216fa164f4a9634d1538d1daa48516039cfa0"
+    },
+    {
+      "path": "config/minecraft/fixtures/workshop/region/r.0.-1.mca",
+      "bytes": 2101248,
+      "sha256": "868edee9475a08af70b2cf6f2455b4eaed55341b8188703f6ca96c58b0130f40"
+    },
+    {
+      "path": "config/minecraft/fixtures/workshop/region/r.0.0.mca",
+      "bytes": 2265088,
+      "sha256": "e9f49a85abcc04737fd3c42fb298133ad2bd5ac17263507fc26b6d3affb56f5d"
+    },
+    {
+      "path": "config/minecraft/fixtures/workshop.source.json",
+      "bytes": 24855,
+      "sha256": "fe100afb109c6ec54e25f5a9c5ebd7d729e9a55b9c37bccac88a56aeef5f893c"
+    },
+    {
+      "path": "config/minecraft/tasks/structured_tools/block_and_counter.yaml",
+      "bytes": 1131,
+      "sha256": "da14b519fcb1ade5efc7d59017d6f376664b565f55e269839126581a2adbccf5"
+    },
+    {
+      "path": "config/minecraft/tasks/structured_tools/bridge_small_gap.yaml",
+      "bytes": 1559,
+      "sha256": "64ea87f3dc479a8e159b4b865b81f693a4804a8bd9ab7ef08a17b1cb230b5337"
+    },
+    {
+      "path": "config/minecraft/tasks/structured_tools/build_plank_enclosure_5x5x2.yaml",
+      "bytes": 2397,
+      "sha256": "0491aeb3821d50b0ad55bd65f79ddc888f4e755aee91ae02f5c7dd8f356a8779"
+    },
+    {
+      "path": "config/minecraft/tasks/structured_tools/build_plank_wall_2x2.yaml",
+      "bytes": 1333,
+      "sha256": "4d9d03b4c46cc8fe525110bd80109295d27cb0e0834eeca4ccddc8be11c82f2b"
+    },
+    {
+      "path": "config/minecraft/tasks/structured_tools/coal_funded_axe.yaml",
+      "bytes": 1022,
+      "sha256": "f1d9167000a8b2577911c684e58feb84b87b4e9268b8fc08a2efc8eb9a64704c"
+    },
+    {
+      "path": "config/minecraft/tasks/structured_tools/collect_diamond.yaml",
+      "bytes": 667,
+      "sha256": "52e89affac1719e9ff50e9b7fe175135baec5d5e626d3f8727a1230c4da982dc"
+    },
+    {
+      "path": "config/minecraft/tasks/structured_tools/collect_logs.yaml",
+      "bytes": 664,
+      "sha256": "8537a6cf052537c221da61cee4968aa9c735e281f6713c6230f9335397ae7dd9"
+    },
+    {
+      "path": "config/minecraft/tasks/structured_tools/cook_supplied_food.yaml",
+      "bytes": 1153,
+      "sha256": "8182b5374b5030d943983776922df25909da495aebf031dc5182930866330b6d"
+    },
+    {
+      "path": "config/minecraft/tasks/structured_tools/craft_iron_pickaxe.yaml",
+      "bytes": 683,
+      "sha256": "a318cebdd734b53e849a642a89473a7dedb4cd017a816fa358d5f95c77fec450"
+    },
+    {
+      "path": "config/minecraft/tasks/structured_tools/craft_wooden_pickaxe.yaml",
+      "bytes": 690,
+      "sha256": "48c678173c3e425a09a735996c8e0d80533e7027f40828fb436ac35ee5a351b9"
+    },
+    {
+      "path": "config/minecraft/tasks/structured_tools/crossing_cargo_return.yaml",
+      "bytes": 1959,
+      "sha256": "a22d2715829ed6034953b81353626a02bce6f4c24a9a7227f069315d2c9a9157"
+    },
+    {
+      "path": "config/minecraft/tasks/structured_tools/deal_damage.yaml",
+      "bytes": 911,
+      "sha256": "9634f3e3bca7ab0409806161921a21f591da3dc9e6bfe9aa1800dbff27969ab4"
+    },
+    {
+      "path": "config/minecraft/tasks/structured_tools/farm_delivery.yaml",
+      "bytes": 2806,
+      "sha256": "9189744c41d2b48337ae27859b4cbeb734deb5b072438a3882f73ed6fff43de0"
+    },
+    {
+      "path": "config/minecraft/tasks/structured_tools/follow_quarry_note.yaml",
+      "bytes": 1297,
+      "sha256": "4fa665dea1bddc6c63de86bf520d30e2d666e5b3b0c7505aa9164ff7bb42a4a6"
+    },
+    {
+      "path": "config/minecraft/tasks/structured_tools/harvest_and_replant.yaml",
+      "bytes": 1941,
+      "sha256": "eca366b5ba984fa3a52a0766be1922fb5060ad6daeac345b8112309524f37dbb"
+    },
+    {
+      "path": "config/minecraft/tasks/structured_tools/lost_expedition.yaml",
+      "bytes": 2241,
+      "sha256": "05c51b883fdd5ba289de77cec27d06d65a315c83819cb5108059d9205e7f5ac8"
+    },
+    {
+      "path": "config/minecraft/tasks/structured_tools/mixed_material_shelter.yaml",
+      "bytes": 2634,
+      "sha256": "f419fc5034ddb425f9696efa4c37426cd08fdd33254343a63a76f3e42baf0416"
+    },
+    {
+      "path": "config/minecraft/tasks/structured_tools/obtain_emerald.yaml",
+      "bytes": 940,
+      "sha256": "370d401910e673a5ee76fbfeb2e419d4dd584d3d362fa5594754256150c0bb77"
+    },
+    {
+      "path": "config/minecraft/tasks/structured_tools/obtain_sticks.yaml",
+      "bytes": 774,
+      "sha256": "f063fb88baf8ce8a5e83b47a2f9cc1fa6f9b843f718437008155cf32a86b62ba"
+    },
+    {
+      "path": "config/minecraft/tasks/structured_tools/open_chest.yaml",
+      "bytes": 798,
+      "sha256": "b00341d147317bc37da15ecd993ac80fc2d2272f6fe6edd2cb9db851a133e865"
+    },
+    {
+      "path": "config/minecraft/tasks/structured_tools/place_single_block.yaml",
+      "bytes": 1033,
+      "sha256": "8f594c608851b1038adc687172c75e3318c4080bbdbbaa44cb8860e3dd154b0f"
+    },
+    {
+      "path": "config/minecraft/tasks/structured_tools/ranged_cache_return.yaml",
+      "bytes": 2065,
+      "sha256": "c41dd9813a0d96a0b516cdb7638fefccb9ce5c982e86eff8d9beab2c94f7409c"
+    },
+    {
+      "path": "config/minecraft/tasks/structured_tools/reach_nearby_point.yaml",
+      "bytes": 947,
+      "sha256": "6be9f4abf224fa9ba9bb3ba48eb0a4c115e5ab342ccee51af4ce134c237e86c3"
+    },
+    {
+      "path": "config/minecraft/tasks/structured_tools/restore_hunger.yaml",
+      "bytes": 787,
+      "sha256": "9aa0d7fd597737c536c7b94fced900d3bc200d89d38ad357fd0d1f18d784b62d"
+    },
+    {
+      "path": "config/minecraft/tasks/structured_tools/scout_outposts_return_0.yaml",
+      "bytes": 2720,
+      "sha256": "b19ff47c5826a8d8f6edb22c028e119fce9fde463edfa0637e77b7b3ce5a5090"
+    },
+    {
+      "path": "config/minecraft/tasks/structured_tools/select_pickaxe.yaml",
+      "bytes": 735,
+      "sha256": "0637aba4fdd2a721ac948031fa7e844a30da1289277c8155aa2416cdf7449026"
+    },
+    {
+      "path": "config/minecraft/tasks/structured_tools/shared_fuel_extraction.yaml",
+      "bytes": 2492,
+      "sha256": "04a01cfd021494907dfdae8a57a8fb85b01bf433bfc1b79d23a02b7f0f0883b5"
+    },
+    {
+      "path": "config/minecraft/tasks/structured_tools/supply_loadout.yaml",
+      "bytes": 1207,
+      "sha256": "a6446392fdd8cf72f1e4099a3378c7a3e283f9529eadaf918dff41566fad16ce"
+    },
+    {
+      "path": "config/minecraft/tasks/structured_tools/take_supplies.yaml",
+      "bytes": 906,
+      "sha256": "150f3ca13a83269789910d725a469f995a688412d31d33d80c7d6ce218eac27b"
+    },
+    {
+      "path": "config/minecraft/tasks/structured_tools/trade_outposts_return.yaml",
+      "bytes": 2569,
+      "sha256": "0101a16f8b42ce0d636d2c99030896245aab573c6073e9d873a373c17719293f"
+    },
+    {
+      "path": "config/minecraft/tasks/structured_tools/two_outposts_return.yaml",
+      "bytes": 2327,
+      "sha256": "ae7644d72fec966a056e1705d4bd197606b3b7941aef403b3f273f1a7eac1846"
+    },
+    {
+      "path": "config/minecraft/tasks/visual_motor/block_and_counter.yaml",
+      "bytes": 1010,
+      "sha256": "4616fda88283544e645c3e181a08e55d0b01dee18bc1ab5ec1929280bbd0066d"
+    },
+    {
+      "path": "config/minecraft/tasks/visual_motor/bridge_small_gap.yaml",
+      "bytes": 1460,
+      "sha256": "f6ff34075040b38a3d62298216e7d516172e0bc1d7c47df6c8e0da5fa8e893b3"
+    },
+    {
+      "path": "config/minecraft/tasks/visual_motor/build_plank_enclosure_5x5x2.yaml",
+      "bytes": 2394,
+      "sha256": "4447e6ceb9e9a7c0ad3990d2b370979398f291ffb29c853c99edb6a6c05f6021"
+    },
+    {
+      "path": "config/minecraft/tasks/visual_motor/build_plank_wall_2x2.yaml",
+      "bytes": 1330,
+      "sha256": "76c57aa9cadd601c77db6fba6afbccb919f1d51eeb47b35c443aee595f479c31"
+    },
+    {
+      "path": "config/minecraft/tasks/visual_motor/coal_funded_axe.yaml",
+      "bytes": 911,
+      "sha256": "942853a1144717ba48842a21ca502e54ca3f19bba0eb9480fcf57e38e432d1f1"
+    },
+    {
+      "path": "config/minecraft/tasks/visual_motor/collect_diamond.yaml",
+      "bytes": 664,
+      "sha256": "447a0f7ab8c30386a592335e88e6d0dfec0cbe788e848e42a49836d2a4fdcff9"
+    },
+    {
+      "path": "config/minecraft/tasks/visual_motor/collect_logs.yaml",
+      "bytes": 661,
+      "sha256": "6aad5819d8c4aa16f74c08f167437bf2fe98328fc0bf0a1bdadd7f094f46afd0"
+    },
+    {
+      "path": "config/minecraft/tasks/visual_motor/cook_supplied_food.yaml",
+      "bytes": 1048,
+      "sha256": "c3b059505acc30f788a43a51bc88d19958a84d624af77f4dfd74346ded88eb14"
+    },
+    {
+      "path": "config/minecraft/tasks/visual_motor/craft_iron_pickaxe.yaml",
+      "bytes": 680,
+      "sha256": "33549b0b880ce42de86a5456d9aa441e0f88573a45ed45eaf89dfc9d5da566a8"
+    },
+    {
+      "path": "config/minecraft/tasks/visual_motor/craft_wooden_pickaxe.yaml",
+      "bytes": 687,
+      "sha256": "d7241fda82c6c9d8256dd006139d4ed91bb99f28900a74c776300bf83b2dab6e"
+    },
+    {
+      "path": "config/minecraft/tasks/visual_motor/crossing_cargo_return.yaml",
+      "bytes": 1795,
+      "sha256": "ef320ae1879913c1a2b580c578a20a11eefe1ad1a563d2a4002ec673ff794660"
+    },
+    {
+      "path": "config/minecraft/tasks/visual_motor/deal_damage.yaml",
+      "bytes": 819,
+      "sha256": "716c9467e21f735854878e8554e1758c8097e750e328d7945feb82942660e92c"
+    },
+    {
+      "path": "config/minecraft/tasks/visual_motor/farm_delivery.yaml",
+      "bytes": 2689,
+      "sha256": "705fd157f1ac58ce047860cbbe082f93817c3583eff7387b8a176112dde96e31"
+    },
+    {
+      "path": "config/minecraft/tasks/visual_motor/follow_quarry_note.yaml",
+      "bytes": 1133,
+      "sha256": "8249bbdc4325a9dc5d4e8b0c26e909d562d0ea9c686771c4e24e8f40ae65eff8"
+    },
+    {
+      "path": "config/minecraft/tasks/visual_motor/harvest_and_replant.yaml",
+      "bytes": 1824,
+      "sha256": "dbdd8b70b9b02152c46351ef58c2c77f2c6642a0a9aeced5165d9b32febe236a"
+    },
+    {
+      "path": "config/minecraft/tasks/visual_motor/lost_expedition.yaml",
+      "bytes": 1928,
+      "sha256": "bcc4d6dc4a82f1b5436fa60c9eea3b9b9da81796ce8f80edc41730225889084a"
+    },
+    {
+      "path": "config/minecraft/tasks/visual_motor/mixed_material_shelter.yaml",
+      "bytes": 2478,
+      "sha256": "220e03825912d84d857183651d88e339854d8d1123427cb59e3f50f8f20c0906"
+    },
+    {
+      "path": "config/minecraft/tasks/visual_motor/obtain_emerald.yaml",
+      "bytes": 851,
+      "sha256": "aa4769b6204e523d8b62c4dcc878c833bdb12d6fb3781d680118b3d834dee60f"
+    },
+    {
+      "path": "config/minecraft/tasks/visual_motor/obtain_sticks.yaml",
+      "bytes": 701,
+      "sha256": "210e945a35a528fdda660c07525591d635aa093aaa19c5f973f83faf8b6ed720"
+    },
+    {
+      "path": "config/minecraft/tasks/visual_motor/open_chest.yaml",
+      "bytes": 733,
+      "sha256": "c0b17074b0133fe0a9467e1735c213f5831025b892214dfc5327b32f2fa409e3"
+    },
+    {
+      "path": "config/minecraft/tasks/visual_motor/place_single_block.yaml",
+      "bytes": 945,
+      "sha256": "0f4808f8bd82aad03d51e6c7b38352e82211aa323d89b9e35f6b0b435abf46d7"
+    },
+    {
+      "path": "config/minecraft/tasks/visual_motor/ranged_cache_return.yaml",
+      "bytes": 1875,
+      "sha256": "700761700a8065aee2255923447663ee362becf74bae7497689fc792527164d1"
+    },
+    {
+      "path": "config/minecraft/tasks/visual_motor/reach_nearby_point.yaml",
+      "bytes": 883,
+      "sha256": "a379c8972c3e3646158c309319e4a7aa14cf09e7ab82cfb4d03a2df6c2aac084"
+    },
+    {
+      "path": "config/minecraft/tasks/visual_motor/restore_hunger.yaml",
+      "bytes": 735,
+      "sha256": "977a237ed298e7a1f5d2e7693904dec40fdf74608a24a38fc3a9d2b2d9484957"
+    },
+    {
+      "path": "config/minecraft/tasks/visual_motor/scout_outposts_return_0.yaml",
+      "bytes": 2475,
+      "sha256": "ab7f1a7c94bcf5e329f7a758a2bf5dd96a8a2889237b1ce3a9e68969b946e6af"
+    },
+    {
+      "path": "config/minecraft/tasks/visual_motor/select_pickaxe.yaml",
+      "bytes": 701,
+      "sha256": "2500ee5fed6e14d255bc5e9af8f98a9261972d79e9e7534d6aeb350bbe31877f"
+    },
+    {
+      "path": "config/minecraft/tasks/visual_motor/shared_fuel_extraction.yaml",
+      "bytes": 2296,
+      "sha256": "4014369218882d38588197393e66869780d81726270c1b69d3179ca1d9c48f03"
+    },
+    {
+      "path": "config/minecraft/tasks/visual_motor/supply_loadout.yaml",
+      "bytes": 1043,
+      "sha256": "0624cc9179c84bd9b1dab5b8efc6ef4880bc0187fd64ded0cc4e9855d967a70f"
+    },
+    {
+      "path": "config/minecraft/tasks/visual_motor/take_supplies.yaml",
+      "bytes": 817,
+      "sha256": "f64a82454f522d80f71ef50c7df44febbf27ed0372af4befdbe5d238348411da"
+    },
+    {
+      "path": "config/minecraft/tasks/visual_motor/trade_outposts_return.yaml",
+      "bytes": 2712,
+      "sha256": "e813768f913fb36fafcd7d860f682409f3fe8f7130fd44f0b9ade0c0ae38aa9a"
+    },
+    {
+      "path": "config/minecraft/tasks/visual_motor/two_outposts_return.yaml",
+      "bytes": 2289,
+      "sha256": "e22a00eceefd112f82916a3c87e5208911384419abdba9413f649ec8798a60c3"
+    },
+    {
+      "path": "config/veloren/experiments/gpt-5.4-nano-low/structured_tools_L1.yaml",
+      "bytes": 1719,
+      "sha256": "8f246672ba9ddf8293b90e2dd012fbd20eaa54455fda78129e4a52393449968a"
+    },
+    {
+      "path": "config/veloren/experiments/gpt-5.4-nano-low/structured_tools_L2.yaml",
+      "bytes": 1730,
+      "sha256": "805b1c54a6272b835d00cfcbf90391bee7cfbb6a4c3372dfb4440974efecaffd"
+    },
+    {
+      "path": "config/veloren/experiments/gpt-5.4-nano-low/structured_tools_L3.yaml",
+      "bytes": 1761,
+      "sha256": "8edbb259ee3ae730f93fd47ff2da0670a0d1b5cae0d391534199cea6cec738ea"
+    },
+    {
+      "path": "config/veloren/experiments/gpt-5.4-nano-low/structured_tools_all.yaml",
+      "bytes": 2891,
+      "sha256": "9f571b5957f672308d1273af226d2be5cb50abf478d868120dd11e7cb838bd88"
+    },
+    {
+      "path": "config/veloren/experiments/gpt-5.4-nano-low/visual_motor_L1.yaml",
+      "bytes": 1675,
+      "sha256": "4924887940a84c774f4d35e78710333a10b4e3fd18876943f389c762ab8692ba"
+    },
+    {
+      "path": "config/veloren/experiments/gpt-5.4-nano-low/visual_motor_L2.yaml",
+      "bytes": 1686,
+      "sha256": "39ce384738378512bd5400b54d7c853308be680f509edc9bd42025578c9858eb"
+    },
+    {
+      "path": "config/veloren/experiments/gpt-5.4-nano-low/visual_motor_L3.yaml",
+      "bytes": 1717,
+      "sha256": "e3375e40582a41b5a8c92f41d9fbcb4fe8307c77f913b5d64d331104388fa782"
+    },
+    {
+      "path": "config/veloren/experiments/gpt-5.4-nano-low/visual_motor_all.yaml",
+      "bytes": 2767,
+      "sha256": "37dc9bdae41615a1a9b3f0a89901e0846658109c79e9a0e5f774eb3e6eee4c26"
+    },
+    {
+      "path": "config/veloren/experiments/gpt-5.6-sol-low/structured_tools_L1.yaml",
+      "bytes": 1706,
+      "sha256": "cbb815f3d1acb3db31675ee9fb66105f2d46e77c9010018019aeaae2e5891181"
+    },
+    {
+      "path": "config/veloren/experiments/gpt-5.6-sol-low/structured_tools_L2.yaml",
+      "bytes": 1717,
+      "sha256": "638fa34b582fed77d8232ad7b09dcdb102efb213f183c0605852f876bc4cb507"
+    },
+    {
+      "path": "config/veloren/experiments/gpt-5.6-sol-low/structured_tools_L3.yaml",
+      "bytes": 1748,
+      "sha256": "ca7ba9411eaf16b77ec255e93f258ff85faf6b55f1e6f6a5a36fbf9a9eaac96a"
+    },
+    {
+      "path": "config/veloren/experiments/gpt-5.6-sol-low/structured_tools_all.yaml",
+      "bytes": 2878,
+      "sha256": "2232450cfea3c79110809ea53791525ae0172dd321a4b0bc733a15e4171c142c"
+    },
+    {
+      "path": "config/veloren/experiments/gpt-5.6-sol-low/visual_motor_L1.yaml",
+      "bytes": 1662,
+      "sha256": "3f363fda15e59b64f385c48ede04beced4a429475aa6b2ac5d4eb6b3693da1e1"
+    },
+    {
+      "path": "config/veloren/experiments/gpt-5.6-sol-low/visual_motor_L2.yaml",
+      "bytes": 1673,
+      "sha256": "b405ecce361344f6c11fc87a01514bfd6c0fb9e6187567a6ff47eaeb6fa50bc7"
+    },
+    {
+      "path": "config/veloren/experiments/gpt-5.6-sol-low/visual_motor_L3.yaml",
+      "bytes": 1704,
+      "sha256": "d02b2cc65f3bf4a787415c5ee08172862764c8fd7d1fc446ee222f3825664fb2"
+    },
+    {
+      "path": "config/veloren/experiments/gpt-5.6-sol-low/visual_motor_all.yaml",
+      "bytes": 2754,
+      "sha256": "04441c0579781103e4c59f6159b1c9b5087e9425fa1b3575708173d4d48ef3ef"
+    },
+    {
+      "path": "config/veloren/experiments/gpt-6-astra-low/structured_tools_L1.yaml",
+      "bytes": 1718,
+      "sha256": "f4740ece66726fb38602093b1d9c4556d53b852b480446b04b37b038aa1faeb7"
+    },
+    {
+      "path": "config/veloren/experiments/gpt-6-astra-low/structured_tools_L2.yaml",
+      "bytes": 1729,
+      "sha256": "45450b3784d271b2931b5bbbf2a44182d01ed69f0e96e7c84ceb22728d4db944"
+    },
+    {
+      "path": "config/veloren/experiments/gpt-6-astra-low/structured_tools_L3.yaml",
+      "bytes": 1760,
+      "sha256": "71153dab4596d21c8eeb3b8e96717d34b0316863986dfd583364419df138425f"
+    },
+    {
+      "path": "config/veloren/experiments/gpt-6-astra-low/structured_tools_all.yaml",
+      "bytes": 2890,
+      "sha256": "db1ff51752c61903d62c3d0f2d1c9ed6efa82861d481469a2b5956839b3973ee"
+    },
+    {
+      "path": "config/veloren/experiments/gpt-6-astra-low/visual_motor_L1.yaml",
+      "bytes": 1674,
+      "sha256": "50a1c148a28acf414d82d2126338b79d79fc313ee25669988157ecbb6780d325"
+    },
+    {
+      "path": "config/veloren/experiments/gpt-6-astra-low/visual_motor_L2.yaml",
+      "bytes": 1685,
+      "sha256": "194755c9bbd948af65ffb776ba3105d2e17d960b7b74d4d08e98bc38412ef957"
+    },
+    {
+      "path": "config/veloren/experiments/gpt-6-astra-low/visual_motor_L3.yaml",
+      "bytes": 1716,
+      "sha256": "d0c200c71e10589833e5dccfc22a33f726f7c63dfafc9a318a25556ba7a50a7b"
+    },
+    {
+      "path": "config/veloren/experiments/gpt-6-astra-low/visual_motor_all.yaml",
+      "bytes": 2766,
+      "sha256": "85afb97e0d8024d62063db00335c6d6348fb543166d96a464c12d262dd314fd5"
+    },
+    {
+      "path": "config/veloren/fixtures/LICENSE",
+      "bytes": 35087,
+      "sha256": "d456cea09bced6a05ff960bd69f7a739c78582baeb79e1cb5edefe6846a78cc5"
+    },
+    {
+      "path": "config/veloren/fixtures/veloren_0_18_0_0.bin",
+      "bytes": 16777252,
+      "sha256": "2560ecb22feccc642aaf75addfaf22e3066defe8668ca052770ef902a2c5e2da"
+    },
+    {
+      "path": "config/veloren/fixtures/veloren_0_18_0_0.source.json",
+      "bytes": 1020,
+      "sha256": "4c734528e78e2cdc0a338130af1221f9054620c2bbd56678c3b2277afd831358"
+    },
+    {
+      "path": "config/veloren/tasks/structured_tools/combat_supply_return.yaml",
+      "bytes": 2344,
+      "sha256": "87a84f00b5a145f197e7dba5f11a0211b30e6133e5670629fdd054b76de8551a"
+    },
+    {
+      "path": "config/veloren/tasks/structured_tools/companion_hunt_return.yaml",
+      "bytes": 3239,
+      "sha256": "3ef0ae46de959fca7e84d405ddde48e783e12b043a41f8b88eeac4ae7b7bec51"
+    },
+    {
+      "path": "config/veloren/tasks/structured_tools/craft_equip.yaml",
+      "bytes": 1868,
+      "sha256": "c3c4edba0c2980ce5ebc2c157a0cfbbb88be5219523cbb8c62582a2d13b57295"
+    },
+    {
+      "path": "config/veloren/tasks/structured_tools/deal_damage.yaml",
+      "bytes": 1296,
+      "sha256": "398820ab1ca73982e0ae53bef74c3e28094380235c15b9a59602c4cb11227753"
+    },
+    {
+      "path": "config/veloren/tasks/structured_tools/defeat_legoom.yaml",
+      "bytes": 1511,
+      "sha256": "2e4449ba861a33baea9c30853e2e2ae6e94a3e29c10519fd593d3d3e82521b74"
+    },
+    {
+      "path": "config/veloren/tasks/structured_tools/dodge_roll.yaml",
+      "bytes": 1405,
+      "sha256": "0a2b6639a6bb63257ff8f951fb9676e9f75bc9468f08d956f98384b8f2ee0dcf"
+    },
+    {
+      "path": "config/veloren/tasks/structured_tools/draw_weapon.yaml",
+      "bytes": 1067,
+      "sha256": "13255fcb9c2c79c6220e9fa2fae80431b6d1fcea15b4547b2105f18275e338c9"
+    },
+    {
+      "path": "config/veloren/tasks/structured_tools/dual_legoom.yaml",
+      "bytes": 2082,
+      "sha256": "198a890a9ae3590b8f8c7b3be1f2f771647195e228d5cf5e2fd93568db43f3c1"
+    },
+    {
+      "path": "config/veloren/tasks/structured_tools/elevation_steps.yaml",
+      "bytes": 1857,
+      "sha256": "5db9e27bfc5d36eec04b9703a18d7787fd0099bac99aa04723500963eccefe07"
+    },
+    {
+      "path": "config/veloren/tasks/structured_tools/equip_supplied_armor.yaml",
+      "bytes": 1174,
+      "sha256": "05d7b3cb5f0880e8d59a789183a014fcfc3842d95e7b2677542d6e44ab5e1c03"
+    },
+    {
+      "path": "config/veloren/tasks/structured_tools/expiring_supply_return.yaml",
+      "bytes": 2981,
+      "sha256": "d6d86479f2e05a94c5b87af19cbf8c21fb15c58188f7c21fb9040fc7d866252d"
+    },
+    {
+      "path": "config/veloren/tasks/structured_tools/food_reserve.yaml",
+      "bytes": 2125,
+      "sha256": "c436bfabccaf9904a168a01a050c8f9d78aca1fe133546e27ff98d6faaf03882"
+    },
+    {
+      "path": "config/veloren/tasks/structured_tools/gather_food.yaml",
+      "bytes": 1739,
+      "sha256": "ee4360dcb601cda217a62ecdf2b397a2e200351a5b50ae2f2d2a6105b28e4bf2"
+    },
+    {
+      "path": "config/veloren/tasks/structured_tools/glide_and_land.yaml",
+      "bytes": 2021,
+      "sha256": "f702a17181c71cce18617a1cfcfc8bffe5d25aba398e804e2033698f9ecb087e"
+    },
+    {
+      "path": "config/veloren/tasks/structured_tools/jump_and_land.yaml",
+      "bytes": 1416,
+      "sha256": "ee4c6dd0f0b4211fb07e860637f64aaf6a2cf86214f0f054adcd924f7af13bc0"
+    },
+    {
+      "path": "config/veloren/tasks/structured_tools/known_food.yaml",
+      "bytes": 1435,
+      "sha256": "dcd8740a141d580b4c76c3ff3b924de54268ab6f3a472e00c6bd0807fb6c9292"
+    },
+    {
+      "path": "config/veloren/tasks/structured_tools/learn_food.yaml",
+      "bytes": 1520,
+      "sha256": "80d1beb8aad0387edfcf1eb0d3a195519e4cba8fd5ceb4e8dbb247cb09126dcc"
+    },
+    {
+      "path": "config/veloren/tasks/structured_tools/learn_recipe.yaml",
+      "bytes": 1177,
+      "sha256": "4c56beaf60c3532775a97f2a42728de66e15ecebaa85bd8e6074ebd57ea755d4"
+    },
+    {
+      "path": "config/veloren/tasks/structured_tools/leather_outfit.yaml",
+      "bytes": 2435,
+      "sha256": "ed7b8cb3d93c878d9cca6ce8bedad8063d2b037b1d167c84d1ccccc14c3c6c7e"
+    },
+    {
+      "path": "config/veloren/tasks/structured_tools/market_hunt_return.yaml",
+      "bytes": 5532,
+      "sha256": "f9591f1af97ac8beef33517378b2349b2e51f3d8764b16b790946a349b0daf79"
+    },
+    {
+      "path": "config/veloren/tasks/structured_tools/merchant_exchange.yaml",
+      "bytes": 2348,
+      "sha256": "c0b56addee1fb1889b66b8aa5d8658eea133425d964853f92f7bd6524d3cecb2"
+    },
+    {
+      "path": "config/veloren/tasks/structured_tools/move_2_metres.yaml",
+      "bytes": 1393,
+      "sha256": "69cc3debc4efc4f50043257b622ad04100031deb30580f31b2e85b836ffe66a7"
+    },
+    {
+      "path": "config/veloren/tasks/structured_tools/pickup_supplies.yaml",
+      "bytes": 1318,
+      "sha256": "b1d0dee0e8bf1ce6c2bd09af4650f177055e4585fe1e227db451c0b5a7105601"
+    },
+    {
+      "path": "config/veloren/tasks/structured_tools/provisioned_hunt_return.yaml",
+      "bytes": 3491,
+      "sha256": "d5e2ffc67895eb862f821fe6a9fdeefdbaa41e7e0d110543af06b7a5e500cf21"
+    },
+    {
+      "path": "config/veloren/tasks/structured_tools/recover_health.yaml",
+      "bytes": 1468,
+      "sha256": "0d2ce6dff2c1665fda104fae4ece047706aec8fae3824e2c261fe6c2bbb40be6"
+    },
+    {
+      "path": "config/veloren/tasks/structured_tools/restore_health.yaml",
+      "bytes": 1170,
+      "sha256": "5632b5c7e946cc3f682d3a9a9a9496aaf8c9c515db5e81a3d876943d32dc763f"
+    },
+    {
+      "path": "config/veloren/tasks/structured_tools/skill_hunt_return.yaml",
+      "bytes": 3314,
+      "sha256": "6502358afd970eca492e0962768bff0711bd6e6d89c7fb959d77dfd7333eb0dc"
+    },
+    {
+      "path": "config/veloren/tasks/structured_tools/slay_contract.yaml",
+      "bytes": 3338,
+      "sha256": "cd95318716b8b96076346d45ba5f028ad652010e5b43405dc2f39b399ec9ab95"
+    },
+    {
+      "path": "config/veloren/tasks/structured_tools/staggered_detour.yaml",
+      "bytes": 1773,
+      "sha256": "5558602285c54c97a9c971fa45c575d6f98caa563e03ba27b807e206d13e3dd8"
+    },
+    {
+      "path": "config/veloren/tasks/structured_tools/workshop_directions.yaml",
+      "bytes": 1696,
+      "sha256": "4f4435688fff402e526a960025fbe605fd5947a9453be669bcfa8446dfcc8a1f"
+    },
+    {
+      "path": "config/veloren/tasks/visual_motor/combat_supply_return.yaml",
+      "bytes": 2341,
+      "sha256": "34ad1cb71884667e5464935cc6473a299992d0ffd488e0fdd4570160cc61e462"
+    },
+    {
+      "path": "config/veloren/tasks/visual_motor/companion_hunt_return.yaml",
+      "bytes": 3048,
+      "sha256": "aa67d1746f08ba935609754b9fa435f1878aff05eb192310907385497fee84b8"
+    },
+    {
+      "path": "config/veloren/tasks/visual_motor/craft_equip.yaml",
+      "bytes": 1865,
+      "sha256": "ac31cc66774a8b4a2d18567a4319c47100631f1d443daafcb2bb59f0b667ac9b"
+    },
+    {
+      "path": "config/veloren/tasks/visual_motor/deal_damage.yaml",
+      "bytes": 1293,
+      "sha256": "7f497c5f3bfad4e18c95c50335390c04c5f3b72eb1aa27d7a5e98a2c606fa832"
+    },
+    {
+      "path": "config/veloren/tasks/visual_motor/defeat_legoom.yaml",
+      "bytes": 1508,
+      "sha256": "5ea4153816b2838750c3040b326bdc33798863c33c96baf55acfc8d47750456e"
+    },
+    {
+      "path": "config/veloren/tasks/visual_motor/dodge_roll.yaml",
+      "bytes": 1362,
+      "sha256": "abe80aa2024b112b6a04849e82789ac3c8cae4732298cfe33ec5bac7282d1b19"
+    },
+    {
+      "path": "config/veloren/tasks/visual_motor/draw_weapon.yaml",
+      "bytes": 1034,
+      "sha256": "e30c85737da3a7da352a9802644cfd1a39e1ccf0f944ae6af04f555ab9d59742"
+    },
+    {
+      "path": "config/veloren/tasks/visual_motor/dual_legoom.yaml",
+      "bytes": 2079,
+      "sha256": "8373e04021366b87af15c048c520d961f3738bde771e1bf35d7501fe53007c00"
+    },
+    {
+      "path": "config/veloren/tasks/visual_motor/elevation_steps.yaml",
+      "bytes": 1854,
+      "sha256": "57fcae872f5a6a7383d11569ab097739d1adea8a7e1757ab892ba974360b9c89"
+    },
+    {
+      "path": "config/veloren/tasks/visual_motor/equip_supplied_armor.yaml",
+      "bytes": 1141,
+      "sha256": "3910a9ad15b65a1ab69dc24e83bab306d9693ba21be2b51e5b448ea87bd267cd"
+    },
+    {
+      "path": "config/veloren/tasks/visual_motor/expiring_supply_return.yaml",
+      "bytes": 2887,
+      "sha256": "67238918016563deba2cdf172069ca4c3f00749c20e95faa11782cedb39b6e34"
+    },
+    {
+      "path": "config/veloren/tasks/visual_motor/food_reserve.yaml",
+      "bytes": 2122,
+      "sha256": "d6c61d5233adf6fbaa400bf322488a404c5153c7c09d218e141bbc5458f8fa7a"
+    },
+    {
+      "path": "config/veloren/tasks/visual_motor/gather_food.yaml",
+      "bytes": 1736,
+      "sha256": "9337c054c44822ffb95c6390ee015212224db28c9b11cf0fd1c09940f0433098"
+    },
+    {
+      "path": "config/veloren/tasks/visual_motor/glide_and_land.yaml",
+      "bytes": 2030,
+      "sha256": "de0eccb3c54288d14bb98d22623a27dfbc9d52c07f978cec3614a2af5d428f53"
+    },
+    {
+      "path": "config/veloren/tasks/visual_motor/jump_and_land.yaml",
+      "bytes": 1384,
+      "sha256": "0cdb8d57f7c2354d2a03d6f976c623e8bddad087a2fc708db489d3aec9d23585"
+    },
+    {
+      "path": "config/veloren/tasks/visual_motor/known_food.yaml",
+      "bytes": 1432,
+      "sha256": "ad37db9edeeb486c14a84d209fd3235f9ded0341e32960d79d57abde9389b780"
+    },
+    {
+      "path": "config/veloren/tasks/visual_motor/learn_food.yaml",
+      "bytes": 1517,
+      "sha256": "5d4c99e9f6c13dbe64a4843369901dd81cca5b56d984a4985472752b56228956"
+    },
+    {
+      "path": "config/veloren/tasks/visual_motor/learn_recipe.yaml",
+      "bytes": 1142,
+      "sha256": "8f2ad9af91fd7fc8ec6e4e82cce046cd7a501239e13f41b029a26a9883160df8"
+    },
+    {
+      "path": "config/veloren/tasks/visual_motor/leather_outfit.yaml",
+      "bytes": 2341,
+      "sha256": "df34999feb24a5c9671d3a4a661d1bc3f37a15fbd88acce075bd3a4205185753"
+    },
+    {
+      "path": "config/veloren/tasks/visual_motor/market_hunt_return.yaml",
+      "bytes": 5302,
+      "sha256": "f6ec738ac52b410aa5d38330baae88fd314f3c18114c60ae4f46b6083b015d40"
+    },
+    {
+      "path": "config/veloren/tasks/visual_motor/merchant_exchange.yaml",
+      "bytes": 2319,
+      "sha256": "4b29d040e944a8a6fba489ee58ad171591e3f135c32214cc73a8ce92fdc94358"
+    },
+    {
+      "path": "config/veloren/tasks/visual_motor/move_2_metres.yaml",
+      "bytes": 1140,
+      "sha256": "06b4db551b3798730afea4dc92ba3b05662006e5c85f683ae0adc108f65649c2"
+    },
+    {
+      "path": "config/veloren/tasks/visual_motor/pickup_supplies.yaml",
+      "bytes": 1262,
+      "sha256": "ce59a65a5026b646cf3eb6256e23d74289b9c049c95726f7ef63698f4e6a6c6c"
+    },
+    {
+      "path": "config/veloren/tasks/visual_motor/provisioned_hunt_return.yaml",
+      "bytes": 3488,
+      "sha256": "e56a91d8d43e8e14e53e730bb875f5ef552a2dae7384dbeedfb04536d2c7faee"
+    },
+    {
+      "path": "config/veloren/tasks/visual_motor/recover_health.yaml",
+      "bytes": 1465,
+      "sha256": "c7224f7a4ae27fb114d9a1580e3cef21761bbfd920bd845e9d36af5f7b2822d9"
+    },
+    {
+      "path": "config/veloren/tasks/visual_motor/restore_health.yaml",
+      "bytes": 1135,
+      "sha256": "83bbc85833d1fc6fc506f8543a5f96a2afaa438696ec14be0a32a80a79797704"
+    },
+    {
+      "path": "config/veloren/tasks/visual_motor/skill_hunt_return.yaml",
+      "bytes": 3069,
+      "sha256": "39499d4800589fba7c63ec68c3383f0326ac90ce3c3aaae367cdc8f998560737"
+    },
+    {
+      "path": "config/veloren/tasks/visual_motor/slay_contract.yaml",
+      "bytes": 3109,
+      "sha256": "e90c2c3ab3d0a88985b1e07734453486f2366fd834bd7e068343b22013278470"
+    },
+    {
+      "path": "config/veloren/tasks/visual_motor/staggered_detour.yaml",
+      "bytes": 1770,
+      "sha256": "4ccfc4cb1489c04c1c8e0f200633d9632f20869cc17aac3cbe6d3af843c88cdf"
+    },
+    {
+      "path": "config/veloren/tasks/visual_motor/workshop_directions.yaml",
+      "bytes": 1672,
+      "sha256": "748e9ba096b47437b24c998f8083ebbb3eeb2064b75b291d46abbbde21dd57f2"
+    }
+  ]
+}

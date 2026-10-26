@@ -1,5 +1,17 @@
 # Survey Update: Open Game Benchmark Reassessment
 
+**Legacy runnable configurations archived (2026-10-26):**
+[Archive and restoration notes](../back/legacy-config-20261026/README.md) /
+[File integrity manifest](../back/legacy-config-20261026/manifest.json).
+The entire root `config/` was moved into the archive: 31 Minecraft and 30 Veloren
+objectives, 122 ST/VM task YAMLs, 48 experiment files and 231 fixture files.
+The original directory is intentionally absent; code and prior run results remain.
+The seventy-candidate draft below is reference material, not a mature replacement.
+The next design focus is six substantive focused anchors, with historical L2 as
+the minimum content reference, normally L3, and intended 5-30 minute completion
+times subject to calibration. Anchor design is paused during this archival change;
+no new task or evaluation has been created.
+
 **Current design: six capability dimensions (2026-10-26):**
 [English design and task-redesign plan](current_design_en_20261026.md) /
 [Chinese design and preserved task inventory](current_design_zh_CN_20261026.md).
@@ -7,9 +19,31 @@ Spatial interaction, planning/resources, real-time execution, information/adapta
 peer cooperation, and within-Episode learning replace the five-level organizing
 framework. Tasks stay in game/track directories with proposed demand metadata;
 focused and integrated tasks have separate reporting. The documents propose a
-reuse-first six-focused/two-integrated family development slice and explain radar
+reuse-first incremental development slice and explain radar
 aggregation, matched controls, missing coverage, and the remaining cooperation/
 learning measurement gaps. Proposed fields and six-axis scores are not implemented.
+
+**Prior integrated-task draft (ten candidates, no implementation):**
+[English task specifications and source ledger](integrated_task_catalog_10_20261026.md) /
+[Chinese discussion companion](integrated_task_catalog_10_zh_CN_20261026.md).
+Five Minecraft native-advancement goals and five Veloren progression, companion,
+contract and dungeon goals; eight solo and two peer-team proposals. Each records
+starting chapters, consequential dependencies, native versus added completion
+conditions, and current ST/VM admission gaps. Official/community documentation
+supports recognizable play, not a measured player consensus. These complement
+the requested sixty-focused-candidate worklist; neither request freezes a release
+quota. Formal tasks are focused or integrated; engineering diagnostics are not a
+third scored category.
+
+**Prior candidate worklist: 60 focused + 10 integrated = 70 objectives:**
+[English focused catalog and combined counts](focused_task_catalog_60_20261026.md) /
+[Chinese seventy-task overview](focused_task_catalog_60_zh_CN_20261026.md).
+Each dimension has ten focused candidates, five per game. Adding five integrated
+missions per game yields 35 objectives per game and 140 intended VM/ST
+combinations, not 140 admitted configurations. The worklist contains 58 solo and
+12 two-player objectives. Native mechanism reuse, matched comparisons, family
+overlap, transfer/tool gaps and unvalidated learning measurements are explicit.
+No task code, YAML or evaluation was introduced by this design work.
 
 **Native peer-team substrate:**
 [Implemented protocol](native_peer_team_v1.md) /
