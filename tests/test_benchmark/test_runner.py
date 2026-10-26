@@ -68,7 +68,8 @@ def test_structured_tool_invalid_arguments_can_be_corrected(game_name):
 
 
 @pytest.mark.parametrize("visual", [False, True])
-def test_baseline_long_history_preserves_actions_and_omits_old_observations(visual):
+@pytest.mark.parametrize("observation_history", [1, 4])
+def test_baseline_long_history_preserves_actions_and_omits_old_observations(visual, observation_history):
     requests, recorded = [], []
     observations = 0
     payload = "terrain " * 3000
@@ -99,6 +100,7 @@ def test_baseline_long_history_preserves_actions_and_omits_old_observations(visu
         agent = ToolCallingAgent(
             client, tools=[Tool("act", "Act", {"type": "object"}, execute)],
             observe=observe, on_message=recorded.append,
+            **({"observation_history": observation_history} if observation_history != 1 else {}),
         )
         now = time.monotonic_ns()
         outcome = await agent.run(AgentContext("history", "keep task", object(), now, now + 10**12, "rules"))
@@ -110,17 +112,23 @@ def test_baseline_long_history_preserves_actions_and_omits_old_observations(visu
     agent = asyncio.run(run())
     final = requests[-1]
     encoded = json.dumps(serialize_messages(final, "test", "test"))
-    assert len(encoded) < 100_000
+    assert len(encoded) < 100_000 + (observation_history - 1) * len(payload)
     assert "keep task" in encoded and "Wall-clock budget:" in encoded and "rules" in encoded
     assert len([m for m in final if m.role == "tool"]) == 120
     assert encoded.count("remember this action") == 120
     assert recorded == agent.messages
     if visual:
-        assert encoded.count("input_image") == 1
+        assert encoded.count("input_image") == observation_history
         assert agent.messages[1].content[-1] is image
     else:
-        assert encoded.count(payload) == 1 and "frame-121:" in encoded and "frame-1:" not in encoded
+        assert encoded.count(payload) == observation_history and "frame-1:" not in encoded
+        assert all(f"frame-{index}:" in encoded for index in range(122 - observation_history, 122))
+        assert f"frame-{121 - observation_history}:" not in encoded
         assert payload in agent.messages[1].content[-1]["text"]
+    retained = [m for m in final if m.role == "user" and any(
+        block.get("type") == "image" or payload in block.get("text", "") for block in m.content
+    )]
+    assert retained == [m for m in agent.messages if m.role == "user"][-observation_history:]
     assert requests[0][1] is agent.messages[1]
 
 

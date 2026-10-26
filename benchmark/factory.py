@@ -52,6 +52,10 @@ def validate_experiment(experiment: ExperimentConfig) -> None:
     for agent in experiment.agents:
         if agent.name not in ("tool_calling", *NATIVE_AGENTS):
             raise ConfigError(f"Unknown Agent: {agent.name}")
+        if type(agent.observation_history) is not int or agent.observation_history < 1:
+            raise ConfigError("observation_history must be a positive integer")
+        if agent.name != "tool_calling" and agent.observation_history != 1:
+            raise ConfigError("observation_history is supported only by tool_calling")
         if agent.name in NATIVE_AGENTS and (
             agent.model.provider == "vllm" or agent.model.reasoning_effort is None
         ):
@@ -93,7 +97,12 @@ def make_agent(
     output: Path, on_message: Callable[[Message], None],
 ) -> BaseAgent[Controls]:
     if config.name == "tool_calling":
-        return ToolCallingAgent(client, tools=tools, observe=observation, on_message=on_message)
+        return ToolCallingAgent(
+            client, tools=tools, observe=observation, on_message=on_message,
+            observation_history=config.observation_history,
+        )
+    if config.observation_history != 1:
+        raise ConfigError("observation_history is supported only by tool_calling")
     assert config.model.reasoning_effort is not None
     return NATIVE_AGENTS[config.name](
         client, output_dir=output, tools=tools, observe=observation, on_message=on_message,

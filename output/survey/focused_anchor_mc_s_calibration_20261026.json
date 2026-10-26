@@ -1,0 +1,138 @@
+{
+  "task": "MC-S abandoned-mine cargo recovery",
+  "status": "feasible_but_not_difficulty_qualified",
+  "development_only": true,
+  "production_prompt_condition": "goal_only",
+  "reasoning_effort": "low",
+  "evidence_root": "output/temp/anchor-development-20261026/mc_s",
+  "goal_only_baseline_results": [
+    {
+      "track": "structured_tool",
+      "model": "gpt-6-astra",
+      "outcome": "failure",
+      "active_wall_seconds": 2502.30187017,
+      "original_cargo": ["service_chamber"],
+      "returned": false,
+      "deaths": 0,
+      "termination": "agent_returned",
+      "output": "baseline-st-astra-goal-only-01"
+    },
+    {
+      "track": "structured_tool",
+      "model": "gpt-5.6-sol",
+      "outcome": "failure",
+      "active_wall_seconds": 2700.053049609,
+      "original_cargo": [],
+      "returned": false,
+      "deaths": 0,
+      "termination": "deadline",
+      "output": "baseline-st-sol-goal-only-01"
+    },
+    {
+      "track": "structured_tool",
+      "model": "gpt-5.4-nano",
+      "outcome": "failure",
+      "active_wall_seconds": 387.142699331,
+      "original_cargo": [],
+      "returned": false,
+      "deaths": 0,
+      "termination": "agent_returned",
+      "output": "baseline-st-nano-goal-only-01"
+    },
+    {
+      "track": "visual_motor",
+      "model": "gpt-6-astra",
+      "outcome": "failure",
+      "active_wall_seconds": 777.296745068,
+      "original_cargo": [],
+      "returned": false,
+      "deaths": 0,
+      "termination": "agent_returned",
+      "output": "baseline-vm-astra-goal-only-01"
+    },
+    {
+      "track": "visual_motor",
+      "model": "gpt-5.6-sol",
+      "outcome": "failure",
+      "active_wall_seconds": 521.042658441,
+      "original_cargo": [],
+      "returned": false,
+      "deaths": 0,
+      "termination": "agent_returned",
+      "output": "baseline-vm-sol-goal-only-01",
+      "note": "The final text claimed success; native inventory and position evidence rejected that claim."
+    },
+    {
+      "track": "visual_motor",
+      "model": "gpt-5.4-nano",
+      "outcome": "failure",
+      "active_wall_seconds": 190.641196989,
+      "original_cargo": [],
+      "returned": false,
+      "deaths": 0,
+      "termination": "agent_returned",
+      "output": "baseline-vm-nano-goal-only-01"
+    }
+  ],
+  "feasibility_evidence": [
+    {
+      "track": "structured_tool",
+      "kind": "scripted_authored_route_reference",
+      "output": "reference-st-v1-03",
+      "success": true,
+      "original_cargo_count": 3,
+      "deaths": 0,
+      "reported_seconds": 264.905,
+      "timing_note": "Reference-script timer includes startup; not a model completion-time result."
+    },
+    {
+      "track": "structured_tool",
+      "kind": "baseline_with_disclosed_map_prompt",
+      "model": "gpt-6-astra",
+      "output": "baseline-st-astra-v1-01",
+      "success": true,
+      "original_cargo_count": 3,
+      "deaths": 0,
+      "active_wall_seconds": 996.929
+    },
+    {
+      "track": "visual_motor",
+      "kind": "authored_route_pixel_only_reference",
+      "output": "pilot-vm-03",
+      "success": true,
+      "original_cargo_count": 3,
+      "deaths": 0,
+      "reported_seconds": 1217.7334662592039,
+      "horizontal_return_error": 0.07203163862618497,
+      "vertical_return_error": 0.0,
+      "motor_batches": 30,
+      "permissions": "Actual screenshots and admitted keyboard/mouse actions; no F3, live private-state control or play-time administrative assistance.",
+      "knowledge": "The controller knew the authored static layout. This proves a legal completion path, not goal-only exploration performance.",
+      "timing_note": "Includes controller deliberation and final snapshot/scoring overhead; not a minimum task duration or model score."
+    }
+  ],
+  "interpretation": [
+    "Both tracks have successful legal-action feasibility evidence.",
+    "All six goal-only Baseline Episodes failed. Astra ST showed some partial progress but never held more than one original sample in its observed trajectory; this was not a near-complete return failure.",
+    "Success-level discrimination is not established; the VM round also has a zero-cargo floor for all three models.",
+    "No infrastructure errors were reported in these six Episodes. Sol ST's final request was cancelled by the deadline, not evidence of a provider outage.",
+    "All six goal-only Episodes had zero deaths. The separately observed roof-respawn behavior did not cause these failures.",
+    "Hinted success and static-layout references do not establish that all task-relevant information is readily discoverable under the production prompt.",
+    "One Episode per model and prompt condition is developmental evidence, not a statistically reliable model ranking."
+  ],
+  "budget": {
+    "baseline_episodes_used_per_track": {
+      "structured_tool": 6,
+      "visual_motor": 6
+    },
+    "maximum_baseline_episodes_per_track": 6,
+    "includes_disclosed_map_and_goal_only_conditions": true,
+    "additional_hermes_vm_episodes": 1,
+    "further_baseline_runs_require_user_authorization": true
+  },
+  "publication": {
+    "task_qualified": false,
+    "task_commit_and_push_completed": false,
+    "historical_results_preserved": true
+  }
+}

@@ -100,6 +100,18 @@ class ParticipantConfig:
     player_state: dict[str, object]
 
 
+CAPABILITIES = frozenset({
+    "spatial_interaction", "planning_resources", "realtime_execution",
+    "information_adaptation", "peer_cooperation", "within_episode_learning",
+})
+
+
+@dataclass(frozen=True)
+class CapabilityConfig:
+    primary: tuple[str, ...]
+    secondary: tuple[str, ...] = ()
+
+
 @dataclass(frozen=True)
 class TaskConfig:
     id: str
@@ -113,11 +125,14 @@ class TaskConfig:
     tools: tuple[str, ...] | None
     source: Source
     participants: tuple[ParticipantConfig, ...] = ()
+    capabilities: CapabilityConfig | None = None
 
     def resolved(self) -> dict:
         result = asdict(self)
         if not self.participants:
             result.pop("participants")
+        if self.capabilities is None:
+            result.pop("capabilities")
         return result
 
 
@@ -139,9 +154,12 @@ class AgentConfig:
     id: str
     name: str
     model: ModelConfig
+    observation_history: int = 1
 
     def resolved(self) -> dict:
         result = asdict(self)
+        if self.observation_history == 1:
+            result.pop("observation_history")
         inactive = ("reasoning_effort",) if self.model.provider == "vllm" else (
             "base_url", "temperature", "enable_thinking",
         )
@@ -169,7 +187,17 @@ class ExperimentConfig:
 def load_task(path: Path) -> TaskConfig:
     data, source = read(path)
     required = {"id", "game", "task_type", "task", "time_limit_seconds", "fixture", "evaluator"}
-    fields(data, required | {"tools", "participants"}, required, "task")
+    fields(data, required | {"tools", "participants", "capabilities"}, required, "task")
+    capabilities = None
+    if "capabilities" in data:
+        row = mapping(data["capabilities"], "capabilities")
+        fields(row, {"primary", "secondary"}, {"primary"}, "capabilities")
+        primary = strings(row["primary"], "capabilities.primary")
+        secondary = strings(row.get("secondary", []), "capabilities.secondary")
+        selected = primary + secondary
+        if not primary or len(set(selected)) != len(selected) or set(selected) - CAPABILITIES:
+            raise ConfigError("Capabilities require nonempty primary and unique known dimensions across both lists")
+        capabilities = CapabilityConfig(primary, secondary)
     mode = text(data["task_type"], "task_type")
     if mode not in ("visual_motor", "structured_tool"):
         raise ConfigError("task_type must be visual_motor or structured_tool")
@@ -203,7 +231,7 @@ def load_task(path: Path) -> TaskConfig:
         identifier(data["id"], "task id"), game, mode, text(data["task"], "task"),
         positive(data["time_limit_seconds"], "time_limit_seconds"), fixture,
         text(evaluator["name"], "evaluator name"), mapping(evaluator["parameters"], "evaluator parameters"),
-        tools, source, tuple(participants),
+        tools, source, tuple(participants), capabilities,
     )
 
 
@@ -244,12 +272,18 @@ def load_experiment(path: Path) -> ExperimentConfig:
     agent_ids = set()
     for value in data["agents"]:
         agent = mapping(value, "agent")
-        fields(agent, {"id", "name", "model"}, {"id", "name", "model"}, "agent")
+        fields(agent, {"id", "name", "model", "observation_history"}, {"id", "name", "model"}, "agent")
         agent_id = identifier(agent["id"], "agent id")
         if agent_id in agent_ids:
             raise ConfigError(f"Duplicate agent id: {agent_id}")
         agent_ids.add(agent_id)
-        agents.append(AgentConfig(agent_id, text(agent["name"], "agent name"), load_model(agent["model"])))
+        name = text(agent["name"], "agent name")
+        if "observation_history" in agent and name != "tool_calling":
+            raise ConfigError("observation_history is supported only by tool_calling")
+        agents.append(AgentConfig(
+            agent_id, name, load_model(agent["model"]),
+            integer(agent.get("observation_history", 1), "observation_history"),
+        ))
     raw_tasks = data["tasks"]
     if not isinstance(raw_tasks, list) or not raw_tasks:
         raise ConfigError("tasks must be a nonempty list of explicit file references")

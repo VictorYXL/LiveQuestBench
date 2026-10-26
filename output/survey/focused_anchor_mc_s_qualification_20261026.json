@@ -1,0 +1,73 @@
+{
+  "task": "MC-S",
+  "task_id": "abandoned_mine_cargo",
+  "status": "development_qualified_difficult",
+  "formal_evaluation_frozen": false,
+  "selected_condition": "recovery_stairs_approximate_locations_baseline_history1",
+  "model_settings": {
+    "agent": "tool_calling",
+    "provider": "github_copilot",
+    "models": ["gpt-6-astra", "gpt-5.6-sol", "gpt-5.4-nano"],
+    "reasoning_effort": "low",
+    "max_output_tokens": 4096,
+    "max_attempts": 3,
+    "timeout_seconds": 120,
+    "observation_history": 1,
+    "episode_time_limit_seconds": 2700
+  },
+  "decision": "Retain the task and move to the next anchor under the user's meaningful-progress criterion. Do not continue simplifying the map or repeating runs merely to obtain full success. This is bounded development acceptance, not a claim of stable difficulty calibration.",
+  "current_condition_model_results": {
+    "episodes": 6,
+    "valid_measurements": 6,
+    "full_successes": 0,
+    "substantive_partial_progress": "Astra VM recovered the original Upper Gallery Cargo and returned alive, grounded and stationary in23m53s. All64 planks and24 ladders remained, with14 bread, health14 and food17. The Agent stopped voluntarily with over21 minutes remaining.",
+    "other_results": "Astra ST and Sol ST reached45 minutes with zero final cargo. Nano ST stopped after1m57s with zero cargo. Sol VM stopped after4m13s with zero cargo and an incorrect success claim. Nano VM stopped after2m37s with zero cargo.",
+    "report": "output/survey/focused_anchor_mc_s_recovery_stairs_20261026.json",
+    "trajectory_review": "output/survey/focused_anchor_mc_s_recovery_progress_20261026.json"
+  },
+  "physical_feasibility": {
+    "structured_tool": {
+      "success": true,
+      "cargo": 3,
+      "deaths": 0,
+      "health": 20,
+      "return_horizontal_error": 0.04974560352951749,
+      "elapsed_seconds": 287.0523447850719,
+      "timing_scope": "Environment startup through terminal snapshot",
+      "reference": "output/temp/anchor-development-20261026/mc_s/recovery-stairs-reference-st-01",
+      "route": "Original legal bridge and ladder route"
+    },
+    "visual_motor": {
+      "success": true,
+      "cargo": 3,
+      "deaths": 0,
+      "return_horizontal_error": 0.5465851079,
+      "elapsed_seconds": 913.9300921541,
+      "timing_scope": "Public play after begin, including visual deliberation",
+      "reference": "output/temp/anchor-development-20261026/mc_s/recovery-stairs-reference-vm-01",
+      "route": "Actual screenshot-guided traversal of both new stair routes and existing lower/service recovery"
+    },
+    "scope": "Authored static layout knowledge with admitted public actions and observations. No private live state used for control. Reference times are not model difficulty estimates."
+  },
+  "known_limitations": [
+    "No fixed-scaffold model completed the selected exact revision in this six-Episode round. Current ST results are particularly weak; do not present this track as reliably solved by Astra.",
+    "One cargo item is not automatically33 percent of total task difficulty. The stronger evidence is the completed retrieval-and-return cycle with retained supplies and a credible continuation state.",
+    "Astra ST completed the different shallow-only condition in19m20s. Keep that result separate; it does not increase current-condition success counts.",
+    "A single Episode per model and track does not estimate a stable success rate, establish a model ranking, or causally identify the effect of a geometry change.",
+    "The eastern stair foot can require a side-entry jump; this was legally traversed, not removed or disclosed in the task prompt.",
+    "Nano VM's terminal screenshot shows a dark nearby wall with rendered HUD and held item, at native position56.7,74,-2.007. This supports ordinary poor visibility, not a diagnosed capture outage.",
+    "The separate four-observation Astra VM diagnostic failed after347.292s with one death and no cargo. No improvement from that scaffold option was demonstrated.",
+    "Retired-task test imports remain an explicitly documented archival limitation. No full repository test-suite health claim is made."
+  ],
+  "publication_provenance": {
+    "historical_task_id": "abandoned_mine_cargo_v1",
+    "ledger_continuity": "run_baseline.py aliases the new task ID to the existing Baseline and supplemental ledgers; no allowance reset",
+    "structured_tool_sha256": "19fe5a42457673f63e41aa2f73cfec705d2db69cfdb65c8c04d3fc5a2d0d927d",
+    "visual_motor_sha256": "e5b575be1a6097e15d0037e3a1333f6e48a805e776f65d120f5a6c6af09cdee0",
+    "fixture_manifest": "config/minecraft/fixtures/abandoned_mine.source.json",
+    "promotion_check": "All18 published world files match the tested candidate by SHA256. Task resolved values match except ID, source metadata and fixture reference. No behavioral edits accompanied promotion.",
+    "preserved_original_fixture": "output/temp/anchor-development-20261026/mc_s/original-formal-fixture-preserved",
+    "author_source": "output/temp/anchor-development-20261026/mc_s/recovery-stairs-fixture-01/author.py"
+  },
+  "next_task": "VE-S: mountain_workshop_circuit. Both public-action references succeeded; model calibration starts after the MC-S commit and push."
+}

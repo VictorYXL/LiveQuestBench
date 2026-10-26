@@ -118,6 +118,18 @@ def _section(section: nbtlib.Compound | None) -> list[str]:
     return [palette[index] for index in indices]
 
 
+def read_block_entity(world: Path, point: Position) -> nbtlib.Compound:
+    region_bounds({"min": point, "max": point}, "minecraft:overworld")
+    chunk = _chunk(Path(world) / "region", point[0] // 16, point[2] // 16)
+    matches = [
+        row for row in chunk["block_entities"]
+        if tuple(int(row[axis]) for axis in ("x", "y", "z")) == point
+    ]
+    if len(matches) != 1:
+        raise ValueError(f"Expected one saved block entity at {point}")
+    return matches[0]
+
+
 def read_blocks(
     world: Path, low: Position, high: Position, dimension: str,
 ) -> dict[Position, str]:

@@ -1,0 +1,153 @@
+{
+  "condition": "original_deep_pit_approximate_locations_gamingagent",
+  "development_only": true,
+  "results": [
+    {
+      "output": "output/temp/anchor-development-20261026/mc_s/gamingagent-st-astra-approximate-locations-01",
+      "model": "gpt-6-astra",
+      "track": "structured_tool",
+      "task_id": "abandoned_mine_cargo_v1",
+      "configuration_sha256": "0084b672cc1780e0bcc1a40153b931f484117632a443eeb71b13444f63d87737",
+      "status": "completed",
+      "measurement": "valid",
+      "outcome": "failure",
+      "errors": [],
+      "timing": {
+        "active_wall_seconds": 2700.058485641,
+        "end_acknowledgement_seconds": 0.057847017,
+        "deadline_request_lateness_seconds": 0.000638624
+      },
+      "metrics": {
+        "deaths": {
+          "count": 0,
+          "before_count": 0,
+          "after_count": 0,
+          "source": "minecraft:custom/minecraft:deaths",
+          "semantics": "native_player_deaths_during_episode",
+          "player_uuid": "2688f575-edcc-37d3-b359-7ead8d40d728"
+        }
+      },
+      "agent_exit": {
+        "reason": "stopped",
+        "message": "",
+        "native_reason": "deadline"
+      },
+      "deadline_reached": true,
+      "native_evaluation": {
+        "success": false,
+        "checks": [
+          {
+            "kind": "original_cargo",
+            "id": "upper_gallery",
+            "item": "minecraft:raw_iron",
+            "count": 0,
+            "passed": false
+          },
+          {
+            "kind": "original_cargo",
+            "id": "lower_excavation",
+            "item": "minecraft:lapis_lazuli",
+            "count": 0,
+            "passed": false
+          },
+          {
+            "kind": "original_cargo",
+            "id": "service_chamber",
+            "item": "minecraft:copper_ingot",
+            "count": 1,
+            "passed": true
+          },
+          {
+            "kind": "health",
+            "actual": 20.0,
+            "minimum": 1,
+            "passed": true
+          },
+          {
+            "kind": "position",
+            "horizontal_error": 40.12480806125524,
+            "vertical_error": 50.0,
+            "motion_blocks_per_tick": 0.0784000015258789,
+            "on_ground": true,
+            "passed": false
+          }
+        ],
+        "semantics": "Original tagged chest items and a living, grounded, settled return. Any legal route, construction, digging, chest breaking or native recovery is allowed. Death is measured separately, not an automatic failure."
+      }
+    },
+    {
+      "output": "output/temp/anchor-development-20261026/mc_s/gamingagent-vm-astra-approximate-locations-01",
+      "model": "gpt-6-astra",
+      "track": "visual_motor",
+      "task_id": "abandoned_mine_cargo_v1",
+      "configuration_sha256": "9c6846337d069d00e372b88f1cc19aa3ca990aa0c0020b8cf191b81715f2a41e",
+      "status": "completed",
+      "measurement": "valid",
+      "outcome": "failure",
+      "errors": [],
+      "timing": {
+        "active_wall_seconds": 2700.040977905,
+        "end_acknowledgement_seconds": 0.039718419,
+        "deadline_request_lateness_seconds": 0.001259486
+      },
+      "metrics": {
+        "deaths": {
+          "count": 0,
+          "before_count": 0,
+          "after_count": 0,
+          "source": "minecraft:custom/minecraft:deaths",
+          "semantics": "native_player_deaths_during_episode",
+          "player_uuid": "2688f575-edcc-37d3-b359-7ead8d40d728"
+        }
+      },
+      "agent_exit": {
+        "reason": "stopped",
+        "message": "",
+        "native_reason": "deadline"
+      },
+      "deadline_reached": true,
+      "native_evaluation": {
+        "success": false,
+        "checks": [
+          {
+            "kind": "original_cargo",
+            "id": "upper_gallery",
+            "item": "minecraft:raw_iron",
+            "count": 0,
+            "passed": false
+          },
+          {
+            "kind": "original_cargo",
+            "id": "lower_excavation",
+            "item": "minecraft:lapis_lazuli",
+            "count": 0,
+            "passed": false
+          },
+          {
+            "kind": "original_cargo",
+            "id": "service_chamber",
+            "item": "minecraft:copper_ingot",
+            "count": 0,
+            "passed": false
+          },
+          {
+            "kind": "health",
+            "actual": 20.0,
+            "minimum": 1,
+            "passed": true
+          },
+          {
+            "kind": "position",
+            "horizontal_error": 37.86139922830522,
+            "vertical_error": 10.0,
+            "motion_blocks_per_tick": 0.0784000015258789,
+            "on_ground": true,
+            "passed": false
+          }
+        ],
+        "semantics": "Original tagged chest items and a living, grounded, settled return. Any legal route, construction, digging, chest breaking or native recovery is allowed. Death is measured separately, not an automatic failure."
+      }
+    }
+  ],
+  "qualification": "Not inferred from this extraction; requires trajectory review."
+}

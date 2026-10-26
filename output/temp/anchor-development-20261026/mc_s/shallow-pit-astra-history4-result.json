@@ -1,0 +1,80 @@
+{
+  "condition": "shallow_pit_astra_history4_diagnostic",
+  "development_only": true,
+  "results": [
+    {
+      "output": "output/temp/anchor-development-20261026/mc_s/history4-vm-astra-shallow-pit-01",
+      "model": "gpt-6-astra",
+      "track": "visual_motor",
+      "task_id": "abandoned_mine_cargo_v1",
+      "configuration_sha256": "7912ac273bacc94636422d72de78e6f5507fe84f1753e23a02b96f40cc58b030",
+      "status": "completed",
+      "measurement": "valid",
+      "outcome": "failure",
+      "errors": [],
+      "timing": {
+        "active_wall_seconds": 347.29243187,
+        "end_acknowledgement_seconds": 0.026203192,
+        "deadline_request_lateness_seconds": 0.0
+      },
+      "metrics": {
+        "deaths": {
+          "count": 1,
+          "before_count": 0,
+          "after_count": 1,
+          "source": "minecraft:custom/minecraft:deaths",
+          "semantics": "native_player_deaths_during_episode",
+          "player_uuid": "2688f575-edcc-37d3-b359-7ead8d40d728"
+        }
+      },
+      "agent_exit": {
+        "reason": "returned",
+        "message": "I couldn\u2019t recover the three cargo samples. I died from a fall and respawned; all controls are released.",
+        "native_reason": "stop"
+      },
+      "deadline_reached": false,
+      "native_evaluation": {
+        "success": false,
+        "checks": [
+          {
+            "kind": "original_cargo",
+            "id": "upper_gallery",
+            "item": "minecraft:raw_iron",
+            "count": 0,
+            "passed": false
+          },
+          {
+            "kind": "original_cargo",
+            "id": "lower_excavation",
+            "item": "minecraft:lapis_lazuli",
+            "count": 0,
+            "passed": false
+          },
+          {
+            "kind": "original_cargo",
+            "id": "service_chamber",
+            "item": "minecraft:copper_ingot",
+            "count": 0,
+            "passed": false
+          },
+          {
+            "kind": "health",
+            "actual": 20.0,
+            "minimum": 1,
+            "passed": true
+          },
+          {
+            "kind": "position",
+            "horizontal_error": 0.0,
+            "vertical_error": 20.0,
+            "motion_blocks_per_tick": 0.0784000015258789,
+            "on_ground": true,
+            "passed": false
+          }
+        ],
+        "semantics": "Original tagged chest items and a living, grounded, settled return. Any legal route, construction, digging, chest breaking or native recovery is allowed. Death is measured separately, not an automatic failure."
+      }
+    }
+  ],
+  "qualification": "Not inferred from this extraction; requires trajectory review."
+}

@@ -1,0 +1,104 @@
+id: abandoned_mine_cargo
+game: minecraft
+task_type: structured_tool
+capabilities:
+  primary:
+  - spatial_interaction
+  secondary:
+  - planning_resources
+task: |-
+  Recover the three original named cargo samples from the abandoned mine
+  and return with them to the yellow entrance marker.
+
+  Approximate target areas, relative to the entrance and your initial facing:
+  - Upper Gallery Cargo: about 50 blocks forward, on a higher level.
+  - Lower Excavation Cargo: about 40 blocks to the right, deep below the entrance.
+  - Service Chamber Cargo: about 30 blocks forward and 30 blocks right,
+    slightly below the entrance.
+
+  Finish alive and standing still on the ground at the marker.
+  Release held controls and finish with a text response.
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/abandoned_mine
+  instance: 1.20.4
+  difficulty: normal
+  player_state:
+    position:
+    - 0.5
+    - 72
+    - 0.5
+    dimension: minecraft:overworld
+    yaw: -90
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+    - slot: 0
+      item: iron_pickaxe
+      count: 1
+    - slot: 1
+      item: oak_planks
+      count: 64
+    - slot: 2
+      item: ladder
+      count: 24
+    - slot: 3
+      item: stone_brick_stairs
+      count: 32
+    - slot: 4
+      item: bread
+      count: 16
+    - slot: 5
+      item: torch
+      count: 32
+    - slot: 6
+      item: iron_axe
+      count: 1
+evaluator:
+  name: cargo
+  parameters:
+    cargo:
+    - id: upper_gallery
+      item: minecraft:raw_iron
+      chest:
+      - 52
+      - 80
+      - 7
+    - id: lower_excavation
+      item: minecraft:lapis_lazuli
+      chest:
+      - 0
+      - 57
+      - 38
+    - id: service_chamber
+      item: minecraft:copper_ingot
+      chest:
+      - 32
+      - 70
+      - 27
+    position:
+      target:
+      - 0.5
+      - 72
+      - 0.5
+      horizontal_tolerance: 1.5
+      vertical_tolerance: 0.5
+      max_speed: 0.1
+tools:
+- MoveTool
+- LookAtPositionTool
+- SelectTool
+- StopTool
+- JumpTool
+- DigTool
+- PlaceTool
+- UseHeldItemTool
+- InspectContainerTool
+- TakeContainerItemTool
+- QueryCraftRecipeTool
+- CraftItemTool
+- RespawnTool

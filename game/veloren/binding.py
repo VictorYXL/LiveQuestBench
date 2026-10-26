@@ -10,9 +10,6 @@ from game.bindings import Controls, GameBinding, bind_controls, validate_tools
 from game.veloren.evaluators.endpoints import evaluate_displacement, evaluate_health, evaluate_inventory
 from game.veloren.evaluators.endpoints import validate_displacement, validate_health, validate_inventory
 from game.veloren.evaluators.endpoints import evaluate_state, validate_state
-from game.veloren.evaluators.encounter import evaluate_damage, evaluate_encounter, validate_encounter
-from game.veloren.evaluators.expedition import evaluate_expedition, validate_expedition
-from game.veloren.evaluators.contract import evaluate_contract, validate_contract
 from game.veloren.evaluators.deaths import evaluate_deaths
 from game.veloren.game import VelorenGame
 from game.veloren.structured_tools import interface as st
@@ -39,14 +36,24 @@ def create_binding(
         raise ValueError("Tool allowlists are only supported for structured_tool tasks")
     evaluators: dict[str, Callable[..., dict]] = {
         "displacement": evaluate_displacement, "inventory": evaluate_inventory, "health": evaluate_health,
-        "state": evaluate_state, "encounter": evaluate_encounter, "expedition": evaluate_expedition,
-        "damage": evaluate_damage, "contract": evaluate_contract,
+        "state": evaluate_state,
     }
     validators: dict[str, Callable[..., object]] = {
         "displacement": validate_displacement, "inventory": validate_inventory, "health": validate_health,
-        "state": validate_state, "encounter": validate_encounter, "expedition": validate_expedition,
-        "damage": validate_encounter, "contract": validate_contract,
+        "state": validate_state,
     }
+    if evaluator in ("encounter", "damage"):
+        from game.veloren.evaluators.encounter import evaluate_damage, evaluate_encounter, validate_encounter
+        evaluators.update(encounter=evaluate_encounter, damage=evaluate_damage)
+        validators.update(encounter=validate_encounter, damage=validate_encounter)
+    elif evaluator == "expedition":
+        from game.veloren.evaluators.expedition import evaluate_expedition, validate_expedition
+        evaluators[evaluator] = evaluate_expedition
+        validators[evaluator] = validate_expedition
+    elif evaluator == "contract":
+        from game.veloren.evaluators.contract import evaluate_contract, validate_contract
+        evaluators[evaluator] = evaluate_contract
+        validators[evaluator] = validate_contract
     if evaluator not in evaluators:
         raise ValueError(f"Unknown Veloren evaluator: {evaluator}")
     score = evaluators[evaluator]

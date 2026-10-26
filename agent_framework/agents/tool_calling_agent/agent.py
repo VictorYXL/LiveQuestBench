@@ -18,7 +18,8 @@ class ToolCallingAgent(BaseAgent[InterfaceT]):
 
     The caller owns the injected client and game resources. There is no planner,
     query Agent, automatic tool retry, or independent task-success detector.
-    Only the latest text observation/image is sent; action history is retained.
+    By default only the latest observation is sent; action history is retained.
+    A configured observation window retains recent public inputs without summarization.
     Full messages remain available for inspection and on_message recording.
     The runner must gate game access at the deadline and on every exit path.
     """
@@ -27,7 +28,11 @@ class ToolCallingAgent(BaseAgent[InterfaceT]):
         self, client: BaseLLMClient, *, tools: Sequence[Tool[InterfaceT]],
         observe: Callable[[InterfaceT], Awaitable[Observation]],
         on_message: Callable[[Message], None] | None = None,
+        observation_history: int = 1,
     ) -> None:
+        if type(observation_history) is not int or observation_history < 1:
+            raise ValueError("observation_history must be a positive integer")
+        self.observation_history = observation_history
         self.client = client
         self.tools = tuple(tools)
         self._by_name = {tool.name: tool for tool in self.tools}
@@ -84,9 +89,14 @@ class ToolCallingAgent(BaseAgent[InterfaceT]):
 
     def _request_messages(self) -> list[Message]:
         result: list[Message] = []
+        observations = [
+            index for index, message in enumerate(self.messages)
+            if message.role == "user" and isinstance(message.content, list)
+        ]
+        retained = set(observations[-self.observation_history:])
         for index, message in enumerate(self.messages):
             content = message.content
-            if index < len(self.messages) - 1 and isinstance(content, list):
+            if index not in retained and index < len(self.messages) - 1 and isinstance(content, list):
                 if index in self._text_observation_offsets:
                     content = content[:self._text_observation_offsets[index]] + [{
                         "type": "text", "text": "[Earlier observation omitted; latest observation follows.]",

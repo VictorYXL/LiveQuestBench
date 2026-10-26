@@ -1,0 +1,56 @@
+{
+  "status": "development_partial_progress_not_full_task_success",
+  "condition": "recovery_stairs_approximate_locations_baseline_history1",
+  "task": "MC-S",
+  "model": "gpt-6-astra",
+  "track": "visual_motor",
+  "task_sha256": "6fd009afe04e2cae38fc719ac6e08ec9ab9d5f23971b69139896b2ff98be80d6",
+  "configuration_sha256": "423b3a58d2f0796416a25302d10ad917b8cd19b1e69f5aa887e35666fc465c93",
+  "episode": "output/temp/anchor-development-20261026/mc_s/baseline-vm-astra-recovery-stairs-01",
+  "native_result": {
+    "measurement": "valid",
+    "outcome": "failure",
+    "active_wall_seconds": 1432.941563837,
+    "original_cargo": ["upper_gallery"],
+    "missing_cargo": ["lower_excavation", "service_chamber"],
+    "alive_grounded_settled_return": true,
+    "return_horizontal_error": 0.6822709190873686,
+    "health": 14,
+    "deaths": 0,
+    "deadline_reached": false,
+    "agent_final_answer": "I returned to the yellow marker and released all controls, but I did not recover all three cargo samples."
+  },
+  "public_evidence": {
+    "assistant_turns": 202,
+    "cargo_name_hover_image": "ab9a7a37ae15c71263976b9f6d3fa7221ace1eec31deb1b36e86e2c2220c8f27.png",
+    "terminal_marker_image": "94e14bd6e07861d394502349f1e84a245c7e643ff4d38288029d734351e3fc98.png",
+    "image_location": "Episode recording/chat/images",
+    "observations": "The public inventory tooltip visibly identifies Upper Gallery Cargo; the terminal public frame shows the entrance marker and retained cargo. Two recorded UI transfer attempts precede the named-item hover. These are actual game frames, not Agent assertions."
+  },
+  "terminal_native_resource_review": {
+    "scope": "Read only after the Episode ended; never supplied to the VM Agent or used for live control",
+    "food": 17,
+    "planks": 64,
+    "ladders": 24,
+    "stone_brick_stairs": 34,
+    "bread": 14,
+    "torches": 31,
+    "mined_blocks_delta": {
+      "stone": 1,
+      "stone_bricks": 6,
+      "stone_brick_stairs": 2
+    },
+    "used_items_delta": {
+      "bread": 2,
+      "iron_pickaxe": 9,
+      "torch": 1
+    }
+  },
+  "interpretation": [
+    "The Agent completed an actual retrieval-and-return cycle while retaining construction and recovery supplies. This is substantive objective progress, unlike the previous zero-cargo opening failures.",
+    "Over21 minutes remained when the Agent voluntarily stopped. The full legal reference demonstrates that the remaining goals are physically reachable; the retained resources and valid return support a credible continuation state. This does not prove that this Agent would complete the remaining legs.",
+    "One of three cargo items is not a calibrated33-percent task score. Do not infer use of a particular stair flight from the terminal state alone.",
+    "Keep the shallow-only Astra ST full success separate: it is not an ST success on this recovery-stairs condition. Paired-condition feasibility and the remaining calibration results are tracked separately.",
+    "No replicated causal claim about recovery stairs or model ranking follows from one Episode."
+  ]
+}

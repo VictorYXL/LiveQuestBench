@@ -8,9 +8,8 @@ from agent_framework.utils.tools import Tool
 from game.bindings import Controls, GameBinding, bind_controls, validate_tools
 from game.minecraft.evaluators.deaths import evaluate_deaths
 from game.minecraft.evaluators.inventory import evaluate_inventory, inventory, validate_requirements
-from game.minecraft.evaluators.structure import evaluate_structure, validate_config
 from game.minecraft.evaluators.state import action_events, evaluate_state, validate_state
-from game.minecraft.evaluators.expedition import evaluate_expedition, registry, verify_initial as verify_expedition
+from game.minecraft.evaluators.cargo import evaluate_cargo, validate_cargo, verify_initial_cargo
 from game.minecraft.game import MinecraftGame
 from game.minecraft.init_player_state import PlayerState
 from game.minecraft.runtime.session import validate_world
@@ -35,7 +34,10 @@ def create_binding(
         raise ValueError("world_path must be nonempty text")
     world_path = Path(path)
     validate_world(world_path)
-    expedition = registry(world_path) if evaluator == "expedition" else None
+    expedition = None
+    if evaluator == "expedition":
+        from game.minecraft.evaluators.expedition import evaluate_expedition, registry, verify_initial as verify_expedition
+        expedition = registry(world_path)
     instance, difficulty = fixture["instance"], fixture["difficulty"]
     if instance != "1.20.4" or difficulty not in ("peaceful", "easy", "normal", "hard"):
         raise ValueError("Unsupported Minecraft instance or difficulty")
@@ -67,12 +69,17 @@ def create_binding(
         validate_state(**parameters)
         score = evaluate_state
     elif evaluator == "structure":
+        from game.minecraft.evaluators.structure import evaluate_structure, validate_config
         inspect.signature(evaluate_structure).bind(Path(), Path(), **parameters)
         validate_config(parameters["config"])
         score = evaluate_structure
     elif evaluator == "expedition":
         inspect.signature(evaluate_expedition).bind(Path(), Path(), None, **parameters)
         score = evaluate_expedition
+    elif evaluator == "cargo":
+        inspect.signature(evaluate_cargo).bind(Path(), Path(), None, **parameters)
+        validate_cargo(**parameters)
+        score = evaluate_cargo
     else:
         raise ValueError(f"Unknown Minecraft evaluator: {evaluator}")
 
@@ -86,6 +93,8 @@ def create_binding(
             raise RuntimeError("Initial native inventory differs from task initialization")
         if evaluator == "expedition":
             verify_expedition(before, game.player_uuid)
+        if evaluator == "cargo":
+            verify_initial_cargo(before, game.player_uuid, **parameters)
         if evaluator == "state" and parameters.get("action_sequence") is not None and action_events(before):
             raise RuntimeError("Native action evidence was not empty before measured play")
 

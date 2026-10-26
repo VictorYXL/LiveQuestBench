@@ -8,9 +8,6 @@ from uuid import UUID
 import nbtlib
 
 from game.minecraft.evaluators.inventory import evaluate_inventory, validate_requirements
-from game.minecraft.evaluators.structure import evaluate_structure, validate_config
-from game.minecraft.fixtures.forge_hunt import uuid_parts
-from game.minecraft.fixtures.workshop import ACTION_SCHEMA, action_hashes
 
 
 def validate_state(
@@ -26,6 +23,7 @@ def validate_state(
     if type(no_death) is not bool:
         raise ValueError("no_death must be boolean")
     if structure is not None:
+        from game.minecraft.evaluators.structure import validate_config
         validate_config(structure)
     if action_sequence is not None and action_sequence != ["block", "damage"]:
         raise ValueError("The supported native action sequence is block then damage")
@@ -73,6 +71,8 @@ def custom_statistics(world: Path, player: UUID) -> dict:
 
 
 def action_events(world: Path) -> list[dict]:
+    from game.minecraft.fixtures.workshop import ACTION_SCHEMA, action_hashes
+
     manifest = json.loads((world / "livequest-action-evidence.json").read_text())
     if manifest != {"schema": ACTION_SCHEMA, "pack_sha256": action_hashes(world)}:
         raise ValueError("Native action evidence registry or datapack hashes changed")
@@ -154,9 +154,11 @@ def evaluate_state(
             checks.append({"kind": "statistic", "name": name, "delta": delta,
                            "minimum": minimum, "passed": delta >= minimum})
     if structure is not None:
+        from game.minecraft.evaluators.structure import evaluate_structure
         result = evaluate_structure(before, after, structure)
         checks.append({"kind": "structure", "passed": result["success"], "result": result})
     if action_sequence is not None:
+        from game.minecraft.fixtures.forge_hunt import uuid_parts
         if action_events(before):
             raise ValueError("Native action sequence must start empty")
         if (before / "livequest-action-evidence.json").read_bytes() != (
