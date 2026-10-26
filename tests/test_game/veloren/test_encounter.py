@@ -1,6 +1,8 @@
 """Identity-bound combat evidence, counterexamples and bounded public skills."""
 
 from copy import deepcopy
+from collections import deque
+import math
 
 import pytest
 
@@ -11,6 +13,69 @@ from game.veloren.structured_tools.interface import COMBAT_TOOLS, FIELDS, valida
 from benchmark.config import load_task
 from pathlib import Path
 from game.veloren.evaluators.deaths import death_snapshot, death_metrics
+
+
+def test_market_hunting_yard_is_separated_and_connected_in_both_tracks():
+    from game.veloren.fixture import solid_voxels
+
+    root = Path(__file__).resolve().parents[3] / "config/veloren/tasks"
+    st = load_task(root / "structured_tools/market_hunt_return.yaml")
+    vm = load_task(root / "visual_motor/market_hunt_return.yaml")
+    assert validate_fixture(st.fixture) == validate_fixture(vm.fixture)
+    assert st.task == vm.task
+    assert st.time_limit_seconds == vm.time_limit_seconds == 1200
+    fixture = st.fixture
+    target = fixture["encounters"][0]["position"]
+    assert math.dist(target, fixture["merchant"]["position"]) > 80
+    assert 80 < math.dist(target, fixture["player_state"]["position"]) < 96
+    voxels = solid_voxels(fixture)
+    walkable = {(x, y) for x, y, z in voxels if z == 500
+                and (x, y, 501) not in voxels and (x, y, 502) not in voxels}
+    start = tuple(math.floor(value) for value in fixture["player_state"]["position"][:2])
+    goal = tuple(math.floor(value) for value in target[:2])
+    reached, queue = {start}, deque([start])
+    while queue:
+        x, y = queue.popleft()
+        for neighbor in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):
+            if neighbor in walkable and neighbor not in reached:
+                reached.add(neighbor)
+                queue.append(neighbor)
+    assert goal in reached
+    assert all((x, y) in reached for x in range(18727, 18785) for y in range(10820, 10826))
+    merchant = tuple(math.floor(value) for value in fixture["merchant"]["position"][:2])
+    assert merchant not in reached
+    assert (18710, 10806) in reached
+    assert math.dist([18710.5, 10806.5, 501], fixture["merchant"]["position"]) <= 3
+    assert (18710, 10808, 501) in voxels
+    assert (18710, 10808, 502) not in voxels
+    assert (18710, 10808, 503) in voxels
+
+
+def test_dual_encounter_divider_blocks_opening_sightlines_without_sealing_targets():
+    from game.veloren.fixture import solid_voxels
+
+    root = Path(__file__).resolve().parents[3] / "config/veloren/tasks"
+    st = load_task(root / "structured_tools/dual_legoom.yaml")
+    vm = load_task(root / "visual_motor/dual_legoom.yaml")
+    assert validate_fixture(st.fixture) == validate_fixture(vm.fixture)
+    assert st.task == vm.task
+    assert st.evaluator_parameters == vm.evaluator_parameters == {"roles": ["west_legoom", "east_legoom"]}
+    assert st.time_limit_seconds == vm.time_limit_seconds == 300
+    fixture = st.fixture
+    voxels = solid_voxels(fixture)
+    start = fixture["player_state"]["position"]
+    for enemy in fixture["encounters"]:
+        target = enemy["position"]
+        fraction = (10815.5 - start[1]) / (target[1] - start[1])
+        crossing_x = math.floor(start[0] + fraction * (target[0] - start[0]))
+        assert all((crossing_x, 10815, z) in voxels for z in (501, 502, 503))
+        route = [(x, 10806) for x in range(18708, 18721)]
+        route += [(18720, y) for y in range(10806, 10821)]
+        route += [(x, 10820) for x in range(math.floor(target[0]), 18721)]
+        assert all((x, y, 500) in voxels and (x, y, 501) not in voxels
+                   and (x, y, 502) not in voxels for x, y in route)
+    assert fixture["player_state"]["health"] == 100
+    assert fixture["player_state"]["inventory"] == {"common.items.consumable.potion_minor": 2}
 
 
 def test_native_death_accounting_counts_repeated_deaths_not_other_actors():

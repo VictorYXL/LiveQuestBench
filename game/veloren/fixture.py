@@ -157,8 +157,8 @@ def validate_fixture(value: object) -> dict:
             raise ValueError("Encounter requires a unique role and a supported exact-body enemy asset")
         spawn = vector(encounter["position"], "encounter.position")
         require_standing_point(spawn, occupied, "Encounter")
-        if not 10 <= math.dist(spawn, point) <= 24 or tuple(spawn) in positions:
-            raise ValueError("Enemies must have distinct spawn points 10-24 metres from the player")
+        if not 10 <= math.dist(spawn, point) <= 96 or tuple(spawn) in positions:
+            raise ValueError("Enemies must have distinct spawn points 10-96 metres from the player")
         roles.add(role)
         positions.add(tuple(spawn))
     if "companion" in fixture:
@@ -342,7 +342,11 @@ async def initialize_encounter(admin, actor, spec: dict, position: list) -> dict
         else {"QuadrupedMedium": {"species": "Wolf", "body_type": "Male"}}
     )
     await setup.goto(admin, admin, position)
-    existing = {row["uid"] for row in (await actor.request("observe"))["nearby_entities"]}
+    player_observation = await actor.request("observe")
+    distant = math.dist(player_observation["position"], position) > 24
+    observer = admin if distant else actor
+    before = await admin.request("observe") if distant else player_observation
+    existing = {row["uid"] for row in before["nearby_entities"]}
     receipt = await setup.command(admin, "make_npc", spec["asset"], 1)
 
     def candidates(row):
@@ -352,7 +356,7 @@ async def initialize_encounter(admin, actor, spec: dict, position: list) -> dict
                 and entry.get("health")]
 
     after = await setup.wait_observation(
-        actor, lambda row: len(candidates(row)) == 1, "unique new exact-body native encounter UID",
+        observer, lambda row: len(candidates(row)) == 1, "unique new exact-body native encounter UID",
     )
     target = candidates(after)[0]
     binding = await native_binding(actor, target["uid"])
@@ -360,10 +364,31 @@ async def initialize_encounter(admin, actor, spec: dict, position: list) -> dict
             or binding["dead"] or binding["health"] <= 0
             or target["health"]["dead"] or target["health"]["current"] <= 0):
         raise RuntimeError("Encounter target lacks the declared living native body and Enemy alignment")
-    return {"role": spec["role"], "asset": spec["asset"], "public": target, "binding": binding,
+    return {"role": spec["role"], "asset": spec["asset"], "public": None if distant else target, "binding": binding,
+            "setup_observation": target, "setup_observer": "administrator" if distant else "player",
             "spawn_receipt": receipt,
             "stock_loadout": "Unchanged native asset loadout; exact-body benchmark derivative.",
             "native_loadout_observed": True}
+
+
+def verify_encounter_opening(targets: list[dict], observation: dict, rows: list[dict]) -> None:
+    latest = next((row for row in reversed(rows) if row["event"] == "combat_entity_bindings"), None)
+    if latest is None:
+        raise RuntimeError("Designated targets lack native opening bindings")
+    current = {entry["uid"]: entry for entry in observation["nearby_entities"]}
+    for target in targets:
+        expected = target["binding"]
+        bindings = [entry for entry in latest["data"]["bindings"] if entry["uid"] == expected["uid"]]
+        if (len(bindings) != 1 or bindings[0]["server_entity"] != expected["server_entity"]
+                or bindings[0]["body"] != expected["body"]
+                or bindings[0]["alignment"] != expected["alignment"]
+                or bindings[0]["dead"] or bindings[0]["health"] <= 0
+                or bindings[0]["health"] != expected["health"]):
+            raise RuntimeError("Designated target unavailable, replaced, dead or injured before measured play")
+        if target["public"] is not None:
+            entry = current.get(expected["uid"])
+            if (entry is None or entry["health"]["dead"] or entry["health"]["current"] != expected["health"]):
+                raise RuntimeError("Nearby designated target unavailable, dead or injured before measured play")
 
 
 def verify_aged_supplies(initialized: dict, observation: dict) -> None:

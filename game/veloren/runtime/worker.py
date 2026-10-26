@@ -210,12 +210,9 @@ class Session:
                 targets = self.initialized["encounters"]
                 if not hasattr(self, "encounter_registry"):
                     verify_player(self.fixture, observation)
+                    from game.veloren.fixture import verify_encounter_opening
+                    verify_encounter_opening(targets, observation, rows)
                     current = {entry["uid"]: entry for entry in observation["nearby_entities"]}
-                    for target in targets:
-                        entry = current.get(target["binding"]["uid"])
-                        if (entry is None or entry["health"]["current"] <= 0 or entry["health"]["dead"]
-                                or entry["health"]["current"] != target["binding"]["health"]):
-                            raise RuntimeError("Designated target unavailable, dead or injured before measured play")
                     self.encounter_registry = {
                         "run_id": self.output.name, "nonce": rows[0]["data"]["nonce"],
                         "opening_sequence": rows[-1]["sequence"],

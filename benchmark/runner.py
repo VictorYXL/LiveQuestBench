@@ -165,6 +165,16 @@ async def run_episode(
         result.update(started_at_ns=started, deadline_at_ns=deadline)
         instructions = binding.game.get_instructions()
         instructions += "\nOnly the supplied tool schemas are available for this task."
+        instructions += (
+            "\nDo not select Quit Game, disconnect, or close the game window, even after completing the task."
+            " Quitting the game is not task completion; an Agent-initiated quit counts as failure."
+            " Leave the game running so the benchmark can evaluate the final state."
+        )
+        instructions += (
+            "\nWhen finished, call final_answer with your answer."
+            if agent_config.name == "smolagents" else
+            "\nWhen finished, return a nonempty final response without tool calls to end your Agent turn."
+        )
         context = AgentContext(result["episode_id"], task.task, public, started, deadline, instructions)
         await asyncio.wait_for(binding.game.begin(), timeout=min(30, task.time_limit_seconds))
         begun = True

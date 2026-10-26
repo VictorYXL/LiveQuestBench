@@ -124,6 +124,13 @@ verify a working runtime.
 Levels organize the development catalog, not calibrated difficulty guarantees.
 Each task declares its exact budget, starting state, permitted tools and goal.
 
+`market_hunt_return` uses a roofed merchant shop and a separate eastern hunting
+yard; `dual_legoom` uses a rock divider with an east-side route. These are task
+scene revisions, not changes to NPC AI, budgets or scoring. Preserve task hashes
+when comparing layouts. Encounters can start 10-96 metres away; distant targets
+are identified privately during setup, without extending ST's 32-metre public
+projection or exposing hidden state to VM.
+
 ### Add a task
 
 1. Copy a task with the desired mode and scoring pattern.

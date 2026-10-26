@@ -172,7 +172,8 @@ def test_player_wait_keeps_inventory_and_position_strict():
 
 
 @pytest.mark.parametrize("alignment", ["Enemy", "Npc"])
-def test_encounter_does_not_bind_late_arriving_admin(monkeypatch, alignment):
+@pytest.mark.parametrize("distance", [0, 80])
+def test_encounter_does_not_bind_late_arriving_admin(monkeypatch, alignment, distance):
     body = {"BipedSmall": {"species": "GreenLegoom", "body_type": "Male"}}
     admin_entity = {"uid": 1, "body_identity": {"Humanoid": {}},
                     "health": {"current": 100, "dead": False}}
@@ -182,7 +183,9 @@ def test_encounter_does_not_bind_late_arriving_admin(monkeypatch, alignment):
 
     class Actor:
         async def request(self, command, **kwargs):
-            return {"nearby_entities": []}
+            return {"position": [0, 0, 1], "nearby_entities": []}
+
+    admin, player = Actor(), Actor()
 
     async def goto(*args):
         pass
@@ -191,12 +194,14 @@ def test_encounter_does_not_bind_late_arriving_admin(monkeypatch, alignment):
         return {"status": "completed"}
 
     async def wait(actor, predicate, reason):
+        assert actor is (admin if distance > 24 else player)
         for row in observed:
             if predicate(row):
                 return row
         raise AssertionError(reason)
 
     async def binding(actor, uid):
+        assert actor is player
         bindings.append(uid)
         return {"uid": uid, "body": body, "alignment": alignment, "health": 25, "dead": False}
 
@@ -205,13 +210,47 @@ def test_encounter_does_not_bind_late_arriving_admin(monkeypatch, alignment):
     spec = {"role": "enemy", "asset": "common.entity.benchmark.male_green_legoom"}
     if alignment != "Enemy":
         with pytest.raises(RuntimeError, match="Enemy alignment"):
-            asyncio.run(fixtures.initialize_encounter(object(), Actor(), spec, [0, 0, 1]))
+            asyncio.run(fixtures.initialize_encounter(admin, player, spec, [distance, 0, 1]))
         assert bindings == [126]
         return
-    result = asyncio.run(fixtures.initialize_encounter(object(), Actor(), spec, [0, 0, 1]))
+    result = asyncio.run(fixtures.initialize_encounter(admin, player, spec, [distance, 0, 1]))
     assert bindings == [126]
     assert result["binding"]["uid"] == 126
-    assert result["public"]["uid"] == 126
+    assert result["public"] == (None if distance > 24 else enemy)
+    assert result["setup_observation"] == enemy
+    assert result["setup_observer"] == ("administrator" if distance > 24 else "player")
+
+
+def test_distant_encounter_opening_requires_current_identity_and_undamaged_native_target():
+    expected = {
+        "uid": 126, "server_entity": "enemy-generation-1", "body": {"BipedSmall": {}},
+        "alignment": "Enemy", "health": 25, "dead": False,
+    }
+    target = {"binding": expected, "public": None}
+    observation = {"nearby_entities": []}
+    rows = [{"event": "combat_entity_bindings", "data": {"bindings": [deepcopy(expected)]}}]
+    fixtures.verify_encounter_opening([target], observation, rows)
+    assert observation == {"nearby_entities": []}
+    for change in (
+        {"uid": 127}, {"server_entity": "replacement"}, {"body": {"Humanoid": {}}},
+        {"alignment": "Npc"}, {"health": 24}, {"health": 0}, {"dead": True},
+    ):
+        latest = deepcopy(rows[0])
+        latest["data"]["bindings"][0].update(change)
+        with pytest.raises(RuntimeError, match="Designated target unavailable"):
+            fixtures.verify_encounter_opening([target], observation, [*rows, latest])
+    for bindings in ([], [deepcopy(expected), deepcopy(expected)]):
+        with pytest.raises(RuntimeError, match="Designated target unavailable"):
+            fixtures.verify_encounter_opening(
+                [target], observation, [*rows, {"event": "combat_entity_bindings", "data": {"bindings": bindings}}],
+            )
+    with pytest.raises(RuntimeError, match="lack native opening bindings"):
+        fixtures.verify_encounter_opening([target], observation, [])
+    target["public"] = {"uid": 126}
+    with pytest.raises(RuntimeError, match="Nearby designated target unavailable"):
+        fixtures.verify_encounter_opening([target], observation, rows)
+    observation["nearby_entities"] = [{"uid": 126, "health": {"current": 25, "dead": False}}]
+    fixtures.verify_encounter_opening([target], observation, rows)
 
 
 @pytest.mark.game

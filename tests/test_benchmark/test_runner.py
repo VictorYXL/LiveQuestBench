@@ -458,6 +458,8 @@ def test_episode_faults_preserve_evidence_and_cleanup(tmp_path, monkeypatch):
             async def run(self, context):
                 assert context.task == config.tasks[0].task
                 assert context.interface is not game
+                assert "Do not select Quit Game" in context.game_instructions
+                assert "final response without tool calls" in context.game_instructions
                 if fault == "execution":
                     raise RuntimeError("execution probe")
                 return AgentExit(AgentExitReason.RETURNED)
