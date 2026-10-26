@@ -2,6 +2,7 @@
 
 import asyncio
 import json
+from unittest.mock import AsyncMock
 
 import httpx
 import pytest
@@ -38,7 +39,8 @@ class ProbeClient(BaseLLMClient):
     ClientError("empty_response", usage={"output_tokens": 18}),
     json.JSONDecodeError("invalid", "{", 1),
 ])
-def test_transient_failures_retry_same_request_with_accounting(error):
+def test_transient_failures_retry_same_request_with_accounting(error, monkeypatch):
+    monkeypatch.setattr(asyncio, "sleep", AsyncMock())
     response = LLMResponse(content="done", finish_reason="stop", usage={"output_tokens": 2})
     client = ProbeClient([error, error, response])
     messages = [Message("user", "Observe")]

@@ -3,8 +3,12 @@
 import base64
 import copy
 import json
+import logging
+import math
 import re
+import time
 from collections.abc import Callable, Sequence
+from email.utils import parsedate_to_datetime
 
 import httpx
 
@@ -288,7 +292,23 @@ class ResponsesClient(BaseLLMClient):
             code = recognized_error_code(error, code)
         except (ValueError, TypeError):
             pass
-        raise ClientError(code, status=response.status_code)
+        retry_after = None
+        value = response.headers.get("retry-after")
+        if value is not None:
+            try:
+                try:
+                    retry_after = float(value)
+                except ValueError:
+                    deadline = parsedate_to_datetime(value)
+                    if deadline.tzinfo is None:
+                        raise ValueError("Retry-After date has no timezone")
+                    retry_after = max(0, deadline.timestamp() - time.time())
+                if not math.isfinite(retry_after) or retry_after < 0:
+                    raise ValueError("Invalid Retry-After delay")
+            except (TypeError, ValueError, OverflowError):
+                logging.getLogger(__name__).warning("Ignoring malformed Retry-After header")
+                retry_after = None
+        raise ClientError(code, status=response.status_code, retry_after_seconds=retry_after)
 
     async def send(
         self, url: str, body: dict[str, object], headers: dict[str, str],

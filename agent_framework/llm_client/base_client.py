@@ -48,12 +48,16 @@ class ClientError(RuntimeError):
         self, code: str, *, status: int | None = None,
         usage: dict[str, object] | None = None,
         response_details: dict[str, object] | None = None,
+        retry_after_seconds: float | None = None,
     ) -> None:
         super().__init__(f"Model request failed: {code} (HTTP status: {status})")
         self.code = code
         self.status = status
         self.usage = usage
         self.response_details = response_details
+        if retry_after_seconds is not None and (not math.isfinite(retry_after_seconds) or retry_after_seconds < 0):
+            raise ValueError("retry_after_seconds must be finite and nonnegative")
+        self.retry_after_seconds = retry_after_seconds
 
 
 @dataclass(frozen=True)
@@ -162,8 +166,16 @@ class BaseLLMClient(ABC):
                         "error_code": error.code if isinstance(error, ClientError) else None,
                         "http_status": error.status if isinstance(error, ClientError) else None,
                         "response_details": error.response_details if isinstance(error, ClientError) else None,
+                        "retry_after_seconds": error.retry_after_seconds if isinstance(error, ClientError) else None,
                     })
-            await asyncio.sleep(self.retry_backoff * 2 ** (attempt - 1))
+            delay = self.retry_backoff * 2 ** (attempt - 1)
+            if isinstance(error, ClientError):
+                if error.retry_after_seconds is not None:
+                    delay = max(delay, error.retry_after_seconds)
+                elif error.status == 429:
+                    delay = max(delay, 30 * 2 ** (attempt - 1))
+            logger.warning("Retrying LLM request in %.3fs (next attempt %s)", delay, attempt + 1)
+            await asyncio.sleep(delay)
         raise RuntimeError("No request attempt was made")
 
     @abstractmethod

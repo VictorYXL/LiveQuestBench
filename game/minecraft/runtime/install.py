@@ -13,6 +13,8 @@ import re
 import shutil
 import subprocess
 import tempfile
+import time
+from urllib.error import HTTPError, URLError
 from urllib.parse import urlparse
 from urllib.request import urlopen
 
@@ -77,7 +79,22 @@ def open_download(url: str, hosts: set[str]):
         or parsed.username or parsed.password or parsed.port not in (None, 443)
     ):
         raise ValueError("Download URL must use an approved HTTPS host.")
-    response = urlopen(url, timeout=60)
+    for attempt in range(1, 4):
+        try:
+            response = urlopen(url, timeout=60)
+            break
+        except (URLError, TimeoutError) as error:
+            reason = error.reason if isinstance(error, URLError) else error
+            retryable = (isinstance(error, HTTPError) and error.code in {408, 429, 500, 502, 503, 504}
+                         or isinstance(reason, (TimeoutError, ConnectionError)))
+            if not retryable or attempt == 3:
+                raise
+            if isinstance(error, HTTPError):
+                error.close()
+            delay = 10 * 2 ** (attempt - 1)
+            print(f"Download connection to {parsed.hostname} failed ({type(error).__name__}); "
+                  f"retry {attempt + 1}/3 in {delay}s", flush=True)
+            time.sleep(delay)
     final = urlparse(response.geturl())
     if final.scheme != "https" or final.hostname not in hosts:
         response.close()

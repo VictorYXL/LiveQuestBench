@@ -10,7 +10,7 @@ from pathlib import Path
 import pytest
 import httpx
 
-from agent_framework.llm_client.base_client import BaseLLMClient, ClientError, Message
+from agent_framework.llm_client.base_client import BaseLLMClient, ClientError, LLMResponse, Message
 from agent_framework.llm_client.github_copilot_client import GitHubCopilotClient
 from agent_framework.llm_client.openai_client import OpenAIClient
 from agent_framework.llm_client.vllm_client import VLLMClient
@@ -142,6 +142,56 @@ def test_provider_errors_are_sanitized_and_not_retried(error, expected):
         await client.close()
 
     asyncio.run(run())
+
+
+@pytest.mark.parametrize("value,expected", [
+    ("90", 90), ("Thu, 01 Jan 1970 00:01:30 GMT", 90),
+    ("nan", None), ("-1", None), ("invalid", None),
+])
+def test_retry_after_header_is_parsed_without_exposing_provider_content(monkeypatch, value, expected):
+    from agent_framework.llm_client import responses
+
+    monkeypatch.setattr(responses.time, "time", lambda: 0)
+    with pytest.raises(ClientError) as raised:
+        ResponsesClient.check_status(httpx.Response(429, headers={"Retry-After": value}))
+    assert raised.value.retry_after_seconds == expected
+
+
+@pytest.mark.parametrize("header,delay,cancel", [
+    ("90", 90, False), ("2", 2, False), (None, 30, False), ("90", 90, True),
+])
+def test_rate_limit_wait_is_bounded_by_attempts_and_cancellable(monkeypatch, header, delay, cancel):
+    sleeps = []
+
+    async def sleep(seconds):
+        sleeps.append(seconds)
+        if cancel:
+            raise asyncio.CancelledError
+
+    class Client(BaseLLMClient):
+        calls = 0
+
+        async def _request_impl(self, messages, **kwargs):
+            self.calls += 1
+            if self.calls == 1:
+                ResponsesClient.check_status(httpx.Response(
+                    429, headers={"Retry-After": header} if header is not None else {},
+                ))
+            return LLMResponse(content="done", finish_reason="stop")
+
+        async def close(self):
+            pass
+
+    monkeypatch.setattr(asyncio, "sleep", sleep)
+    client = Client(max_attempts=2, retry_backoff=0)
+    if cancel:
+        with pytest.raises(asyncio.CancelledError):
+            asyncio.run(client.chat([Message("user", "test")]))
+        assert client.calls == 1
+    else:
+        assert asyncio.run(client.chat([Message("user", "test")])).content == "done"
+        assert client.calls == 2
+    assert sleeps == [delay]
 
 
 @pytest.mark.live
