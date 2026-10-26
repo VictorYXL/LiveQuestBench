@@ -148,10 +148,10 @@ class VelorenGame(BaseGame[MotorInterface | StructuredInterface]):
                               rpg=any(key in self.fixture for key in ("native_site", "merchant", "contract")),
                               skills="sword_skill_points" in self.fixture)
         if self.fixture.get("encounters"):
-            observation["profile"] = ("veloren-native-market-expedition-tools" if "merchant" in self.fixture
-                                      else "veloren-native-fixed-tools-v4-combat")
+            observation["profile"] = ("veloren-native-market-expedition-tools-v2" if "merchant" in self.fixture
+                                      else "veloren-native-fixed-tools-v5-combat")
         if "contract" in self.fixture:
-            observation["profile"] = "veloren-native-contract-tools"
+            observation["profile"] = "veloren-native-contract-tools-v2"
         return observation
 
     async def _call_tool(self, name: str, arguments: dict) -> dict:

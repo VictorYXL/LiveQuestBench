@@ -9,11 +9,11 @@ import math
 from agent_framework.utils.tools import Tool
 
 
-PROFILE_ID = "veloren-native-fixed-tools-v2"
+PROFILE_ID = "veloren-native-fixed-tools-v3"
 logger = logging.getLogger(__name__)
 FIELDS = (
     "session_id", "tick", "position", "velocity", "on_ground", "survival", "inventory",
-    "nearby_entities", "known_recipes", "nearby_interactable_sprites",
+    "nearby_entities", "known_recipes", "nearby_interactable_sprites", "local_geometry",
 )
 SPECS = {
     "RespawnTool": (
@@ -192,7 +192,7 @@ def project(observation: dict, *, rpg: bool = False, skills: bool = False) -> di
         result.update(skill_tree=observation["skill_tree"], auxiliary_abilities=observation["auxiliary_abilities"])
     if rpg:
         result.update(
-            profile="veloren-native-settlement-tools",
+            profile="veloren-native-settlement-tools-v2",
             dialogue=public_dialogue(observation["dialogue"]),
             dialogue_markers=[public_dialogue(row) for row in observation["dialogue_markers"]],
             pending_trade=public_trade(observation["social_and_trade"]["pending_trade"]),

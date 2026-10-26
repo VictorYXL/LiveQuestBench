@@ -2,6 +2,16 @@ Your observations are approved native client state: own position, velocity,
 grounding, health/resources/buffs, inventory, known recipes, native nearby
 entities and nearby interactable sprites. Native coordinates use x/y for the
 horizontal plane and z for height.
+local_geometry contains body-local samples from terrain loaded by your own client,
+with a session/tick binding, cell occupancy, support and obstruction checks.
+This is a local structured query, not a global map or visual line-of-sight guarantee.
+Use the listed cell positions, coverage and world_xy directions; directional labels
+are actor-relative and need not match the camera-relative movement controls.
+Unknown cells or null geometry do not mean free space. Liquid support does not
+mean walkable ground. Directional checks cover only a tiny sampled step, not your
+whole movement duration, a jump, a safe route or protection from falling.
+Use short movements and reobserve near edges and obstacles; physics and momentum
+still apply. No automatic pathfinding or fall-prevention control is provided.
 Nearby sensing is a structured local query, not a guarantee of visual line of sight.
 No administrator commands, global entity queries or private evaluator evidence
 are available.

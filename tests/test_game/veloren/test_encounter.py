@@ -369,10 +369,24 @@ def test_combat_does_not_override_reserve_or_destination_requirements():
 
 def test_public_projection_never_contains_private_encounter_registry():
     row = {name: {} for name in FIELDS}
+    row["local_geometry"] = {
+        "schema_version": "1.0", "scope": "body_local_loaded_terrain",
+        "binding": {"tick": 7, "session_id": "test"},
+        "geometry": {
+            "cells": [{"position": [0, 0, 0], "occupancy": "unknown"}],
+            "self_column": {"support": "known_unsupported"},
+        },
+    }
     row["private_encounter_evidence"] = {"secret": True}
     row["private_motion_evidence"] = {"secret": True}
     assert "private_encounter_evidence" not in project(row)
     assert "private_motion_evidence" not in project(row)
+    assert project(row)["local_geometry"] == row["local_geometry"]
+    row["local_geometry"]["geometry"] = None
+    assert project(row)["local_geometry"]["geometry"] is None
+    del row["local_geometry"]
+    with pytest.raises(ValueError, match="local_geometry"):
+        project(row)
 
 
 def test_public_combat_tools_are_bounded_and_never_autoaim():
