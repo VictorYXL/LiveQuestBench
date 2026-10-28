@@ -190,12 +190,19 @@ def public_trade(row: dict | None) -> dict | None:
     return result
 
 
-def project(observation: dict, *, rpg: bool = False, skills: bool = False, peer: bool = False) -> dict:
+def project(observation: dict, *, rpg: bool = False, skills: bool = False, peer: bool = False,
+            energy: bool = False) -> dict:
+    """Project ordinary player state; public_energy fixtures also expose native HUD energy."""
     missing = set(FIELDS) - observation.keys()
     if missing:
         raise ValueError(f"Native observation lacks required fields: {sorted(missing)}")
     result = {"profile": PROFILE_ID, "coordinate_frame": "native x/y horizontal, z up",
               **{name: observation[name] for name in FIELDS}}
+    if energy:
+        native_energy = observation.get("energy")
+        if not isinstance(native_energy, dict) or {"current", "maximum", "fraction"} - native_energy.keys():
+            raise ValueError("Native observation lacks current player energy")
+        result["energy"] = {key: native_energy[key] for key in ("current", "maximum", "fraction")}
     if skills:
         result.update(skill_tree=observation["skill_tree"], auxiliary_abilities=observation["auxiliary_abilities"])
     if rpg or peer:

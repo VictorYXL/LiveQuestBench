@@ -64,11 +64,12 @@ def validate_fixture(value: object) -> dict:
     required = {"world_path", "world_seed", "time_of_day", "day_length", "calendar", "player_state"}
     optional = {"blocks", "stations", "supplies", "recipe_groups", "recipes", "encounters",
                 "motion_evidence", "glide_evidence", "platform", "native_site", "merchant",
-                "sword_skill_points", "companion", "contract", "respawn_at_start", "route_evidence"}
+                "sword_skill_points", "companion", "contract", "respawn_at_start", "route_evidence",
+                "public_energy"}
     if not isinstance(value, dict) or required - value.keys() or value.keys() - required - optional:
         raise ValueError(f"Veloren fixture requires exactly {sorted(required)} plus optional {sorted(optional)}")
     fixture = value
-    for flag in ("motion_evidence", "glide_evidence", "respawn_at_start", "route_evidence"):
+    for flag in ("motion_evidence", "glide_evidence", "respawn_at_start", "route_evidence", "public_energy"):
         if flag in fixture and type(fixture[flag]) is not bool:
             raise ValueError(f"{flag} must be boolean")
     if "sword_skill_points" in fixture and (

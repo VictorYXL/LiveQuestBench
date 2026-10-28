@@ -152,7 +152,8 @@ class VelorenGame(BaseGame[MotorInterface | StructuredInterface]):
         session = self._check_running()
         observation = project(await session.request("observe"),
                               rpg=any(key in self.fixture for key in ("native_site", "merchant", "contract")),
-                              skills="sword_skill_points" in self.fixture, peer=self.team_role is not None)
+                              skills="sword_skill_points" in self.fixture, peer=self.team_role is not None,
+                              energy=self.fixture.get("public_energy", False))
         if self.fixture.get("encounters"):
             observation["profile"] = ("veloren-native-market-expedition-tools" if "merchant" in self.fixture
                                       else "veloren-native-fixed-tools-combat")
