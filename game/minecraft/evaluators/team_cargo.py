@@ -142,6 +142,8 @@ def _item_activity(before: Path, after: Path, player: UUID) -> dict:
 
 
 def team_efficiency(before: Path, after: Path, players: dict[str, UUID]) -> dict:
+    from game.minecraft.evaluators.threat_targets import target_diagnostics
+
     result = {}
     for role, player in players.items():
         first = custom_statistics(before / role, player)
@@ -172,6 +174,9 @@ def team_efficiency(before: Path, after: Path, players: dict[str, UUID]) -> dict
         }
     return {
         "participants": result,
+        "enemy_targeting": target_diagnostics(
+            before / next(iter(players)), after / next(iter(players)), players,
+        ),
         "semantics": "Raw native elapsed ticks, travel and health-loss statistics. "
                      "Time includes deliberation and finalization; not first goal-achievement time. "
                      "Movement-category distance is not cargo-weighted transport; the separate optional "

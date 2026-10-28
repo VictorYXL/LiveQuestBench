@@ -142,6 +142,12 @@ remain unchanged. Omit it to preserve ordinary world-spawn behavior.
 
 ### Choose scoring that matches the goal
 
+Minecraft teams opting into `native_efficiency` report native resource, travel
+and damage diagnostics separately from success. Fixtures may additionally
+include the passive `livequest-target-trace.json` observer for skeleton AI
+targets. Its counts are sampled enemy observations, not attack counts, targeted
+seconds or evidence that a teammate causally prevented damage.
+
 | Evaluator | Suitable goals | Important limit |
 | --- | --- | --- |
 | `inventory` | Final item counts or net increases | Possession does not prove crafting or a particular pickup |
