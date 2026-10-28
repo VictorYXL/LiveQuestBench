@@ -51,7 +51,8 @@ def test_published_additions_have_matching_admitted_tracks(game, tmp_path):
             for mode in ("structured_tools", "visual_motor")
         ]
         assert (left.task_type, right.task_type) == ("structured_tool", "visual_motor")
-        for field in ("id", "task", "fixture", "participants", "evaluator",
+        # Track-specific control manuals may differ; native goals and scoring may not.
+        for field in ("id", "fixture", "participants", "evaluator",
                       "evaluator_parameters", "capabilities", "time_limit_seconds"):
             assert getattr(left, field) == getattr(right, field), (name, field)
         for task in (left, right):
