@@ -21,7 +21,15 @@ def player_damage(event: dict, source: dict, target: dict) -> bool:
 
 
 def validate_encounter(*, roles: list[str], companion: dict | None = None,
-                       no_death: bool = True, **state) -> None:
+                       no_death: bool = True, required_attack: dict | None = None, **state) -> None:
+    if required_attack is not None:
+        if (not isinstance(required_attack, dict)
+                or set(required_attack) - {"source", "tool", "lethal", "ability"}
+                or {"source", "tool", "lethal"} - required_attack.keys()
+                or required_attack["source"] not in ("Melee", "Projectile", "Beam")
+                or required_attack["tool"] not in ("Bow", "Sword", "Sceptre", "Staff")
+                or type(required_attack["lethal"]) is not bool):
+            raise ValueError("required_attack requires native source, tool and boolean lethal")
     if type(no_death) is not bool:
         raise ValueError("no_death must be boolean")
     if (not isinstance(roles, list) or not roles
@@ -39,9 +47,11 @@ def validate_encounter(*, roles: list[str], companion: dict | None = None,
 def _combat_checks(
     initial: dict, final: dict, *, roles: list[str], require_death: bool,
     companion: dict | None = None, no_death: bool = True,
+    required_attack: dict | None = None,
     _contributors: list[dict] | None = None, **state,
 ) -> dict:
-    validate_encounter(roles=roles, companion=companion, no_death=no_death, **state)
+    validate_encounter(roles=roles, companion=companion, no_death=no_death,
+                       required_attack=required_attack, **state)
     first, last = (row["private_encounter_evidence"] for row in (initial, final))
     registry = first["registry"]
     if (first["schema"] != "livequest-encounter/1" or last["schema"] != first["schema"]
@@ -64,7 +74,7 @@ def _combat_checks(
             raise ValueError("Invalid native event schema")
         if not previous < event["sequence"] <= last["through_sequence"]:
             raise ValueError("Native event sequence is not strictly ordered within the boundary")
-        if event["event"] not in ("health_effect_applied", "native_entity_death"):
+        if event["event"] not in ("health_effect_applied", "native_entity_death", "attack_health_effect_queued"):
             raise ValueError("Unsupported encounter evidence event")
         previous = event["sequence"]
 
@@ -94,6 +104,16 @@ def _combat_checks(
                        "native_death": bool(killed), "player_damage_events": len(damage),
                        "damage": sum(row["data"]["before"] - row["data"]["after"] for row in damage),
                        "passed": bool(damage) and (bool(killed) or not require_death)})
+        if required_attack is not None:
+            from game.veloren.evaluators.attack import qualifying_attack
+            qualified = [row for row in damage if qualifying_attack(events, row, required_attack)]
+            lethal = [row for row in qualified if row["data"]["before"] > 0 and row["data"]["after"] <= 0]
+            checks.append({
+                "kind": "required_attack", "role": target["role"],
+                "qualifying_hits": len(qualified), "qualifying_lethal_hits": len(lethal),
+                "requirement": required_attack,
+                "passed": bool(qualified) and (not required_attack["lethal"] or bool(killed) and bool(lethal)),
+            })
     if companion is not None:
         registered = registry["companion"]
         pet = registered["binding"]
@@ -142,7 +162,10 @@ def _combat_checks(
                          + ("no player death, and " if no_death else
                             "player death measured separately, and ")
                          + "simultaneous terminal requirements. "
-                         "No last-blow requirement; disappearance and loot do not prove death. "
+                         + ("The required native attack must cause the lethal health change. "
+                            if required_attack is not None and required_attack["lethal"]
+                            else "No last-blow requirement. ")
+                         + "Disappearance and loot do not prove death. "
                          "Evidence ends at post-gate client snapshot, not an atomic server pause."
                          + (" Original owned companion must never die and remain alive, owned, grouped and "
                             "within the declared terminal distance; no required support input." if companion else "")}

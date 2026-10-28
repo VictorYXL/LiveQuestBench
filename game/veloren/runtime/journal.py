@@ -51,7 +51,7 @@ def snapshot_rows(
                     retained[sequence] = {**row, "data": {**row["data"], "bindings": changed}}
             elif contracts or after_sequence is not None and sequence > after_sequence and (
                 row["event"] == "native_entity_death"
-                or encounters and row["event"] == "health_effect_applied"
+                or encounters and row["event"] in ("health_effect_applied", "attack_health_effect_queued")
             ):
                 retained[sequence] = row
             last = row

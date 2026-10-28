@@ -300,7 +300,8 @@ class Session:
                     "through_sequence": rows[-1]["sequence"],
                     "equipment_samples": equipment_samples,
                     "events": [row for row in rows if row["sequence"] > self.encounter_registry["opening_sequence"]
-                               and row["event"] in ("health_effect_applied", "native_entity_death")],
+                               and row["event"] in ("health_effect_applied", "native_entity_death",
+                                                    "attack_health_effect_queued")],
                 }
                 if "companion" in self.encounter_registry:
                     bindings = next(row["data"]["bindings"] for row in reversed(rows)
