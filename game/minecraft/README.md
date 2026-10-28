@@ -135,6 +135,11 @@ starting point is safe and the resources and target geometry are present.
 Keep a source manifest and confirm redistribution rights. Do not alter the
 world during measured play to make the task succeed.
 
+An optional `fixture.player_state.respawn_position: [x, y, z]` initializes a
+native forced spawn point in the starting dimension. This avoids world-spawn
+surface selection in roofed scenarios; native death, item loss and respawn
+remain unchanged. Omit it to preserve ordinary world-spawn behavior.
+
 ### Choose scoring that matches the goal
 
 | Evaluator | Suitable goals | Important limit |

@@ -26,8 +26,14 @@ class PlayerState:
     experience_level: int = 0
     inventory: list[dict] = field(default_factory=list)
     effects: list[dict] = field(default_factory=list)
+    respawn_position: tuple[int, int, int] | None = None
 
     def __post_init__(self) -> None:
+        if self.respawn_position is not None and (
+            len(self.respawn_position) != 3
+            or any(type(value) is not int for value in self.respawn_position)
+        ):
+            raise ValueError("Respawn position requires three integer block coordinates")
         if len(self.position) != 3 or any(
             isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value)
             for value in (*self.position, self.yaw, self.pitch, self.health, self.saturation)
@@ -80,7 +86,7 @@ class PlayerState:
 
     def nbt(self, player_uuid: UUID) -> Compound:
         parts = [(player_uuid.int >> shift) & 0xFFFFFFFF for shift in (96, 64, 32, 0)]
-        return Compound({
+        result = Compound({
             "DataVersion": Int(3700),
             "UUID": IntArray([part if part < 2**31 else part - 2**32 for part in parts]),
             "Pos": List[Double](self.position),
@@ -115,6 +121,16 @@ class PlayerState:
                 for effect in self.effects
             ]),
         })
+        if self.respawn_position is not None:
+            result.update({
+                "SpawnX": Int(self.respawn_position[0]),
+                "SpawnY": Int(self.respawn_position[1]),
+                "SpawnZ": Int(self.respawn_position[2]),
+                "SpawnDimension": String(self.dimension),
+                "SpawnForced": Byte(1),
+                "SpawnAngle": Float(self.yaw),
+            })
+        return result
 
     def write(self, world: Path, player_uuid: UUID, *, replace: bool = False) -> None:
         directory = world / "playerdata"
@@ -126,6 +142,10 @@ class PlayerState:
 
     def verify(self, actual: Compound, player_uuid: UUID) -> None:
         expected = self.nbt(player_uuid)
+        if self.respawn_position is not None:
+            for key in ("SpawnX", "SpawnY", "SpawnZ", "SpawnDimension", "SpawnForced", "SpawnAngle"):
+                if actual.get(key) != expected[key]:
+                    raise RuntimeError(f"Player initialization verification failed: {key}")
         if "UUID" not in actual or list(actual["UUID"]) != list(expected["UUID"]):
             raise RuntimeError("Player initialization verification failed: UUID")
         for key in ("Dimension", "playerGameType", "foodLevel", "XpLevel", "SelectedItemSlot"):
