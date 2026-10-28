@@ -15,13 +15,16 @@ def validate_state(
     held_item: str | None = None, min_food: int | None = None,
     statistics: dict[str, int] | None = None, min_health: float = 1,
     structure: dict | None = None, action_sequence: list[str] | None = None, no_death: bool = False,
+    gamemode: str | None = None,
 ) -> None:
     if not any(value is not None for value in (
-        inventory, position, held_item, min_food, statistics, structure, action_sequence,
+        inventory, position, held_item, min_food, statistics, structure, action_sequence, gamemode,
     )):
         raise ValueError("State evaluation requires a goal predicate")
     if type(no_death) is not bool:
         raise ValueError("no_death must be boolean")
+    if gamemode is not None and gamemode not in ("survival", "creative", "adventure", "spectator"):
+        raise ValueError("gamemode must be a native Minecraft mode")
     if structure is not None:
         from game.minecraft.evaluators.structure import validate_config
         validate_config(structure)
@@ -95,10 +98,11 @@ def evaluate_state(
     min_food: int | None = None, statistics: dict[str, int] | None = None,
     min_health: float = 1,
     structure: dict | None = None, action_sequence: list[str] | None = None, no_death: bool = False,
+    gamemode: str | None = None,
 ) -> dict:
     validate_state(inventory=inventory, position=position, held_item=held_item,
                    min_food=min_food, statistics=statistics, min_health=min_health,
-                   structure=structure, action_sequence=action_sequence, no_death=no_death)
+                   structure=structure, action_sequence=action_sequence, no_death=no_death, gamemode=gamemode)
     native = nbtlib.load(after / "playerdata" / f"{player}.dat")
     if int(native["DataVersion"]) != 3700:
         raise ValueError("State evaluation requires Minecraft 1.20.4 player data")
@@ -106,6 +110,11 @@ def evaluate_state(
     if not math.isfinite(health):
         raise ValueError("Invalid native health")
     checks = [{"kind": "health", "actual": health, "minimum": min_health, "passed": health >= min_health}]
+    if gamemode is not None:
+        from game.minecraft.init_player_state import MODES
+        actual = int(native["playerGameType"])
+        checks.append({"kind": "gamemode", "actual": actual, "expected": gamemode,
+                       "passed": actual == MODES[gamemode]})
     if no_death:
         first = custom_statistics(before, player).get("minecraft:deaths", 0)
         last = custom_statistics(after, player).get("minecraft:deaths", 0)
