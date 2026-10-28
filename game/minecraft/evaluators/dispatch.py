@@ -77,7 +77,8 @@ def evaluate_dispatch(before: Path, after: Path, player: UUID, **state) -> dict:
     result["semantics"] += (
         " Passive output increases and fuel starts at the two original furnace positions provide native timestamps; "
         "production after furnace relocation is not covered by these observers. "
-        "Empty-input burn ticks are a lower bound on wasted fuel time, not all possible blocked-furnace waste. "
+        "Empty-input burn ticks count sampled burning/empty-input states, including batch-completion boundaries; "
+        "they are not an exact waste measure and do not cover all blocked-furnace losses. "
         "Fuel labels are last sampled slot contents, not proven consumed-item identities; missing labels are unknown. "
         "Native mined-block deltas expose replacement gathering, not attribution of collected items to fuel. "
         "Serial production, furnace relocation and replacement gathering are legal."
