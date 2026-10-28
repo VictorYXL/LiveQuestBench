@@ -1,0 +1,93 @@
+id: lookout_and_pathfinder
+game: minecraft
+task_type: structured_tool
+capabilities:
+  primary:
+  - peer_cooperation
+  secondary:
+  - information_adaptation
+  - spatial_interaction
+task: Together recover the original Canyon Parcel from a chest in one of the three coloured corridors
+  and reunite alive, standing still on the yellow exit pad beyond the canyon. The canyon is roughly 45
+  blocks long. Alpha starts on the lookout walkway; Beta starts near the three coloured entrances. The
+  lookout has two viewing angles and stairs back to ground. You may communicate, exchange roles or search
+  independently; no particular messages or division of work are required. Native recovery is allowed.
+  Release controls before finishing with a text answer.
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/lookout_and_pathfinder
+  instance: 1.20.4
+  difficulty: normal
+participants:
+- id: Alpha
+  player_state:
+    position:
+    - 25.5
+    - 82
+    - -16.5
+    dimension: minecraft:overworld
+    yaw: -90
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+    - slot: 0
+      item: bread
+      count: 8
+- id: Beta
+  player_state:
+    position:
+    - 0.5
+    - 72
+    - 0.5
+    dimension: minecraft:overworld
+    yaw: -90
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+    - slot: 0
+      item: bread
+      count: 8
+evaluator:
+  name: team
+  parameters:
+    all:
+      position: &id001
+        target:
+        - 44.5
+        - 72
+        - 0.5
+        horizontal_tolerance: 3
+        vertical_tolerance: 0.5
+        max_speed: 0.1
+    cargo:
+      cargo:
+      - id: canyon_parcel
+        item: minecraft:paper
+        chest:
+        - 37
+        - 72
+        - 10
+      position: *id001
+    native_efficiency: true
+tools:
+- MoveTool
+- LookAtPositionTool
+- SelectTool
+- StopTool
+- JumpTool
+- DigTool
+- PlaceTool
+- UseHeldItemTool
+- InspectContainerTool
+- TakeContainerItemTool
+- RespawnTool
+- BroadcastTool
+- ChatTool
