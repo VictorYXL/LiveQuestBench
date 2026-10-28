@@ -85,6 +85,10 @@ def create_binding(
         inspect.signature(evaluate_cargo).bind(Path(), Path(), None, **parameters)
         validate_cargo(**parameters)
         score = evaluate_cargo
+    elif evaluator == "extraction":
+        from game.minecraft.evaluators.extraction import evaluate_extraction, validate_extraction
+        validate_extraction(**parameters)
+        score = evaluate_extraction
     elif evaluator == "route_transfer":
         from game.minecraft.evaluators.route_transfer import evaluate_route, validate_route, verify_layout
         validate_route(**parameters)

@@ -1,0 +1,70 @@
+id: tool_wear_extraction
+game: minecraft
+task_type: visual_motor
+task: Return to the yellow quarry marker carrying 12 raw iron, 4 raw gold and 8 redstone dust. Also retain 3 iron
+  ingots and an iron pickaxe with at least 20 uses remaining. Your starting iron pickaxe has only 12 uses left;
+  a stone pickaxe and workshop supplies are provided. The three exposed veins are within about 30 blocks of camp.
+  Extra iron and legal repairs are allowed. Finish alive, grounded and still.
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/tool_wear_extraction
+  instance: 1.20.4
+  difficulty: easy
+  player_state:
+    position:
+    - 0.5
+    - 72
+    - 0.5
+    dimension: minecraft:overworld
+    yaw: 0
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+    - slot: 0
+      item: iron_pickaxe
+      count: 1
+      damage: 238
+    - slot: 1
+      item: stone_pickaxe
+      count: 1
+    - slot: 2
+      item: iron_ingot
+      count: 3
+    - slot: 3
+      item: oak_log
+      count: 2
+    - slot: 4
+      item: coal
+      count: 2
+    - slot: 5
+      item: bread
+      count: 8
+evaluator:
+  name: extraction
+  parameters:
+    position:
+      target:
+      - 0.5
+      - 72
+      - 0.5
+      horizontal_tolerance: 3
+      vertical_tolerance: 1
+      max_speed: 0.1
+    inventory:
+    - item: raw_iron
+      min_count: 12
+    - item: raw_gold
+      min_count: 4
+    - item: redstone
+      min_count: 8
+    - item: iron_ingot
+      min_count: 3
+    minimum_pickaxe_uses: 20
+capabilities:
+  primary:
+  - planning_resources
+  secondary: []
