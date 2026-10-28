@@ -138,8 +138,9 @@ def validate_state(
     marker_arrival: dict | None = None,
     sword_skills: list[str] | None = None, auxiliary_ability: dict[str, int] | None = None,
 ) -> None:
-    if finite(min_health, "min_health") <= 0:
-        raise ValueError("min_health must be positive")
+    """A zero floor requires strictly positive health; the legacy default stays one."""
+    if finite(min_health, "min_health") < 0:
+        raise ValueError("min_health must be nonnegative")
     if wielding is not None and type(wielding) is not bool:
         raise ValueError("wielding must be boolean")
     if sword_skills is not None and (
@@ -289,7 +290,7 @@ def state_checks(
     checks = []
     hp = finite(final["survival"]["health"]["current"], "health")
     checks.append({"kind": "health", "actual": hp, "minimum": min_health,
-                   "passed": hp >= min_health and final["survival"].get("dead") is not True
+                   "passed": hp > 0 and hp >= min_health and final["survival"].get("dead") is not True
                    and final["survival"]["health"].get("dead") is not True})
     if wielding is not None:
         if type(final["wielding"]) is not bool:

@@ -108,6 +108,23 @@ def test_state_checks_require_simultaneous_endpoint_conditions():
         assert not state_checks(row, final, **requirements)["success"]
 
 
+def test_alive_only_health_floor_accepts_native_fraction_but_preserves_legacy_default():
+    row = {"survival": {"health": {"current": 0.390625, "dead": False}}}
+    validate_state(min_health=0)
+    assert state_checks(row, row, min_health=0)["success"]
+    assert not state_checks(row, row)["success"]
+    with pytest.raises(ValueError, match="nonnegative"):
+        validate_state(min_health=-1)
+    for survival in (
+        {"health": {"current": 0, "dead": False}},
+        {"health": {"current": -0.1, "dead": False}},
+        {"health": {"current": 0.390625, "dead": True}},
+        {"health": {"current": 0.390625, "dead": False}, "dead": True},
+    ):
+        final = {"survival": survival}
+        assert not state_checks(row, final, min_health=0)["success"]
+
+
 @pytest.mark.parametrize("mode", ["structured_tools", "visual_motor"])
 def test_glide_return_accepts_both_sides_of_the_visible_arch(mode):
     from benchmark.config import load_task
