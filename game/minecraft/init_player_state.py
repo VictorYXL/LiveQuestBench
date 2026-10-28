@@ -164,5 +164,12 @@ class PlayerState:
         requested_effects = sorted(
             (row["id"], row["amplifier"], row["duration"]) for row in self.effects
         )
-        if observed_effects != requested_effects:
+        # Native players still tick while the world is frozen for client readiness.
+        if (len(observed_effects) != len(requested_effects)
+                or any(
+                    observed[:2] != requested[:2]
+                    or (observed[2] != -1 if requested[2] == -1
+                        else not 0 < observed[2] <= requested[2])
+                    for observed, requested in zip(observed_effects, requested_effects)
+                )):
             raise RuntimeError("Player initialization verification failed: active_effects")
