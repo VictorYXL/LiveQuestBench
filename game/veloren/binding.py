@@ -68,6 +68,12 @@ def create_binding(
         expected |= solid_voxels({**fixture, "blocks": []})
         if not fixture.get("route_evidence") or solid_voxels(fixture) != expected:
             raise ValueError("Route-transfer fixture must match the scored layout and enable native evidence")
+    elif evaluator == "itinerary":
+        from game.veloren.evaluators.itinerary import evaluate_itinerary, validate_itinerary
+        evaluators[evaluator] = evaluate_itinerary
+        validators[evaluator] = validate_itinerary
+        if not fixture.get("route_evidence"):
+            raise ValueError("Itinerary scoring requires native route evidence")
     if evaluator not in evaluators:
         raise ValueError(f"Unknown Veloren evaluator: {evaluator}")
     score = evaluators[evaluator]
