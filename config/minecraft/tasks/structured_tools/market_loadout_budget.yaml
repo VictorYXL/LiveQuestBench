@@ -1,0 +1,83 @@
+id: market_loadout_budget
+game: minecraft
+task_type: structured_tool
+task: 'Return to the yellow market stand with a shield, an iron pickaxe, at least 8 cooked porkchops and at least
+  4 emeralds. Workshop supplies and a table are provided. The three nearby merchants offer: farmer buys 20 wheat
+  for 1 emerald and sells 6 bread for 1; toolsmith buys 15 coal for 1 emerald and sells an iron pickaxe for 8 or
+  an optional iron axe for 7; butcher sells 5 cooked porkchops for 1 emerald. All prices are per exchange. Further
+  lawful gathering is allowed. Finish alive, grounded and still.'
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/market_loadout_budget
+  instance: 1.20.4
+  difficulty: easy
+  player_state:
+    position:
+    - 0.5
+    - 72
+    - 0.5
+    dimension: minecraft:overworld
+    yaw: 0
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+    - slot: 0
+      item: emerald
+      count: 12
+    - slot: 1
+      item: coal
+      count: 15
+    - slot: 2
+      item: wheat
+      count: 20
+    - slot: 3
+      item: iron_ingot
+      count: 1
+    - slot: 4
+      item: oak_log
+      count: 2
+    - slot: 5
+      item: bread
+      count: 8
+evaluator:
+  name: market
+  parameters:
+    position:
+      target:
+      - 0.5
+      - 72
+      - 0.5
+      horizontal_tolerance: 3
+      vertical_tolerance: 1
+      max_speed: 0.1
+    bundles:
+    - - item: shield
+        min_count: 1
+      - item: iron_pickaxe
+        min_count: 1
+      - item: cooked_porkchop
+        min_count: 8
+      - item: emerald
+        min_count: 4
+capabilities:
+  primary:
+  - planning_resources
+  secondary: []
+tools:
+- MoveTool
+- LookAtPositionTool
+- SelectTool
+- StopTool
+- JumpTool
+- DigTool
+- PlaceTool
+- UseHeldItemTool
+- RespawnTool
+- QueryCraftRecipeTool
+- CraftItemTool
+- InspectMerchantTool
+- TradeTool

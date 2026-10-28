@@ -1,0 +1,27 @@
+{
+  "game": "minecraft",
+  "version": "1.20.4",
+  "task": "market_loadout_budget",
+  "provenance": "Locally authored native save on the project's reusable island substrate.",
+  "initialization": "Terrain, stock and signs initialized before readiness; ordinary survival after readiness.",
+  "files": {
+    "DIM-1/data/raids.dat": "5d70af1e31fa1d09727363dbe4097cafd41b818ca7ee98100866a2ae291809a1",
+    "DIM1/data/raids_end.dat": "5d70af1e31fa1d09727363dbe4097cafd41b818ca7ee98100866a2ae291809a1",
+    "data/chunks.dat": "403911e755e0852a5338546744dc6beaae1ddb48e9629d90e378eb73aa6c42c0",
+    "data/command_storage_gameagent.dat": "b09a0442758eae78e195d8307998db158ec1dadd612f80e1506b3845bbbadfef",
+    "data/raids.dat": "5d70af1e31fa1d09727363dbe4097cafd41b818ca7ee98100866a2ae291809a1",
+    "entities/r.-1.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "entities/r.-1.0.mca": "a884a7c29d152d40ef06509062dd6858d6bb46e65a7459d8904b3bf9b087d78a",
+    "entities/r.0.-1.mca": "2e206fc83afb2df05726d1d8030f74f7a6de53327e06b1298de36c9a5d2e43d8",
+    "entities/r.0.0.mca": "c9a3041668ffefa7fa2c1c94547bedcfb6f8107c38485cb618312d38404a3d90",
+    "level.dat": "de6c6b438ef3745d50f0f8f72f8794445df388f36187191a4ace4057da528e84",
+    "poi/r.-1.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "poi/r.-1.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "poi/r.0.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "poi/r.0.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "region/r.-1.-1.mca": "74127d1008d44384a63f736beb2c02064ea0ada027f5ccc55909360926a7a77c",
+    "region/r.-1.0.mca": "11e39e732d7b7b93cdc6936bc80fc830813e0a66576c1341b4a5e6e574894dba",
+    "region/r.0.-1.mca": "b7356648da96b1d415ba4aa0573b092aee0d7b97334b93fc6f475e84e10b5880",
+    "region/r.0.0.mca": "6271afecf9acd9aa492ea24ff2484cf00c377b93eb3a649fe83748159cef54e3"
+  }
+}
