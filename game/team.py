@@ -213,8 +213,10 @@ def create_team_binding(task: TaskConfig, output: Path, *, headless: bool,
             raise ValueError("Original team chest cargo requires Minecraft")
         validate_cargo(**parameters["cargo"])
     if "native_efficiency" in parameters:
-        if task.game != "minecraft" or parameters["native_efficiency"] is not True:
-            raise ValueError("Native team efficiency requires Minecraft and true")
+        if parameters["native_efficiency"] is not True:
+            raise ValueError("Native team efficiency must be true")
+        if task.game == "veloren" and not task.fixture.get("route_evidence"):
+            raise ValueError("Veloren team efficiency requires native route evidence")
     if "crossing" in parameters:
         from game.minecraft.evaluators.crossing import evaluate_crossing, validate_crossing
         if task.game != "minecraft":
@@ -351,10 +353,14 @@ def create_team_binding(task: TaskConfig, output: Path, *, headless: bool,
             "semantics": "native_player_deaths_summed_across_participants",
         }}
         if parameters.get("native_efficiency"):
-            from game.minecraft.evaluators.team_cargo import team_efficiency
-            result["native_efficiency"] = team_efficiency(
-                before, after, {role: member.game.player_uuid for role, member in members.items()},
-            )
+            if task.game == "minecraft":
+                from game.minecraft.evaluators.team_cargo import team_efficiency
+                result["native_efficiency"] = team_efficiency(
+                    before, after, {role: member.game.player_uuid for role, member in members.items()},
+                )
+            else:
+                from game.veloren.evaluators.team_efficiency import team_efficiency
+                result["native_efficiency"] = team_efficiency(before, after, list(members))
         return result
 
     return GameBinding(game, unavailable, evaluate, verify, metrics)
