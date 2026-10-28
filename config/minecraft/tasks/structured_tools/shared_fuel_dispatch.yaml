@@ -1,0 +1,90 @@
+id: shared_fuel_dispatch
+game: minecraft
+task_type: structured_tool
+task: Return to the yellow dispatch marker with 8 iron ingots, 8 cooked beef and 8 glass, retaining at least 1 coal
+  and 2 oak planks. Two furnaces are about 18 blocks apart around camp. Fuel burns continuously; all production
+  orders and reserves must be satisfied together. Extra timber can be gathered at the grove about 35 blocks beyond
+  camp. Any legal production schedule is allowed. Finish alive, grounded and still.
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/shared_fuel_dispatch
+  instance: 1.20.4
+  difficulty: easy
+  player_state:
+    position:
+    - 0.5
+    - 72
+    - 0.5
+    dimension: minecraft:overworld
+    yaw: 0
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+    - slot: 0
+      item: stone_pickaxe
+      count: 1
+    - slot: 1
+      item: stone_axe
+      count: 1
+    - slot: 2
+      item: raw_iron
+      count: 8
+    - slot: 3
+      item: beef
+      count: 8
+    - slot: 4
+      item: sand
+      count: 8
+    - slot: 5
+      item: coal
+      count: 3
+    - slot: 6
+      item: oak_planks
+      count: 8
+    - slot: 7
+      item: bread
+      count: 8
+evaluator:
+  name: dispatch
+  parameters:
+    position:
+      target:
+      - 0.5
+      - 72
+      - 0.5
+      horizontal_tolerance: 3
+      vertical_tolerance: 1
+      max_speed: 0.1
+    inventory:
+    - item: iron_ingot
+      min_count: 8
+    - item: cooked_beef
+      min_count: 8
+    - item: glass
+      min_count: 8
+    - item: coal
+      min_count: 1
+    - item: oak_planks
+      min_count: 2
+capabilities:
+  primary:
+  - planning_resources
+  secondary: []
+tools:
+- MoveTool
+- LookAtPositionTool
+- SelectTool
+- StopTool
+- JumpTool
+- DigTool
+- PlaceTool
+- UseHeldItemTool
+- RespawnTool
+- QueryCraftRecipeTool
+- CraftItemTool
+- InspectFurnaceTool
+- FurnaceClickTool

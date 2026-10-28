@@ -76,6 +76,11 @@ def create_binding(
     elif evaluator == "expedition":
         inspect.signature(evaluate_expedition).bind(Path(), Path(), None, **parameters)
         score = evaluate_expedition
+    elif evaluator == "dispatch":
+        from game.minecraft.evaluators.dispatch import evaluate_dispatch, furnace_evidence
+        validate_state(**parameters)
+        furnace_evidence(world_path)
+        score = evaluate_dispatch
     elif evaluator == "cargo":
         inspect.signature(evaluate_cargo).bind(Path(), Path(), None, **parameters)
         validate_cargo(**parameters)
@@ -118,6 +123,8 @@ def create_binding(
             verify_layout(before, **parameters)
         if evaluator == "workshop" and order_events(before):
             raise RuntimeError("Workshop milestone history was not empty before measured play")
+        if evaluator == "dispatch" and furnace_evidence(before)["events"]:
+            raise RuntimeError("Furnace production history must start empty")
         if evaluator == "raid":
             verify_initial_raid(before, game.player_uuid)
         if evaluator == "state" and parameters.get("action_sequence") is not None and action_events(before):

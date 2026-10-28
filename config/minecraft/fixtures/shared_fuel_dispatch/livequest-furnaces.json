@@ -1,0 +1,13 @@
+{
+  "schema": "minecraft-furnace-dispatch/1",
+  "sha256": {
+    "pack.mcmeta": "2ffd008ae46c0a5a008ee37a7b5586464e4b20f045eda8a360f68582495de229",
+    "data/minecraft/tags/functions/tick.json": "126a4f444e8217f968b0bfbce2c1d893086e6c053e2065cb532f86572fb9ed1f",
+    "data/livequest_furnaces/functions/output0.mcfunction": "2b84bd3bc0bb9f1bb394d26815fa4ca8ae51ec91f9c5cbe40f594caab1132d5d",
+    "data/livequest_furnaces/functions/fuel0.mcfunction": "f2516e95f3a9764f6a7261e7e5d19a490d28fa580116f323e41bc8e55a6ce5a5",
+    "data/livequest_furnaces/functions/output1.mcfunction": "1c6a1696ae9fdcac385e69518f17123be39acd3f180d5a5276289f4df9be70ba",
+    "data/livequest_furnaces/functions/fuel1.mcfunction": "b53ad41727f7ad114513db9314a4c8cb5d2a425c20908393ff7a49b7c96ba874",
+    "data/livequest_furnaces/functions/sample.mcfunction": "5cea2efa71d9667a3757fdd9ac5c942b2fbd59570523d92965b0ee7834dd3363",
+    "data/livequest_furnaces/functions/tick.mcfunction": "d3cb958f7ba15c07df18d7851cdc66b4722eed37d287367cfc133d26f65e3a63"
+  }
+}
