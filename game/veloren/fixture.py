@@ -157,11 +157,19 @@ def validate_fixture(value: object) -> dict:
                 raise ValueError(f"Contract {key} must be {lower}-{upper} metres from the player")
     roles, positions = set(), set()
     for encounter in encounters:
-        fields(encounter, {"role", "asset", "position"}, "encounter")
+        fields({key: value for key, value in encounter.items() if key != "initial_health"},
+               {"role", "asset", "position"}, "encounter")
+        if "initial_health" in encounter and (
+            type(encounter["initial_health"]) not in (int, float)
+            or not math.isfinite(encounter["initial_health"])
+            or not 0 < encounter["initial_health"] <= 100
+        ):
+            raise ValueError("Encounter initial_health must be finite and in (0, 100]")
         role, asset = encounter["role"], encounter["asset"]
         if (not isinstance(role, str) or not re.fullmatch(r"[a-z][a-z0-9_]{0,63}", role)
                 or role in roles or asset not in (
                     "common.entity.benchmark.male_green_legoom", "common.entity.benchmark.male_wolf",
+                    "common.entity.dungeon.haniwa.archer",
                 )):
             raise ValueError("Encounter requires a unique role and a supported exact-body enemy asset")
         spawn = vector(encounter["position"], "encounter.position")
@@ -361,13 +369,26 @@ async def initialize_encounter(admin, actor, spec: dict, position: list) -> dict
     def candidates(row):
         # Teleported administrators can reach this client's visibility window after the spawn command.
         return [entry for entry in row["nearby_entities"]
-                if entry["uid"] not in existing and entry.get("body_identity") == expected
+                if entry["uid"] not in existing and (
+                    entry.get("body_identity", {}).get("BipedSmall", {}).get("species") == "Haniwa"
+                    if spec["asset"] == "common.entity.dungeon.haniwa.archer"
+                    else entry.get("body_identity") == expected)
                 and entry.get("health")]
 
     after = await setup.wait_observation(
         observer, lambda row: len(candidates(row)) == 1, "unique new exact-body native encounter UID",
     )
     target = candidates(after)[0]
+    if spec["asset"] == "common.entity.dungeon.haniwa.archer":
+        expected = target["body_identity"]
+    if "initial_health" in spec:
+        await setup.command(admin, "sudo", f"uid@{target['uid']}", "health", spec["initial_health"])
+        after = await setup.wait_observation(
+            observer, lambda row: any(
+                entry["uid"] == target["uid"] and entry["health"]["current"] == spec["initial_health"]
+                for entry in row["nearby_entities"]), "declared finite initial enemy health",
+        )
+        target = next(entry for entry in after["nearby_entities"] if entry["uid"] == target["uid"])
     binding = await native_binding(actor, target["uid"])
     if (binding["body"] != expected or binding["alignment"] != "Enemy"
             or binding["dead"] or binding["health"] <= 0

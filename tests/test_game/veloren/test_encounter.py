@@ -148,6 +148,22 @@ def evidence():
     return initial, final
 
 
+def test_crossfire_injury_is_explicit_finite_and_asset_bound():
+    path = Path(__file__).resolve().parents[3] / "tests/fixtures/legacy/config/veloren/tasks/structured_tools/dual_legoom.yaml"
+    fixture = load_task(path).fixture
+    fixture["encounters"][1].update(asset="common.entity.dungeon.haniwa.archer", initial_health=25)
+    assert validate_fixture(fixture)["encounters"][1]["initial_health"] == 25
+    for value in (0, -1, float("nan"), float("inf"), True, 101):
+        invalid = deepcopy(fixture)
+        invalid["encounters"][1]["initial_health"] = value
+        with pytest.raises(ValueError, match="initial_health"):
+            validate_fixture(invalid)
+    invalid = deepcopy(fixture)
+    invalid["encounters"][1]["asset"] = "common.entity.wild.aggressive.wolf"
+    with pytest.raises(ValueError, match="supported exact-body"):
+        validate_fixture(invalid)
+
+
 def test_team_encounter_accepts_peer_damage_not_unregistered_or_other_session():
     from game.veloren.evaluators.encounter import team_encounter_checks
 
