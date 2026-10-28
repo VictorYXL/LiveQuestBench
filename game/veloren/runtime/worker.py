@@ -150,9 +150,8 @@ class Session:
         if not any(supply["player_target"] is None for supply in initialized["supplies"]):
             await self.finish_setup()
         self.record["actor"] = self.actor.ready.result()
-        (self.output / "fixture.json").write_text(json.dumps({
-            **initialized, "world": self.record["world_fixture"],
-        }, indent=2) + "\n")
+        from game.veloren.runtime.records import write_fixture_record
+        write_fixture_record(self.output, initialized, self.record["world_fixture"])
         return {"renderer_pid": self.actor.process.pid, "actor": self.actor.ready.result(),
                 "runtime": cfg, "display": os.environ["DISPLAY"],
                 "shared_world": {"port": port, "userdata": str(userdata), "output": str(self.oracle_output),
@@ -186,9 +185,8 @@ class Session:
         }
         self.record["administrator_retirement"] = initialized["administrator_retirement"]
         self.setup_administrator = None
-        (self.output / "fixture.json").write_text(json.dumps({
-            **initialized, "world": self.record["world_fixture"],
-        }, indent=2) + "\n")
+        from game.veloren.runtime.records import write_fixture_record
+        write_fixture_record(self.output, initialized, self.record["world_fixture"])
 
     async def frame_fence(self) -> dict:
         current = await self.actor.request("observe", origin="lifecycle")
@@ -434,6 +432,12 @@ class Session:
             await self.stack.aclose()
         finally:
             (self.output / "native-cleanup.json").write_text(json.dumps(self.record, indent=2) + "\n")
+            if hasattr(self, "initialized") and not hasattr(self, "authoring_digest"):
+                from game.veloren.runtime.records import write_authoring_detail, write_fixture_record
+                self.authoring_digest = write_authoring_detail(self.output, self.initialized)
+                write_fixture_record(
+                    self.output, self.initialized, self.record["world_fixture"], self.authoring_digest,
+                )
 
 
 async def main() -> None:
