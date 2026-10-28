@@ -144,6 +144,10 @@ world during measured play to make the task succeed.
 | `state` | Position, health, food, equipment and supported native effects | Endpoint state does not prove a route or full action history |
 | `expedition` | Designated encounters, preparation, cargo and return | Requires compatible fixture evidence and explicit conditions |
 
+Initial `player_state.inventory` entries may declare integer `damage` for a
+single tool. This writes vanilla item wear before readiness and verifies it
+against native initialization; it does not grant repair or replacement during play.
+
 For inventory requirements, `min_count`, `max_count` and `min_delta` are
 independent constraints; specify at least one. A net increase is not cumulative
 collection: consumed or dropped items reduce it.

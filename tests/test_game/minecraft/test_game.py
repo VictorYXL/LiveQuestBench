@@ -88,6 +88,24 @@ def test_minecraft_lifecycle_requires_explicit_consent(tmp_path: Path, monkeypat
     asyncio.run(check())
 
 
+def test_initial_tool_wear_is_written_and_verified():
+    player = UUID("00000000-0000-0000-0000-000000000001")
+    state = PlayerState(position=(0.5, 72, 0.5),
+                        inventory=[{"slot": 0, "item": "iron_pickaxe", "count": 1, "damage": 238}])
+    native = state.nbt(player)
+    state.verify(native, player)
+    native["Inventory"][0]["tag"]["Damage"] = nbtlib.Int(0)
+    with pytest.raises(RuntimeError, match="Inventory damage"):
+        state.verify(native, player)
+
+
+@pytest.mark.parametrize("damage,count", [(-1, 1), (True, 1), (1.5, 1), (238, 2)])
+def test_initial_tool_wear_rejects_invalid_or_stacked_damage(damage, count):
+    with pytest.raises(ValueError, match="damage"):
+        PlayerState(position=(0.5, 72, 0.5),
+                    inventory=[{"slot": 0, "item": "iron_pickaxe", "count": count, "damage": damage}])
+
+
 def test_native_state_distinguishes_selection_effects_and_history(tmp_path):
     from game.minecraft.evaluators.state import evaluate_state, validate_state
 

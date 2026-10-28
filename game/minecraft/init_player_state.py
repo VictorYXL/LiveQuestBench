@@ -43,8 +43,9 @@ class PlayerState:
             raise ValueError("Experience level must be a nonnegative integer")
         slots = set()
         for item in self.inventory:
-            if not isinstance(item, dict) or set(item) != {"slot", "item", "count"}:
-                raise ValueError("Inventory entries require slot, item and count")
+            if (not isinstance(item, dict) or not {"slot", "item", "count"} <= set(item)
+                    or set(item) - {"slot", "item", "count", "damage"}):
+                raise ValueError("Inventory entries require slot, item and count, with optional damage")
             slot, count, name = item["slot"], item["count"], item["item"]
             if type(slot) is not int or slot not in (*range(36), 100, 101, 102, 103, -106) or slot in slots:
                 raise ValueError("Inventory slots must be valid and unique")
@@ -52,6 +53,10 @@ class PlayerState:
                 raise ValueError("Inventory count must be in [1, 64]")
             if not isinstance(name, str) or not re.fullmatch(r"(minecraft:)?[a-z0-9_]+", name):
                 raise ValueError("Invalid vanilla inventory item ID")
+            if "damage" in item and (
+                type(item["damage"]) is not int or not 0 <= item["damage"] < 2147483647 or count != 1
+            ):
+                raise ValueError("Initial item damage requires a nonnegative integer and a single item")
             slots.add(slot)
         effect_ids = set()
         for effect in self.effects:
@@ -99,6 +104,7 @@ class PlayerState:
                     "Slot": Byte(item["slot"]),
                     "id": String("minecraft:" + item["item"].removeprefix("minecraft:")),
                     "Count": Byte(item["count"]),
+                    **({"tag": Compound({"Damage": Int(item["damage"])})} if "damage" in item else {}),
                 })
                 for item in self.inventory
             ]),
@@ -146,6 +152,11 @@ class PlayerState:
         requested = sorted((int(item["Slot"]), str(item["id"]), int(item["Count"])) for item in expected["Inventory"])
         if observed != requested:
             raise RuntimeError("Player initialization verification failed: Inventory")
+        observed_wear = {int(item["Slot"]): int(item.get("tag", {}).get("Damage", 0))
+                         for item in inventory}
+        requested_wear = {item["slot"]: item.get("damage", 0) for item in self.inventory}
+        if observed_wear != requested_wear:
+            raise RuntimeError("Player initialization verification failed: Inventory damage")
         observed_effects = sorted(
             (str(row["id"]), int(row.get("amplifier", 0)), int(row["duration"]))
             for row in actual.get("active_effects", [])
