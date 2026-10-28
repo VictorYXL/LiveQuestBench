@@ -85,6 +85,10 @@ def create_binding(
         validate_route(**parameters)
         verify_layout(world_path, **parameters)
         score = evaluate_route
+    elif evaluator == "market":
+        from game.minecraft.evaluators.market import evaluate_market, validate_market
+        validate_market(**parameters)
+        score = evaluate_market
     elif evaluator == "workshop":
         from game.minecraft.evaluators.workshop import evaluate_workshop, order_events
         validate_state(**parameters)
