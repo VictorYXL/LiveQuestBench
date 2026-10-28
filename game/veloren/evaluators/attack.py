@@ -34,3 +34,16 @@ def qualifying_attack(events: list[dict], effect: dict, requirement: dict) -> bo
         raise ValueError("Native attack lacks its originating ability")
     return (data["attack_source"] == requirement["source"] and ability["tool"] == requirement["tool"]
             and ("ability" not in requirement or ability["ability"] == requirement["ability"]))
+
+
+def causes_native_death(effect: dict, death: dict) -> bool:
+    """A zero-health hit is not lethal proof if death protection or another cause intervenes."""
+    if "cause" not in death["data"]:
+        raise ValueError("Native death lacks its recorded causal HealthChange")
+    cause = death["data"]["cause"]
+    if cause is None:
+        return False
+    applied = effect["data"]
+    return (cause["instance"] == applied["instance"] and cause["time"] == applied["change_time"]
+            and cause["amount"] == applied["requested_amount"] and cause["by"] == applied["contributor"]
+            and cause["cause"] == applied["cause"])

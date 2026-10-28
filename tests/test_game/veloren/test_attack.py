@@ -15,6 +15,9 @@ def test_bow_lethal_requires_same_applied_native_attack_not_prior_arrow():
     effect["sequence"] = 12
     effect["data"].update(cause={"Attack": "Projectile"}, instance=7, change_time=4.5)
     events[1]["sequence"] = 13
+    events[1]["data"]["cause"] = {
+        "amount": -25, "by": {"Solo": 1}, "cause": {"Attack": "Projectile"}, "instance": 7, "time": 4.5,
+    }
     queued = {
         "schema": "rpg-native-oracle", "version": "1.1", "private": True,
         "event": "attack_health_effect_queued", "sequence": 11,
@@ -37,4 +40,10 @@ def test_bow_lethal_requires_same_applied_native_attack_not_prior_arrow():
         assert not encounter_checks(initial, changed, roles=["enemy"], required_attack=requirement)["success"]
     queued["data"]["instance"] = 8
     with pytest.raises(ValueError, match="causal join"):
+        encounter_checks(initial, final, roles=["enemy"], required_attack=requirement)
+    queued["data"]["instance"] = 7
+    events[-1]["data"]["cause"]["instance"] = 9
+    assert not encounter_checks(initial, final, roles=["enemy"], required_attack=requirement)["success"]
+    events[-1]["data"].pop("cause")
+    with pytest.raises(ValueError, match="causal HealthChange"):
         encounter_checks(initial, final, roles=["enemy"], required_attack=requirement)

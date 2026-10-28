@@ -105,12 +105,14 @@ def _combat_checks(
                        "damage": sum(row["data"]["before"] - row["data"]["after"] for row in damage),
                        "passed": bool(damage) and (bool(killed) or not require_death)})
         if required_attack is not None:
-            from game.veloren.evaluators.attack import qualifying_attack
+            from game.veloren.evaluators.attack import causes_native_death, qualifying_attack
             qualified = [row for row in damage if qualifying_attack(events, row, required_attack)]
-            lethal = [row for row in qualified if row["data"]["before"] > 0 and row["data"]["after"] <= 0]
+            lethal = [row for row in qualified if required_attack["lethal"] and killed and row["data"]["before"] > 0
+                      and row["data"]["after"] <= 0 and causes_native_death(row, killed[0])]
             checks.append({
                 "kind": "required_attack", "role": target["role"],
-                "qualifying_hits": len(qualified), "qualifying_lethal_hits": len(lethal),
+                "qualifying_hits": len(qualified),
+                "qualifying_lethal_hits": len(lethal) if required_attack["lethal"] else None,
                 "requirement": required_attack,
                 "passed": bool(qualified) and (not required_attack["lethal"] or bool(killed) and bool(lethal)),
             })
