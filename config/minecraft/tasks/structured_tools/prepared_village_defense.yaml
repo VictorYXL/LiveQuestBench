@@ -1,0 +1,97 @@
+id: prepared_village_defense
+game: minecraft
+task_type: structured_tool
+capabilities:
+  primary:
+  - realtime_execution
+  secondary:
+  - planning_resources
+  - spatial_interaction
+task: |-
+  Defend the village east of your starting marker and win its native raid. You begin with Bad Omen I; entering the village triggers the raid under Minecraft Java 1.20.4 rules.
+  The village is roughly 80 blocks ahead in your initial facing direction. Keep the village from falling, defeat the raiders, and earn the native Hero of the Village advancement. Choose your own approach, defenses and recovery timing. Not every resident must survive.
+  You start with diamond armor and a diamond sword. Death keeps your inventory and respawns you in the small shelter west of the village; the raid and villagers do not reset.
+  Finish alive and standing still on the ground at the village's yellow central marker after victory.
+  Two northern houses have iron doors sheltering their residents; other residents remain exposed. The raid must still be defeated through ordinary play.
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/prepared_village_defense_difficulty_v4
+  instance: 1.20.4
+  difficulty: easy
+  player_state:
+    position:
+    - -64.5
+    - 72
+    - 0.5
+    dimension: minecraft:overworld
+    yaw: -90
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+    - slot: 0
+      item: diamond_sword
+      count: 1
+    - slot: 1
+      item: bow
+      count: 1
+    - slot: 2
+      item: cooked_beef
+      count: 24
+    - slot: 3
+      item: cobblestone
+      count: 32
+    - slot: 4
+      item: iron_pickaxe
+      count: 1
+    - slot: 5
+      item: arrow
+      count: 64
+    - slot: 6
+      item: arrow
+      count: 64
+    - slot: -106
+      item: shield
+      count: 1
+    - slot: 100
+      item: diamond_boots
+      count: 1
+    - slot: 101
+      item: diamond_leggings
+      count: 1
+    - slot: 102
+      item: diamond_chestplate
+      count: 1
+    - slot: 103
+      item: diamond_helmet
+      count: 1
+    effects:
+    - id: minecraft:bad_omen
+      amplifier: 0
+      duration: -1
+evaluator:
+  name: raid
+  parameters:
+    position:
+      target:
+      - 16.5
+      - 72
+      - 0.5
+      horizontal_tolerance: 5
+      vertical_tolerance: 0.5
+      max_speed: 0.1
+tools:
+- MoveTool
+- LookAtPositionTool
+- SelectTool
+- StopTool
+- JumpTool
+- DigTool
+- PlaceTool
+- UseHeldItemTool
+- AttackTool
+- StrikeTool
+- RespawnTool

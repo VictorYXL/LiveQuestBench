@@ -1,0 +1,244 @@
+id: hostile_route_supply_recovery
+game: veloren
+task_type: visual_motor
+task: |-
+  Retrieve one leather, defeat both Green Legooms on the eastern hunting route, and return alive to the starting stone arch carrying the leather.
+  The bundle is along the eastern passage, roughly 50 metres right and 15 metres forward from your starting position and facing. One opponent is near that part of the route; the other is in the yard at the far end. Loose supplies normally disappear after about five minutes in the world.
+  Finish standing still on the ground at the arch.
+  The loose bundle is the supplied leather source; collect it before it disappears or find another lawful source. Completion checks leather delivery, not the identity of the picked-up bundle.
+  Your initial native respawn waypoint is the starting arch. Death does not restore supplies, enemies, equipment or the time budget.
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/veloren_0_18_0_0.bin
+  world_seed: 130626853
+  time_of_day: '12:00'
+  day_length: 30
+  calendar: none
+  respawn_at_start: true
+  platform:
+    origin:
+    - 18700
+    - 10800
+    - 500
+    size:
+    - 28
+    - 28
+    block: Rock
+  blocks:
+  - origin:
+    - 18700
+    - 10815
+    - 501
+    size:
+    - 18
+    - 1
+    - 3
+  - origin:
+    - 18714
+    - 10818
+    - 501
+    size:
+    - 1
+    - 10
+    - 3
+  - origin:
+    - 18700
+    - 10800
+    - 501
+    size:
+    - 28
+    - 1
+    - 6
+  - origin:
+    - 18700
+    - 10827
+    - 501
+    size:
+    - 28
+    - 1
+    - 6
+  - origin:
+    - 18700
+    - 10801
+    - 501
+    size:
+    - 1
+    - 26
+    - 6
+  - origin:
+    - 18727
+    - 10801
+    - 501
+    size:
+    - 1
+    - 19
+    - 6
+  - origin:
+    - 18727
+    - 10826
+    - 501
+    size:
+    - 1
+    - 1
+    - 6
+  - origin:
+    - 18728
+    - 10820
+    - 500
+    size:
+    - 56
+    - 6
+    - 1
+  - origin:
+    - 18728
+    - 10819
+    - 500
+    size:
+    - 56
+    - 1
+    - 4
+  - origin:
+    - 18728
+    - 10826
+    - 500
+    size:
+    - 56
+    - 1
+    - 4
+  - origin:
+    - 18784
+    - 10816
+    - 500
+    size:
+    - 20
+    - 16
+    - 1
+  - origin:
+    - 18784
+    - 10816
+    - 501
+    size:
+    - 20
+    - 1
+    - 6
+  - origin:
+    - 18784
+    - 10831
+    - 501
+    size:
+    - 20
+    - 1
+    - 6
+  - origin:
+    - 18803
+    - 10817
+    - 501
+    size:
+    - 1
+    - 14
+    - 6
+  - origin:
+    - 18784
+    - 10817
+    - 501
+    size:
+    - 1
+    - 3
+    - 6
+  - origin:
+    - 18784
+    - 10826
+    - 501
+    size:
+    - 1
+    - 5
+    - 6
+  - origin:
+    - 18707
+    - 10804
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18707
+    - 10808
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18707
+    - 10804
+    - 504
+    size:
+    - 1
+    - 5
+    - 1
+  player_state:
+    position:
+    - 18708.5
+    - 10806.5
+    - 501
+    look:
+    - 0
+    - 1
+    - 0
+    health: 100
+    inventory:
+      common.items.consumable.potion_minor: 6
+      common.items.food.apple: 4
+    equipment:
+      active_mainhand: common.items.weapons.sword.starter
+      chest: common.items.armor.hide.rawhide.chest
+      feet: common.items.armor.misc.foot.sandals
+      glider: common.items.glider.basic_white
+      lantern: common.items.lantern.black_0
+      legs: common.items.armor.misc.pants.worker_brown
+  encounters:
+  - role: passage_legoom
+    asset: common.entity.benchmark.male_green_legoom
+    position:
+    - 18753.5
+    - 10823.5
+    - 501
+  - role: east_legoom
+    asset: common.entity.benchmark.male_green_legoom
+    position:
+    - 18796.5
+    - 10824.5
+    - 501
+  supplies:
+  - position:
+    - 18758.5
+    - 10823.5
+    - 501
+    item: common.items.crafting_ing.leather.simple_leather
+    amount: 1
+evaluator:
+  name: encounter
+  parameters:
+    roles:
+    - passage_legoom
+    - east_legoom
+    no_death: false
+    inventory:
+    - item: common.items.crafting_ing.leather.simple_leather
+      min_count: 1
+      min_delta: 1
+    position:
+      target:
+      - 18708.5
+      - 10806.5
+      - 501
+      horizontal_tolerance: 2
+      vertical_tolerance: 0.5
+      max_speed: 0.1
+capabilities:
+  primary:
+  - realtime_execution
+  secondary:
+  - planning_resources
+  - spatial_interaction

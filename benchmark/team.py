@@ -27,7 +27,7 @@ class TeamAgent(BaseAgent[Controls]):
         self.closed = False
 
     async def run(self, context: AgentContext[Controls]) -> AgentExit:
-        from benchmark.runner import logged_controls, run_bounded
+        from benchmark.runner import RECOVERY_INSTRUCTIONS, logged_controls, run_bounded
 
         for role in self.game.members:
             output = self.root / "participants" / role
@@ -41,7 +41,7 @@ class TeamAgent(BaseAgent[Controls]):
             public = logged_controls(public, log)
             agent = make_agent(self.config, client, tools, output / "agent", log.message)
             self.agents[role] = agent
-            instructions = self.game.instructions(role) + (
+            instructions = self.game.instructions(role) + RECOVERY_INSTRUCTIONS + (
                 "\nCall final_answer when your participation is finished."
                 if self.config.name == "smolagents" else
                 "\nReturn a nonempty final response without tool calls when your participation is finished."

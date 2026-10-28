@@ -58,6 +58,7 @@ class LocalRenderer(RendererBridge):
             "VELOREN_USERDATA": str(self.out / "renderer-userdata"), "WGPU_BACKEND": "vulkan",
             "NO_PROXY": "127.0.0.1,localhost", "no_proxy": "127.0.0.1,localhost",
             "LIVEQUEST_DISABLE_NATIVE_PROTECTION": "1",
+            "LIVEQUEST_ROUTE_EVIDENCE": "1" if getattr(self, "route_evidence", False) else "0",
         }
         Path(env["HOME"]).mkdir(exist_ok=True)
         self.process = await asyncio.create_subprocess_exec(
@@ -104,6 +105,8 @@ class Session:
             raise ValueError("Fixture requires passive native motion evidence; rerun Veloren setup")
         if self.fixture.get("glide_evidence") and cfg.get("glide_evidence") != "native-client-glide/1":
             raise ValueError("Fixture requires passive native glide evidence; rerun Veloren setup")
+        if self.fixture.get("route_evidence") and cfg.get("route_evidence") != "native-client-route/1":
+            raise ValueError("Fixture requires passive native route evidence; rerun Veloren setup")
         if "sword_skill_points" in self.fixture and cfg.get("auxiliary_input") != "native-client-auxiliary/1":
             raise ValueError("Skill fixture requires bounded native auxiliary input; rerun Veloren setup")
         for path, digest in cfg["sha256"].items():
@@ -139,8 +142,31 @@ class Session:
             renderer=renderer, frames=self.output / "frames",
         )
         self.stack.push_async_callback(self.actor.close)
+        self.actor.route_evidence = self.fixture.get("route_evidence", False)
         await self.actor.start()
         initialized = await initialize_fixture(admin, self.actor, self.fixture, shared_world=bool(self.attachment))
+        self.initialized = initialized
+        self.setup_administrator = (admin, administrator, administrator_uid)
+        if not any(supply["player_target"] is None for supply in initialized["supplies"]):
+            await self.finish_setup()
+        self.record["actor"] = self.actor.ready.result()
+        (self.output / "fixture.json").write_text(json.dumps({
+            **initialized, "world": self.record["world_fixture"],
+        }, indent=2) + "\n")
+        return {"renderer_pid": self.actor.process.pid, "actor": self.actor.ready.result(),
+                "runtime": cfg, "display": os.environ["DISPLAY"],
+                "shared_world": {"port": port, "userdata": str(userdata), "output": str(self.oracle_output),
+                                 "username": self.record["username"], "world_fixture": self.record["world_fixture"]}}
+
+    async def finish_setup(self) -> None:
+        pending = getattr(self, "setup_administrator", None)
+        if pending is None:
+            return
+        from game.veloren.fixture import observe_remote_supplies, verify_aged_supplies
+
+        admin, administrator, administrator_uid = pending
+        initialized = self.initialized
+        await observe_remote_supplies(admin, initialized["supplies"])
         await administrator.aclose()
         opening = await setup.wait_observation(
             self.actor,
@@ -152,21 +178,17 @@ class Session:
         if initialized.get("merchant") is not None:
             from game.veloren.settlement import verify_merchant
             verify_merchant(opening, initialized["merchant"])
+        verify_aged_supplies(initialized, opening)
         initialized["opening"] = opening
         initialized["administrator_retirement"] = {
             "uid": administrator_uid, "confirmed_absent": True,
             "returncode": admin.process.returncode, "cleanup": admin.cleanup,
         }
         self.record["administrator_retirement"] = initialized["administrator_retirement"]
-        self.initialized = initialized
-        self.record["actor"] = self.actor.ready.result()
+        self.setup_administrator = None
         (self.output / "fixture.json").write_text(json.dumps({
             **initialized, "world": self.record["world_fixture"],
         }, indent=2) + "\n")
-        return {"renderer_pid": self.actor.process.pid, "actor": self.actor.ready.result(),
-                "runtime": cfg, "display": os.environ["DISPLAY"],
-                "shared_world": {"port": port, "userdata": str(userdata), "output": str(self.oracle_output),
-                                 "username": self.record["username"], "world_fixture": self.record["world_fixture"]}}
 
     async def frame_fence(self) -> dict:
         current = await self.actor.request("observe", origin="lifecycle")
@@ -182,6 +204,7 @@ class Session:
         if operation == "start":
             return await self.start()
         if operation == "begin":
+            await self.finish_setup()
             if self.team_role:
                 batch = await self.actor.request("events", {"after_seq": 0, "limit": 1}, origin="lifecycle")
                 self.chat_after_seq = batch["next_seq"] - 1
@@ -198,15 +221,18 @@ class Session:
         if operation == "snapshot":
             if self.running:
                 raise RuntimeError("Snapshot requires a closed public gate")
+            await self.finish_setup()
             observation = await recipe_observation(self.actor, self.fixture)
             from game.veloren.evaluators.deaths import death_snapshot
             from game.veloren.runtime.journal import snapshot_rows
             registry = getattr(self, "death_registry", None)
-            rows = snapshot_rows(
+            rows = await asyncio.to_thread(
+                snapshot_rows,
                 self.oracle_output / "private-native-oracle.ndjson", self.oracle_output.name,
                 after_sequence=registry["opening_sequence"] if registry is not None else None,
                 encounters=bool(self.initialized["encounters"]),
                 contracts=self.initialized.get("contract") is not None,
+                equipment_uid=observation["self_identity"]["uid"],
             )
             observation["private_death_evidence"] = death_snapshot(
                 rows, observation["self_identity"], registry,
@@ -220,6 +246,10 @@ class Session:
                 from game.veloren.settlement import verify_merchant
                 verify_merchant(observation, self.initialized["merchant"])
                 self.merchant_opening = True
+            if self.fixture.get("route_evidence"):
+                observation["private_route_evidence"] = await self.actor.request(
+                    "route_evidence", await self.frame_fence(), origin="private-validation",
+                )
             if self.fixture.get("motion_evidence") or self.fixture.get("glide_evidence"):
                 observation["private_motion_evidence"] = await self.actor.request(
                     "glide_evidence" if self.fixture.get("glide_evidence") else "motion_evidence",

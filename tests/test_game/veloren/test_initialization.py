@@ -103,9 +103,12 @@ def upstream(monkeypatch, setup, combat=None):
 
 
 @pytest.mark.parametrize(("health", "stale_health"), [(35, 100), (100, 99.98828125)])
-def test_initialize_waits_for_actual_health(monkeypatch, health, stale_health):
+@pytest.mark.parametrize("respawn_at_start", [False, True])
+def test_initialize_waits_for_actual_health(monkeypatch, health, stale_health, respawn_at_start):
     fixture, expected = player_scene(health)
     fixture.update(time_of_day="12:00")
+    if respawn_at_start:
+        fixture["respawn_at_start"] = True
     stale = deepcopy(expected)
     stale["survival"]["health"]["current"] = stale_health
     calls = []
@@ -123,6 +126,11 @@ def test_initialize_waits_for_actual_health(monkeypatch, health, stale_health):
     async def command(admin, name, *args):
         if "health" in args:
             calls.append("health")
+        if "set_waypoint" in args:
+            assert args == ("Player", "set_waypoint")
+            assert "health" in calls
+            calls.append("set_waypoint")
+            return {"status": "completed", "native_command": "set_waypoint"}
 
     async def goto(*args, **kwargs):
         pass
@@ -132,6 +140,35 @@ def test_initialize_waits_for_actual_health(monkeypatch, health, stale_health):
     result = asyncio.run(fixtures.initialize_fixture(object(), Actor(), fixture))
     fixtures.verify_player(fixture, result["opening"])
     assert result["opening"]["survival"]["health"]["current"] == health
+    assert ("set_waypoint" in calls) is respawn_at_start
+    assert result["initial_waypoint_receipt"] == (
+        {"status": "completed", "native_command": "set_waypoint"} if respawn_at_start else None
+    )
+
+
+@pytest.mark.parametrize("value", [True, 999, 10001, 1000.5])
+def test_contract_funding_rejects_invalid_reserves(value):
+    from benchmark.config import load_task
+
+    fixture = load_task(Path("config/veloren/tasks/structured_tools/native_contract_settlement.yaml")).fixture
+    fixture["contract"]["giver_funding"] = value
+    with pytest.raises(ValueError, match="giver_funding"):
+        fixtures.validate_fixture(fixture)
+
+
+def test_optional_native_recovery_fields_preserve_legacy_defaults():
+    from benchmark.config import load_task
+
+    fixture = load_task(Path("config/veloren/tasks/structured_tools/native_contract_settlement.yaml")).fixture
+    fixture["contract"].pop("giver_funding")
+    fixture.pop("respawn_at_start")
+    assert "giver_funding" not in fixtures.validate_fixture(fixture)["contract"]
+    fixture["contract"]["giver_funding"] = 3000
+    fixture["respawn_at_start"] = True
+    assert fixtures.validate_fixture(fixture)["contract"]["giver_funding"] == 3000
+    fixture["respawn_at_start"] = 1
+    with pytest.raises(ValueError, match="respawn_at_start"):
+        fixtures.validate_fixture(fixture)
 
 
 def test_player_wait_times_out_with_mismatch_and_does_not_repair_state():
@@ -169,6 +206,109 @@ def test_player_wait_keeps_inventory_and_position_strict():
     fixture["player_state"]["inventory"] = {"common.items.food.cheese": 1}
     with pytest.raises(RuntimeError, match="inventory"):
         fixtures.verify_player(fixture, observed)
+
+
+def test_declared_initial_armor_is_equipped_before_inventory_cleanup(monkeypatch):
+    old, new = "common.items.armor.misc.chest.worker_purple_brown", "common.items.armor.hide.rawhide.chest"
+    observed = {"inventory": {"equipment": {"chest": {"id": {"Simple": old}}},
+                             "items": []}}
+    calls = []
+
+    class Actor:
+        async def request(self, command):
+            return deepcopy(observed)
+
+    actor = Actor()
+
+    async def gift(admin, target, name, amount):
+        assert target is actor and name == new and amount == 1
+        calls.append("gift")
+        observed["inventory"]["items"] = [{"loadout_idx": 0, "slot_idx": 3,
+                                           "item": {"id": {"Simple": new}, "amount": 1}}]
+        return deepcopy(observed)
+
+    async def action(target, name, **args):
+        assert target is actor and name == "equip"
+        assert args == {"equip_slot": "chest", "loadout_idx": 0, "slot_idx": 3}
+        calls.append("equip")
+        observed["inventory"]["equipment"]["chest"] = {"id": {"Simple": new}}
+        observed["inventory"]["items"][0]["item"]["id"]["Simple"] = old
+
+    async def wait(target, predicate, reason):
+        assert predicate(observed)
+        return deepcopy(observed)
+
+    upstream(monkeypatch, SimpleNamespace(
+        gift=gift, action=action, wait_observation=wait,
+        slot=lambda row: {key: row[key] for key in ("loadout_idx", "slot_idx")},
+    ))
+    asyncio.run(fixtures.initialize_equipment(object(), actor, {"chest": new}))
+    assert calls == ["gift", "equip"]
+    assert fixtures.inventory_counts(observed) == {old: 1}
+    asyncio.run(fixtures.initialize_equipment(object(), actor, {"chest": new}))
+    assert calls == ["gift", "equip"]
+
+
+def test_distant_supply_uses_private_readback_without_player_visibility(monkeypatch):
+    supply = {
+        "uid": 7, "player_target": None, "item": "common.items.food.apple", "amount": 1,
+        "expiry_game_time_estimate": 300, "entity": {"position": [50, 0, 1]},
+    }
+    entity = {"uid": 7, "pickup": {"id": {"Simple": supply["item"]}, "amount": 1}}
+    private = {"nearby_entities": [entity], "survival": {"buff_clock": {"now": 10}}}
+    player = {"nearby_entities": [], "survival": {"buff_clock": {"now": 11}}}
+    original_player = deepcopy(player)
+
+    class Admin:
+        async def request(self, command, **kwargs):
+            assert command == "observe" and kwargs == {"origin": "private-validation"}
+            return deepcopy(private)
+
+    admin = Admin()
+
+    async def goto(controller, target, point):
+        assert controller is target is admin
+        assert point == [50, 0, 1]
+
+    upstream(monkeypatch, SimpleNamespace(goto=goto))
+    with pytest.raises(RuntimeError, match="identity-matched"):
+        fixtures.verify_aged_supplies({"supplies": [supply]}, player)
+    asyncio.run(fixtures.observe_remote_supplies(admin, [supply]))
+    fixtures.verify_aged_supplies({"supplies": [supply]}, player)
+    assert player == original_player
+    player["survival"]["buff_clock"]["now"] = 286
+    with pytest.raises(RuntimeError, match="identity-matched"):
+        fixtures.verify_aged_supplies({"supplies": [supply]}, player)
+    for entries in ([], [{**entity, "uid": 8}], [{**entity, "pickup": {**entity["pickup"], "amount": 2}}]):
+        private["nearby_entities"] = entries
+        with pytest.raises(RuntimeError, match="private native readback"):
+            asyncio.run(fixtures.observe_remote_supplies(admin, [supply]))
+
+
+def test_begin_does_not_open_public_gate_before_private_setup_finishes(monkeypatch):
+    worker = load_worker(monkeypatch)
+    session = object.__new__(worker.Session)
+    session.running = False
+    session.team_role = None
+    session.track = "structured_tool"
+    calls = []
+
+    async def finish():
+        assert not session.running
+        calls.append("private-readback-and-admin-retirement")
+
+    session.finish_setup = finish
+    assert asyncio.run(session.dispatch("begin", {})) == {"running": True}
+    assert calls == ["private-readback-and-admin-retirement"]
+
+    async def fail():
+        raise RuntimeError("Distant supply missing")
+
+    session.running = False
+    session.finish_setup = fail
+    with pytest.raises(RuntimeError, match="Distant supply missing"):
+        asyncio.run(session.dispatch("begin", {}))
+    assert session.running is False
 
 
 @pytest.mark.parametrize("alignment", ["Enemy", "Npc"])
@@ -263,7 +403,7 @@ def test_native_regression_fixture(mode, task_id):
     import json
 
     root = Path(__file__).resolve().parents[3]
-    fixture = load_task(root / f"config/veloren/tasks/{mode}/{task_id}.yaml").fixture
+    fixture = load_task(root / f"output/back/legacy-config-20261026/config/veloren/tasks/{mode}/{task_id}.yaml").fixture
     output = root / "output/test" / f"veloren-initialization-{mode}-{task_id}-{uuid4().hex}"
     print(f"Veloren initialization artifacts: {output}")
     game = VelorenGame(output_dir=output, fixture=fixture,

@@ -6,8 +6,10 @@ plans when thinking takes time and resources spent now may be needed later?
 
 The benchmark supports Minecraft and Veloren, a built-in tool-calling baseline,
 and external Agent integrations. It is a development benchmark, not a frozen
-research release. Qualify tasks and budgets before using them for comparative
-research.
+research release. The initial reference set contains **12 objectives and 24
+ST/VM configurations**, with six objectives per game. It is a starting point
+for task development, not a statistically validated six-axis leaderboard.
+See the [task catalog, provisional difficulty and evidence limits](output/survey/reference_tasks_release_20261028.md).
 
 ## Games and evaluation modes
 
@@ -88,17 +90,18 @@ Choose an experiment from:
 - [Minecraft experiments](config/minecraft/experiments/)
 - [Veloren experiments](config/veloren/experiments/)
 
-The `all` configurations include the full catalog; `L1`, `L2` and `L3`
-configurations select task subsets. Bundled experiments specify six Agents and
-**10 repetitions**. Inspect the configuration before launching a large run.
+Each game's `structured_tools.yaml` and `visual_motor.yaml` select its six
+reference objectives, one baseline Agent and **one repetition**. The cooperation
+objective runs two player Agents. Old L1/L2/L3 configurations are archived, not
+part of the active catalog. Inspect the configuration before launching a run.
 
 For a smoke test, create a separate experiment with one task and one repetition:
 
 ```yaml
-id: veloren_smoke
+id: veloren_single_reference
 game: veloren
 tasks:
-  - path: ../tasks/structured_tools/move_2_metres.yaml
+  - path: ../tasks/structured_tools/mountain_workshop_circuit.yaml
 repetitions: 1
 agents:
   - id: baseline

@@ -64,7 +64,7 @@ uv run --locked --extra minecraft python run_benchmark.py \
 ```
 
 Prepare the chosen Agent and model credentials first. For a small first run,
-select one L1 task and set `repetitions: 1`; follow the
+select one reference task and set `repetitions: 1`; follow the
 [experiment guide](../../README.md#running-an-experiment).
 
 ## Tests

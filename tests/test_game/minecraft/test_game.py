@@ -129,8 +129,7 @@ def test_native_state_distinguishes_selection_effects_and_history(tmp_path):
 
 def test_native_block_then_damage_requires_identity_order_and_same_life(tmp_path):
     from game.minecraft.evaluators.state import evaluate_state
-    from game.minecraft.fixtures.forge_hunt import uuid_parts
-    from game.minecraft.fixtures.workshop import ACTION_SCHEMA, action_hashes, action_pack
+    from game.minecraft.fixtures.actions import ACTION_SCHEMA, action_hashes, action_pack
 
     player = UUID(int=1)
     before, after = tmp_path / "before", tmp_path / "after"
@@ -149,7 +148,8 @@ def test_native_block_then_damage_requires_identity_order_and_same_life(tmp_path
         (world / "data").mkdir()
 
     def write(world, kinds, actor=player):
-        events = [nbtlib.Compound({"kind": nbtlib.String(kind), "player": nbtlib.IntArray(uuid_parts(actor)),
+        identity = [int.from_bytes(actor.bytes[i:i + 4], "big", signed=True) for i in range(0, 16, 4)]
+        events = [nbtlib.Compound({"kind": nbtlib.String(kind), "player": nbtlib.IntArray(identity),
                                   "tick": nbtlib.Long(21)}) for kind in kinds]
         nbtlib.File({"DataVersion": nbtlib.Int(3700), "data": nbtlib.Compound({
             "contents": nbtlib.Compound({"actions": nbtlib.Compound({

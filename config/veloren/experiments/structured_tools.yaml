@@ -1,0 +1,19 @@
+id: veloren_reference_structured_tools
+game: veloren
+tasks:
+  - path: ../tasks/structured_tools/mountain_workshop_circuit.yaml
+  - path: ../tasks/structured_tools/self_funded_expedition.yaml
+  - path: ../tasks/structured_tools/hostile_route_supply_recovery.yaml
+  - path: ../tasks/structured_tools/native_contract_settlement.yaml
+  - path: ../tasks/structured_tools/coordinated_route_hunt.yaml
+  - path: ../tasks/structured_tools/route_schema_transfer.yaml
+repetitions: 1
+agents:
+  - id: baseline
+    name: tool_calling
+    model:
+      provider: github_copilot
+      name: gpt-6-astra
+      reasoning_effort: low
+      max_output_tokens: 4096
+      max_attempts: 3

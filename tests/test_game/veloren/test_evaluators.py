@@ -108,6 +108,25 @@ def test_state_checks_require_simultaneous_endpoint_conditions():
         assert not state_checks(row, final, **requirements)["success"]
 
 
+@pytest.mark.parametrize("mode", ["structured_tools", "visual_motor"])
+def test_glide_return_accepts_both_sides_of_the_visible_arch(mode):
+    from benchmark.config import load_task
+
+    root = Path(__file__).resolve().parents[3]
+    task = load_task(root / f"output/back/learning-tasks-20261028/config/veloren/tasks/{mode}/glide_route_transfer.yaml")
+    pillars = [block["origin"] for block in task.fixture["blocks"] if block["size"] == [1, 1, 3]]
+    left, right = pillars
+    center = [(left[0] + right[0]) / 2 + .5, (left[1] + right[1]) / 2 + .5, left[2]]
+    row = {"survival": {"health": {"current": 100}},
+           "velocity": [0, 0, 0], "on_ground": True}
+    goal = task.evaluator_parameters["position"]
+    for offset in (-1, 0, 1):
+        row["position"] = [center[0] + offset, *center[1:]]
+        assert state_checks(row, row, position=goal)["success"], row["position"]
+    row["position"] = [center[0] - goal["horizontal_tolerance"] - 1, *center[1:]]
+    assert not state_checks(row, row, position=goal)["success"]
+
+
 def test_truncated_recipe_book_can_only_prove_explicit_entries():
     row = {"known_recipes": {"total": 2, "omitted": 1, "items": [{"recipe": "a"}]}}
     assert known_recipes(row, required=["a"]) == {"a"}
@@ -178,6 +197,40 @@ def test_glide_landing_requires_new_flight_distance_and_correct_landing():
     final["private_motion_evidence"]["glide_landings"] = []
     with pytest.raises(ValueError, match="history changed"):
         state_checks(initial, final, glide_landing=goal)
+
+
+def test_glide_route_requires_distinct_new_landings_in_order():
+    from game.veloren.evaluators.glide_route import glide_route_checks
+
+    initial = {
+        "session_id": "same", "self_identity": {"uid": 7},
+        "survival": {"health": {"current": 100}},
+        "private_motion_evidence": {
+            "schema": "native-client-motion/1", "session_id": "same", "uid": 7,
+            "samples": 10, "through_tick": 20, "jump_landings": 0, "roll_entries": 0,
+            "glide_schema": "native-client-glide/1", "glide_landings": [],
+        },
+    }
+    final = deepcopy(initial)
+    final.update(position=[0, 0, 0], velocity=[0, 0, 0], on_ground=True)
+    final["private_motion_evidence"].update(samples=100, through_tick=110)
+    goals = [{"target": [x, 0, 0], "horizontal_tolerance": 2, "vertical_tolerance": 1,
+              "min_distance": 6} for x in (10, 20)]
+    position = {"target": [0, 0, 0], "horizontal_tolerance": 2,
+                "vertical_tolerance": 1, "max_speed": .1}
+    events = [{"position": goal["target"], "glide_distance": 7} for goal in goals]
+    for entries, passed in ((events, True), (events[::-1], False),
+                            ([events[0]], False), ([events[0], {**events[1], "glide_distance": 5}], False)):
+        final["private_motion_evidence"]["glide_landings"] = entries
+        assert glide_route_checks(initial, final, landings=goals, position=position)["success"] is passed
+    missed = {"position": [100, 100, 0], "glide_distance": 7}
+    for entries, completed in (([missed, events[0], missed], 1),
+                               ([missed, events[0], missed, events[0], events[1]], 2)):
+        final["private_motion_evidence"]["glide_landings"] = entries
+        result = glide_route_checks(initial, final, landings=goals, position=position)
+        progress = next(row for row in result["checks"] if row["kind"] == "ordered_glide_landings")
+        assert progress["completed"] == completed
+        assert result["success"] is (completed == 2)
 
 
 def test_marker_arrival_requires_new_native_directions_not_a_personal_marker():

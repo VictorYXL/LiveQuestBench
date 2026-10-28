@@ -1,0 +1,19 @@
+id: minecraft_reference_structured_tools
+game: minecraft
+tasks:
+  - path: ../tasks/structured_tools/abandoned_mine_cargo.yaml
+  - path: ../tasks/structured_tools/mining_workshop_restart.yaml
+  - path: ../tasks/structured_tools/prepared_village_defense.yaml
+  - path: ../tasks/structured_tools/expedition_record_reconstruction.yaml
+  - path: ../tasks/structured_tools/shared_crossing_camp.yaml
+  - path: ../tasks/structured_tools/route_schema_transfer.yaml
+repetitions: 1
+agents:
+  - id: baseline
+    name: tool_calling
+    model:
+      provider: github_copilot
+      name: gpt-6-astra
+      reasoning_effort: low
+      max_output_tokens: 4096
+      max_attempts: 3

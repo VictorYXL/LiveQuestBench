@@ -1,0 +1,162 @@
+id: native_contract_settlement
+game: veloren
+task_type: structured_tool
+task: |-
+  Accept the guard's native monster-slaying contract, defeat its designated target after acceptance, and return to the giver to receive the actual coin reward.
+  The guard begins near the starting camp; the monster starts in the northern yard beyond the stone arch. Follow the actual offer and any later movement. The benchmark supplies the giver with 3000 coins before play to fund native offers; the monster-slaying reward remains 1000 coins; no contract is accepted for you.
+  Finish alive, standing still on the ground beside the giver after receiving payment.
+  Offers can vary between conversations; unrelated delivery or escort jobs do not satisfy the monster-slaying objective. The initial native respawn waypoint is your starting camp. Death does not revive NPCs, cancel quests, repair equipment or reset the time budget.
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/veloren_0_18_0_0.bin
+  world_seed: 130626853
+  time_of_day: '12:00'
+  day_length: 30
+  calendar: none
+  platform:
+    origin:
+    - 18700
+    - 10800
+    - 500
+    size:
+    - 28
+    - 28
+    block: Rock
+  blocks:
+  - origin:
+    - 18700
+    - 10815
+    - 501
+    size:
+    - 18
+    - 1
+    - 5
+  - origin:
+    - 18714
+    - 10818
+    - 501
+    size:
+    - 1
+    - 10
+    - 3
+  - origin:
+    - 18719
+    - 10815
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18725
+    - 10815
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18719
+    - 10815
+    - 504
+    size:
+    - 7
+    - 1
+    - 1
+  - origin:
+    - 18700
+    - 10800
+    - 501
+    size:
+    - 28
+    - 1
+    - 6
+  - origin:
+    - 18700
+    - 10827
+    - 501
+    size:
+    - 28
+    - 1
+    - 6
+  - origin:
+    - 18700
+    - 10801
+    - 501
+    size:
+    - 1
+    - 26
+    - 6
+  - origin:
+    - 18727
+    - 10801
+    - 501
+    size:
+    - 1
+    - 26
+    - 6
+  player_state:
+    position:
+    - 18708.5
+    - 10806.5
+    - 501
+    look:
+    - 0
+    - 1
+    - 0
+    health: 100
+    inventory:
+      common.items.consumable.potion_minor: 8
+      common.items.food.apple: 4
+    equipment:
+      active_mainhand: common.items.weapons.sword.starter
+      chest: common.items.armor.hide.rawhide.chest
+      feet: common.items.armor.misc.foot.sandals
+      glider: common.items.glider.basic_white
+      lantern: common.items.lantern.black_0
+      legs: common.items.armor.misc.pants.worker_brown
+  contract:
+    source_site: Spausalm
+    giver_position:
+    - 18710.5
+    - 10809.5
+    - 501
+    target_position:
+    - 18722.5
+    - 10824.5
+    - 501
+    giver_funding: 3000
+  respawn_at_start: true
+evaluator:
+  name: contract
+  parameters:
+    min_reward: 1000
+    no_death: false
+    giver_arrival:
+      max_distance: 3
+      max_speed: 0.1
+tools:
+- MoveTool
+- TurnTool
+- JumpTool
+- PickupTool
+- UseItemTool
+- CraftTool
+- EquipTool
+- LookTool
+- AttackTool
+- WieldTool
+- BlockTool
+- RollTool
+- StopTool
+- StrikeTool
+- TalkTool
+- DialogueResponseTool
+- DialogueAckTool
+- RespawnTool
+capabilities:
+  primary:
+  - information_adaptation
+  secondary:
+  - realtime_execution
+  - planning_resources

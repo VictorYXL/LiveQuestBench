@@ -24,7 +24,7 @@ ROOT = Path(__file__).resolve().parents[2]
 @pytest.mark.parametrize("mode", ["structured_tools", "visual_motor"])
 @pytest.mark.parametrize("model", ["gpt-6-astra", "gpt-5.6-sol", "gpt-5.4-nano"])
 def test_all_experiments_include_exactly_l1_through_l3(game, mode, model):
-    directory = ROOT / "config" / game / "experiments" / f"{model}-low"
+    directory = ROOT / "output/back/legacy-config-20261026/config" / game / "experiments" / f"{model}-low"
     combined = load_experiment(directory / f"{mode}_all.yaml")
     levels = [load_experiment(directory / f"{mode}_L{level}.yaml") for level in (1, 2, 3)]
     expected = {task.source.path: task for level in levels for task in level.tasks}
@@ -37,7 +37,7 @@ def test_all_experiments_include_exactly_l1_through_l3(game, mode, model):
                for agent in combined.agents)
     assert model.replace(".", "_").replace("-", "_") in combined.id
     if game == "minecraft":
-        exploratory = load_task(ROOT / f"config/minecraft/tasks/{mode}/lost_expedition.yaml")
+        exploratory = load_task(ROOT / f"output/back/legacy-config-20261026/config/minecraft/tasks/{mode}/lost_expedition.yaml")
         assert exploratory.source.path not in expected
 
 
@@ -45,7 +45,7 @@ def test_model_profiles_change_only_model_and_identifiers():
     from dataclasses import asdict
 
     for game in ("minecraft", "veloren"):
-        directory = ROOT / "config" / game / "experiments"
+        directory = ROOT / "output/back/legacy-config-20261026/config" / game / "experiments"
         for source in (directory / "gpt-6-astra-low").glob("*.yaml"):
             baseline = load_experiment(source)
             for model in ("gpt-5.6-sol", "gpt-5.4-nano"):
@@ -66,7 +66,7 @@ def test_world_reset_copies_are_isolated(tmp_path):
     from game.minecraft.init_player_state import PlayerState
     from game.minecraft.runtime.session import copy_world
 
-    source_file = ROOT / "config/minecraft/tasks/structured_tools/collect_logs.yaml"
+    source_file = ROOT / "output/back/legacy-config-20261026/config/minecraft/tasks/structured_tools/collect_logs.yaml"
     relative = load_task(source_file)
     source = Path(relative.fixture["world_path"])
     hashes = {str(p.relative_to(source)): hashlib.sha256(p.read_bytes()).hexdigest()
@@ -103,7 +103,7 @@ def test_veloren_server_retires_after_success_or_map_fallback(tmp_path, monkeypa
     assert spec is not None and spec.loader is not None
     server = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(server)
-    fixture = load_task(ROOT / "config/veloren/tasks/structured_tools/move_2_metres.yaml").fixture
+    fixture = load_task(ROOT / "output/back/legacy-config-20261026/config/veloren/tasks/structured_tools/move_2_metres.yaml").fixture
     world = Path(fixture["world_path"])
     digest = hashlib.sha256(world.read_bytes()).hexdigest()
     native = SimpleNamespace(
@@ -154,7 +154,7 @@ def test_veloren_server_retires_after_success_or_map_fallback(tmp_path, monkeypa
 def test_veloren_changed_configuration_is_applied(headless, recording):
     from game.veloren.game import VelorenGame
 
-    fixture = load_task(ROOT / "config/veloren/tasks/structured_tools/move_2_metres.yaml").fixture
+    fixture = load_task(ROOT / "output/back/legacy-config-20261026/config/veloren/tasks/structured_tools/move_2_metres.yaml").fixture
     fixture["platform"]["origin"][0] += 16
     fixture["player_state"]["position"][0] += 16
     fixture["player_state"]["health"] = 95

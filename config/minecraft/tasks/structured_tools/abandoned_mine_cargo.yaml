@@ -7,20 +7,12 @@ capabilities:
   secondary:
   - planning_resources
 task: |-
-  Recover the three original named cargo samples from the abandoned mine
-  and return with them to the yellow entrance marker.
-
-  Approximate target areas, relative to the entrance and your initial facing:
-  - Upper Gallery Cargo: about 50 blocks forward, on a higher level.
-  - Lower Excavation Cargo: about 40 blocks to the right, deep below the entrance.
-  - Service Chamber Cargo: about 30 blocks forward and 30 blocks right,
-    slightly below the entrance.
-
-  Finish alive and standing still on the ground at the marker.
-  Release held controls and finish with a text response.
+  Recover the three original named cargo samples from the abandoned mine and return with them to the yellow entrance marker.
+  Relative to the entrance and your initial facing, Upper Gallery Cargo is about 40 blocks ahead on a higher level; Lower Excavation Cargo is about 30 blocks right on a lower level; Service Chamber Cargo is about 25 blocks ahead and 20 blocks right.
+  Finish alive and standing still on the ground in the yellow entrance area.
 time_limit_seconds: 2700
 fixture:
-  world_path: ../../fixtures/abandoned_mine
+  world_path: ../../fixtures/abandoned_mine_cargo_stage1_v2
   instance: 1.20.4
   difficulty: normal
   player_state:
@@ -65,27 +57,27 @@ evaluator:
     - id: upper_gallery
       item: minecraft:raw_iron
       chest:
-      - 52
-      - 80
-      - 7
+      - 40
+      - 76
+      - 0
     - id: lower_excavation
       item: minecraft:lapis_lazuli
       chest:
       - 0
-      - 57
-      - 38
+      - 68
+      - 32
     - id: service_chamber
       item: minecraft:copper_ingot
       chest:
-      - 32
-      - 70
-      - 27
+      - 26
+      - 72
+      - 20
     position:
       target:
       - 0.5
       - 72
       - 0.5
-      horizontal_tolerance: 1.5
+      horizontal_tolerance: 2
       vertical_tolerance: 0.5
       max_speed: 0.1
 tools:

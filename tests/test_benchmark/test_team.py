@@ -14,7 +14,7 @@ from game.team import TeamGame
 
 
 def test_team_configuration_is_explicit_and_singleton_remains_default(tmp_path):
-    path = Path("config/minecraft/tasks/structured_tools/reach_nearby_point.yaml")
+    path = Path("output/back/legacy-config-20261026/config/minecraft/tasks/structured_tools/reach_nearby_point.yaml")
     assert load_task(path).participants == ()
     assert "participants" not in load_task(path).resolved()
     data = yaml.safe_load(path.read_text())
@@ -122,6 +122,8 @@ def test_peer_loops_share_deadline_and_preserve_early_member_exit(tmp_path, monk
         assert timed_out and late_continued.is_set()
         assert len(clients) == len(agents) == 2 and clients[0] is not clients[1]
         assert contexts[0].deadline_at_ns == contexts[1].deadline_at_ns == context.deadline_at_ns
+        assert all("recover, revise your approach, and try again" in child.game_instructions
+                   and "Retries do not reset the world" in child.game_instructions for child in contexts)
         assert team.results["Alpha"]["agent_exit"]["reason"] == "completed"
         assert all(task.done() for task in team.tasks)
         assert {call.args[0] for call in game.finish.await_args_list} == {"Alpha", "Beta"}
@@ -150,7 +152,7 @@ def test_team_goal_composition_uses_each_native_players_inventory(tmp_path, monk
     from game.minecraft.init_player_state import PlayerState
     from game.team import create_team_binding
 
-    task = load_task(Path("config/minecraft/tasks/structured_tools/reach_nearby_point.yaml"))
+    task = load_task(Path("output/back/legacy-config-20261026/config/minecraft/tasks/structured_tools/reach_nearby_point.yaml"))
     state = dict(task.fixture["player_state"])
     state["inventory"] = [{"item": "minecraft:apple", "count": 1, "slot": 0}]
     task = replace(task, fixture={key: value for key, value in task.fixture.items() if key != "player_state"},

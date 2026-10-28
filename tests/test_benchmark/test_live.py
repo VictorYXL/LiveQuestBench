@@ -24,12 +24,12 @@ def test_cli_lifecycle(case, headless, recording):
         pytest.skip("Set LIVEQUEST_BENCHMARK_TEST=1 and LIVEQUEST_LIVE_COPILOT=1")
     root = ROOT / "output/test" / f"benchmark-{case}-{uuid4().hex}"
     root.mkdir(parents=True)
-    task = yaml.safe_load((ROOT / "config/veloren/tasks/structured_tools/move_2_metres.yaml").read_text())
+    task = yaml.safe_load((ROOT / "output/back/legacy-config-20261026/config/veloren/tasks/structured_tools/move_2_metres.yaml").read_text())
     task["fixture"]["world_path"] = str(
-        (ROOT / "config/veloren/tasks/structured_tools" / task["fixture"]["world_path"]).resolve()
+        (ROOT / "output/back/legacy-config-20261026/config/veloren/tasks/structured_tools" / task["fixture"]["world_path"]).resolve()
     )
     task["tools"] = ["MoveTool"]
-    experiment = yaml.safe_load((ROOT / "config/veloren/experiments/gpt-6-astra-low/visual_motor_all.yaml").read_text())
+    experiment = yaml.safe_load((ROOT / "output/back/legacy-config-20261026/config/veloren/experiments/gpt-6-astra-low/visual_motor_all.yaml").read_text())
     experiment["tasks"] = [{"path": "task.yaml"}]
     experiment["repetitions"] = 1
     if case == "native":

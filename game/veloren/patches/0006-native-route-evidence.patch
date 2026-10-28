@@ -1,0 +1,115 @@
+--- a/voxygen/src/native_agent.rs
++++ b/voxygen/src/native_agent.rs
+@@ -30,9 +30,32 @@
+     glide_flight: Option<([f32; 3], f32)>,
+     glide_landings: Vec<([f32; 3], f32)>,
+     glide_overflow: bool,
++    route_samples: Vec<(u64, [f32; 3])>,
++    route_overflow: bool,
++    route_enabled: bool,
+ }
+ 
+ impl MotionEvidence {
++    fn sample_route(&mut self, point: [f32; 3]) {
++        if !self.route_enabled {
++            return;
++        }
++        if point.iter().any(|value| !value.is_finite()) {
++            self.invalid = true;
++            return;
++        }
++        let changed = self.route_samples.last().is_none_or(|(_, previous)| {
++            point.iter().zip(previous).map(|(a, b)| (a - b).powi(2)).sum::<f32>() >= 0.01
++        });
++        if changed {
++            if self.route_samples.len() >= 131072 {
++                self.route_overflow = true;
++            } else {
++                self.route_samples.push((self.samples, point));
++            }
++        }
++    }
++
+     fn sample_glide(&mut self, grounded: bool, point: [f32; 3], gliding: bool) {
+         if point.iter().any(|value| !value.is_finite()) {
+             self.invalid = true;
+@@ -241,7 +264,10 @@
+             last_actuator_dispatch: Value::Null,
+             image_only: args.agent_observation == "image",
+             visual: visual_ui::VisualUi::default(),
+-            motion: MotionEvidence::default(),
++            motion: MotionEvidence {
++                route_enabled: std::env::var("LIVEQUEST_ROUTE_EVIDENCE").ok().as_deref() == Some("1"),
++                ..MotionEvidence::default()
++            },
+         })
+     }
+ 
+@@ -269,6 +295,7 @@
+                 physics.on_ground.is_some(), [position.0.x, position.0.y, position.0.z],
+                 matches!(character, comp::CharacterState::Glide(_)),
+             );
++            self.motion.sample_route([position.0.x, position.0.y, position.0.z]);
+         }
+         while let Ok(input) = self.receiver.try_recv() {
+             let line = match input {
+@@ -318,7 +345,7 @@
+                 });
+             }
+             match request.cmd.as_str() {
+-                "motion_evidence" | "glide_evidence" => {
++                "motion_evidence" | "glide_evidence" | "route_evidence" => {
+                     let actor = protocol::actuator_identity(client, &self.state)["actor"].clone();
+                     if let Err(code) = frame_fence(&request.args, &self.state.session_id, &actor) {
+                         self.error(request.id, code, code);
+@@ -328,6 +355,10 @@
+                         self.error(request.id, "invalid_motion_evidence", "native actor or samples changed");
+                     } else if request.cmd == "glide_evidence" && self.motion.glide_overflow {
+                         self.error(request.id, "invalid_glide_evidence", "native glide landing capacity exceeded");
++                    } else if request.cmd == "route_evidence" && self.motion.route_overflow {
++                        self.error(request.id, "invalid_route_evidence", "native route capacity exceeded");
++                    } else if request.cmd == "route_evidence" && !self.motion.route_enabled {
++                        self.error(request.id, "route_evidence_disabled", "native route observer was not enabled");
+                     } else {
+                         let mut result = json!({
+                             "schema": "native-client-motion/1", "session_id": self.state.session_id,
+@@ -344,6 +375,14 @@
+                                 ).collect::<Vec<_>>()
+                             );
+                         }
++                        if request.cmd == "route_evidence" {
++                            result["route_schema"] = json!("native-client-route/1");
++                            result["route_samples"] = json!(
++                                self.motion.route_samples.iter().map(|(sequence, point)|
++                                    json!({"sequence": sequence, "position": point})
++                                ).collect::<Vec<_>>()
++                            );
++                        }
+                         protocol::emit(&json!({
+                             "type": "response", "protocol_version": protocol::PROTOCOL_VERSION,
+                             "session_id": self.state.session_id, "id": request.id, "ok": true,
+@@ -545,6 +584,24 @@
+     }
+ 
+     #[test]
++    fn route_samples_require_opt_in_and_native_displacement() {
++        let mut motion = MotionEvidence::default();
++        motion.sample_route([0.0, 0.0, 0.0]);
++        assert!(motion.route_samples.is_empty());
++        motion.route_enabled = true;
++        motion.samples = 1;
++        motion.sample_route([0.0, 0.0, 0.0]);
++        motion.samples = 2;
++        motion.sample_route([0.01, 0.0, 0.0]);
++        assert_eq!(motion.route_samples.len(), 1);
++        motion.samples = 3;
++        motion.sample_route([0.2, 0.0, 0.0]);
++        assert_eq!(motion.route_samples, vec![(1, [0.0; 3]), (3, [0.2, 0.0, 0.0])]);
++        motion.sample_route([f32::NAN, 0.0, 0.0]);
++        assert!(motion.invalid);
++    }
++
++    #[test]
+     fn glide_samples_require_airborne_glide_and_landing() {
+         let mut motion = MotionEvidence::default();
+         motion.sample_glide(true, [0.0, 0.0, 12.0], false);

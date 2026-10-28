@@ -18,7 +18,7 @@ from game.veloren.evaluators.deaths import death_snapshot, death_metrics
 def test_market_hunting_yard_is_separated_and_connected_in_both_tracks():
     from game.veloren.fixture import solid_voxels
 
-    root = Path(__file__).resolve().parents[3] / "config/veloren/tasks"
+    root = Path(__file__).resolve().parents[3] / "output/back/legacy-config-20261026/config/veloren/tasks"
     st = load_task(root / "structured_tools/market_hunt_return.yaml")
     vm = load_task(root / "visual_motor/market_hunt_return.yaml")
     assert validate_fixture(st.fixture) == validate_fixture(vm.fixture)
@@ -54,7 +54,7 @@ def test_market_hunting_yard_is_separated_and_connected_in_both_tracks():
 def test_dual_encounter_divider_blocks_opening_sightlines_without_sealing_targets():
     from game.veloren.fixture import solid_voxels
 
-    root = Path(__file__).resolve().parents[3] / "config/veloren/tasks"
+    root = Path(__file__).resolve().parents[3] / "output/back/legacy-config-20261026/config/veloren/tasks"
     st = load_task(root / "structured_tools/dual_legoom.yaml")
     vm = load_task(root / "visual_motor/dual_legoom.yaml")
     assert validate_fixture(st.fixture) == validate_fixture(vm.fixture)
@@ -148,6 +148,45 @@ def evidence():
     return initial, final
 
 
+def test_team_encounter_accepts_peer_damage_not_unregistered_or_other_session():
+    from game.veloren.evaluators.encounter import team_encounter_checks
+
+    first, last = evidence()
+    initial, final = {}, {}
+    for role, uid, entity in (("Alpha", 1, "player-generation-1"), ("Beta", 3, "peer-generation-1")):
+        opening, closing = deepcopy(first), deepcopy(last)
+        opening["self_identity"] = closing["self_identity"] = {"uid": uid}
+        registry = {"run_id": "run", "nonce": "nonce", "opening_sequence": 10,
+                    "identity": {"uid": uid}, "uid": uid, "server_entity": entity}
+        for state, sequence in ((opening, 10), (closing, 12)):
+            state["private_death_evidence"] = {
+                "schema": "livequest-player-deaths/1", "registry": deepcopy(registry),
+                "through_sequence": sequence, "events": [],
+            }
+        initial[role], final[role] = opening, closing
+    damage = final["Alpha"]["private_encounter_evidence"]["events"][0]["data"]
+    damage.update(contributor={"Solo": 3}, contributor_entity="peer-generation-1")
+    assert team_encounter_checks(initial, final, roles=["enemy"])["success"]
+    damage["contributor"] = {"Solo": 99}
+    assert not team_encounter_checks(initial, final, roles=["enemy"])["success"]
+    for boundary in (initial, final):
+        boundary["Beta"]["private_death_evidence"]["registry"]["nonce"] = "different"
+    with pytest.raises(ValueError, match="session"):
+        team_encounter_checks(initial, final, roles=["enemy"])
+
+
+def test_fresh_supply_must_still_exist_at_opening():
+    from game.veloren.fixture import verify_aged_supplies
+
+    initialized = {"supplies": [{
+        "uid": 7, "player_target": "pickup-7", "item": "common.items.food.apple",
+        "amount": 1, "expiry_game_time_estimate": 300,
+    }]}
+    observation = {"nearby_entities": [], "survival": {"buff_clock": {"now": 10}}}
+    with pytest.raises(RuntimeError, match="live, identity-matched"):
+        verify_aged_supplies(initialized, observation)
+
+
 def test_actual_death_and_own_damage_are_both_required():
     initial, final = evidence()
     assert encounter_checks(initial, final, roles=["enemy"])["success"]
@@ -177,6 +216,22 @@ def test_actual_death_and_own_damage_are_both_required():
     changed = deepcopy(final)
     changed["survival"]["health"]["current"] = 0
     assert not encounter_checks(initial, changed, roles=["enemy"])["success"]
+
+
+def test_encounter_can_allow_recovery_without_accepting_missing_target_evidence():
+    initial, final = evidence()
+    final["private_encounter_evidence"]["events"].append({
+        "schema": "rpg-native-oracle", "version": "1.1", "private": True,
+        "event": "native_entity_death", "sequence": 13,
+        "data": {"uid": 1, "entity": "player-generation-1"},
+    })
+    final["private_encounter_evidence"]["through_sequence"] = 13
+    assert not encounter_checks(initial, final, roles=["enemy"])["success"]
+    assert encounter_checks(initial, final, roles=["enemy"], no_death=False)["success"]
+    final["private_encounter_evidence"]["events"].pop(1)
+    assert not encounter_checks(initial, final, roles=["enemy"], no_death=False)["success"]
+    with pytest.raises(ValueError, match="boolean"):
+        encounter_checks(initial, final, roles=["enemy"], no_death=0)
 
 
 def test_companion_requires_original_living_owned_identity_not_replacement_or_disappearance():
@@ -252,6 +307,25 @@ def test_native_contract_requires_activation_then_bound_kill_and_actual_reward_c
         }]},
     }]
     assert contract_checks(initial, final)["success"]
+    giver_ref = {"uid": 4, "lifecycle": "giver-client"}
+    for row in (initial, final):
+        row["private_contract_evidence"]["registry"]["giver_target"] = giver_ref
+    final.update(position=[0, 0, 0], velocity=[0, 0, 0], on_ground=True)
+    final["nearby_entities"].append({"uid": 4, "control_target": giver_ref, "position": [2, 0, 0]})
+    arrival = {"max_distance": 3, "max_speed": .1}
+    assert contract_checks(initial, final, giver_arrival=arrival)["success"]
+    for change in (
+        lambda row: row["nearby_entities"][-1].update(position=[4, 0, 0]),
+        lambda row: row["nearby_entities"][-1].update(control_target={"uid": 4, "lifecycle": "replacement"}),
+        lambda row: row.update(on_ground=False),
+        lambda row: row.update(velocity=[1, 0, 0]),
+    ):
+        changed = deepcopy(final)
+        change(changed)
+        assert not contract_checks(initial, changed, giver_arrival=arrival)["success"]
+    recovered = deepcopy(final)
+    recovered["private_contract_evidence"]["player_deaths"] = [19]
+    assert contract_checks(initial, recovered, no_death=False, giver_arrival=arrival)["success"]
     for change in (
         lambda row: row["candidates"][0]["reward"].update(actual_reward_inserted=False),
         lambda row: row["candidates"][0]["reward"]["chains"][0].update(amount=999),
@@ -300,7 +374,7 @@ def test_expedition_requires_native_preparation_before_first_damage():
 
 
 def test_expedition_catalog_admits_paired_native_fixtures():
-    root = Path(__file__).resolve().parents[3] / "config/veloren/tasks"
+    root = Path(__file__).resolve().parents[3] / "output/back/legacy-config-20261026/config/veloren/tasks"
     st = load_task(root / "structured_tools/provisioned_hunt_return.yaml")
     vm = load_task(root / "visual_motor/provisioned_hunt_return.yaml")
     assert validate_fixture(st.fixture) == validate_fixture(vm.fixture)
@@ -443,7 +517,7 @@ def test_native_settlement_fixture_does_not_hide_an_authored_platform():
     from game.veloren.fixture import solid_voxels
 
     root = Path(__file__).resolve().parents[3]
-    fixture = load_task(root / "config/veloren/tasks/structured_tools/known_food.yaml").fixture
+    fixture = load_task(root / "output/back/legacy-config-20261026/config/veloren/tasks/structured_tools/known_food.yaml").fixture
     fixture.pop("platform")
     fixture["native_site"] = "Spausalm"
     fixture["player_state"]["position"] = [18703.5, 10799.5, 382]
@@ -476,7 +550,7 @@ def test_merchant_lifecycle_is_bound_in_the_player_client_not_the_admin_client()
 
 def test_encounter_fixture_rejects_ambiguous_or_unsupported_enemies():
     root = Path(__file__).resolve().parents[3]
-    fixture = load_task(root / "config/veloren/tasks/structured_tools/dual_legoom.yaml").fixture
+    fixture = load_task(root / "output/back/legacy-config-20261026/config/veloren/tasks/structured_tools/dual_legoom.yaml").fixture
     assert len(validate_fixture(fixture)["encounters"]) == 2
     for mutate in (
         lambda rows: rows[1].update(role=rows[0]["role"]),
@@ -490,7 +564,7 @@ def test_encounter_fixture_rejects_ambiguous_or_unsupported_enemies():
 
 
 def test_encounter_catalog_pairs_share_fixtures_and_simultaneous_requirements():
-    root = Path(__file__).resolve().parents[3] / "config/veloren/tasks"
+    root = Path(__file__).resolve().parents[3] / "output/back/legacy-config-20261026/config/veloren/tasks"
     for name in ("defeat_legoom", "dual_legoom", "combat_supply_return"):
         st = load_task(root / "structured_tools" / f"{name}.yaml")
         vm = load_task(root / "visual_motor" / f"{name}.yaml")

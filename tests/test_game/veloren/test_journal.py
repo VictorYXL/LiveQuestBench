@@ -114,3 +114,32 @@ def test_snapshot_does_not_chase_concurrent_appends(tmp_path, monkeypatch):
     assert snapshot_rows(path, "game")[-1] == rows[-1]
     monkeypatch.setattr(os, "fstat", original_stat)
     assert snapshot_rows(path, "game")[-1] == appended
+
+
+@pytest.mark.parametrize("contracts", [False, True])
+def test_repeated_world_bindings_keep_equipment_changes_and_exact_latest_state(tmp_path, contracts):
+    rows = journal_rows()
+    player = {"uid": 73, "server_entity": "player-generation", "health": 100, "dead": False,
+              "equipment": {"chest": "old"}}
+    other = {**player, "uid": 99, "server_entity": "other-generation"}
+    rows = [rows[0], {**rows[1], "data": {"bindings": [player, other]}}]
+    for index in range(2, 102):
+        chest = "new" if 25 <= index < 75 else "old"
+        rows.append({
+            **rows[1], "sequence": index, "data": {"bindings": [
+                {**player, "health": 100 - index / 10, "equipment": {"chest": chest}},
+                {**other, "health": index, "equipment": {"chest": f"other-{index}"}},
+            ]},
+        })
+    path = tmp_path / "journal.ndjson"
+    write_rows(path, rows)
+    projected = snapshot_rows(path, "game", after_sequence=1, encounters=True, contracts=contracts,
+                              equipment_uid=73)
+    assert [row["sequence"] for row in projected] == ([0, 1, 25, 75, 101] if contracts else [0, 25, 75, 101])
+    assert projected[-1] == rows[-1]
+    transitions = [row for row in projected if row["sequence"] in (25, 75)]
+    assert [row["data"]["bindings"] for row in transitions] == [
+        [rows[index]["data"]["bindings"][0]] for index in (25, 75)
+    ]
+    registry = death_snapshot(rows[:2], {"uid": 73})["registry"]
+    assert death_snapshot(projected, {"uid": 73}, registry) == death_snapshot(rows, {"uid": 73}, registry)

@@ -8,6 +8,7 @@ import re
 
 
 MAX_VOXELS = 8192
+MAX_ROUTE_VOXELS = 10240
 
 
 class FixtureMismatch(RuntimeError):
@@ -29,12 +30,13 @@ def solid_voxels(fixture: dict) -> set[tuple[int, int, int]]:
     platform = fixture["platform"]
     regions = [{"origin": platform["origin"], "size": [*platform["size"], 1]}, *fixture.get("blocks", [])]
     voxels = set()
+    limit = MAX_ROUTE_VOXELS if fixture.get("route_evidence") is True else MAX_VOXELS
     for region in regions:
         origin, size = cuboid(region, "block region")
         voxels.update((origin[0] + x, origin[1] + y, origin[2] + z)
                       for x in range(size[0]) for y in range(size[1]) for z in range(size[2]))
-        if len(voxels) > MAX_VOXELS:
-            raise ValueError(f"Fixture exceeds {MAX_VOXELS} authored voxels")
+        if len(voxels) > limit:
+            raise ValueError(f"Fixture exceeds {limit} authored voxels")
     return voxels
 
 
@@ -62,11 +64,11 @@ def validate_fixture(value: object) -> dict:
     required = {"world_path", "world_seed", "time_of_day", "day_length", "calendar", "player_state"}
     optional = {"blocks", "stations", "supplies", "recipe_groups", "recipes", "encounters",
                 "motion_evidence", "glide_evidence", "platform", "native_site", "merchant",
-                "sword_skill_points", "companion", "contract"}
+                "sword_skill_points", "companion", "contract", "respawn_at_start", "route_evidence"}
     if not isinstance(value, dict) or required - value.keys() or value.keys() - required - optional:
         raise ValueError(f"Veloren fixture requires exactly {sorted(required)} plus optional {sorted(optional)}")
     fixture = value
-    for flag in ("motion_evidence", "glide_evidence"):
+    for flag in ("motion_evidence", "glide_evidence", "respawn_at_start", "route_evidence"):
         if flag in fixture and type(fixture[flag]) is not bool:
             raise ValueError(f"{flag} must be boolean")
     if "sword_skill_points" in fixture and (
@@ -136,7 +138,14 @@ def validate_fixture(value: object) -> dict:
     if "contract" in fixture:
         if "platform" not in fixture or encounters or "merchant" in fixture or "companion" in fixture:
             raise ValueError("Native Slay contracts require a separate authored scene without injected encounters")
-        contract = fields(fixture["contract"], {"source_site", "giver_position", "target_position"}, "contract")
+        contract = fixture["contract"]
+        if not isinstance(contract, dict):
+            raise ValueError("contract must be a mapping")
+        fields({key: value for key, value in contract.items() if key != "giver_funding"},
+               {"source_site", "giver_position", "target_position"}, "contract")
+        funding = contract.get("giver_funding", 1000)
+        if type(funding) is not int or not 1000 <= funding <= 10000:
+            raise ValueError("contract.giver_funding must be an integer in [1000, 10000]")
         if (not isinstance(contract["source_site"], str) or not contract["source_site"].strip()
                 or len(contract["source_site"]) > 128):
             raise ValueError("Contract source_site must name an existing native settlement")
@@ -391,17 +400,53 @@ def verify_encounter_opening(targets: list[dict], observation: dict, rows: list[
                 raise RuntimeError("Nearby designated target unavailable, dead or injured before measured play")
 
 
+async def observe_remote_supplies(admin, supplies: list[dict]) -> None:
+    """Capture setup-only readback without moving the player or expanding public observations."""
+    from scripts.rpg_benchmark import setup
+
+    for supply in supplies:
+        if supply.get("player_target") is not None:
+            continue
+        await setup.goto(admin, admin, supply["entity"]["position"])
+        observed = await admin.request("observe", origin="private-validation")
+        entity = next((row for row in observed["nearby_entities"] if row["uid"] == supply["uid"]), None)
+        if (entity is None or item_id(entity.get("pickup") or {}) != supply["item"]
+                or entity["pickup"]["amount"] != supply["amount"]):
+            raise RuntimeError("Distant expiring supply lacks identity-matched private native readback")
+        supply["private_opening"] = {
+            "entity": entity, "clock": observed["survival"]["buff_clock"]["now"],
+            "observer": "administrator", "scope": "Read immediately before administrator retirement; "
+            "not an atomic server snapshot or an Agent observation.",
+        }
+
+
 def verify_aged_supplies(initialized: dict, observation: dict) -> None:
-    if not any(row.get("pre_age_seconds") for row in initialized["fixture"].get("supplies", [])):
+    if not initialized["supplies"]:
         return
     current = {row["uid"]: row for row in observation["nearby_entities"]}
     clock = observation["survival"]["buff_clock"]["now"]
     for supply in initialized["supplies"]:
-        entity = current.get(supply["uid"])
-        if (entity is None or entity["control_target"] != supply["player_target"]
+        private = supply.get("private_opening")
+        if supply.get("player_target") is not None:
+            entity = current.get(supply["uid"])
+            identity_matches = entity is not None and entity["control_target"] == supply["player_target"]
+        else:
+            entity = private["entity"] if private is not None else None
+            identity_matches = (
+                entity is not None and entity["uid"] == supply["uid"]
+                and private["observer"] == "administrator"
+                and private["clock"] <= clock
+            )
+        if (not identity_matches
                 or item_id(entity["pickup"]) != supply["item"] or entity["pickup"]["amount"] != supply["amount"]
                 or supply["expiry_game_time_estimate"] - clock < 15):
             raise RuntimeError("Declared expiring supply lacks a live, identity-matched opening with >=15 seconds")
+        visible = current.get(supply["uid"])
+        if visible is not None and (
+            item_id(visible.get("pickup") or {}) != supply["item"]
+            or visible["pickup"]["amount"] != supply["amount"]
+        ):
+            raise RuntimeError("Declared expiring supply differs from current player readback")
 
 
 async def initialize_companion(admin, actor, fixture: dict) -> dict:
@@ -434,6 +479,28 @@ async def initialize_companion(admin, actor, fixture: dict) -> dict:
             "initial_public": pet, "native_ai": True, "tethered": False}
 
 
+async def initialize_equipment(admin, actor, equipment: dict[str, str]) -> None:
+    from scripts.rpg_benchmark import setup
+
+    observation = await actor.request("observe")
+    current = {slot: item_id(item) for slot, item in observation["inventory"]["equipment"].items()
+               if item is not None}
+    if current.keys() - equipment.keys():
+        raise FixtureMismatch("Removing undeclared starting equipment is not supported")
+    for slot, name in equipment.items():
+        if current.get(slot) == name:
+            continue
+        observation = await setup.gift(admin, actor, name, 1)
+        stack = next(row for row in observation["inventory"]["items"] if item_id(row["item"]) == name)
+        await setup.action(actor, "equip", equip_slot=slot, **setup.slot(stack))
+        await setup.wait_observation(
+            actor,
+            lambda row: row["inventory"]["equipment"].get(slot) is not None
+            and item_id(row["inventory"]["equipment"][slot]) == name,
+            f"declared starting equipment in {slot}",
+        )
+
+
 async def initialize_fixture(admin, actor, fixture: dict, *, shared_world: bool = False) -> dict:
     """Author absolute geometry, set player/time fields and verify native readback."""
     from scripts.rpg_benchmark import setup
@@ -458,6 +525,7 @@ async def initialize_fixture(admin, actor, fixture: dict, *, shared_world: bool 
         stations.append(await setup.station(admin, station["position"], station["sprite"], "flat"))
     for group in fixture.get("recipe_groups", []):
         await setup.learn(admin, actor, group)
+    await initialize_equipment(admin, actor, fixture["player_state"]["equipment"])
     if inventory_counts(await actor.request("observe")) != fixture["player_state"]["inventory"]:
         await setup.clean_inventory(admin, actor)
         for name, amount in fixture["player_state"]["inventory"].items():
@@ -511,14 +579,19 @@ async def initialize_fixture(admin, actor, fixture: dict, *, shared_world: bool 
     await setup.command(admin, "time", fixture["time_of_day"])
     await setup.command(admin, "sudo", actor.name, "health", fixture["player_state"]["health"])
     opening = await wait_player(actor, fixture, await setup.ready_observation(actor))
-    if not shared_world and any(row.get("pre_age_seconds") for row in fixture.get("supplies", [])):
+    waypoint = None
+    if fixture.get("respawn_at_start", False):
+        waypoint = await setup.command(admin, "sudo", actor.name, "set_waypoint")
+    if not shared_world and supplies:
         current = {row["uid"]: row for row in opening["nearby_entities"]}
         for supply in supplies:
             entity = current.get(supply["uid"])
-            if (entity is None or item_id(entity["pickup"]) != supply["item"]
-                    or entity["pickup"]["amount"] != supply["amount"]):
+            if entity is not None and (
+                item_id(entity.get("pickup") or {}) != supply["item"]
+                or entity["pickup"]["amount"] != supply["amount"]
+            ):
                 raise RuntimeError("Expiring supply cannot be bound in the player's native client")
-            supply["player_target"] = entity["control_target"]
+            supply["player_target"] = entity["control_target"] if entity is not None else None
     if merchant is not None:
         from game.veloren.settlement import bind_merchant
         merchant = bind_merchant(opening, merchant)
@@ -545,4 +618,4 @@ async def initialize_fixture(admin, actor, fixture: dict, *, shared_world: bool 
     return {"fixture": fixture, "construction": construction, "blocks": blocks,
             "stations": stations, "supplies": supplies, "opening": opening,
             "encounters": encounters, "source_binding": source, "merchant": merchant,
-            "companion": companion, "contract": contract}
+            "companion": companion, "contract": contract, "initial_waypoint_receipt": waypoint}

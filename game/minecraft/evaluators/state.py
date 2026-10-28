@@ -71,7 +71,7 @@ def custom_statistics(world: Path, player: UUID) -> dict:
 
 
 def action_events(world: Path) -> list[dict]:
-    from game.minecraft.fixtures.workshop import ACTION_SCHEMA, action_hashes
+    from game.minecraft.fixtures.actions import ACTION_SCHEMA, action_hashes
 
     manifest = json.loads((world / "livequest-action-evidence.json").read_text())
     if manifest != {"schema": ACTION_SCHEMA, "pack_sha256": action_hashes(world)}:
@@ -158,7 +158,8 @@ def evaluate_state(
         result = evaluate_structure(before, after, structure)
         checks.append({"kind": "structure", "passed": result["success"], "result": result})
     if action_sequence is not None:
-        from game.minecraft.fixtures.forge_hunt import uuid_parts
+        identity = [int.from_bytes(player.bytes[i:i + 4], "big", signed=True)
+                    for i in range(0, 16, 4)]
         if action_events(before):
             raise ValueError("Native action sequence must start empty")
         if (before / "livequest-action-evidence.json").read_bytes() != (
@@ -171,7 +172,7 @@ def evaluate_state(
         previous = opening_tick
         matched = []
         for index, event in enumerate(events):
-            if (event["kind"] not in ("block", "damage") or event["player"] != uuid_parts(player)
+            if (event["kind"] not in ("block", "damage") or event["player"] != identity
                     or not previous <= event["tick"] <= closing_tick):
                 raise ValueError("Invalid native action identity or event ordering")
             previous = event["tick"]

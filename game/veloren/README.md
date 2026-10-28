@@ -57,7 +57,7 @@ assets have their own licenses; do not assume blanket redistribution rights.
 
 Select a configuration from
 [Veloren experiments](../../config/veloren/experiments/).
-For a first run, choose `move_2_metres`, one Agent and one repetition using the
+For a first run, choose `mountain_workshop_circuit`, one Agent and one repetition using the
 [smoke-test example](../../README.md#running-an-experiment).
 
 With `EXPERIMENT_CONFIG` and `RESULTS_DIR` set to your chosen experiment and

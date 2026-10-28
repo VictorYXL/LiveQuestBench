@@ -26,6 +26,14 @@ from game.bindings import Controls
 
 
 InterfaceT = TypeVar("InterfaceT")
+RECOVERY_INSTRUCTIONS = (
+    "\nAn unsuccessful action or attempt does not automatically end the episode."
+    " If the objective remains achievable, use the remaining time to recover, revise your approach,"
+    " and try again. Retries do not reset the world, restore spent resources, or extend the deadline."
+    " Before finishing, check the required objectives against your available observations."
+    " End when your objectives are complete, no useful attempt fits the remaining time,"
+    " or you have evidence that completion is no longer possible."
+)
 
 
 async def run_bounded(
@@ -178,6 +186,7 @@ async def run_episode(
         result.update(started_at_ns=started, deadline_at_ns=deadline)
         instructions = binding.game.get_instructions()
         instructions += "\nOnly the supplied tool schemas are available for this task."
+        instructions += RECOVERY_INSTRUCTIONS
         instructions += (
             "\nDo not select Quit Game, disconnect, or close the game window, even after completing the task."
             " Quitting the game is not task completion; an Agent-initiated quit counts as failure."

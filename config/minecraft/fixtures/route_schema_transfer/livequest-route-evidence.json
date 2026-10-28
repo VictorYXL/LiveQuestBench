@@ -1,0 +1,9 @@
+{
+  "schema": "minecraft-native-route/1",
+  "pack_sha256": {
+    "pack.mcmeta": "0275cdf511328a290013ee88a7efdd9e2b5b9e107c0c90a993523457b96ce171",
+    "data/minecraft/tags/functions/tick.json": "2ba67221c48c3066cb7d6614a1e7aaa770e6bcb612ee36edd3dd556418e6344e",
+    "data/livequest_route/functions/tick.mcfunction": "320a69f9cc112c8f556e20bab5582de4b12c046b5dc60a3c856422963d806301",
+    "data/livequest_route/functions/sample.mcfunction": "0b11261aa935b818378fa23ad9d2b56c3a1a5e315dd109615409f2c18e588cd6"
+  }
+}

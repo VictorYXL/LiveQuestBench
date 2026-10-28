@@ -54,6 +54,20 @@ def create_binding(
         from game.veloren.evaluators.contract import evaluate_contract, validate_contract
         evaluators[evaluator] = evaluate_contract
         validators[evaluator] = validate_contract
+    elif evaluator == "glide_route":
+        from game.veloren.evaluators.glide_route import evaluate_glide_route, validate_glide_route
+        evaluators[evaluator] = evaluate_glide_route
+        validators[evaluator] = validate_glide_route
+    elif evaluator == "route_transfer":
+        from game.route_transfer import build_layout
+        from game.veloren.evaluators.route_transfer import evaluate_route, validate_route
+        from game.veloren.fixture import solid_voxels
+        evaluators[evaluator] = evaluate_route
+        validators[evaluator] = validate_route
+        expected = build_layout(parameters["variant"], tuple(parameters["origin"]), headroom=3)["solid"]
+        expected |= solid_voxels({**fixture, "blocks": []})
+        if not fixture.get("route_evidence") or solid_voxels(fixture) != expected:
+            raise ValueError("Route-transfer fixture must match the scored layout and enable native evidence")
     if evaluator not in evaluators:
         raise ValueError(f"Unknown Veloren evaluator: {evaluator}")
     score = evaluators[evaluator]
@@ -69,6 +83,8 @@ def create_binding(
         raise ValueError("Motion scoring requires private fixture motion evidence")
     if parameters.get("glide_landing") is not None and not fixture.get("glide_evidence"):
         raise ValueError("Glide landing scoring requires private fixture glide evidence")
+    if evaluator == "glide_route" and not fixture.get("glide_evidence"):
+        raise ValueError("Ordered gliding requires private fixture glide evidence")
     if parameters.get("marker_arrival") is not None and "native_site" not in fixture:
         raise ValueError("Dialogue marker arrival requires an admitted native settlement fixture")
     if (parameters.get("sword_skills") is not None or parameters.get("auxiliary_ability") is not None

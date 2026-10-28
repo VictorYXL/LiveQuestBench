@@ -106,7 +106,7 @@ def test_native_furnace_slots_and_residual_fuel(headless: bool, recording: bool)
     output = root / f"minecraft-furnace-{uuid4().hex}"
     game = MinecraftGame(
         track="structured_tool", output_dir=output,
-        world_path=Path("config/minecraft/fixtures/workshop").resolve(),
+        world_path=Path("output/back/legacy-config-20261026/config/minecraft/fixtures/workshop").resolve(),
         headless=headless, recording=recording,
         player_state=PlayerState(position=(.5, 72, .5), inventory=[
             {"slot": 0, "item": "coal", "count": 2},
@@ -193,7 +193,7 @@ def test_native_trade_refusal_and_cutoff(headless: bool, recording: bool) -> Non
     from benchmark.config import load_task
 
     repository = Path(__file__).resolve().parents[3]
-    task = load_task(repository / "config/minecraft/tasks/structured_tools/trade_outposts_return.yaml")
+    task = load_task(repository / "output/back/legacy-config-20261026/config/minecraft/tasks/structured_tools/trade_outposts_return.yaml")
     root = Path(os.environ.get("MINECRAFT_TEST_OUTPUT", "output/test"))
     game = MinecraftGame(
         track="structured_tool", output_dir=root / f"minecraft-trade-{uuid4().hex}",

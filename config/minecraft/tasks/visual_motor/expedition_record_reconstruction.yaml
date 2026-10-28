@@ -1,0 +1,77 @@
+id: expedition_record_reconstruction
+game: minecraft
+task_type: visual_motor
+capabilities:
+  primary:
+  - information_adaptation
+  secondary:
+  - planning_resources
+  - spatial_interaction
+task: |-
+  Recover the three original expedition records: Route Survey, Mineral Survey and Archive Ledger. Return alive with all three to the yellow camp marker.
+  Begin your search at the white-roofed field office, roughly 25 blocks forward from camp in your initial facing direction.
+  Finish standing still on the ground at the marker.
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/expedition_record_reconstruction_stage1
+  instance: 1.20.4
+  difficulty: easy
+  player_state:
+    position:
+    - 0.5
+    - 72
+    - 0.5
+    dimension: minecraft:overworld
+    yaw: -90
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+    - slot: 0
+      item: iron_pickaxe
+      count: 1
+    - slot: 1
+      item: oak_planks
+      count: 24
+    - slot: 2
+      item: bread
+      count: 16
+    - slot: 3
+      item: torch
+      count: 32
+    - slot: 4
+      item: iron_axe
+      count: 1
+evaluator:
+  name: cargo
+  parameters:
+    cargo:
+    - id: route_survey
+      item: minecraft:paper
+      chest:
+      - 24
+      - 72
+      - 0
+    - id: mineral_survey
+      item: minecraft:paper
+      chest:
+      - 60
+      - 72
+      - -24
+    - id: archive_ledger
+      item: minecraft:paper
+      chest:
+      - -24
+      - 72
+      - 16
+    position:
+      target:
+      - 0.5
+      - 72
+      - 0.5
+      horizontal_tolerance: 2
+      vertical_tolerance: 0.5
+      max_speed: 0.1

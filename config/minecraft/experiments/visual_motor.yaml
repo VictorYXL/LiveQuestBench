@@ -1,0 +1,19 @@
+id: minecraft_reference_visual_motor
+game: minecraft
+tasks:
+  - path: ../tasks/visual_motor/abandoned_mine_cargo.yaml
+  - path: ../tasks/visual_motor/mining_workshop_restart.yaml
+  - path: ../tasks/visual_motor/prepared_village_defense.yaml
+  - path: ../tasks/visual_motor/expedition_record_reconstruction.yaml
+  - path: ../tasks/visual_motor/shared_crossing_camp.yaml
+  - path: ../tasks/visual_motor/route_schema_transfer.yaml
+repetitions: 1
+agents:
+  - id: baseline
+    name: tool_calling
+    model:
+      provider: github_copilot
+      name: gpt-6-astra
+      reasoning_effort: low
+      max_output_tokens: 4096
+      max_attempts: 3

@@ -46,7 +46,8 @@ async def initialize_contract(admin, actor, fixture: dict) -> dict:
     giver = await locate("civilised,guard")
     if giver["source_site"] != spec["source_site"]:
         raise RuntimeError("Native contract giver is not from the declared source settlement")
-    await command("sudo", f"uid@{giver['uid']}", "give_item", "common.items.utility.coins", 1000)
+    funding = spec.get("giver_funding", 1000)
+    await command("sudo", f"uid@{giver['uid']}", "give_item", "common.items.utility.coins", funding)
     await command("sudo", f"uid@{giver['uid']}", "goto", *spec["giver_position"])
     target = await locate("monster,ogre")
     await command("sudo", f"uid@{target['uid']}", "goto", *spec["target_position"])
@@ -71,7 +72,8 @@ async def initialize_contract(admin, actor, fixture: dict) -> dict:
     return {
         "giver": giver, "target": target, "commands": commands,
         "helper_sha256": hashlib.sha256(Path(evidence.__file__).read_bytes()).hexdigest(),
-        "scope": "Existing RTSim guard and Monster; initial placement and 1000 giver coins only. "
+        "giver_funding": funding,
+        "scope": f"Existing RTSim guard and Monster; initial placement and {funding} giver coins only. "
                  "No accepted quest, health reduction, AI override, safezone or post-opening assistance.",
     }
 
@@ -105,6 +107,7 @@ def contract_registry(prepared: dict, observation: dict, rows: list[dict]) -> di
         "player": {**players[0], "client_session_id": observation["session_id"],
                    "client_actor": observation["control_actor"]},
         "giver_actor": prepared["giver"]["actor"], "target_actor": prepared["target"]["actor"],
+        "giver_target": prepared["giver"]["player_target"],
         "helper_sha256": prepared["helper_sha256"],
     }
 

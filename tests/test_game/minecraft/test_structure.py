@@ -17,6 +17,23 @@ nbtlib = pytest.importorskip("nbtlib", reason="Install the minecraft extra")
 from game.minecraft.evaluators.structure import evaluate_structure
 
 
+def test_level_crossing_accepts_detour_but_rejects_blocked_headroom(tmp_path):
+    from game.minecraft.evaluators.crossing import evaluate_crossing
+
+    before, after = tmp_path / "before", tmp_path / "after"
+    banks = {(0, 0, 0): "stone", (4, 0, 0): "stone"}
+    _save_world(before, banks)
+    deck = banks | {(x, 0, 1): "oak_planks" for x in range(5)}
+    goal = {"region": {"min": [0, 0, 0], "max": [4, 2, 2]},
+            "start": [0, 0, 0], "end": [4, 0, 0]}
+    _save_world(after, deck)
+    assert evaluate_crossing(before, after, **goal)["success"]
+    blocked = tmp_path / "blocked"
+    _save_world(blocked, deck | {(2, 2, 1): "stone"})
+    assert not evaluate_crossing(before, blocked, **goal)["success"]
+    assert not evaluate_crossing(after, after, **goal)["success"]
+
+
 def _save_world(root: Path, blocks: dict[tuple[int, int, int], str]) -> None:
     """Write small real-format chunks with five-bit, padded palette indices."""
     region = root / "region"

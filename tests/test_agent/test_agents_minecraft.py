@@ -69,7 +69,7 @@ def test_minecraft_collect_three_logs(
         "interrupt_after_first_game_tool": interrupt,
         "integration_status": "not_verified",
         "upstream": NATIVE_AGENTS[agent_name].source if agent_name in NATIVE_AGENTS else None,
-        "world_path": str(Path(__file__).resolve().parents[2] / "config/minecraft/fixtures/island"),
+        "world_path": str(Path(__file__).resolve().parents[2] / "output/back/legacy-config-20261026/config/minecraft/fixtures/island"),
         "task": "Collect at least 3 oak logs in your inventory. Keep them as logs, not planks. "
                 "Do not drop them. Finish with a text answer when you believe the task is complete.",
     }

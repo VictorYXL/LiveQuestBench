@@ -80,6 +80,21 @@ def create_binding(
         inspect.signature(evaluate_cargo).bind(Path(), Path(), None, **parameters)
         validate_cargo(**parameters)
         score = evaluate_cargo
+    elif evaluator == "route_transfer":
+        from game.minecraft.evaluators.route_transfer import evaluate_route, validate_route, verify_layout
+        validate_route(**parameters)
+        verify_layout(world_path, **parameters)
+        score = evaluate_route
+    elif evaluator == "workshop":
+        from game.minecraft.evaluators.workshop import evaluate_workshop, order_events
+        validate_state(**parameters)
+        score = evaluate_workshop
+    elif evaluator == "raid":
+        from game.minecraft.evaluators.raid import evaluate_raid, verify_initial_raid
+        validate_state(**parameters)
+        if not any(row["id"] == "minecraft:bad_omen" for row in state.effects):
+            raise ValueError("Prepared village defense requires a declared native Bad Omen opening")
+        score = evaluate_raid
     else:
         raise ValueError(f"Unknown Minecraft evaluator: {evaluator}")
 
@@ -95,6 +110,12 @@ def create_binding(
             verify_expedition(before, game.player_uuid)
         if evaluator == "cargo":
             verify_initial_cargo(before, game.player_uuid, **parameters)
+        if evaluator == "route_transfer":
+            verify_layout(before, **parameters)
+        if evaluator == "workshop" and order_events(before):
+            raise RuntimeError("Workshop milestone history was not empty before measured play")
+        if evaluator == "raid":
+            verify_initial_raid(before, game.player_uuid)
         if evaluator == "state" and parameters.get("action_sequence") is not None and action_events(before):
             raise RuntimeError("Native action evidence was not empty before measured play")
 

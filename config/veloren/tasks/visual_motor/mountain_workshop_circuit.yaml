@@ -1,0 +1,250 @@
+id: mountain_workshop_circuit
+game: veloren
+task_type: visual_motor
+task: |-
+  Obtain and wear a rawhide chestpiece, then return alive to the stone arch where you started.
+  Relative to the arch and your initial facing, the tanning rack is roughly 40 metres to the right and 10 metres behind you, on the upper terrace. The crafting bench is roughly 35 metres right and 10 metres forward, on a lower terrace than the rack.
+  Finish standing still on the ground at the arch.
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/veloren_0_18_0_0.bin
+  world_seed: 130626853
+  time_of_day: '12:00'
+  day_length: 30
+  calendar: none
+  platform:
+    origin:
+    - 18693
+    - 10793
+    - 500
+    size:
+    - 62
+    - 54
+    block: Rock
+  player_state:
+    position: &id001
+    - 18702.5
+    - 10820.5
+    - 501
+    look:
+    - 0
+    - 1
+    - 0
+    health: 100
+    inventory:
+      common.items.crafting_ing.hide.animal_hide: 5
+      common.items.consumable.potion_minor: 2
+      common.items.food.apple: 3
+    equipment:
+      active_mainhand: common.items.weapons.sword.starter
+      chest: common.items.armor.misc.chest.worker_purple_brown
+      feet: common.items.armor.misc.foot.sandals
+      glider: common.items.glider.basic_white
+      lantern: common.items.lantern.black_0
+      legs: common.items.armor.misc.pants.worker_brown
+  recipes:
+    simple_leather: true
+    rawhide_chest: true
+  stations:
+  - position:
+    - 18740.5
+    - 10810.5
+    - 507
+    sprite: TanningRack
+  - position:
+    - 18736.5
+    - 10832.5
+    - 504
+    sprite: CraftingBench
+  blocks:
+  - origin:
+    - 18732
+    - 10806
+    - 501
+    size:
+    - 12
+    - 10
+    - 6
+  - origin:
+    - 18732
+    - 10824
+    - 501
+    size:
+    - 12
+    - 12
+    - 3
+  - origin:
+    - 18702
+    - 10818
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18702
+    - 10822
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18702
+    - 10818
+    - 504
+    size:
+    - 1
+    - 5
+    - 1
+  - origin:
+    - 18693
+    - 10793
+    - 501
+    size:
+    - 1
+    - 54
+    - 12
+  - origin:
+    - 18754
+    - 10793
+    - 501
+    size:
+    - 1
+    - 54
+    - 12
+  - origin:
+    - 18694
+    - 10793
+    - 501
+    size:
+    - 60
+    - 1
+    - 12
+  - origin:
+    - 18694
+    - 10846
+    - 501
+    size:
+    - 60
+    - 1
+    - 12
+  - origin:
+    - 18694
+    - 10794
+    - 512
+    size:
+    - 2
+    - 52
+    - 1
+  - origin:
+    - 18752
+    - 10794
+    - 512
+    size:
+    - 2
+    - 52
+    - 1
+  - origin:
+    - 18696
+    - 10794
+    - 512
+    size:
+    - 56
+    - 2
+    - 1
+  - origin:
+    - 18696
+    - 10844
+    - 512
+    size:
+    - 56
+    - 2
+    - 1
+  - origin:
+    - 18726
+    - 10808
+    - 501
+    size:
+    - 1
+    - 6
+    - 1
+  - origin:
+    - 18727
+    - 10808
+    - 501
+    size:
+    - 1
+    - 6
+    - 2
+  - origin:
+    - 18728
+    - 10808
+    - 501
+    size:
+    - 1
+    - 6
+    - 3
+  - origin:
+    - 18729
+    - 10808
+    - 501
+    size:
+    - 1
+    - 6
+    - 4
+  - origin:
+    - 18730
+    - 10808
+    - 501
+    size:
+    - 1
+    - 6
+    - 5
+  - origin:
+    - 18731
+    - 10808
+    - 501
+    size:
+    - 1
+    - 6
+    - 6
+  - origin:
+    - 18729
+    - 10830
+    - 501
+    size:
+    - 1
+    - 6
+    - 1
+  - origin:
+    - 18730
+    - 10830
+    - 501
+    size:
+    - 1
+    - 6
+    - 2
+  - origin:
+    - 18731
+    - 10830
+    - 501
+    size:
+    - 1
+    - 6
+    - 3
+evaluator:
+  name: state
+  parameters:
+    equipment:
+      chest: common.items.armor.hide.rawhide.chest
+    position:
+      target: *id001
+      horizontal_tolerance: 2
+      vertical_tolerance: 0.5
+      max_speed: 0.1
+capabilities:
+  primary:
+  - spatial_interaction
+  secondary:
+  - planning_resources

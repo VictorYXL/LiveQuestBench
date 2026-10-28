@@ -15,7 +15,7 @@ from agent_framework.agents.tool_calling_agent import ToolCallingAgent
 from agent_framework.llm_client.base_client import BaseLLMClient, LLMResponse, Message
 from agent_framework.llm_client.responses import ResponsesClient, serialize_messages
 from agent_framework.utils.tools import Tool
-from benchmark.config import ConfigError, load_experiment
+from benchmark.config import AgentConfig, ConfigError, ModelConfig, load_experiment, load_task
 from benchmark.results import EpisodeLog
 from game.bindings import Controls, GameBinding
 from benchmark.runner import output_lock, prepare_episode, run_bounded, run_episode, run_experiment
@@ -318,7 +318,7 @@ def test_failed_admission_preserves_each_launch(tmp_path):
 
 @pytest.mark.parametrize("fail_first", [False, True])
 def test_agent_task_repetition_matrix_is_serial_and_separately_summarized(tmp_path, monkeypatch, fail_first):
-    config = load_experiment(ROOT / "config/veloren/experiments/gpt-6-astra-low/visual_motor_all.yaml")
+    config = load_experiment(ROOT / "config/veloren/experiments/visual_motor.yaml")
     first = config.agents[0]
     second = replace(first, id="second", model=replace(first.model, name="another-model"))
     tasks = (config.tasks[0], replace(config.tasks[0], task_type="structured_tool"))
@@ -424,7 +424,8 @@ def test_resume_protects_conflicts_and_active_output(tmp_path):
 
 
 def test_episode_faults_preserve_evidence_and_cleanup(tmp_path, monkeypatch):
-    config = load_experiment(ROOT / "config/veloren/experiments/gpt-6-astra-low/visual_motor_all.yaml")
+    task = load_task(ROOT / "config/veloren/tasks/visual_motor/native_contract_settlement.yaml")
+    agent_config = AgentConfig("baseline", "tool_calling", ModelConfig("github_copilot", "model"))
     for fault in ("execution", "measurement", "metrics", "cleanup", "context_success", "context_failure"):
         events = []
 
@@ -464,10 +465,12 @@ def test_episode_faults_preserve_evidence_and_cleanup(tmp_path, monkeypatch):
 
         class Agent(BaseAgent[Controls]):
             async def run(self, context):
-                assert context.task == config.tasks[0].task
+                assert context.task == task.task
                 assert context.interface is not game
                 assert "Do not select Quit Game" in context.game_instructions
                 assert "final response without tool calls" in context.game_instructions
+                assert "recover, revise your approach, and try again" in context.game_instructions
+                assert "Retries do not reset the world" in context.game_instructions
                 if fault == "execution":
                     raise RuntimeError("execution probe")
                 return AgentExit(AgentExitReason.RETURNED)
@@ -513,7 +516,7 @@ def test_episode_faults_preserve_evidence_and_cleanup(tmp_path, monkeypatch):
         ))
         output = tmp_path / fault
         result = asyncio.run(run_episode(
-            config.agents[0], config.tasks[0], output, {"episode_id": fault},
+            agent_config, task, output, {"episode_id": fault},
             headless=True, recording=False, recording_fps=10,
         ))
         assert result["model_history_policy"] == Client.history_policy

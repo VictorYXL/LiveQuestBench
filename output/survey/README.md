@@ -1,5 +1,14 @@
 # Survey Update: Open Game Benchmark Reassessment
 
+**Initial reference release (2026-10-28, after the snapshots below):**
+[Twelve objectives, twenty-four paired conditions, provisional difficulty and evidence limits](reference_tasks_release_20261028.md).
+The user selected a practical reference-task release rather than full statistical
+six-axis validation. Native route-schema transfer replaces workshop/glide;
+contract pairing, recovery waypoints and supply goal/score wording are aligned.
+The report distinguishes reference readiness from complete native witnesses and
+empirical capability discrimination. Earlier candidate/status entries remain
+historical snapshots.
+
 **Legacy runnable configurations archived (2026-10-26):**
 [Archive and restoration notes](../back/legacy-config-20261026/README.md) /
 [File integrity manifest](../back/legacy-config-20261026/manifest.json).

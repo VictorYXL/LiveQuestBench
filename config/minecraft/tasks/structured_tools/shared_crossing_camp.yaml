@@ -1,0 +1,166 @@
+id: shared_crossing_camp
+game: minecraft
+task_type: structured_tool
+capabilities:
+  primary:
+  - peer_cooperation
+  secondary:
+  - planning_resources
+  - spatial_interaction
+task: |-
+  Together restore a walkable crossing of the channel east of camp, build the far-bank shelter, and reunite at the yellow marker beside it. Finish alive with at least four bread across the team's inventories.
+  The crossing must connect the two yellow bank markers inside the marked construction strip. Use a continuous level deck of oak planks, cobblestone, stone or stone bricks, with two clear blocks of headroom.
+  The shelter's marked 3 by 3 footprint is beyond the eastern bank. Build a two-block-high perimeter: cobblestone in the lower layer and oak planks in the upper layer. Leave a two-block-high doorway at the centre of the north wall and keep the interior empty. Cover it with a full 3 by 3 oak-plank roof. Timber is near the northern start; stone is near the southern start. Choose your own division of work.
+  Both players must finish standing still on the ground at the far-bank yellow marker.
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/shared_crossing_camp_stage1_v2
+  instance: 1.20.4
+  difficulty: normal
+evaluator:
+  name: team
+  parameters:
+    all:
+      position:
+        target:
+        - 22.5
+        - 72
+        - 9.5
+        horizontal_tolerance: 3
+        vertical_tolerance: 0.5
+        max_speed: 0.1
+    any:
+      structure:
+        target:
+          structure:
+          - - - cobblestone
+              - air
+              - cobblestone
+            - - cobblestone
+              - air
+              - cobblestone
+            - - cobblestone
+              - cobblestone
+              - cobblestone
+          - - - oak_planks
+              - air
+              - oak_planks
+            - - oak_planks
+              - air
+              - oak_planks
+            - - oak_planks
+              - oak_planks
+              - oak_planks
+          - - - oak_planks
+              - oak_planks
+              - oak_planks
+            - - oak_planks
+              - oak_planks
+              - oak_planks
+            - - oak_planks
+              - oak_planks
+              - oak_planks
+        region:
+          min:
+          - 24
+          - 72
+          - 8
+          max:
+          - 26
+          - 74
+          - 10
+        match:
+          rotation_invariant: false
+    crossing:
+      region:
+        min:
+        - 4
+        - 71
+        - -2
+        max:
+        - 12
+        - 73
+        - 4
+      start:
+      - 4
+      - 71
+      - 0
+      end:
+      - 12
+      - 71
+      - 0
+    inventory_total:
+    - item: bread
+      min_count: 4
+    no_death: false
+tools:
+- MoveTool
+- LookAtPositionTool
+- SelectTool
+- StopTool
+- JumpTool
+- DigTool
+- PlaceTool
+- UseHeldItemTool
+- InspectContainerTool
+- TakeContainerItemTool
+- QueryCraftRecipeTool
+- CraftItemTool
+- RespawnTool
+- BroadcastTool
+- ChatTool
+participants:
+- id: Alpha
+  player_state:
+    position:
+    - -4.5
+    - 72
+    - 0.5
+    dimension: minecraft:overworld
+    yaw: -90
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+    - slot: 0
+      item: iron_pickaxe
+      count: 1
+    - slot: 1
+      item: iron_axe
+      count: 1
+    - slot: 2
+      item: bread
+      count: 4
+    - slot: 3
+      item: torch
+      count: 8
+- id: Beta
+  player_state:
+    position:
+    - -4.5
+    - 72
+    - 12.5
+    dimension: minecraft:overworld
+    yaw: -90
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+    - slot: 0
+      item: iron_pickaxe
+      count: 1
+    - slot: 1
+      item: iron_axe
+      count: 1
+    - slot: 2
+      item: bread
+      count: 4
+    - slot: 3
+      item: torch
+      count: 8

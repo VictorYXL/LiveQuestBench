@@ -230,7 +230,8 @@ class VelorenGame(BaseGame[MotorInterface | StructuredInterface]):
             if any(part.is_symlink() for part in (destination, *destination.parents)):
                 raise ValueError("Snapshot paths must not contain symlinks")
             started = time.monotonic_ns()
-            observation = await self._session.request("snapshot")
+            # Long native journals can exceed the normal RPC timeout after the public gate closes.
+            observation = await self._session.request("snapshot", timeout=180)
             destination.mkdir(parents=True)
             payload = json.dumps(observation, indent=2, allow_nan=False).encode()
             (destination / "observation.json").write_bytes(payload)

@@ -5,9 +5,12 @@ are supplied. The normal HUD and inventory may be inspected visually.
 
 Default controls: W/A/S/D move; mouse motion rotates the camera; Space jumps;
 left mouse uses the primary ability, right mouse the secondary ability;
-I opens the inventory and E interacts.
+I opens the inventory and E interacts. G toggles the equipped lantern.
 Number keys activate their normal hotbar slots. Mouse wheel changes camera zoom.
 R draws or sheathes the weapon; middle mouse requests a dodge roll.
+Left Ctrl (key left_ctrl) draws or stows the equipped glider; drawing is not takeoff.
+Comma toggles the free UI cursor; period toggles auto-walk, not the cursor.
+M opens the map. Space requests ordinary respawn when dead.
 The stock Alt block binding is intentionally unavailable in this keyboard profile.
 Key and mouse down persist until explicitly released. Batch waits are bounded;
 use key_up/mouse_up or release_all to stop held controls.

@@ -1,0 +1,53 @@
+id: route_schema_transfer
+game: minecraft
+task_type: visual_motor
+task: 'Explore the first three-module wing, then traverse two application wings and
+  finish alive and stationary at the centre of the final enlarged chamber. Complete
+  the route without dying or respawning.
+
+  Each module has one, two or three shallow niches in the wall beside its entrance.
+  Within this instance, a given niche pattern always has the same continuing exit
+  side relative to the direction in which you enter. One branch continues; the other
+  ends at a solid wall. Learn the architecture through ordinary exploration.
+
+  After the first wing, descend the connecting staircase. Later wings rearrange the
+  module order and rotate their orientation. Reuse what you discovered; an absolute
+  compass direction or blindly replaying the first turn sequence will not suffice.
+
+  The two application wings together allow at most 344 metres of sampled native travel,
+  including detours and backtracking. Practice travel and connecting stairs are outside
+  that distance allowance, but still consume episode time. All movement remains ordinary
+  native movement; there are no modified controls, recipes or physics. Complete the
+  application wings in order and remain in the final chamber.'
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/route_schema_transfer
+  instance: 1.20.4
+  difficulty: peaceful
+  player_state:
+    position:
+    - 0.5
+    - 201
+    - 0.5
+    dimension: minecraft:overworld
+    yaw: 0
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory: []
+evaluator:
+  name: route_transfer
+  parameters:
+    variant: 5
+    origin:
+    - 0
+    - 0
+    - 201
+capabilities:
+  primary:
+  - within_episode_learning
+  secondary:
+  - spatial_interaction

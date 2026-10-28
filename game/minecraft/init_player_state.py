@@ -25,6 +25,7 @@ class PlayerState:
     saturation: float = 5
     experience_level: int = 0
     inventory: list[dict] = field(default_factory=list)
+    effects: list[dict] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         if len(self.position) != 3 or any(
@@ -52,6 +53,19 @@ class PlayerState:
             if not isinstance(name, str) or not re.fullmatch(r"(minecraft:)?[a-z0-9_]+", name):
                 raise ValueError("Invalid vanilla inventory item ID")
             slots.add(slot)
+        effect_ids = set()
+        for effect in self.effects:
+            if not isinstance(effect, dict) or set(effect) != {"id", "amplifier", "duration"}:
+                raise ValueError("Effects require id, amplifier and duration in ticks")
+            name = effect["id"]
+            if not isinstance(name, str) or not re.fullmatch(r"minecraft:[a-z0-9_]+", name):
+                raise ValueError("Effects require a namespaced vanilla identifier")
+            if (name in effect_ids or type(effect["amplifier"]) is not int
+                    or not 0 <= effect["amplifier"] <= 127
+                    or type(effect["duration"]) is not int
+                    or not (effect["duration"] == -1 or 1 <= effect["duration"] <= 2147483647)):
+                raise ValueError("Effect identities must be unique with bounded amplifier and duration")
+            effect_ids.add(name)
 
     @classmethod
     def from_dict(cls, values: dict) -> "PlayerState":
@@ -87,6 +101,12 @@ class PlayerState:
                     "Count": Byte(item["count"]),
                 })
                 for item in self.inventory
+            ]),
+            "active_effects": List[Compound]([
+                Compound({"id": String(effect["id"]), "amplifier": Byte(effect["amplifier"]),
+                          "duration": Int(effect["duration"]), "ambient": Byte(0),
+                          "show_particles": Byte(1), "show_icon": Byte(1)})
+                for effect in self.effects
             ]),
         })
 
@@ -126,3 +146,12 @@ class PlayerState:
         requested = sorted((int(item["Slot"]), str(item["id"]), int(item["Count"])) for item in expected["Inventory"])
         if observed != requested:
             raise RuntimeError("Player initialization verification failed: Inventory")
+        observed_effects = sorted(
+            (str(row["id"]), int(row.get("amplifier", 0)), int(row["duration"]))
+            for row in actual.get("active_effects", [])
+        )
+        requested_effects = sorted(
+            (row["id"], row["amplifier"], row["duration"]) for row in self.effects
+        )
+        if observed_effects != requested_effects:
+            raise RuntimeError("Player initialization verification failed: active_effects")

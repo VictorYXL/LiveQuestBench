@@ -1,0 +1,89 @@
+id: mining_workshop_restart
+game: minecraft
+task_type: structured_tool
+task: |-
+  Return alive to the yellow camp marker carrying a diamond, an iron pickaxe, a shield, four cooked beef, at least one coal and two oak planks.
+  The diamond outcrop is about 50 blocks forward from camp, relative to your initial facing.
+  Finish standing still on the ground at the marker.
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/mining_workshop_restart_stage1
+  instance: 1.20.4
+  difficulty: easy
+  player_state:
+    position:
+    - 0.5
+    - 72
+    - 0.5
+    dimension: minecraft:overworld
+    yaw: -90
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+    - slot: 0
+      item: stone_pickaxe
+      count: 1
+    - slot: 1
+      item: raw_iron
+      count: 4
+    - slot: 2
+      item: beef
+      count: 4
+    - slot: 3
+      item: coal
+      count: 2
+    - slot: 4
+      item: oak_log
+      count: 3
+    - slot: 5
+      item: bread
+      count: 2
+evaluator:
+  name: state
+  parameters:
+    inventory:
+    - item: diamond
+      min_count: 1
+    - item: iron_pickaxe
+      min_count: 1
+    - item: shield
+      min_count: 1
+    - item: cooked_beef
+      min_count: 4
+    - item: coal
+      min_count: 1
+    - item: oak_planks
+      min_count: 2
+    position:
+      target:
+      - 0.5
+      - 72
+      - 0.5
+      horizontal_tolerance: 2
+      vertical_tolerance: 0.5
+      max_speed: 0.1
+tools:
+- MoveTool
+- LookAtPositionTool
+- SelectTool
+- StopTool
+- JumpTool
+- DigTool
+- PlaceTool
+- UseHeldItemTool
+- QueryCraftRecipeTool
+- CraftItemTool
+- InspectFurnaceTool
+- FurnaceClickTool
+- AttackTool
+- RespawnTool
+capabilities:
+  primary:
+  - planning_resources
+  secondary:
+  - realtime_execution
+  - spatial_interaction

@@ -1,0 +1,19 @@
+id: veloren_reference_visual_motor
+game: veloren
+tasks:
+  - path: ../tasks/visual_motor/mountain_workshop_circuit.yaml
+  - path: ../tasks/visual_motor/self_funded_expedition.yaml
+  - path: ../tasks/visual_motor/hostile_route_supply_recovery.yaml
+  - path: ../tasks/visual_motor/native_contract_settlement.yaml
+  - path: ../tasks/visual_motor/coordinated_route_hunt.yaml
+  - path: ../tasks/visual_motor/route_schema_transfer.yaml
+repetitions: 1
+agents:
+  - id: baseline
+    name: tool_calling
+    model:
+      provider: github_copilot
+      name: gpt-6-astra
+      reasoning_effort: low
+      max_output_tokens: 4096
+      max_attempts: 3

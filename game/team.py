@@ -203,8 +203,21 @@ def create_team_binding(task: TaskConfig, output: Path, *, headless: bool,
         from game.veloren.evaluators.endpoints import validate_state, evaluate_state
         fallback = {"min_health": 1}
     parameters = task.evaluator_parameters
-    if not parameters or set(parameters) - {"all", "any", "roles", "inventory_total", "no_death"}:
-        raise ValueError("Team goals require all/any/roles state predicates, inventory_total, or no_death")
+    if not parameters or set(parameters) - {"all", "any", "roles", "inventory_total", "no_death",
+                                           "crossing", "encounters"}:
+        raise ValueError("Unsupported team goal predicate")
+    if "crossing" in parameters:
+        from game.minecraft.evaluators.crossing import evaluate_crossing, validate_crossing
+        if task.game != "minecraft":
+            raise ValueError("Level deck scoring requires Minecraft")
+        validate_crossing(**parameters["crossing"])
+    if "encounters" in parameters:
+        from game.veloren.evaluators.encounter import team_encounter_checks, validate_encounter
+        if task.game != "veloren":
+            raise ValueError("Team native encounter scoring requires Veloren")
+        validate_encounter(roles=parameters["encounters"])
+        if set(parameters["encounters"]) != {row["role"] for row in task.fixture.get("encounters", [])}:
+            raise ValueError("Team target roles must match fixture encounters")
     role_ids = {role.id for role in task.participants}
     role_goals = parameters.get("roles", {})
     if not isinstance(role_goals, dict) or role_goals.keys() - role_ids:
@@ -229,7 +242,7 @@ def create_team_binding(task: TaskConfig, output: Path, *, headless: bool,
                   for goal in totals]
     if "no_death" in parameters and type(parameters["no_death"]) is not bool:
         raise ValueError("no_death must be boolean")
-    if not any(key in parameters for key in ("all", "any", "inventory_total")) and not role_goals and not parameters.get("no_death"):
+    if not any(key in parameters for key in ("all", "any", "inventory_total", "crossing", "encounters")) and not role_goals and not parameters.get("no_death"):
         raise ValueError("Team requires at least one effective goal")
     members = {}
     member_tools = None
@@ -262,6 +275,17 @@ def create_team_binding(task: TaskConfig, output: Path, *, headless: bool,
 
     def evaluate(before: Path, after: Path) -> dict:
         checks = []
+        if "crossing" in parameters:
+            owner = next(iter(members))
+            result = evaluate_crossing(before / owner, after / owner, **parameters["crossing"])
+            checks.append({"scope": "crossing", "result": result, "passed": result["success"]})
+        if "encounters" in parameters:
+            initial, final = [
+                {role: json.loads((boundary / role / "observation.json").read_text()) for role in members}
+                for boundary in (before, after)
+            ]
+            result = team_encounter_checks(initial, final, roles=parameters["encounters"])
+            checks.append({"scope": "encounters", "result": result, "passed": result["success"]})
         for scope in ("all", "any"):
             if scope in parameters:
                 rows = {role: score(role, before, after, parameters[scope]) for role in members}

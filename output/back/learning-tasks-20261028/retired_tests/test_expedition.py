@@ -1,4 +1,4 @@
-"""Counterexamples for native preparation/kill evidence and a same-life return."""
+"""Archived tests for expedition modules retired in commit 31cf02c."""
 
 import json
 from pathlib import Path
