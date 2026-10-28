@@ -129,10 +129,13 @@ class Session:
         else:
             port, userdata = await self.stack.enter_async_context(
                 fixture_server(self.output, self.record, native, self.fixture))
-        admin = NativeBridge(self.output, self.record["username"], port, userdata, journal, native)
+        from game.veloren.runtime.startup import start_setup_bridge
+
         administrator = await self.stack.enter_async_context(AsyncExitStack())
-        administrator.push_async_callback(admin.close)
-        await admin.start()
+        admin = await start_setup_bridge(
+            lambda directory: NativeBridge(directory, self.record["username"], port, userdata, journal, native),
+            self.output, administrator, reconnect=bool(self.attachment),
+        )
         protected = await protect_administrator(admin)
         administrator_uid = protected["self_identity"]["uid"]
         self.record["setup_admin_protection"] = protected["survival"]["buffs"]
