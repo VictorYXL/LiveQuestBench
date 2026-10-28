@@ -1,0 +1,172 @@
+id: leather_outfit_allocation
+game: veloren
+task_type: visual_motor
+task: Obtain and wear leather chest armor and leather boots, keeping a worker shirt and sandals in your
+  bag. Return alive to the starting stone arch with at least five coins, standing still on the ground.
+  Your starting hides are insufficient for both pieces; a nearby merchant trades materials at native prices.
+  Plan purchases and processing without exhausting your reserves. The tanning rack and crafting bench
+  occupy separate terraces nearby. Death does not restore resources.
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/veloren_0_18_0_0.bin
+  world_seed: 130626853
+  time_of_day: '12:00'
+  day_length: 30
+  calendar: none
+  platform:
+    origin:
+    - 18700
+    - 10800
+    - 500
+    size:
+    - 40
+    - 24
+    block: Rock
+  player_state:
+    position: &id001
+    - 18702.5
+    - 10809.5
+    - 501
+    look:
+    - 0
+    - 1
+    - 0
+    health: 100
+    inventory:
+      common.items.crafting_ing.hide.tough_hide: 12
+      common.items.crafting_ing.hide.animal_hide: 6
+      common.items.utility.coins: 99
+    equipment:
+      active_mainhand: common.items.weapons.sword.starter
+      chest: common.items.armor.misc.chest.worker_purple_brown
+      feet: common.items.armor.misc.foot.sandals
+      glider: common.items.glider.basic_white
+      lantern: common.items.lantern.black_0
+      legs: common.items.armor.misc.pants.worker_brown
+  recipes:
+    simple_leather: true
+    thick_leather: true
+    leather_strips: true
+    leather_chest: true
+    leather_feet: true
+  stations:
+  - position:
+    - 18710.5
+    - 10809.5
+    - 501
+    sprite: TanningRack
+  - position:
+    - 18728.5
+    - 10809.5
+    - 503
+    sprite: CraftingBench
+  recipe_groups:
+  - common.items.recipes.armor.leather
+  blocks:
+  - origin:
+    - 18723
+    - 10804
+    - 500
+    size:
+    - 12
+    - 12
+    - 3
+  - origin:
+    - 18721
+    - 10805
+    - 500
+    size:
+    - 2
+    - 10
+    - 2
+  - origin:
+    - 18701
+    - 10807
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18701
+    - 10811
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18701
+    - 10807
+    - 504
+    size:
+    - 1
+    - 5
+    - 1
+  - origin:
+    - 18700
+    - 10800
+    - 501
+    size:
+    - 40
+    - 1
+    - 4
+  - origin:
+    - 18700
+    - 10823
+    - 501
+    size:
+    - 40
+    - 1
+    - 4
+  - origin:
+    - 18700
+    - 10801
+    - 501
+    size:
+    - 1
+    - 22
+    - 4
+  - origin:
+    - 18739
+    - 10801
+    - 501
+    size:
+    - 1
+    - 22
+    - 4
+  respawn_at_start: true
+  merchant:
+    position:
+    - 18705.5
+    - 10809.5
+    - 501
+    stock_item: common.items.crafting_ing.hide.tough_hide
+    stock_amount: 1
+    payment_item: common.items.crafting_ing.hide.animal_hide
+    payment_reserve: 2
+    coin_reserve: 5
+evaluator:
+  name: state
+  parameters:
+    min_health: 0
+    equipment:
+      chest: common.items.armor.hide.leather.chest
+      feet: common.items.armor.hide.leather.foot
+    inventory:
+    - item: common.items.armor.misc.chest.worker_purple_brown
+      min_count: 1
+    - item: common.items.armor.misc.foot.sandals
+      min_count: 1
+    - item: common.items.utility.coins
+      min_count: 5
+    position:
+      target: *id001
+      horizontal_tolerance: 3
+      vertical_tolerance: 1
+      max_speed: 0.1
+capabilities:
+  primary:
+  - planning_resources
+  secondary:
+  - spatial_interaction
