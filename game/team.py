@@ -204,8 +204,17 @@ def create_team_binding(task: TaskConfig, output: Path, *, headless: bool,
         fallback = {"min_health": 1}
     parameters = task.evaluator_parameters
     if not parameters or set(parameters) - {"all", "any", "roles", "inventory_total", "no_death",
-                                           "crossing", "encounters"}:
+                                           "crossing", "encounters", "cargo", "native_efficiency"}:
         raise ValueError("Unsupported team goal predicate")
+    if "cargo" in parameters:
+        from game.minecraft.evaluators.cargo import validate_cargo
+        from game.minecraft.evaluators.team_cargo import evaluate_team_cargo, verify_team_cargo
+        if task.game != "minecraft":
+            raise ValueError("Original team chest cargo requires Minecraft")
+        validate_cargo(**parameters["cargo"])
+    if "native_efficiency" in parameters:
+        if task.game != "minecraft" or parameters["native_efficiency"] is not True:
+            raise ValueError("Native team efficiency requires Minecraft and true")
     if "crossing" in parameters:
         from game.minecraft.evaluators.crossing import evaluate_crossing, validate_crossing
         if task.game != "minecraft":
@@ -242,7 +251,7 @@ def create_team_binding(task: TaskConfig, output: Path, *, headless: bool,
                   for goal in totals]
     if "no_death" in parameters and type(parameters["no_death"]) is not bool:
         raise ValueError("no_death must be boolean")
-    if not any(key in parameters for key in ("all", "any", "inventory_total", "crossing", "encounters")) and not role_goals and not parameters.get("no_death"):
+    if not any(key in parameters for key in ("all", "any", "inventory_total", "crossing", "encounters", "cargo")) and not role_goals and not parameters.get("no_death"):
         raise ValueError("Team requires at least one effective goal")
     members = {}
     member_tools = None
@@ -275,6 +284,12 @@ def create_team_binding(task: TaskConfig, output: Path, *, headless: bool,
 
     def evaluate(before: Path, after: Path) -> dict:
         checks = []
+        if "cargo" in parameters:
+            result = evaluate_team_cargo(
+                before, after, {role: member.game.player_uuid for role, member in members.items()},
+                **parameters["cargo"],
+            )
+            checks.append({"scope": "cargo", "result": result, "passed": result["success"]})
         if "crossing" in parameters:
             owner = next(iter(members))
             result = evaluate_crossing(before / owner, after / owner, **parameters["crossing"])
@@ -315,6 +330,11 @@ def create_team_binding(task: TaskConfig, output: Path, *, headless: bool,
         return {"schema": "team-endpoints", "success": all(row["passed"] for row in checks), "checks": checks}
 
     def verify(before: Path) -> None:
+        if "cargo" in parameters:
+            verify_team_cargo(
+                before, {role: member.game.player_uuid for role, member in members.items()},
+                **parameters["cargo"],
+            )
         for role, member in members.items():
             member.verify_initial(before / role)
             if task.game == "veloren":
@@ -326,9 +346,15 @@ def create_team_binding(task: TaskConfig, output: Path, *, headless: bool,
 
     def metrics(before: Path, after: Path) -> dict:
         rows = {role: member.metrics(before / role, after / role) for role, member in members.items()}
-        return {"participants": rows, "deaths": {
+        result = {"participants": rows, "deaths": {
             "count": sum(row["deaths"]["count"] for row in rows.values()),
             "semantics": "native_player_deaths_summed_across_participants",
         }}
+        if parameters.get("native_efficiency"):
+            from game.minecraft.evaluators.team_cargo import team_efficiency
+            result["native_efficiency"] = team_efficiency(
+                before, after, {role: member.game.player_uuid for role, member in members.items()},
+            )
+        return result
 
     return GameBinding(game, unavailable, evaluate, verify, metrics)
