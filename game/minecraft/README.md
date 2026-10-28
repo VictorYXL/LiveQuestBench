@@ -206,6 +206,8 @@ Task-specific tools cover:
 - Container inspection and transfers.
 - Attacking, held-item use and native merchant exchanges where admitted.
 - Native respawn.
+- Opt-in `InspectVitalsTool` reads the player's native air supply and active
+  effect durations without changing controls, effects or the episode clock.
 
 Automatic navigation is available only when admitted by the task. It is not
 appropriate when route choice itself is the intended planning challenge.

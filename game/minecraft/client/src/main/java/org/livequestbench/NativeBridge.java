@@ -117,6 +117,15 @@ public class NativeBridge implements ClientModInitializer {
                     error(request, "not_connected", "Native client is not in a world");
                 } else if (method.equals("observe")) {
                     reply(request, observe());
+                } else if (method.equals("vitals")) {
+                    JsonArray effects = new JsonArray();
+                    for (var effect : client().player.getStatusEffects())
+                        effects.add(object("id", Registries.STATUS_EFFECT.getId(effect.getEffectType()).toString(),
+                                "amplifier", effect.getAmplifier(), "duration_ticks", effect.getDuration()));
+                    reply(request, ok("air_ticks", client().player.getAir(),
+                            "max_air_ticks", client().player.getMaxAir(),
+                            "submerged_in_water", client().player.isSubmergedInWater(),
+                            "effects", effects));
                 } else if (method.equals("chat_inbox")) {
                     var messages = ((ChatHudAccessor) client().inGameHud.getChatHud()).livequestMessages();
                     List<JsonObject> rows = new ArrayList<>();

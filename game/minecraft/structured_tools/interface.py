@@ -92,6 +92,9 @@ SCHEMAS.extend([
 ])
 TRADING_TOOLS = tuple(schema["name"] for schema in SCHEMAS if schema["name"] != "GetObservationTool")
 SCHEMAS.extend([
+    tool("InspectVitalsTool", "Read only your native air supply and active effects: air ticks, maximum air, "
+         "whether your eyes are underwater, and effect IDs, amplifiers and remaining native ticks. "
+         "Ordinary native time continues; no breathing refill, potion use, movement or safe-route advice.", {}, []),
     tool("InspectFurnaceTool", "Open the reachable furnace under your aim, or read the already open furnace. "
          "Read native window slots (0=input, 1=fuel, 2=output, 3-38=player inventory), cursor and UI progress. "
          "No material choice, insertion, waiting for cooking or collection.", {}, []),
@@ -192,6 +195,8 @@ async def execute_tool(bridge: NativeBridge, name: str, arguments: dict) -> dict
         return await observe(bridge)
     if name == "QueryCraftRecipeTool":
         return await bridge.request("recipes", arguments)
+    if name == "InspectVitalsTool":
+        return check_action(await bridge.request("vitals", {}))
     action = {
         "MoveTool": "move_" + arguments.get("direction", ""),
         "LookAtPositionTool": "look", "SelectTool": "select", "StopTool": "stop", "RespawnTool": "respawn",
