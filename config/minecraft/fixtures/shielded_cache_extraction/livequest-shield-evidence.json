@@ -1,0 +1,8 @@
+{
+  "schema": "minecraft-skeleton-projectile-blocks/1",
+  "pack_sha256": {
+    "pack.mcmeta": "b5cd0656de7f3a07848f60ad2bb23daad56cc66eca1ae9746596308bfaad6d70",
+    "data/livequest_shield/advancements/block.json": "f7fde1bbb0e9df0135540862dd72017f14e9540e94e2cd6610ef8316fe4b868a",
+    "data/livequest_shield/functions/block.mcfunction": "15b555a2a444ffd029d90860b4d083bc9c5c29bc159c456b3c648fa772f53202"
+  }
+}

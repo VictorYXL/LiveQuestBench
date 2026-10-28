@@ -147,6 +147,7 @@ remain unchanged. Omit it to preserve ordinary world-spawn behavior.
 | `inventory` | Final item counts or net increases | Possession does not prove crafting or a particular pickup |
 | `structure` | A declared block blueprint in a bounded region | Does not establish functional mechanisms or visual quality |
 | `state` | Position, health, food, equipment and supported native effects | Endpoint state does not prove a route or full action history |
+| `shielded_cargo` | Original chest cargo, living settled return and an actual skeleton-arrow shield block | Requires the passive native advancement observer; raising a shield alone is insufficient |
 | `expedition` | Designated encounters, preparation, cargo and return | Requires compatible fixture evidence and explicit conditions |
 
 Initial `player_state.inventory` entries may declare integer `damage` for a

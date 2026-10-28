@@ -1,0 +1,1 @@
+{"criteria": {"block": {"trigger": "minecraft:entity_hurt_player", "conditions": {"damage": {"blocked": true, "type": {"direct_entity": {"type": "minecraft:arrow"}, "source_entity": {"type": "minecraft:skeleton"}}}}}}, "rewards": {"function": "livequest_shield:block"}}

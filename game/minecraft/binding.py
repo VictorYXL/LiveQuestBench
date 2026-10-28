@@ -68,6 +68,12 @@ def create_binding(
         inspect.signature(evaluate_state).bind(Path(), Path(), None, **parameters)
         validate_state(**parameters)
         score = evaluate_state
+    elif evaluator == "shielded_cargo":
+        from game.minecraft.evaluators.shielded_cargo import (
+            evaluate_shielded_cargo, verify_initial_shielded_cargo,
+        )
+        validate_cargo(**parameters)
+        score = evaluate_shielded_cargo
     elif evaluator == "structure":
         from game.minecraft.evaluators.structure import evaluate_structure, validate_config
         inspect.signature(evaluate_structure).bind(Path(), Path(), **parameters)
@@ -119,6 +125,8 @@ def create_binding(
             expected[name] = expected.get(name, 0) + item["count"]
         if inventory(before, game.player_uuid) != expected:
             raise RuntimeError("Initial native inventory differs from task initialization")
+        if evaluator == "shielded_cargo":
+            verify_initial_shielded_cargo(before, game.player_uuid, **parameters)
         if evaluator == "expedition":
             verify_expedition(before, game.player_uuid)
         if evaluator == "cargo":

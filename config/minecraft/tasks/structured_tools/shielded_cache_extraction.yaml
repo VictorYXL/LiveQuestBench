@@ -1,0 +1,78 @@
+id: shielded_cache_extraction
+game: minecraft
+task_type: structured_tool
+capabilities:
+  primary:
+  - realtime_execution
+  secondary:
+  - spatial_interaction
+task: Recover the original Cache Part from the chest near the far end of this roughly 30-block ruined
+  corridor, block at least one actual skeleton arrow with your shield, and return alive and standing still
+  on the yellow entrance pad with the part. All three conditions are required. Broad stone cover islands
+  are available; fighting, avoiding enemies and native death recovery are legal. Raising the shield without
+  blocking an arrow does not count. Native respawn returns to the entrance without replacing lost items.
+  Release controls and finish with a text answer.
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/shielded_cache_extraction
+  instance: 1.20.4
+  difficulty: normal
+  player_state:
+    position:
+    - 0.5
+    - 72
+    - 0.5
+    dimension: minecraft:overworld
+    respawn_position: [0, 72, 0]
+    yaw: -90
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+    - slot: 0
+      item: iron_sword
+      count: 1
+    - slot: 1
+      item: bread
+      count: 12
+    - slot: 102
+      item: iron_chestplate
+      count: 1
+    - slot: -106
+      item: shield
+      count: 1
+evaluator:
+  name: shielded_cargo
+  parameters:
+    cargo:
+    - id: shielded_cache_part
+      item: minecraft:amethyst_shard
+      chest:
+      - 28
+      - 72
+      - 3
+    position:
+      target:
+      - 0.5
+      - 72
+      - 0.5
+      horizontal_tolerance: 3
+      vertical_tolerance: 0.5
+      max_speed: 0.1
+tools:
+- MoveTool
+- LookAtPositionTool
+- SelectTool
+- StopTool
+- JumpTool
+- DigTool
+- PlaceTool
+- UseHeldItemTool
+- InspectContainerTool
+- TakeContainerItemTool
+- StrikeTool
+- AttackTool
+- RespawnTool
