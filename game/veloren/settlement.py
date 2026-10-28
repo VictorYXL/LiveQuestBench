@@ -30,6 +30,20 @@ def quoted_stack(rows: list[dict], identifier: str) -> dict:
     return min(matches, key=lambda row: (-row["amount"], row["slot"]))
 
 
+def purchase_funded(inventory: dict, spec: dict, *, product_value: float,
+                    payment_value: float, coin_value: float) -> bool:
+    coins = "common.items.utility.coins"
+    opening_coins = inventory.get(coins, 0)
+    if spec["payment_item"] == coins:
+        budget = opening_coins * coin_value
+        reserve = max(spec["payment_reserve"], spec["coin_reserve"])
+    else:
+        spendable = inventory[spec["payment_item"]] - spec["payment_reserve"]
+        budget = spendable * payment_value + opening_coins * coin_value
+        reserve = spec["coin_reserve"]
+    return budget >= spec["stock_amount"] * product_value + reserve * coin_value
+
+
 def nearby_merchants(observation: dict) -> list[dict]:
     return [row for row in observation["nearby_entities"]
             if isinstance(row.get("name_text"), str) and "(Merchant)" in row["name_text"] and row["distance"] < 4]
@@ -138,7 +152,9 @@ async def initialize_merchant(admin, actor, fixture: dict) -> dict:
     payment = quoted_stack(trade["inventories"][own], spec["payment_item"])
     spendable = fixture["player_state"]["inventory"][spec["payment_item"]] - spec["payment_reserve"]
     if (product["amount"] < spec["stock_amount"] or coins["amount"] < spec["coin_reserve"]
-            or spendable * value(payment) < spec["stock_amount"] * value(product) + spec["coin_reserve"] * value(coins)
+            or not purchase_funded(fixture["player_state"]["inventory"], spec,
+                                   product_value=value(product), payment_value=value(payment),
+                                   coin_value=value(coins))
             or coins["amount"] * value(coins) < spendable * value(payment)):
         raise RuntimeError("Native stock, prices or liquidity do not support the declared purchase and reserves")
     qualified_stock = trade
