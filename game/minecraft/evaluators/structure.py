@@ -138,7 +138,7 @@ def evaluate_structure(before: Path, after: Path, config: dict) -> dict:
                 }
     success = best is not None and best["passed"]
     return {
-        "success": success, "evaluator": "structure", "version": "minecraft-1.20.4-structure-v1",
+        "success": success, "evaluator": "structure", "version": "minecraft-1.20.4-structure",
         "dimension": dimension, "region": {"min": list(low), "max": list(high)}, "settings": settings,
         "coverage": {"before_blocks": len(initial), "after_blocks": len(final), "changed_blocks": len(changes)},
         "best_match": best,

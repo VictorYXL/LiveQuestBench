@@ -9,7 +9,7 @@ import math
 from agent_framework.utils.tools import Tool
 
 
-PROFILE_ID = "veloren-native-fixed-tools-v3"
+PROFILE_ID = "veloren-native-fixed-tools"
 logger = logging.getLogger(__name__)
 FIELDS = (
     "session_id", "tick", "position", "velocity", "on_ground", "survival", "inventory",
@@ -192,7 +192,7 @@ def project(observation: dict, *, rpg: bool = False, skills: bool = False) -> di
         result.update(skill_tree=observation["skill_tree"], auxiliary_abilities=observation["auxiliary_abilities"])
     if rpg:
         result.update(
-            profile="veloren-native-settlement-tools-v2",
+            profile="veloren-native-settlement-tools",
             dialogue=public_dialogue(observation["dialogue"]),
             dialogue_markers=[public_dialogue(row) for row in observation["dialogue_markers"]],
             pending_trade=public_trade(observation["social_and_trade"]["pending_trade"]),

@@ -10,13 +10,13 @@ from benchmark.config import load_task
 @pytest.fixture
 def minecraft_world_path() -> Path:
     return Path(os.environ["MINECRAFT_TEST_FIXTURE"]) if os.environ.get("MINECRAFT_TEST_FIXTURE") else (
-        Path(__file__).resolve().parents[1] / "output/back/legacy-config-20261026/config/minecraft/fixtures/island"
+        Path(__file__).resolve().parents[1] / "tests/fixtures/legacy/config/minecraft/fixtures/island"
     )
 
 
 @pytest.fixture
 def veloren_fixture() -> dict:
-    return load_task(Path(__file__).resolve().parents[1] / "output/back/legacy-config-20261026/config/veloren/tasks/structured_tools/move_2_metres.yaml").fixture
+    return load_task(Path(__file__).resolve().parents[1] / "tests/fixtures/legacy/config/veloren/tasks/structured_tools/move_2_metres.yaml").fixture
 
 
 def pytest_addoption(parser: pytest.Parser) -> None:

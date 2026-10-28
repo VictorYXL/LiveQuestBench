@@ -403,7 +403,7 @@ def test_native_regression_fixture(mode, task_id):
     import json
 
     root = Path(__file__).resolve().parents[3]
-    fixture = load_task(root / f"output/back/legacy-config-20261026/config/veloren/tasks/{mode}/{task_id}.yaml").fixture
+    fixture = load_task(root / f"tests/fixtures/legacy/config/veloren/tasks/{mode}/{task_id}.yaml").fixture
     output = root / "output/test" / f"veloren-initialization-{mode}-{task_id}-{uuid4().hex}"
     print(f"Veloren initialization artifacts: {output}")
     game = VelorenGame(output_dir=output, fixture=fixture,

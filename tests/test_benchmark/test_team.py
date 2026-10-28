@@ -14,7 +14,7 @@ from game.team import TeamGame
 
 
 def test_team_configuration_is_explicit_and_singleton_remains_default(tmp_path):
-    path = Path("output/back/legacy-config-20261026/config/minecraft/tasks/structured_tools/reach_nearby_point.yaml")
+    path = Path("tests/fixtures/legacy/config/minecraft/tasks/structured_tools/reach_nearby_point.yaml")
     assert load_task(path).participants == ()
     assert "participants" not in load_task(path).resolved()
     data = yaml.safe_load(path.read_text())
@@ -152,7 +152,7 @@ def test_team_goal_composition_uses_each_native_players_inventory(tmp_path, monk
     from game.minecraft.init_player_state import PlayerState
     from game.team import create_team_binding
 
-    task = load_task(Path("output/back/legacy-config-20261026/config/minecraft/tasks/structured_tools/reach_nearby_point.yaml"))
+    task = load_task(Path("tests/fixtures/legacy/config/minecraft/tasks/structured_tools/reach_nearby_point.yaml"))
     state = dict(task.fixture["player_state"])
     state["inventory"] = [{"item": "minecraft:apple", "count": 1, "slot": 0}]
     task = replace(task, fixture={key: value for key, value in task.fixture.items() if key != "player_state"},

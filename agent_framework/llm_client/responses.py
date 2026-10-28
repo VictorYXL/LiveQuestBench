@@ -224,7 +224,7 @@ class ResponsesClient(BaseLLMClient):
     """
 
     provider = ""
-    history_policy = "responses-visible-history-v1"
+    history_policy = "responses-visible-history"
 
     def __init__(
         self, model: str, *, max_output_tokens: int = 4096,

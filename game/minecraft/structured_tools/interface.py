@@ -13,7 +13,7 @@ from game.minecraft.runtime.bridge import BridgeError, NativeBridge
 from agent_framework.utils.tools import Tool
 
 
-PROFILE_ID = "minecraft-1.20.4-st-native-v5"
+PROFILE_ID = "minecraft-1.20.4-st-native"
 logger = logging.getLogger(__name__)
 NUMBER = {"type": "number", "minimum": -30000000, "maximum": 30000000}
 POSITION = {"x": NUMBER, "y": {"type": "number", "minimum": -2048, "maximum": 2048}, "z": NUMBER}

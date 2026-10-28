@@ -18,7 +18,7 @@ from game.veloren.evaluators.deaths import death_snapshot, death_metrics
 def test_market_hunting_yard_is_separated_and_connected_in_both_tracks():
     from game.veloren.fixture import solid_voxels
 
-    root = Path(__file__).resolve().parents[3] / "output/back/legacy-config-20261026/config/veloren/tasks"
+    root = Path(__file__).resolve().parents[3] / "tests/fixtures/legacy/config/veloren/tasks"
     st = load_task(root / "structured_tools/market_hunt_return.yaml")
     vm = load_task(root / "visual_motor/market_hunt_return.yaml")
     assert validate_fixture(st.fixture) == validate_fixture(vm.fixture)
@@ -54,7 +54,7 @@ def test_market_hunting_yard_is_separated_and_connected_in_both_tracks():
 def test_dual_encounter_divider_blocks_opening_sightlines_without_sealing_targets():
     from game.veloren.fixture import solid_voxels
 
-    root = Path(__file__).resolve().parents[3] / "output/back/legacy-config-20261026/config/veloren/tasks"
+    root = Path(__file__).resolve().parents[3] / "tests/fixtures/legacy/config/veloren/tasks"
     st = load_task(root / "structured_tools/dual_legoom.yaml")
     vm = load_task(root / "visual_motor/dual_legoom.yaml")
     assert validate_fixture(st.fixture) == validate_fixture(vm.fixture)
@@ -374,7 +374,7 @@ def test_expedition_requires_native_preparation_before_first_damage():
 
 
 def test_expedition_catalog_admits_paired_native_fixtures():
-    root = Path(__file__).resolve().parents[3] / "output/back/legacy-config-20261026/config/veloren/tasks"
+    root = Path(__file__).resolve().parents[3] / "tests/fixtures/legacy/config/veloren/tasks"
     st = load_task(root / "structured_tools/provisioned_hunt_return.yaml")
     vm = load_task(root / "visual_motor/provisioned_hunt_return.yaml")
     assert validate_fixture(st.fixture) == validate_fixture(vm.fixture)
@@ -517,7 +517,7 @@ def test_native_settlement_fixture_does_not_hide_an_authored_platform():
     from game.veloren.fixture import solid_voxels
 
     root = Path(__file__).resolve().parents[3]
-    fixture = load_task(root / "output/back/legacy-config-20261026/config/veloren/tasks/structured_tools/known_food.yaml").fixture
+    fixture = load_task(root / "tests/fixtures/legacy/config/veloren/tasks/structured_tools/known_food.yaml").fixture
     fixture.pop("platform")
     fixture["native_site"] = "Spausalm"
     fixture["player_state"]["position"] = [18703.5, 10799.5, 382]
@@ -550,7 +550,7 @@ def test_merchant_lifecycle_is_bound_in_the_player_client_not_the_admin_client()
 
 def test_encounter_fixture_rejects_ambiguous_or_unsupported_enemies():
     root = Path(__file__).resolve().parents[3]
-    fixture = load_task(root / "output/back/legacy-config-20261026/config/veloren/tasks/structured_tools/dual_legoom.yaml").fixture
+    fixture = load_task(root / "tests/fixtures/legacy/config/veloren/tasks/structured_tools/dual_legoom.yaml").fixture
     assert len(validate_fixture(fixture)["encounters"]) == 2
     for mutate in (
         lambda rows: rows[1].update(role=rows[0]["role"]),
@@ -564,7 +564,7 @@ def test_encounter_fixture_rejects_ambiguous_or_unsupported_enemies():
 
 
 def test_encounter_catalog_pairs_share_fixtures_and_simultaneous_requirements():
-    root = Path(__file__).resolve().parents[3] / "output/back/legacy-config-20261026/config/veloren/tasks"
+    root = Path(__file__).resolve().parents[3] / "tests/fixtures/legacy/config/veloren/tasks"
     for name in ("defeat_legoom", "dual_legoom", "combat_supply_return"):
         st = load_task(root / "structured_tools" / f"{name}.yaml")
         vm = load_task(root / "visual_motor" / f"{name}.yaml")

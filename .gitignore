@@ -25,6 +25,7 @@ accounts.json
 accounts.json.*
 
 # Temporary scripts, exploratory tests, logs and recordings
+# Maintained documents belong in docs/ and regression inputs in tests/fixtures/.
 /output/
 *.log
 *.mp4

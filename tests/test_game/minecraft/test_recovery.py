@@ -120,7 +120,7 @@ def test_respawn_dispatch_preserves_native_confirmation(alive):
 
 
 def binding(evidence_root, tools):
-    task = load_task(Path("output/back/legacy-config-20261026/config/minecraft/tasks/structured_tools/collect_logs.yaml"))
+    task = load_task(Path("tests/fixtures/legacy/config/minecraft/tasks/structured_tools/collect_logs.yaml"))
     return create_binding(
         fixture=task.fixture, task_type=task.task_type, evaluator=task.evaluator,
         parameters=task.evaluator_parameters, tools=tools, output_dir=evidence_root / "run",

@@ -9,7 +9,7 @@ and external Agent integrations. It is a development benchmark, not a frozen
 research release. The initial reference set contains **12 objectives and 24
 ST/VM configurations**, with six objectives per game. It is a starting point
 for task development, not a statistically validated six-axis leaderboard.
-See the [task catalog, provisional difficulty and evidence limits](output/survey/reference_tasks_release_20261028.md).
+See the [task catalog, provisional difficulty and evidence limits](docs/reference_tasks.md).
 
 ## Games and evaluation modes
 

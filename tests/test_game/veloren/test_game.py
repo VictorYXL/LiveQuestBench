@@ -141,7 +141,7 @@ def test_native_movement_and_cutoff(track: str, headless: bool, recording: bool,
                 ))
                 assert rejected["error"] == "invalid_tool_arguments" and rejected["executed"] is False
                 observation = await public.observe()
-                assert observation["profile"] == "veloren-native-fixed-tools-v3"
+                assert observation["profile"] == "veloren-native-fixed-tools"
                 assert observation["local_geometry"]["scope"] == "body_local_loaded_terrain"
                 assert (await public.call_tool("TurnTool", {"degrees": 20}))["status"] == "completed"
                 assert (await public.call_tool("JumpTool", {}))["status"] == "completed"

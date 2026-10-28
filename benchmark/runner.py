@@ -170,7 +170,7 @@ async def run_episode(
                 raise PermissionError("Only role-scoped team controls are available")
 
             public = Controls(no_shared_access, no_shared_access)
-            result["team_profile"] = "native-peer-team-v1"
+            result["team_profile"] = "native-peer-team"
             result["participants"] = [role.id for role in task.participants]
             agent = TeamAgent(agent_config, binding.game, root, log, record_chat=record_chat)
         else:

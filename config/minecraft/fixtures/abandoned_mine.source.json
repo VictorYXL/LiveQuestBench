@@ -1,7 +1,6 @@
 {
   "condition": "recovery_stairs_approximate_locations",
   "development_only": true,
-  "historical_task_id": "abandoned_mine_cargo_v1",
   "task_id": "abandoned_mine_cargo",
   "source_authoring": "output/temp/anchor-development-20261026/mc_s/recovery-stairs-fixture-01/authoring.json",
   "source_author": "output/temp/anchor-development-20261026/mc_s/recovery-stairs-fixture-01/author.py",

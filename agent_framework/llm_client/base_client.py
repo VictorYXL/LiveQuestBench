@@ -78,7 +78,7 @@ class BaseLLMClient(ABC):
     duplicate remote inference/cost, but never replay executed game actions.
     """
 
-    history_policy = "provider-native-v1"
+    history_policy = "provider-native"
 
     def __init__(
         self, *, timeout: float = 120, max_attempts: int = 3,

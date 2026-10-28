@@ -199,6 +199,8 @@ class MinecraftSession:
         self._jar = server_jar()
 
     def preflight(self) -> None:
+        if (self.world / "livequest-expedition.json").is_file():
+            raise ValueError("Retired expedition fixtures are not supported by the active runtime")
         if os.environ.get("MINECRAFT_EULA_ACCEPTED") != "true":
             raise PermissionError("Review the Minecraft EULA and explicitly set MINECRAFT_EULA_ACCEPTED=true")
         self._java = check_java()
@@ -345,49 +347,6 @@ class MinecraftSession:
                     await asyncio.sleep(0.1)
         await self._verify_input_ready()
         await self._verify_player()
-        if not self.shared_server and (self.world / "livequest-expedition.json").is_file():
-            from game.minecraft.evaluators.expedition import registry
-            from game.minecraft.fixtures.forge_hunt import targets_for, uuid_parts
-            expected = registry(self.world)
-            targets = expected.get("targets", targets_for())
-            for enemy in targets + expected.get("merchants", []):
-                target = UUID(enemy["uuid"])
-                native_uuid = "[I;" + ",".join(map(str, uuid_parts(target))) + "]"
-                lines = await self.server.command(
-                    f"execute as @e[type={enemy['type']},nbt={{UUID:{native_uuid}}},limit=1] run data get entity @s"
-                )
-                values = [nbtlib.parse_nbt(line.split("has the following entity data: ", 1)[1])
-                          for line in lines if "has the following entity data: " in line]
-                if (len(values) != 1 or list(values[0]["UUID"]) != uuid_parts(target)
-                        or float(values[0]["Health"]) != enemy["health"]):
-                    raise RuntimeError(f"Expedition target missing, injured or changed: {enemy['role']}")
-                if enemy in expected.get("merchants", []):
-                    from game.minecraft.fixtures.trade_hunt import offers
-                    actual = values[0]["Offers"]["Recipes"]
-                    required = offers(enemy["role"])
-                    if len(actual) != len(required) or any(
-                        any(row[key] != value for key, value in wanted.items())
-                        for row, wanted in zip(actual, required)
-                    ):
-                        raise RuntimeError("Initial native merchant stock or price differs from the fixture")
-            opening = {"target_uuid": expected["target_uuid"], "health": targets[0]["health"],
-                       "player_uuid": str(self.config.player_uuid)}
-            if "targets" in expected:
-                opening["targets"] = targets
-            if "merchants" in expected:
-                opening["merchants"] = expected["merchants"]
-            if "route_gates" in expected:
-                for gate in expected["route_gates"]:
-                    for key, block in (("open_z", "air"), ("closed_z", "stone_bricks")):
-                        for y in (72, 73):
-                            lines = await self.server.command(
-                                f"execute if block {gate['x']} {y} {gate[key]} minecraft:{block} "
-                                "run data get storage livequest:expedition state"
-                            )
-                            if not any("has the following contents:" in line for line in lines):
-                                raise RuntimeError("Reconnaissance passage differs from the declared condition")
-                opening["route_gates"] = expected["route_gates"]
-            (self.world / "livequest-opening.json").write_text(json.dumps(opening, indent=2) + "\n")
 
     async def _verify_input_ready(self) -> None:
         """Verify mouse/keyboard acceptance and restore the starting view and slot."""

@@ -104,7 +104,7 @@ def test_history_policy_logged_and_hidden_reasoning_not_requested():
         async with Client("test", reasoning_effort="low") as client:
             client.on_query = lambda kind, data: queries.append((kind, data))
             await client.chat([Message("user", "Observe")])
-        assert queries[0][1]["history_policy"] == "responses-visible-history-v1"
+        assert queries[0][1]["history_policy"] == "responses-visible-history"
 
     asyncio.run(scenario())
 

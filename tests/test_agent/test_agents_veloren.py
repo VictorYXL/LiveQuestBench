@@ -64,7 +64,7 @@ def test_veloren_move_and_stop(
         "status": "execution_error", "integration_status": "not_verified",
         "agent": agent_name, "track": track, "provider": "github_copilot", "model": "gpt-6-astra",
         "reasoning_effort": "low", "max_output_tokens": 4096, "max_attempts": 1, "budget_seconds": 180,
-        "fixture": "veloren-movement-platform-v1", "headless": headless, "recording": recording,
+        "fixture": "veloren-movement-platform", "headless": headless, "recording": recording,
         "interrupt_after_first_game_tool": interrupt,
         "upstream": NATIVE_AGENTS[agent_name].source if agent_name in NATIVE_AGENTS else None,
         "task": "Move at least 2 horizontal metres away from your starting position while staying alive, "

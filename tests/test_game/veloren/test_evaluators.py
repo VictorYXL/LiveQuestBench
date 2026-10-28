@@ -113,7 +113,7 @@ def test_glide_return_accepts_both_sides_of_the_visible_arch(mode):
     from benchmark.config import load_task
 
     root = Path(__file__).resolve().parents[3]
-    task = load_task(root / f"output/back/learning-tasks-20261028/config/veloren/tasks/{mode}/glide_route_transfer.yaml")
+    task = load_task(root / f"tests/fixtures/learning/config/veloren/tasks/{mode}/glide_route_transfer.yaml")
     pillars = [block["origin"] for block in task.fixture["blocks"] if block["size"] == [1, 1, 3]]
     left, right = pillars
     center = [(left[0] + right[0]) / 2 + .5, (left[1] + right[1]) / 2 + .5, left[2]]
@@ -271,7 +271,7 @@ def test_endpoint_thresholds_and_integrity(tmp_path: Path) -> None:
                            "survival": {"health": {"current": health}}}).encode()
         (path / "observation.json").write_bytes(data)
         (path / "_livequest_snapshot.json").write_text(json.dumps({
-            "schema": "veloren-endpoint-v1", "phase": phase, "session_id": "same",
+            "schema": "veloren-endpoint", "phase": phase, "session_id": "same",
             "capture_started_at_ns": timestamp, "captured_at_ns": timestamp + 1,
             "sha256": hashlib.sha256(data).hexdigest(),
         }))

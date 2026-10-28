@@ -120,7 +120,7 @@ class TeamGame(BaseGame[object]):
                 raise TypeError("Structured team observations must be JSON text")
             state = json.loads(observation)
             state["communication"] = await request("chat_inbox")
-            state["communication_profile"] = "native-team-chat-v1"
+            state["communication_profile"] = "native-team-chat"
             return json.dumps(state, allow_nan=False)
 
         async def execute(name: str, arguments: dict) -> str:
@@ -172,7 +172,7 @@ class TeamGame(BaseGame[object]):
         for role, member in self.members.items():
             await member.game.save_snapshot(destination / role)
         (destination / "team.json").write_text(json.dumps({
-            "schema": "native-team-v1", "roles": list(self.members), "phase": self.phase,
+            "schema": "native-team", "roles": list(self.members), "phase": self.phase,
             "world": self.task.game, "atomic": False,
         }, indent=2) + "\n")
         return destination
@@ -312,7 +312,7 @@ def create_team_binding(task: TaskConfig, output: Path, *, headless: bool,
                 counts = {role: values.get(goal["item"], 0) for role, values in inventories.items()}
                 checks.append({"scope": "inventory_total", **goal, "counts": counts,
                                "passed": sum(counts.values()) >= goal["min_count"]})
-        return {"schema": "team-endpoints-v1", "success": all(row["passed"] for row in checks), "checks": checks}
+        return {"schema": "team-endpoints", "success": all(row["passed"] for row in checks), "checks": checks}
 
     def verify(before: Path) -> None:
         for role, member in members.items():

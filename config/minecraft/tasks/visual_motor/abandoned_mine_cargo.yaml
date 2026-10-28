@@ -12,7 +12,7 @@ task: |-
   Finish alive and standing still on the ground in the yellow entrance area.
 time_limit_seconds: 2700
 fixture:
-  world_path: ../../fixtures/abandoned_mine_cargo_stage1_v2
+  world_path: ../../fixtures/abandoned_mine_cargo
   instance: 1.20.4
   difficulty: normal
   player_state:

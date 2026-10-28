@@ -154,10 +154,10 @@ class VelorenGame(BaseGame[MotorInterface | StructuredInterface]):
                               rpg=any(key in self.fixture for key in ("native_site", "merchant", "contract")),
                               skills="sword_skill_points" in self.fixture)
         if self.fixture.get("encounters"):
-            observation["profile"] = ("veloren-native-market-expedition-tools-v2" if "merchant" in self.fixture
-                                      else "veloren-native-fixed-tools-v5-combat")
+            observation["profile"] = ("veloren-native-market-expedition-tools" if "merchant" in self.fixture
+                                      else "veloren-native-fixed-tools-combat")
         if "contract" in self.fixture:
-            observation["profile"] = "veloren-native-contract-tools-v2"
+            observation["profile"] = "veloren-native-contract-tools"
         return observation
 
     async def _call_tool(self, name: str, arguments: dict) -> dict:
@@ -236,7 +236,7 @@ class VelorenGame(BaseGame[MotorInterface | StructuredInterface]):
             payload = json.dumps(observation, indent=2, allow_nan=False).encode()
             (destination / "observation.json").write_bytes(payload)
             (destination / "_livequest_snapshot.json").write_text(json.dumps({
-                "schema": "veloren-endpoint-v1", "phase": self.phase,
+                "schema": "veloren-endpoint", "phase": self.phase,
                 "session_id": observation["session_id"], "capture_started_at_ns": started,
                 "captured_at_ns": time.monotonic_ns(), "sha256": hashlib.sha256(payload).hexdigest(),
                 "boundaries": self._boundary,

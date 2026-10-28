@@ -14,7 +14,7 @@ task: |-
   Both players must finish standing still on the ground at the far-bank yellow marker.
 time_limit_seconds: 2700
 fixture:
-  world_path: ../../fixtures/shared_crossing_camp_stage1_v2
+  world_path: ../../fixtures/shared_crossing_camp
   instance: 1.20.4
   difficulty: normal
 evaluator:

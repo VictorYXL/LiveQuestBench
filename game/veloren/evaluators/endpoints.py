@@ -30,7 +30,7 @@ def load_pair(before: Path, after: Path) -> tuple[dict, dict]:
     for path, phase in ((before, "ready"), (after, "ended")):
         data = (Path(path) / "observation.json").read_bytes()
         meta = json.loads((Path(path) / "_livequest_snapshot.json").read_text())
-        if (meta["schema"] != "veloren-endpoint-v1" or meta["phase"] != phase
+        if (meta["schema"] != "veloren-endpoint" or meta["phase"] != phase
                 or meta["sha256"] != hashlib.sha256(data).hexdigest()):
             raise ValueError("Invalid endpoint identity, phase or evidence checksum")
         row = json.loads(data)
