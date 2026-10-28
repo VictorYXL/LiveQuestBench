@@ -360,13 +360,16 @@ class Session:
             ):
                 raise PermissionError("Native action is not in the fixed public skill set")
             rpg_actions = {
-                "context_interact": ("talk",), "social_action": ("invite_trade",),
+                "context_interact": ("talk",), "social_action": ("invite_trade", "respond_accept", "respond_decline"),
                 "dialogue_action": ("ack", "respond"),
                 "trade_action": ("add_item", "remove_item", "accept", "decline"),
                 "companion_action": ("pet_stay",),
             }
             if args["action_type"] in rpg_actions and args.get("operation") not in rpg_actions[args["action_type"]]:
                 raise PermissionError("Native RPG operation is not in the fixed public skill set")
+            if (args["action_type"] == "social_action" and args.get("operation", "").startswith("respond_")
+                    and (not self.team_role or args.get("invite_kind") != "Trade")):
+                raise PermissionError("Public invitation responses require a peer Trade invitation")
             try:
                 if args["action_type"] == "glide":
                     result = await setup.action(
@@ -406,7 +409,8 @@ class Session:
                     "attack_auxiliary": {"auxiliary_ineligible"},
                     "companion_action": {"actor_unavailable", "companion_target_changed", "pet_not_owned_or_nearby"},
                     "context_interact": {"actor_unavailable", "interaction_target_changed", "interaction_ineligible"},
-                    "social_action": {"actor_unavailable", "trade_target_changed", "trade_already_pending"},
+                    "social_action": {"actor_unavailable", "trade_target_changed", "trade_already_pending",
+                                      "invite_unavailable", "invite_changed"},
                     "dialogue_action": {"dialogue_unavailable", "dialogue_changed", "dialogue_sender_changed",
                                         "dialogue_sender_unavailable", "dialogue_response_unknown"},
                     "trade_action": {"actor_unavailable", "no_pending_trade", "trade_identity_or_phase_changed",

@@ -87,8 +87,16 @@ TRADE_FIELDS = {
 SPECS.update({
     "TalkTool": ("Ask a currently observed nearby resident to talk. No automatic response selection.",
                  "context_interact", TARGET_FIELDS),
-    "InviteTradeTool": ("Invite a currently observed nearby NPC to trade. Does not negotiate or buy.",
+    "InviteTradeTool": ("Invite a currently observed nearby native actor to trade. Does not negotiate or buy.",
                         "social_action", TARGET_FIELDS),
+    "RespondTradeInviteTool": (
+        "Accept or decline the currently observed Trade invitation from its exact inviter. "
+        "An acceptance opens trade; it does not transfer items.",
+        "social_action", {
+            "inviter_uid": TARGET_FIELDS["uid"],
+            "accept": {"type": "boolean"},
+        },
+    ),
     "DialogueResponseTool": (
         "Choose one offered response from the current native question. Copy its decimal-string dialogue_id "
         "exactly; this submits a response, not confirmation of a quest or reward.",
@@ -182,7 +190,7 @@ def public_trade(row: dict | None) -> dict | None:
     return result
 
 
-def project(observation: dict, *, rpg: bool = False, skills: bool = False) -> dict:
+def project(observation: dict, *, rpg: bool = False, skills: bool = False, peer: bool = False) -> dict:
     missing = set(FIELDS) - observation.keys()
     if missing:
         raise ValueError(f"Native observation lacks required fields: {sorted(missing)}")
@@ -190,7 +198,7 @@ def project(observation: dict, *, rpg: bool = False, skills: bool = False) -> di
               **{name: observation[name] for name in FIELDS}}
     if skills:
         result.update(skill_tree=observation["skill_tree"], auxiliary_abilities=observation["auxiliary_abilities"])
-    if rpg:
+    if rpg or peer:
         result.update(
             profile="veloren-native-settlement-tools",
             dialogue=public_dialogue(observation["dialogue"]),
@@ -198,6 +206,8 @@ def project(observation: dict, *, rpg: bool = False, skills: bool = False) -> di
             pending_trade=public_trade(observation["social_and_trade"]["pending_trade"]),
             last_trade_result=observation["last_trade_result"],
         )
+    if peer:
+        result["incoming_invite"] = observation["social_and_trade"]["incoming_invite"]
     return result
 
 
@@ -234,6 +244,9 @@ def validate_tool(name: str, arguments: dict) -> tuple[str, dict]:
         converted = {"slot": converted["slot"], "ability": {"MainWeapon": converted["mainhand_index"]}}
     elif name == "PetStayTool":
         converted = {"operation": "pet_stay", "stay": converted.pop("stay"), "target": converted}
+    elif name == "RespondTradeInviteTool":
+        converted = {"operation": "respond_accept" if converted.pop("accept") else "respond_decline",
+                     "invite_kind": "Trade", **converted}
     elif name in ("TalkTool", "InviteTradeTool"):
         converted = {"operation": "talk" if name == "TalkTool" else "invite_trade",
                      "target": converted}
