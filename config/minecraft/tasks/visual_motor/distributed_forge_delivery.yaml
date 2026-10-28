@@ -1,0 +1,94 @@
+id: distributed_forge_delivery
+game: minecraft
+task_type: visual_motor
+capabilities:
+  primary:
+  - peer_cooperation
+  secondary:
+  - planning_resources
+task: Together finish at the yellow forge pad carrying, across your inventories, at least two iron pickaxes,
+  one shield, four oak planks and one coal. Both players must finish alive and standing still there. Alpha
+  starts with raw iron; Beta starts with coal and logs. The two starting stations and forge form a roughly
+  30-block triangle. Two furnaces and a crafting table are at the forge; an exchange chest is near the
+  middle. Native furnace interfaces allow bounded individual slot clicks while production continues. Choose
+  your own division of work and legal handoffs; one crafter may do all production. Native recovery is
+  allowed.
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/distributed_forge_delivery
+  instance: 1.20.4
+  difficulty: normal
+participants:
+- id: Alpha
+  player_state:
+    position:
+    - 0.5
+    - 72
+    - 0.5
+    dimension: minecraft:overworld
+    yaw: -90
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+    - slot: 0
+      item: raw_iron
+      count: 8
+    - slot: 1
+      item: stone_pickaxe
+      count: 1
+    - slot: 2
+      item: bread
+      count: 4
+- id: Beta
+  player_state:
+    position:
+    - 0.5
+    - 72
+    - 30.5
+    dimension: minecraft:overworld
+    yaw: -90
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+    - slot: 0
+      item: coal
+      count: 2
+    - slot: 1
+      item: oak_log
+      count: 4
+    - slot: 2
+      item: stone_axe
+      count: 1
+    - slot: 3
+      item: bread
+      count: 4
+evaluator:
+  name: team
+  parameters:
+    all:
+      position:
+        target:
+        - 26.5
+        - 72
+        - 15.5
+        horizontal_tolerance: 3
+        vertical_tolerance: 0.5
+        max_speed: 0.1
+    inventory_total:
+    - item: iron_pickaxe
+      min_count: 2
+    - item: shield
+      min_count: 1
+    - item: oak_planks
+      min_count: 4
+    - item: coal
+      min_count: 1
+    native_efficiency: true
