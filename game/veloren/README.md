@@ -150,6 +150,12 @@ selects a native map, relative to the task YAML or as an absolute path. A map is
 not a complete live-world checkpoint: initial player state, terrain preparation
 and other fixture settings must also be declared.
 
+For two-player fixtures with `peer_group: true`, both native players attach and
+verify Group membership before the original encounter is spawned. The setup
+administrator then disconnects before the initial snapshot and gameplay. This
+avoids pre-play attacks during peer attachment without protecting, healing or
+repositioning players after play starts.
+
 Choose an existing fixture pattern for platforms, terrain obstacles, stations,
 supplies, encounters or a native settlement. Supplies can expire according to
 native game rules; expose relevant deadlines in the objective rather than

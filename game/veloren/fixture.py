@@ -548,7 +548,27 @@ async def initialize_equipment(admin, actor, equipment: dict[str, str]) -> None:
         )
 
 
-async def initialize_fixture(admin, actor, fixture: dict, *, shared_world: bool = False) -> dict:
+async def initialize_encounters(admin, actor, fixture: dict, contract=None) -> dict:
+    from scripts.rpg_benchmark.combat_support import native_binding
+
+    encounters = []
+    if contract is not None:
+        encounters.append({
+            "role": "contract_target", "asset": "existing native RTSim Ogre",
+            "binding": contract["target"]["binding"], "public": contract["target"]["public"],
+        })
+    for enemy in fixture.get("encounters", []):
+        encounters.append(await initialize_encounter(admin, actor, enemy, enemy["position"]))
+    opening = await actor.request("observe", origin="private-validation")
+    verify_player(fixture, opening)
+    source = await native_binding(actor, opening["self_identity"]["uid"])
+    if source["health"] <= 0 or source["dead"]:
+        raise RuntimeError("Encounter player is not alive at initialization")
+    return {"encounters": encounters, "source_binding": source, "opening": opening}
+
+
+async def initialize_fixture(admin, actor, fixture: dict, *, shared_world: bool = False,
+                             defer_encounters: bool = False) -> dict:
     """Author absolute geometry, set player/time fields and verify native readback."""
     from scripts.rpg_benchmark import setup
 
@@ -645,24 +665,13 @@ async def initialize_fixture(admin, actor, fixture: dict, *, shared_world: bool 
     if "contract" in fixture and not shared_world:
         from game.veloren.contracts import initialize_contract
         contract = await initialize_contract(admin, actor, fixture)
-    encounters = []
-    source = None
-    if not shared_world and (fixture.get("encounters") or contract is not None):
-        from scripts.rpg_benchmark.combat_support import native_binding
-        if contract is not None:
-            encounters.append({
-                "role": "contract_target", "asset": "existing native RTSim Ogre",
-                "binding": contract["target"]["binding"], "public": contract["target"]["public"],
-            })
-        for enemy in fixture.get("encounters", []):
-            target = await initialize_encounter(admin, actor, enemy, enemy["position"])
-            encounters.append(target)
-        opening = await actor.request("observe", origin="private-validation")
-        verify_player(fixture, opening)
-        source = await native_binding(actor, opening["self_identity"]["uid"])
-        if source["health"] <= 0 or source["dead"]:
-            raise RuntimeError("Encounter player is not alive at initialization")
-    return {"fixture": fixture, "construction": construction, "blocks": blocks,
+    result = {"fixture": fixture, "construction": construction, "blocks": blocks,
             "stations": stations, "supplies": supplies, "opening": opening,
-            "encounters": encounters, "source_binding": source, "merchant": merchant,
+            "encounters": [], "source_binding": None, "merchant": merchant,
             "companion": companion, "contract": contract, "initial_waypoint_receipt": waypoint}
+    if not shared_world and (fixture.get("encounters") or contract is not None):
+        if defer_encounters:
+            result["encounters_pending"] = True
+        else:
+            result.update(await initialize_encounters(admin, actor, fixture, contract))
+    return result

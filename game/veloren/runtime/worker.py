@@ -136,8 +136,11 @@ class Session:
         from game.veloren.runtime.startup import start_setup_bridge
 
         administrator = await self.stack.enter_async_context(AsyncExitStack())
+        self.setup_bridge_factory = lambda directory: NativeBridge(
+            directory, self.record["username"], port, userdata, journal, native,
+        )
         admin = await start_setup_bridge(
-            lambda directory: NativeBridge(directory, self.record["username"], port, userdata, journal, native),
+            self.setup_bridge_factory,
             self.output, administrator, reconnect=bool(self.attachment),
         )
         protected = await protect_administrator(admin)
@@ -151,11 +154,14 @@ class Session:
         self.stack.push_async_callback(self.actor.close)
         self.actor.route_evidence = self.fixture.get("route_evidence", False)
         await self.actor.start()
-        initialized = await initialize_fixture(admin, self.actor, self.fixture, shared_world=bool(self.attachment))
+        initialized = await initialize_fixture(
+            admin, self.actor, self.fixture, shared_world=bool(self.attachment),
+            defer_encounters=bool(self.team_role and self.fixture.get("peer_group") and not self.attachment),
+        )
         self.initialized = initialized
         self.setup_administrator = (admin, administrator, administrator_uid)
         if not any(supply["player_target"] is None for supply in initialized["supplies"]):
-            await self.finish_setup()
+            await self.finish_setup(finalize_encounters=False)
         self.record["actor"] = self.actor.ready.result()
         from game.veloren.runtime.records import write_fixture_record
         write_fixture_record(self.output, initialized, self.record["world_fixture"])
@@ -164,14 +170,35 @@ class Session:
                 "shared_world": {"port": port, "userdata": str(userdata), "output": str(self.oracle_output),
                                  "username": self.record["username"], "world_fixture": self.record["world_fixture"]}}
 
-    async def finish_setup(self) -> None:
+    async def reconnect_setup_administrator(self) -> None:
+        from game.veloren.runtime.startup import start_setup_bridge
+
+        administrator = await self.stack.enter_async_context(AsyncExitStack())
+        admin = await start_setup_bridge(
+            self.setup_bridge_factory, self.output / "encounter-setup", administrator, reconnect=True,
+        )
+        protected = await protect_administrator(admin)
+        self.setup_administrator = (admin, administrator, protected["self_identity"]["uid"])
+
+    async def finish_setup(self, *, finalize_encounters: bool = True) -> None:
+        initialized = self.initialized
+        if initialized.get("encounters_pending") and finalize_encounters:
+            if self.running or not getattr(self, "peer_group_ready", False):
+                raise RuntimeError("Peer encounters require a verified Group before gameplay")
+            if getattr(self, "setup_administrator", None) is None:
+                await self.reconnect_setup_administrator()
         pending = getattr(self, "setup_administrator", None)
         if pending is None:
             return
         from game.veloren.fixture import observe_remote_supplies, verify_aged_supplies
 
         admin, administrator, administrator_uid = pending
-        initialized = self.initialized
+        if initialized.get("encounters_pending") and finalize_encounters:
+            from game.veloren.fixture import initialize_encounters
+            initialized.update(await initialize_encounters(
+                admin, self.actor, self.fixture, initialized.get("contract"),
+            ))
+            initialized["encounters_pending"] = False
         await observe_remote_supplies(admin, initialized["supplies"])
         await administrator.aclose()
         opening = await setup.wait_observation(
@@ -211,7 +238,9 @@ class Session:
         if operation == "setup_peer_group":
             if self.running or not self.team_role or not self.fixture.get("peer_group"):
                 raise PermissionError("Native Group setup is only available before declared peer play")
-            await self.finish_setup()
+            # Spawn the encounter only after Group setup, not while Beta attaches.
+            if not self.initialized.get("encounters_pending"):
+                await self.finish_setup()
             mode = args["mode"]
             if mode == "identity":
                 row = await self.actor.request("observe", origin="setup")
@@ -230,6 +259,7 @@ class Session:
                 await setup.wait_observation(self.actor, lambda row: any(
                     entity["uid"] == args["uid"] and entity.get("same_native_group") is True
                     for entity in row["nearby_entities"]), "native peer Group membership")
+                self.peer_group_ready = True
             else:
                 raise ValueError("Unsupported Group setup operation")
             return {"native_group_setup": mode}
