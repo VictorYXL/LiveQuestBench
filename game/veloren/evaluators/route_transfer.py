@@ -1,4 +1,4 @@
-"""Passive native client-route history, separate from inferred learning benefit."""
+"""Passive native physics-route history, separate from inferred learning benefit."""
 
 from pathlib import Path
 
@@ -16,7 +16,7 @@ def route_transfer_checks(initial: dict, final: dict, *, variant: int, origin: l
     first, last = (row["private_route_evidence"] for row in (initial, final))
     for boundary, evidence in ((initial, first), (final, last)):
         if (evidence["schema"] != "native-client-motion/1"
-                or evidence["route_schema"] != "native-client-route/1"
+                or evidence["route_schema"] != "native-client-route/2"
                 or evidence["session_id"] != boundary["session_id"]
                 or evidence["uid"] != boundary["self_identity"]["uid"]):
             raise ValueError("Native route identity or schema mismatch")

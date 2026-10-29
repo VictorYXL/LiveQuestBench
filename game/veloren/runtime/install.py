@@ -41,8 +41,12 @@ def main() -> None:
     glide_patch = patch.with_name("0004-native-glide-evidence.patch")
     auxiliary_patch = patch.with_name("0005-bounded-auxiliary-input.patch")
     route_patch = patch.with_name("0006-native-route-evidence.patch")
+    physics_route_patch = patch.with_name("0008-native-physics-route-evidence.patch")
     changed = ("voxygen/src/native_agent.rs", "voxygen/src/session/mod.rs",
-               "client/src/agent_protocol/continuous_control.rs", "client/src/agent_protocol/mod.rs")
+               "client/src/agent_protocol/continuous_control.rs", "client/src/agent_protocol/mod.rs",
+               "common/src/comp/phys.rs", "common/src/comp/mod.rs",
+               "common/systems/src/phys/mod.rs", "common/systems/src/phys/collision.rs",
+               "common/systems/tests/phys/fixture_authoring.rs")
     with tempfile.TemporaryDirectory(prefix="veloren-patch-", dir=root.parent) as temporary:
         expected = Path(temporary)
         for name in changed:
@@ -62,6 +66,8 @@ def main() -> None:
         subprocess.run(["patch", "--batch", "-p1", "-i", str(auxiliary_patch.resolve())], cwd=expected, check=True)
         without_route = hashes | {name: digest(expected / name) for name in changed}
         subprocess.run(["patch", "--batch", "-p1", "-i", str(route_patch.resolve())], cwd=expected, check=True)
+        without_physics_route = hashes | {name: digest(expected / name) for name in changed}
+        subprocess.run(["patch", "--batch", "-p1", "-i", str(physics_route_patch.resolve())], cwd=expected, check=True)
         patched = hashes | {name: digest(expected / name) for name in changed}
     if not root.exists():
         shutil.copytree(cache, root, symlinks=False)
@@ -90,6 +96,10 @@ def main() -> None:
     if current == without_route:
         subprocess.run(["patch", "--batch", "-p1", "-i", str(route_patch.resolve())],
                        cwd=root / "source", check=True)
+        current = without_physics_route
+    if current == without_physics_route:
+        subprocess.run(["patch", "--batch", "-p1", "-i", str(physics_route_patch.resolve())],
+                       cwd=root / "source", check=True)
     elif current != patched:
         raise ValueError("Build source differs from the selected source plus declared patch")
     if {name: digest(root / "source" / name) for name in hashes} != patched:
@@ -116,12 +126,13 @@ def main() -> None:
         "motion_patch_sha256": digest(motion_patch), "motion_evidence": "native-client-motion/1",
         "glide_patch_sha256": digest(glide_patch), "glide_evidence": "native-client-glide/1",
         "auxiliary_patch_sha256": digest(auxiliary_patch), "auxiliary_input": "native-client-auxiliary/1",
-        "route_patch_sha256": digest(route_patch), "route_evidence": "native-client-route/1",
+        "route_patch_sha256": digest(route_patch), "route_evidence": "native-client-route/2",
+        "physics_route_patch_sha256": digest(physics_route_patch),
         "native_protection": "disabled by explicit renderer launch environment",
         "compiler_cache": str(cache), "qualification": "requires LiveQuestBench real-game checks",
         "sha256": {str(path.resolve()): digest(path)
                    for path in (executable, patch, protection_patch, motion_patch, glide_patch,
-                                auxiliary_patch, route_patch, source_manifest)},
+                                auxiliary_patch, route_patch, physics_route_patch, source_manifest)},
     }
     pending = root / ".runtime.json.tmp"
     pending.write_text(json.dumps(record, indent=2) + "\n")

@@ -318,6 +318,13 @@ def test_distant_supply_uses_private_readback_without_player_visibility(monkeypa
     asyncio.run(fixtures.observe_remote_supplies(admin, [supply]))
     fixtures.verify_aged_supplies({"supplies": [supply]}, player)
     assert player == original_player
+    player["survival"]["buff_clock"]["now"] = 6
+    fixtures.verify_aged_supplies({"supplies": [supply]}, player)
+    supply["private_opening"]["clock"] = 286
+    player["survival"]["buff_clock"]["now"] = 282
+    with pytest.raises(RuntimeError, match="identity-matched"):
+        fixtures.verify_aged_supplies({"supplies": [supply]}, player)
+    supply["private_opening"]["clock"] = 10
     player["survival"]["buff_clock"]["now"] = 286
     with pytest.raises(RuntimeError, match="identity-matched"):
         fixtures.verify_aged_supplies({"supplies": [supply]}, player)

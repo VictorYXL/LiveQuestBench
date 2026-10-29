@@ -23,7 +23,7 @@ def route_samples(initial: dict, final: dict) -> list[dict]:
     first, last = (row["private_route_evidence"] for row in (initial, final))
     for boundary, evidence in ((initial, first), (final, last)):
         if (evidence["schema"] != "native-client-motion/1"
-                or evidence["route_schema"] != "native-client-route/1"
+                or evidence["route_schema"] != "native-client-route/2"
                 or evidence["session_id"] != boundary["session_id"]
                 or evidence["uid"] != boundary["self_identity"]["uid"]):
             raise ValueError("Native route identity or schema mismatch")

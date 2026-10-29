@@ -456,6 +456,7 @@ def verify_aged_supplies(initialized: dict, observation: dict) -> None:
     current = {row["uid"]: row for row in observation["nearby_entities"]}
     clock = observation["survival"]["buff_clock"]["now"]
     for supply in initialized["supplies"]:
+        supply_clock = clock
         private = supply.get("private_opening")
         if supply.get("player_target") is not None:
             entity = current.get(supply["uid"])
@@ -465,11 +466,13 @@ def verify_aged_supplies(initialized: dict, observation: dict) -> None:
             identity_matches = (
                 entity is not None and entity["uid"] == supply["uid"]
                 and private["observer"] == "administrator"
-                and private["clock"] <= clock
             )
+            if identity_matches:
+                # Client clock estimates can be offset; their ordering is not causal evidence.
+                supply_clock = max(clock, private["clock"])
         if (not identity_matches
                 or item_id(entity["pickup"]) != supply["item"] or entity["pickup"]["amount"] != supply["amount"]
-                or supply["expiry_game_time_estimate"] - clock < 15):
+                or supply["expiry_game_time_estimate"] - supply_clock < 15):
             raise RuntimeError("Declared expiring supply lacks a live, identity-matched opening with >=15 seconds")
         visible = current.get(supply["uid"])
         if visible is not None and (

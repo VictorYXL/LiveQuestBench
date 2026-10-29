@@ -1,0 +1,350 @@
+--- a/common/src/comp/mod.rs
++++ b/common/src/comp/mod.rs
+@@ -98,7 +98,7 @@
+     pet::Pet,
+     phys::{
+         CapsulePrism, Collider, Density, FixtureAuthoring, ForceUpdate, Immovable, Mass, PhysicsState, Pos,
+-        PosVelOriDefer, PreviousPhysCache, Scale, Sticky, Vel,
++        NativeRouteTrace, PosVelOriDefer, PreviousPhysCache, Scale, Sticky, Vel,
+     },
+     player::{AliasError, DisconnectReason, MAX_ALIAS_LEN, Player},
+     poise::{Poise, PoiseChange, PoiseState},
+--- a/common/src/comp/phys.rs
++++ b/common/src/comp/phys.rs
+@@ -18,6 +18,45 @@
+ 
+ impl Component for Pos {
+     type Storage = VecStorage<Self>;
++}
++
++/// Opt-in, local-only observation of accepted terrain collision increments.
++pub struct NativeRouteTrace {
++    pub entity: specs::Entity,
++    points: std::sync::Mutex<Vec<Vec3<f32>>>,
++    invalid: std::sync::atomic::AtomicBool,
++}
++
++impl NativeRouteTrace {
++    pub fn new(entity: specs::Entity) -> Self {
++        Self {
++            entity,
++            points: std::sync::Mutex::new(Vec::new()),
++            invalid: std::sync::atomic::AtomicBool::new(false),
++        }
++    }
++
++    pub fn reject(&self) {
++        self.invalid.store(true, std::sync::atomic::Ordering::Relaxed);
++    }
++
++    pub fn record(&self, points: &[Vec3<f32>]) {
++        let mut pending = self.points.lock().unwrap();
++        if pending.len() + points.len() > 4096
++            || points.iter().any(|point| !point.x.is_finite() || !point.y.is_finite() || !point.z.is_finite())
++        {
++            self.reject();
++            return;
++        }
++        pending.extend_from_slice(points);
++    }
++
++    pub fn take(&self) -> (bool, Vec<Vec3<f32>>) {
++        (
++            self.invalid.load(std::sync::atomic::Ordering::Relaxed),
++            std::mem::take(&mut *self.points.lock().unwrap()),
++        )
++    }
+ }
+ 
+ /// Velocity
+--- a/common/systems/src/phys/collision.rs
++++ b/common/systems/src/phys/collision.rs
+@@ -35,6 +35,7 @@
+     ori: &Ori,
+     // Get the proportion of surface friction that should be applied based on the current velocity
+     friction_factor: impl Fn(Vec3<f32>) -> f32,
++    mut route: Option<&mut Vec<Vec3<f32>>>,
+ ) {
+     // We cap out scale at 10.0 to prevent an enormous amount of lag
+     let scale = read.scales.get(entity).map_or(1.0, |s| s.0.min(10.0));
+@@ -125,6 +126,9 @@
+     let increments = ((pos_delta.map(|e| e.abs()).reduce_partial_max() / min_step).ceil() as usize)
+         .clamped(1, MAX_INCREMENTS);
+     let old_pos = pos.0;
++    if let Some(route) = &mut route {
++        route.push(old_pos);
++    }
+     for _ in 0..increments {
+         //prof_span!("increment");
+         const MAX_ATTEMPTS: usize = 16;
+@@ -276,7 +280,14 @@
+         if attempts == MAX_ATTEMPTS {
+             vel.0 = Vec3::zero();
+             pos.0 = old_pos;
++            if let Some(route) = &mut route {
++                route.clear();
++                route.push(old_pos);
++            }
+             break;
++        }
++        if let Some(route) = &mut route {
++            route.push(pos.0);
+         }
+     }
+ 
+@@ -316,6 +327,10 @@
+             .get(Vec3::new(pos.0.x, pos.0.y, pos.0.z - 0.01).map(|e| e.floor() as i32))
+             .ok()
+             .copied();
++    }
++
++    if let Some(route) = &mut route {
++        route.push(pos.0);
+     }
+ 
+     // Find liquid immersion and wall collision all in one round of iteration
+--- a/common/systems/src/phys/mod.rs
++++ b/common/systems/src/phys/mod.rs
+@@ -161,6 +161,7 @@
+     stats: ReadStorage<'a, Stats>,
+     weather: Option<Read<'a, WeatherGrid>>,
+     time_of_day: Read<'a, TimeOfDay>,
++    route_trace: Option<ReadExpect<'a, common::comp::NativeRouteTrace>>,
+ }
+ 
+ #[derive(SystemData)]
+@@ -901,6 +902,13 @@
+                 )| {
+                     let mut land_on_ground = None;
+                     let mut outcomes = Vec::new();
++                    let route_trace = read.route_trace.as_ref().filter(|trace| trace.entity == entity);
++                    let mut route_path = Vec::new();
++                    if let Some(trace) = route_trace
++                        && !matches!(collider, Collider::CapsulePrism(_))
++                    {
++                        trace.reject();
++                    }
+                     // Defer the writes of positions, velocities and orientations
+                     // to allow an inner loop over terrain-like entities.
+                     let old_vel = *vel;
+@@ -1052,6 +1060,7 @@
+                                     read,
+                                     &ori,
+                                     friction_factor,
++                                    None,
+                                 );
+                                 tgt_pos = cpos.0;
+                             },
+@@ -1087,6 +1096,7 @@
+                                     read,
+                                     &ori,
+                                     friction_factor,
++                                    route_trace.is_some().then_some(&mut route_path),
+                                 );
+ 
+                                 // Sticky things shouldn't move when on a surface
+@@ -1202,6 +1212,10 @@
+                                         {
+                                             return;
+                                         }
++                                        if let Some(trace) = route_trace {
++                                            // Collider-local coordinates are not a world-space route.
++                                            trace.reject();
++                                        }
+ 
+                                         let mut physics_state_delta = PhysicsState::default();
+ 
+@@ -1298,6 +1312,7 @@
+                                                 read,
+                                                 &ori,
+                                                 |vel| friction_factor(previous_cache_other.ori * vel),
++                                                None,
+                                             );
+ 
+                                             // Transform entity attributes back into world space now
+@@ -1362,6 +1377,10 @@
+                             );
+                     }
+ 
++                    if let Some(trace) = route_trace {
++                        route_path.push(tgt_pos);
++                        trace.record(&route_path);
++                    }
+                     if tgt_pos != pos.0 {
+                         pos_vel_ori_defer.pos = Some(Pos(tgt_pos));
+                     } else {
+--- a/common/systems/tests/phys/fixture_authoring.rs
++++ b/common/systems/tests/phys/fixture_authoring.rs
+@@ -3,6 +3,81 @@
+ use specs::WorldExt;
+ use std::time::Duration;
+ use vek::Vec3;
++
++#[test]
++fn route_trace_captures_slow_frame_increments_without_changing_physics() {
++    use common::comp::{NativeRouteTrace, PhysicsState, PreviousPhysCache};
++    use common_ecs::dispatch;
++    let mut state = utils::setup(|builder| {
++        dispatch::<veloren_common_systems::phys::Sys>(builder, &[]);
++    });
++    let player = utils::create_player(&mut state);
++    let initial = Pos(Vec3::new(16., 16., 270.));
++    let velocity = Vel(Vec3::new(0., 24., 0.));
++    let reset = |state: &mut common_state::State| {
++        state.ecs_mut().write_storage::<Pos>().insert(player, initial).unwrap();
++        state.ecs_mut().write_storage::<Vel>().insert(player, velocity).unwrap();
++        state.ecs_mut().write_storage::<PhysicsState>().remove(player);
++        state.ecs_mut().write_storage::<PreviousPhysCache>().remove(player);
++    };
++    reset(&mut state);
++    utils::tick(&mut state, Duration::from_millis(200));
++    let unobserved = utils::get_transform(&state, player).unwrap();
++    assert!(unobserved.0.0.distance(initial.0) > 4.);
++    reset(&mut state);
++    state.ecs_mut().insert(NativeRouteTrace::new(player));
++    utils::tick(&mut state, Duration::from_millis(200));
++    assert_eq!(utils::get_transform(&state, player).unwrap(), unobserved);
++    let trace = state.ecs().read_resource::<NativeRouteTrace>();
++    let (invalid, points) = trace.take();
++    assert!(!invalid);
++    assert_eq!(points.first(), Some(&initial.0));
++    assert_eq!(points.last(), Some(&unobserved.0.0));
++    assert!(points.len() > 10);
++    assert!(points.windows(2).all(|pair| pair[0].distance(pair[1]) < 0.4));
++}
++
++#[test]
++fn route_trace_records_collision_resolutions_not_attempted_wall_crossings() {
++    use common::{comp::NativeRouteTrace, terrain::{Block, BlockKind, TerrainGrid}, vol::WriteVol};
++    use common_ecs::dispatch;
++    let mut state = utils::setup(|builder| {
++        dispatch::<veloren_common_systems::phys::Sys>(builder, &[]);
++    });
++    let player = utils::create_player(&mut state);
++    state.ecs_mut().write_storage::<Pos>().insert(player, Pos(Vec3::new(16., 16., 270.))).unwrap();
++    state.ecs_mut().write_storage::<Vel>().insert(player, Vel(Vec3::new(0., 24., 0.))).unwrap();
++    {
++        let mut terrain = state.ecs().write_resource::<TerrainGrid>();
++        for x in 15..18 {
++            for z in 268..275 {
++                terrain.set(Vec3::new(x, 19, z), Block::new(BlockKind::Rock, vek::Rgb::zero())).unwrap();
++            }
++        }
++    }
++    state.ecs_mut().insert(NativeRouteTrace::new(player));
++    utils::tick(&mut state, Duration::from_millis(200));
++    let position = utils::get_transform(&state, player).unwrap().0.0;
++    let (invalid, points) = state.ecs().read_resource::<NativeRouteTrace>().take();
++    assert!(!invalid);
++    assert!(position.y > 18.3 && position.y < 19.);
++    assert_eq!(points.last(), Some(&position));
++    assert!(points.iter().all(|point| point.y < 19.));
++}
++
++#[test]
++fn route_trace_overflow_is_sticky_and_never_silently_truncated() {
++    use common::comp::NativeRouteTrace;
++    let mut state = utils::setup(veloren_common_systems::add_local_systems);
++    let player = utils::create_player(&mut state);
++    let trace = NativeRouteTrace::new(player);
++    trace.record(&[Vec3::zero(); 4097]);
++    let (invalid, points) = trace.take();
++    assert!(invalid);
++    assert!(points.is_empty());
++    trace.record(&[Vec3::zero()]);
++    assert!(trace.take().0);
++}
+ 
+ #[test]
+ fn fixture_authoring_stays_fixed_across_delays_bootstrap_and_moves_then_releases() {
+--- a/voxygen/src/native_agent.rs
++++ b/voxygen/src/native_agent.rs
+@@ -1,6 +1,7 @@
+ //! Ordinary-player protocol host. It owns no Client and never connects to a server.
+ use client::{Client, agent_protocol::{self as protocol, BridgeState, Request}};
+ use common::comp;
++use specs::WorldExt;
+ use crate::session::interactable::Interactables;
+ use serde::Deserialize;
+ use serde_json::{Value, json};
+@@ -33,6 +34,7 @@
+     route_samples: Vec<(u64, [f32; 3])>,
+     route_overflow: bool,
+     route_enabled: bool,
++    route_sequence: u64,
+ }
+ 
+ impl MotionEvidence {
+@@ -44,14 +46,15 @@
+             self.invalid = true;
+             return;
+         }
++        self.route_sequence += 1;
+         let changed = self.route_samples.last().is_none_or(|(_, previous)| {
+             point.iter().zip(previous).map(|(a, b)| (a - b).powi(2)).sum::<f32>() >= 0.01
+         });
+         if changed {
+-            if self.route_samples.len() >= 131072 {
++            if self.route_samples.len() >= 1048576 {
+                 self.route_overflow = true;
+             } else {
+-                self.route_samples.push((self.samples, point));
++                self.route_samples.push((self.route_sequence, point));
+             }
+         }
+     }
+@@ -282,6 +285,18 @@
+     /// Returns false only on explicit close, input failure or EOF.
+     pub fn poll(&mut self, client: &mut Client, hud: &mut crate::hud::Hud,
+                 talk: &Interactables) -> bool {
++        if self.motion.route_enabled {
++            let entity = client.entity();
++            if client.state().ecs().try_fetch::<comp::NativeRouteTrace>().is_none() {
++                client.state_mut().ecs_mut().insert(comp::NativeRouteTrace::new(entity));
++            }
++            let trace = client.state().ecs().read_resource::<comp::NativeRouteTrace>();
++            let (invalid, points) = trace.take();
++            self.motion.invalid |= invalid || trace.entity != entity;
++            for point in points {
++                self.motion.sample_route([point.x, point.y, point.z]);
++            }
++        }
+         if let (Some(uid), Some(position), Some(velocity), Some(physics), Some(character)) = (
+             client.uid(), client.current::<comp::Pos>(), client.current::<comp::Vel>(),
+             client.current::<comp::PhysicsState>(), client.current::<comp::CharacterState>(),
+@@ -376,7 +391,11 @@
+                             );
+                         }
+                         if request.cmd == "route_evidence" {
+-                            result["route_schema"] = json!("native-client-route/1");
++                            result["route_schema"] = json!("native-client-route/2");
++                            result["samples"] = json!(self.motion.route_sequence);
++                            result["semantics"] = json!(
++                                "Passive accepted native terrain-collision increments and client endpoints; no interpolated positions. Counters describe route observations, not render ticks."
++                            );
+                             result["route_samples"] = json!(
+                                 self.motion.route_samples.iter().map(|(sequence, point)|
+                                     json!({"sequence": sequence, "position": point})
+@@ -584,6 +603,22 @@
+     }
+ 
+     #[test]
++    fn route_sequence_counts_observed_physics_points_without_filling_gaps() {
++        let mut motion = MotionEvidence::default();
++        motion.route_enabled = true;
++        motion.samples = 100;
++        for i in 0..21 {
++            motion.sample_route([i as f32 * 0.225, 0.0, 0.0]);
++        }
++        assert_eq!(motion.route_samples.len(), 21);
++        assert_eq!(motion.route_sequence, 21);
++        assert_eq!(motion.samples, 100);
++        motion.sample_route([100.0, 0.0, 0.0]);
++        assert_eq!(motion.route_samples.len(), 22);
++        assert_eq!(motion.route_samples.last(), Some(&(22, [100.0, 0.0, 0.0])));
++    }
++
++    #[test]
+     fn route_samples_require_opt_in_and_native_displacement() {
+         let mut motion = MotionEvidence::default();
+         motion.sample_route([0.0, 0.0, 0.0]);

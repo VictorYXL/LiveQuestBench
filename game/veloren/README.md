@@ -49,6 +49,11 @@ The integration disables the upstream automatic protection controller so that
 combat decisions remain with the Agent. Ordinary enemy AI, damage, blocking
 and the game's native downed/death mechanics remain active.
 
+Route evidence version 2 records accepted native terrain-collision increments,
+not interpolated points between rendered frames. Route tasks require a rebuilt
+runtime; the original distance-gap validity check remains unchanged. This
+observer does not alter physics, controls, or the game clock.
+
 Veloren native source and bundled map retain their applicable GPLv3 terms.
 The [native license notice](patches/LICENSE) is retained. Other components and
 assets have their own licenses; do not assume blanket redistribution rights.

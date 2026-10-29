@@ -11,7 +11,7 @@ def score(points):
         "survival": {"health": {"current": 100}},
         "position": [0, 0, 201], "velocity": [0, 0, 0], "on_ground": True,
         "private_route_evidence": {
-            "schema": "native-client-motion/1", "route_schema": "native-client-route/1",
+            "schema": "native-client-motion/1", "route_schema": "native-client-route/2",
             "session_id": "same", "uid": 7, "samples": 10, "through_tick": 20,
             "route_samples": [{"sequence": 1, "position": [0, 0, 201]}],
         },

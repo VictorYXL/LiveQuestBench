@@ -105,7 +105,7 @@ class Session:
             raise ValueError("Fixture requires passive native motion evidence; rerun Veloren setup")
         if self.fixture.get("glide_evidence") and cfg.get("glide_evidence") != "native-client-glide/1":
             raise ValueError("Fixture requires passive native glide evidence; rerun Veloren setup")
-        if self.fixture.get("route_evidence") and cfg.get("route_evidence") != "native-client-route/1":
+        if self.fixture.get("route_evidence") and cfg.get("route_evidence") != "native-client-route/2":
             raise ValueError("Fixture requires passive native route evidence; rerun Veloren setup")
         if self.fixture.get("pickup_evidence") and cfg.get("pickup_evidence") != "native-server-pickups/1":
             raise ValueError("Fixture requires passive native original-supply evidence")
