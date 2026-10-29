@@ -1,0 +1,14 @@
+{
+  "schema": "minecraft-arrow-gallery/1",
+  "sha256": {
+    "pack.mcmeta": "3eb2d72f75535da6661e0f20c20c3f22c5e3a3553f7aa2406529ea901468e560",
+    "data/minecraft/tags/functions/tick.json": "fe9225a876c98bf311fbe59d07cc2b1e65b74721f8981d3d16371627be59f09f",
+    "data/livequest_gallery/advancements/hit.json": "d5e6b7815f918759e2bcf4051b02c59a9fa943cce7b5eb66f38b223968562db1",
+    "data/livequest_gallery/functions/record0.mcfunction": "c597e57771bad67c7eb8d57283244c948ca2c1bdadebb34a26044edcbb473ddc",
+    "data/livequest_gallery/functions/record1.mcfunction": "5544096fee35b714f52fa17271618ada7a09f2eefaff97c06695f51dba6331fa",
+    "data/livequest_gallery/functions/record2.mcfunction": "f14704998518fb2f4f551623bee7168e58c1f175e16200f131d42ce84b59e81f",
+    "data/livequest_gallery/functions/hit.mcfunction": "6d372a765937ee7e3c57f831bbee98e32b6ef3b0138bc9b0a6cbf65f18af981f",
+    "data/livequest_gallery/functions/lamps.mcfunction": "b370220606c328e474ea45ce420ee2e54cdf83f7ebebe0521f697a40817f72d6",
+    "data/livequest_gallery/functions/tick.mcfunction": "dedbf6c4c231155c6e4f3ac086c2aa88f8cf5f5237ba9e92d0be8efb678ee78b"
+  }
+}

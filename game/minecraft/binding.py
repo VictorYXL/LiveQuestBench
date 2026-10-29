@@ -89,6 +89,11 @@ def create_binding(
         validate_state(**parameters)
         stable_ticks(world_path)
         score = evaluate_irrigation
+    elif evaluator == "gallery":
+        from game.minecraft.evaluators.gallery import evaluate_gallery, gallery_evidence
+        validate_state(**parameters)
+        gallery_evidence(world_path)
+        score = evaluate_gallery
     elif evaluator == "structure":
         from game.minecraft.evaluators.structure import evaluate_structure, validate_config
         inspect.signature(evaluate_structure).bind(Path(), Path(), **parameters)

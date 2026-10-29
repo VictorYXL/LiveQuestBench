@@ -1,0 +1,52 @@
+id: occluded_target_gallery
+game: minecraft
+task_type: visual_motor
+task: 'In this Adventure-mode gallery, activate all three target circuits with your arrows, leaving all three lamp
+  latches lit, then return to the yellow gallery entrance with at least 1 HP, grounded and still. The targets are
+  at three elevations beyond laterally offset openings in the protected baffle wall. Use the ground firing area
+  and the terraced balcony to find clear sightlines. Arena circuit cells cannot be reached on foot; 32 arrows are
+  supplied. Control note: after closing a menu, verify that camera movement actually applies; a harmless tiny first
+  movement can prime native mouse recapture.'
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/occluded_target_gallery
+  instance: 1.20.4
+  difficulty: easy
+  player_state:
+    position:
+    - 0.5
+    - 72
+    - 0.5
+    dimension: minecraft:overworld
+    yaw: 0
+    pitch: 0
+    gamemode: adventure
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+    - slot: 0
+      item: bow
+      count: 1
+    - slot: 1
+      item: arrow
+      count: 32
+    - slot: 2
+      item: bread
+      count: 8
+evaluator:
+  name: gallery
+  parameters:
+    position:
+      target:
+      - 0.5
+      - 72
+      - 0.5
+      horizontal_tolerance: 3
+      vertical_tolerance: 1
+      max_speed: 0.1
+capabilities:
+  primary:
+  - spatial_interaction
+  secondary: []
