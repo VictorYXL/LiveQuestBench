@@ -6,7 +6,7 @@ capabilities:
   - peer_cooperation
   secondary:
   - spatial_interaction
-task: Together open both gate routes, retrieve the original Gate Parcel and bring both players alive,
+task: Together open both gate routes, retrieve the original Gate Parcel and bring both players with at least 1 health point each,
   standing still, to the yellow final chamber with the parcel. The two short gate corridors are enclosed
   by bedrock. You are both in native Adventure mode without block-breaking or placement permissions. Each
   near-side stone pressure station temporarily opens its gate; the far-side lever can keep that route
