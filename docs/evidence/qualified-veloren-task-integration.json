@@ -3,7 +3,9 @@
   "review_date": "2026-10-29",
   "base_commit": "8325849a108cf7d9184e5a47411a33942a520b28",
   "task_assembly_commit": "aa9fb6f",
-  "status": "task_only_patch_ready_shared_harvest_dependency_pending",
+  "task_admission_and_provenance_commit": "b247bb2",
+  "status": "isolated_shared_composition_verified_parent_main_integration_pending",
+  "isolated_composition_commit": "3ae0abbb1681642203f458cfa9bd1653810b2741",
   "tasks": {
     "VE-I05": {
       "source_commit": "f826a89e04c4d1e56138fb7eaef545c765f31f48",
@@ -66,6 +68,18 @@
       "deferred_native_records": "4b6dcec1a90f8393046883c5b96c949d009d2395"
     },
     "harvest_shared_owner": "80b8163d-5d8f-4250-9b31-e39fc3fc19c3",
+    "verified_shared_tip": "ad46f7086d7c10d737f4e998ccfb94f8deb99b20",
+    "shared_commits_in_order": [
+      "93439b2f61388dec8bdcb1a13ca32d813afcac07",
+      "59996599012f6b8306969fcd40f6a5848551f966",
+      "9689fcb90f92c9aaefb8134adcd4897d65b53a9f",
+      "a08a7b6b4a7d6210d90ac021517da789d3b4c0a7",
+      "c1c1304f16a17546d4ff4dfc52ba736490320c24",
+      "17701c23923e0a0688651c732ce5fbb886aaa4a9",
+      "c21166be01b40a5f63a990d8f750aae87d824c4b",
+      "6c4d9eab5471abd632aba2dd9bebe51a52439ff4",
+      "ad46f7086d7c10d737f4e998ccfb94f8deb99b20"
+    ],
     "harvest_source_commit": "f826a89e04c4d1e56138fb7eaef545c765f31f48",
     "harvest_required_files_and_hunks": {
       "game/veloren/harvest.py": "Exact native mushroom preparation, terrain_cell and harvest_snapshot implementation.",
@@ -77,17 +91,18 @@
     "native_runtime_requirement": "Existing admitted native terrain query/ordinary collection plus native-server-pickups/1; separately pinned native server, source manifest, build receipt and base runtime.",
     "existing_pickup_runtime": "output/temp/task_development/veloren-interaction/native-pickups/runtime.json",
     "integration_order": [
-      "Parent reconciles shared dependency chain; do not replay already integrated pickup/alive-health/deferred-record ancestors.",
-      "Apply task-only aa9fb6f and the follow-up task admission/provenance commit; do not cherry-pick whole I05 ancestry or duplicate R02 YAMLs.",
-      "Run the focused checks against the composed tree before claiming full integration; parent alone merges main."
+      "Parent integrates the ordered shared chain through ad46f7086d7c10d737f4e998ccfb94f8deb99b20, preserving any main changes; do not replay already integrated pickup/alive-health/deferred-record ancestors.",
+      "Apply task-only aa9fb6f then b247bb2 and this validation-report follow-up; do not cherry-pick whole I05 ancestry or duplicate R02 YAMLs.",
+      "The isolated validation merge 3ae0abbb1681642203f458cfa9bd1653810b2741 is not an additional production dependency. Parent alone merges main and verifies its final composed tree."
     ]
   },
   "validation": {
-    "completed": "R02 ST/VM admission/scorer plus existing pickup/server-extension tests: 34 passed, 16 I05 cases deselected.",
-    "pending": "I05 admission/scorer and original harvest tests require the shared harvest dependency.",
+    "completed": "Composed I05/R02 ST/VM admission/scorer, original harvest tests and existing pickup/server-extension tests: 60 passed.",
+    "pending": "Parent main integration only; no native/model requalification was performed or claimed.",
     "focused_command": "mkdir -p output/test && python -m pytest -q tests/test_game/veloren/test_qualified_tasks.py tests/test_game/veloren/test_harvest.py tests/test_game/veloren/test_pickups.py tests/test_game/veloren/test_server_extension.py --basetemp=output/test/qualified-integration",
     "all_four_task_files_byte_identical_to_source": true,
     "harvest_evaluator_byte_identical_to_source": true,
+    "shared_harvest_module_byte_identical_to_source": true,
     "new_native_or_model_episodes": 0,
     "main_modified": false,
     "existing_task_worktrees_or_evidence_modified": false
