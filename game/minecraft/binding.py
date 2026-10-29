@@ -60,7 +60,14 @@ def create_binding(
             tools = (*tools, "RespawnTool")
     elif tools is not None:
         raise ValueError("Tool allowlists are only supported for structured_tool tasks")
-    if evaluator == "timed_routing":
+    if evaluator == "target_lock":
+        from game.minecraft.evaluators.target_lock import evaluate_lock
+        if parameters:
+            raise ValueError("The hidden acceptance window is native fixture state, not public parameters")
+        if not (world_path / "livequest-lock-public.json").is_file():
+            raise ValueError("Missing native lock fixture")
+        score = evaluate_lock
+    elif evaluator == "timed_routing":
         from game.minecraft.evaluators.timed_routing import evaluate_routing, verify_initial as verify_routing
         if parameters:
             raise ValueError("Timed routing has no public hidden-state parameters")

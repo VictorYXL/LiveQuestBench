@@ -1,0 +1,71 @@
+{
+  "kind": "native_hidden_analog_lock_prototype",
+  "targets": [
+    {
+      "position": [
+        18,
+        73,
+        0
+      ],
+      "nominal_aim": [
+        18.5,
+        74.4,
+        0.5
+      ],
+      "feedback_chests": {
+        "low": [
+          17,
+          73,
+          -5
+        ],
+        "high": [
+          17,
+          73,
+          5
+        ],
+        "accepted": [
+          17,
+          73,
+          8
+        ]
+      }
+    },
+    {
+      "position": [
+        28,
+        77,
+        0
+      ],
+      "nominal_aim": [
+        28.5,
+        79.75,
+        0.5
+      ],
+      "feedback_chests": {
+        "low": [
+          17,
+          73,
+          15
+        ],
+        "high": [
+          17,
+          73,
+          25
+        ],
+        "accepted": [
+          17,
+          73,
+          28
+        ]
+      }
+    }
+  ],
+  "mechanism": "One shared unknown four-strength native comparator window. Native low/high counters retain outcome history; an accepted pulse releases the original token into the accepted chest.",
+  "feedback": "Count differences, not old nonempty counters, identify the latest hit. Misses release nothing.",
+  "goal": "Retrieve both original released tokens and return alive to the starting marker.",
+  "budgets": {
+    "practice_arrows": 24,
+    "application_arrows": 12
+  },
+  "limits": "Application-only mechanism proof; optional practice station and full phase accounting are not yet implemented."
+}

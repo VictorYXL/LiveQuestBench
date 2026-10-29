@@ -1,0 +1,269 @@
+{
+  "schema": "livequest-main-task-admission/1",
+  "task": "MC-L04",
+  "task_id": "archery_calibration_transfer",
+  "version": 1,
+  "source_commit": "3ba560a502926c2963cac6062f77d96451aed954",
+  "integration_base": "4b7ff80ed313b127c1385d9cc634241352e39034",
+  "accepted_condition": "Exact frozen paired task, scorer, native observer and fixture; historical whole-native ST/VM successes and valid first formal ST success/VM failure; bounded independent review; additive current-source read-only runtime admission.",
+  "status": "qualified_pinned_historical_evidence_current_runtime_read_only_compatible",
+  "qualification_delta": 1,
+  "task_dependency_files": {
+    "config/minecraft/tasks/structured_tools/archery_calibration_transfer.yaml": "5fac441f0566e1a736bc716816aefd14c3e471b2229445418747b8feaf298a97",
+    "config/minecraft/tasks/visual_motor/archery_calibration_transfer.yaml": "2381efc4bedf9ec9f49b446881e7f1b1894077e49950136b513c6eafb61ba8ef",
+    "game/minecraft/evaluators/target_lock.py": "6f446e2612f52ca55dbcf4e7f90d43b523bdb3e19356d5819b5e5f02d97c28cb",
+    "game/minecraft/fixtures/target_lock.py": "ced087a30283b092749736c4e42b1d50b0e6c5657421a78af87be441c14fc727",
+    "scripts/prove_target_lock.py": "32072a9f8c9c83dc387e718f0057c4e4a2856d53bd8da90e0cac6d83de91ad28",
+    "scripts/author_target_lock.py": "aaf5ccd163b8f9cc5fa975f467e8d8a765608ba3207c50ff826262e0c708eca0",
+    "game/minecraft/fixtures/archery_evidence.py": "24b07a8558c7ccfa3f79eec1dcbc5e3b478dac12cf43a13af56d4cb169578df9",
+    "config/minecraft/fixtures/archery_calibration_transfer/DIM-1/data/raids.dat": "8c576fdc68a0a46ff3d171a56fbbe445c2fdff14094c58f2316a9e06a041a5ed",
+    "config/minecraft/fixtures/archery_calibration_transfer/DIM1/data/raids_end.dat": "8c576fdc68a0a46ff3d171a56fbbe445c2fdff14094c58f2316a9e06a041a5ed",
+    "config/minecraft/fixtures/archery_calibration_transfer/data/chunks.dat": "31cab8f2e7557f5fc385cb531629d617f4210b9502e42149d92ea04e757e7c05",
+    "config/minecraft/fixtures/archery_calibration_transfer/data/command_storage_gameagent.dat": "96923139516676e5745b6852761d8ed9d195954c52a891057f0aacc7857ee7a9",
+    "config/minecraft/fixtures/archery_calibration_transfer/data/command_storage_livequest.dat": "3c5996419436efb50bd7824862494e8a522b0a4243df03cd6a3bd67ab0ae0485",
+    "config/minecraft/fixtures/archery_calibration_transfer/data/raids.dat": "13f6f8f44fb401279e97bcf23d637e852bdabe0b3f7d61e56c9c17f2676c7dd2",
+    "config/minecraft/fixtures/archery_calibration_transfer/data/scoreboard.dat": "ced901eab0d14d974fa3e5f6cf0b3f697545817ef916c223550656dbc0908a67",
+    "config/minecraft/fixtures/archery_calibration_transfer/datapacks/livequest_archery/data/livequest_archery/advancements/application_1.json": "8960a2bddcf008c4005fa4e91745cc2974e9d5ab0e451f1a14eefddbcaa081d8",
+    "config/minecraft/fixtures/archery_calibration_transfer/datapacks/livequest_archery/data/livequest_archery/advancements/application_2.json": "a51072d72fc2f135ccdfd2e0d6dbe546d19ca477c971c3c3a8b2e8cbf1fc31d4",
+    "config/minecraft/fixtures/archery_calibration_transfer/datapacks/livequest_archery/data/livequest_archery/functions/application_1.mcfunction": "bdefd175dd77ad7a366528a122470b072689b36080b7c76a87f525820c57b80b",
+    "config/minecraft/fixtures/archery_calibration_transfer/datapacks/livequest_archery/data/livequest_archery/functions/application_2.mcfunction": "35ea80df93d77af2112c2fe53ba36927db5d5b29a8dbc541772861a0a721978c",
+    "config/minecraft/fixtures/archery_calibration_transfer/datapacks/livequest_archery/data/livequest_archery/functions/load.mcfunction": "0262140a403488497d0d0328c0bd20f25100e07d8882865b174b8554fed2ac58",
+    "config/minecraft/fixtures/archery_calibration_transfer/datapacks/livequest_archery/data/livequest_archery/functions/shot.mcfunction": "4f474a72d561b4c93dc3c11b0a27c956a226e0024c024ef1b0f81ba85b93cbd9",
+    "config/minecraft/fixtures/archery_calibration_transfer/datapacks/livequest_archery/data/livequest_archery/functions/tick.mcfunction": "a0f116e67afcc06f364d772513090060a01986c31dda712f6593a9419ddb9e6f",
+    "config/minecraft/fixtures/archery_calibration_transfer/datapacks/livequest_archery/data/minecraft/tags/functions/load.json": "884d4df5fcf94b65702584b2c550a1b98ce1ffddca56b9125927e3f33152bfab",
+    "config/minecraft/fixtures/archery_calibration_transfer/datapacks/livequest_archery/data/minecraft/tags/functions/tick.json": "5057c9b63bb30079eb3c1f6144ecf21fafb4659119064318398477920cd2d890",
+    "config/minecraft/fixtures/archery_calibration_transfer/datapacks/livequest_archery/pack.mcmeta": "cda98fd22b0cec80e31093a71ddacf09e4e717149d7f3a58841dafcfe37d5cd4",
+    "config/minecraft/fixtures/archery_calibration_transfer/datapacks/livequest_lock/data/livequest_lock/functions/load.mcfunction": "4ccd522d3470b3542140cf7b4b414ac8b50816620d595b2b2bb69ac1c823f1a6",
+    "config/minecraft/fixtures/archery_calibration_transfer/datapacks/livequest_lock/data/livequest_lock/functions/tick.mcfunction": "d570c6274ed43934fbe6937e21b7608cad2d79b8570eb971e9c8535911b2b743",
+    "config/minecraft/fixtures/archery_calibration_transfer/datapacks/livequest_lock/data/minecraft/tags/functions/load.json": "fcfa3999efe43d4b1aca7a781bd14609db857124cd638185607061b844c8336f",
+    "config/minecraft/fixtures/archery_calibration_transfer/datapacks/livequest_lock/data/minecraft/tags/functions/tick.json": "8a2e5205a514343292056a675ec95407b42ce36619a2b9cb47b28ddaee66c2d1",
+    "config/minecraft/fixtures/archery_calibration_transfer/datapacks/livequest_lock/pack.mcmeta": "7f75f5d29b551f42819316f4a5876a98a5c7b94cbded897e6af6555256ca8d4a",
+    "config/minecraft/fixtures/archery_calibration_transfer/entities/r.-1.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "config/minecraft/fixtures/archery_calibration_transfer/entities/r.-1.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "config/minecraft/fixtures/archery_calibration_transfer/entities/r.0.-1.mca": "53a1da8ddb5442f589014fbb669e678f77eb201d67e0823e7d4566686f0b1b4e",
+    "config/minecraft/fixtures/archery_calibration_transfer/entities/r.0.0.mca": "6c408a54a350dc0c5711904ee56a9167859da9a53762eaaf34eb25c0a11b9600",
+    "config/minecraft/fixtures/archery_calibration_transfer/level.dat": "18f6309d7703db60e723ffc0f9e8a68fd07da9c4a0dec511042125e542afc575",
+    "config/minecraft/fixtures/archery_calibration_transfer/livequest-lock-public.json": "1daa703f4fe2353d2de248bac512d57787783f9a2554a7a1e0188e5e6bde26f4",
+    "config/minecraft/fixtures/archery_calibration_transfer/poi/r.-1.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "config/minecraft/fixtures/archery_calibration_transfer/poi/r.-1.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "config/minecraft/fixtures/archery_calibration_transfer/poi/r.0.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "config/minecraft/fixtures/archery_calibration_transfer/poi/r.0.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "config/minecraft/fixtures/archery_calibration_transfer/region/r.-1.-1.mca": "66fe66bf09cb23cc940d6cc5e06e4caa2bbc45a9c530f398c262ade76db26d36",
+    "config/minecraft/fixtures/archery_calibration_transfer/region/r.-1.0.mca": "d978122d09d2e0803e8e49ade9b90fbfc0319e8b9ff3fa8e09c28c941b0411e0",
+    "config/minecraft/fixtures/archery_calibration_transfer/region/r.0.-1.mca": "714b6a316df54bf3ddc6a951343d2f59b39e4fa36e1c463b58826842c5aaf37b",
+    "config/minecraft/fixtures/archery_calibration_transfer/region/r.0.0.mca": "0937b62e83644a7c747aadb53cf345a7e9b6cde3d3eacda5a24d1dc4d97bca83"
+  },
+  "source_manifest": "config/minecraft/fixtures/archery_calibration_transfer.source.json",
+  "current_runtime": {
+    "home": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/minecraft-runtime/MC-R05-main-vitals-placement-cart-v1",
+    "source_sha256": "39b0c2e0e5549fa3921071d844ad9e2b8f3c1ff9ae4499531ce61683aeb98f6b",
+    "provenance": {
+      "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/minecraft-runtime/MC-R05-main-vitals-placement-cart-v1/provenance.json",
+      "sha256": "b8a060086346a0b16210beb1a89ed2cb9161d547a82dcda5168efbe4f740a949"
+    },
+    "previously_compiled_java_sources": 8,
+    "runtime_reused_unchanged": true,
+    "new_builds": 0,
+    "published_definitions_read_only_passed": 54,
+    "previous_main_and_default_and_frozen_r05_correctly_rejected": true,
+    "historical_caches_unchanged": true,
+    "fresh_native_episode": false,
+    "preserved_main_features": [
+      "native placement confirmation",
+      "vitals RPC",
+      "native chest/cart inspection"
+    ],
+    "native_client_changes_for_this_admission": [],
+    "historical_l04_delta": "Existing main vitals/placement/cart support only; no replacement from stale candidate ancestry."
+  },
+  "historical_runtime": {
+    "home": "/home/msra/.local/share/livequestbench/minecraft",
+    "client_source_sha256": "9af8c6aecb88164015a583916a8fe64fc4ec2d5b16cb63e969402d944fb83bb8"
+  },
+  "retained_evidence": [
+    {
+      "kind": "native",
+      "track": "st",
+      "result": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L04-full-public-st-v1/result.json",
+        "sha256": "088ad939e49f90f76e1d6183d2f8e1bd29d79e8fd6c0926b7757060c471c1aa4"
+      },
+      "environment": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L04-full-public-st-v1/game/environment.json",
+        "sha256": "ce897ec65502fc79931a13e748cc768d2dfe283247a6b8f317d2b7af676188cb"
+      },
+      "evaluation": {
+        "success": true,
+        "checks": {
+          "original_tokens": [
+            "target_1",
+            "target_2"
+          ],
+          "both_tokens": true,
+          "living_return": true,
+          "owned_targets": [
+            "application_1",
+            "application_2"
+          ],
+          "native_launches": 5,
+          "application_diagnostic_success": true
+        }
+      },
+      "measurement": null,
+      "task_outcome": null,
+      "immutable_snapshots_and_results": true,
+      "exact_retained_replay": true
+    },
+    {
+      "kind": "native",
+      "track": "vm",
+      "result": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L04-full-public-vm-v1/result.json",
+        "sha256": "6243dd350b7f2ef52620661346dfe41c40c23663ef38399e872f015eb6f4dc89"
+      },
+      "environment": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L04-full-public-vm-v1/game/environment.json",
+        "sha256": "4336600305be28a2babd38327f7a155e14a9da28eab1d08a2de490d37dd1b98e"
+      },
+      "evaluation": {
+        "success": true,
+        "checks": {
+          "original_tokens": [
+            "target_1",
+            "target_2"
+          ],
+          "both_tokens": true,
+          "living_return": true,
+          "owned_targets": [
+            "application_1",
+            "application_2"
+          ],
+          "native_launches": 7,
+          "application_diagnostic_success": true
+        }
+      },
+      "measurement": "valid",
+      "task_outcome": null,
+      "immutable_snapshots_and_results": true,
+      "exact_retained_replay": true
+    },
+    {
+      "kind": "formal",
+      "track": "st",
+      "result": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L04-formal-st-reviewed-3ba560a/results/baseline/archery_calibration_transfer.structured_tool/episode_1/results/result.json",
+        "sha256": "e8bb3b6d55ccf79b8e98980ab276c848577a871e2c869cd63f854c93e9d90998"
+      },
+      "environment": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L04-formal-st-reviewed-3ba560a/results/baseline/archery_calibration_transfer.structured_tool/episode_1/game/environment.json",
+        "sha256": "aa4c080f69749e5adbbb166df2c52e7e50dae8fa10f69c330ca64289543d2552"
+      },
+      "evaluation": {
+        "success": true,
+        "checks": {
+          "original_tokens": [
+            "target_1",
+            "target_2"
+          ],
+          "both_tokens": true,
+          "living_return": true,
+          "owned_targets": [
+            "application_1",
+            "application_2"
+          ],
+          "native_launches": 2,
+          "application_diagnostic_success": true
+        }
+      },
+      "measurement": "valid",
+      "task_outcome": "success",
+      "immutable_snapshots_and_results": true,
+      "exact_retained_replay": true
+    },
+    {
+      "kind": "formal",
+      "track": "vm",
+      "result": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L04-formal-vm-reviewed-3ba560a/results/baseline/archery_calibration_transfer.visual_motor/episode_1/results/result.json",
+        "sha256": "2f4adcf00b95adf071fc08da9000f2f9f4f03654360016249405ca2146fcb9e6"
+      },
+      "environment": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L04-formal-vm-reviewed-3ba560a/results/baseline/archery_calibration_transfer.visual_motor/episode_1/game/environment.json",
+        "sha256": "647be2fdbbfc3473c106b26b0a16b504ff07cea089e0da8bf9ba0051f3c29524"
+      },
+      "evaluation": {
+        "success": false,
+        "checks": {
+          "original_tokens": [],
+          "both_tokens": false,
+          "living_return": false,
+          "owned_targets": [
+            "application_1"
+          ],
+          "native_launches": 12,
+          "application_diagnostic_success": false
+        }
+      },
+      "measurement": "valid",
+      "task_outcome": "failure",
+      "immutable_snapshots_and_results": true,
+      "exact_retained_replay": true
+    }
+  ],
+  "scientific": {
+    "review": {
+      "path": "output/temp/task_development/checks/MC-L04-independent-verdict.json",
+      "sha256": "bdfdbfaeecf2f4b73da197a5caec0ea7ecb2a110307e25e623720d4c45295793"
+    },
+    "source_commit": "3ba560a502926c2963cac6062f77d96451aed954",
+    "status": "reviewed_pass",
+    "construct": "Unknown native four-strength acceptance interval, informative low/high feedback and functional application to a second differently positioned target.",
+    "difficulty": {
+      "st": {
+        "reviewer_rating": 2,
+        "uncertainty": "moderate_to_high",
+        "plausible_range": [
+          2,
+          3
+        ]
+      },
+      "vm": {
+        "reviewer_rating": 3,
+        "uncertainty": "high",
+        "plausible_range": [
+          2,
+          4
+        ]
+      },
+      "learning_component": 2,
+      "basis": "Native strength-feedback search plus two applications within12 arrows; VM adds meaningful aiming/aperture/navigation control.886.102s and7 launches show feasibility within1200s, not population difficulty. Do not equate motor difficulty with stronger learning.",
+      "calibrated": false
+    },
+    "limits": [
+      "Final measurements may describe this single-window feedback/application condition, not generalized or causally necessary within-episode learning.",
+      "Keep cold first-try success and ordinary aim/charge alternatives legal. No mandatory exploration/failure or new calibration requested.",
+      "Nonblocking metadata cleanup: fixture helper public_manifest still mentions24 practice arrows/application-only prototype. Canonical full-task YAML clearly has12 total; do not present old helper proposal as the measured public contract."
+    ]
+  },
+  "tests": {
+    "focused": "28 passed, 5 skipped; skips are opt-in native games, not newly executed proof.",
+    "candidate_read_only_admission": {
+      "path": "output/temp/task_development/checks/MC-L04-candidate-read-only-admission.json",
+      "sha256": "a317adc62e0c91863273afdfb910bcbb9c19cc88d16141445a6cf36a9382377b"
+    },
+    "candidate_focused_log": {
+      "path": "output/temp/task_development/checks/MC-L04-candidate-tests.log",
+      "sha256": "31447d52a31a650f326d066283ad2def83c3c854c549b3f7a630c717c2325368"
+    }
+  },
+  "limits": [
+    "Only the reviewed single native window4..7, not a balanced runtime distribution.",
+    "Twelve total native launches; older helper practice-budget metadata is nonauthoritative.",
+    "Cold two-shot first-final ST success remains legal and is not causal learning evidence.",
+    "The first formal VM valid failure is retained, not rerun or reclassified.",
+    "Native feasibility and replay do not assert fresh gameplay on the combined runtime.",
+    "ST2/VM3 and learning-component2 are uncertain reviewer estimates, not population calibration.",
+    "L05 remains unqualified pending separate new-family final and integration gates."
+  ],
+  "new_native_or_model_jobs": 0
+}

@@ -124,7 +124,8 @@ LIVEQUEST_MINECRAFT_HOME="$PWD/output/temp/task_development/minecraft-runtime/MC
 
 Its source digest is
 `39b0c2e0e5549fa3921071d844ad9e2b8f3c1ff9ae4499531ce61683aeb98f6b`.
-All 52 published Minecraft definitions pass read-only admission. Historical
+At R05 admission, all 52 then-published Minecraft definitions passed read-only
+admission. Historical
 and default mismatched caches remain rejected and unchanged. Other hosts
 must provision from the exact current sources, not copy admission receipts.
 
@@ -137,7 +138,30 @@ See the [versioned admission receipt](../../docs/evidence/minecraft-rail-junctio
 The bounded claim is native continuous-time routing/delivery, provisionally
 ST2/VM2: one well-timed switch can suffice, and disclosed-time fixed policies
 remain legal. Feedback necessity, broad recovery robustness, and population
-difficulty are not established. L04 and L05 are not admitted by this change.
+difficulty are not established. That admission did not include L04 or L05.
+
+### Single-window archery calibration admission (version 1)
+
+The paired `archery_calibration_transfer` task retains exact reviewed source
+`3ba560a502926c2963cac6062f77d96451aed954`. Its two native comparator locks
+share the single reviewed hidden acceptance window, strengths 4–7. Native
+low/high counters provide feedback; accepted shots physically release original
+tokens. Success requires both original tokens, owned native hits on both
+targets, at most **12 total launches**, and a living same-floor return.
+Cold first-try success and ordinary aiming/charge alternatives remain legal.
+
+Whole-task native ST/VM successes and the first formal ST success/VM valid
+failure were replayed unchanged. The two-shot formal ST success is not proof
+of causal learning. Reviewed difficulty is provisional ST2/VM3, with learning
+component 2; no generalized window distribution or learning benefit is claimed.
+The old fixture-helper practice-budget metadata is historical, not the measured
+public contract: the unchanged task YAML specifies 12 total arrows.
+
+This additive task admission reuses the source-matched cart/placement/vitals
+runtime above without rebuilding or changing any historical installation.
+All 54 published definitions pass read-only admission; no new native or model
+episode was run. See the [versioned archery admission receipt](../../docs/evidence/minecraft-archery-calibration-admission-v1.json).
+L05 remains separate and is not qualified by this admission.
 
 ## Run an experiment
 

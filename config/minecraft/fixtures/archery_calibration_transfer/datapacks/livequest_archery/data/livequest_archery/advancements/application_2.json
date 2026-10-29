@@ -1,0 +1,34 @@
+{
+  "criteria": {
+    "hit": {
+      "trigger": "minecraft:target_hit",
+      "conditions": {
+        "signal_strength": {
+          "min": 1
+        },
+        "projectile": {
+          "type": "minecraft:arrow",
+          "location": {
+            "position": {
+              "x": {
+                "min": 24,
+                "max": 29
+              },
+              "y": {
+                "min": 75,
+                "max": 80
+              },
+              "z": {
+                "min": -2,
+                "max": 2
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "rewards": {
+    "function": "livequest_archery:application_2"
+  }
+}

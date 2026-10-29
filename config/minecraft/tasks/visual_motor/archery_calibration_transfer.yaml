@@ -1,0 +1,74 @@
+id: archery_calibration_transfer
+game: minecraft
+task_type: visual_motor
+task: 'Open two native target locks, retrieve both original released paper tokens,
+
+  and return alive within three horizontal blocks of (0.5,72,0.5) on the same
+
+  floor. You have one ordinary bow and twelve arrows in total.
+
+
+  Both locks share one initially unknown native acceptance window of four
+
+  consecutive target strengths. Native target blocks, arrows and comparators
+
+  determine acceptance; bow physics and controls are unchanged. The hidden
+
+  window is not a private score label: an accepted pulse physically releases
+
+  an original token through protected droppers and ordinary hopper delivery.
+
+  The first target can supply useful experience for the second in this same
+
+  episode. Exploration is optional; no failure or attempt count is required.
+
+
+  Targets are (18,73,0) and (28,77,0). Ordinary full-charge nominal aiming points
+
+  from the start are (18.5,74.4,0.5) and (28.5,79.75,0.5); these are public
+
+  geometric hints, not an acceptance guarantee. Choose your own aim and charge.
+
+  For target1, low/high/accepted chests are (17,73,-5), (17,73,5), (17,73,8).
+
+  For target2, they are (17,73,15), (17,73,25), (17,73,28).
+
+  Low/high paper counters retain history; differences in counts identify the
+
+  latest outcome. Misses add nothing. Allow ordinary native signal and hopper
+
+  travel time. Accepted chests contain the original goal tokens.
+
+  All ordinary public controls remain legal. Start with20health and finish
+
+  alive; there is no hidden health increase requirement or separate reset.
+
+  '
+time_limit_seconds: 1200
+fixture:
+  world_path: ../../fixtures/archery_calibration_transfer
+  instance: 1.20.4
+  difficulty: normal
+  player_state:
+    position:
+    - 0.5
+    - 72
+    - 0.5
+    yaw: -90
+    pitch: -2.481
+    health: 20
+    inventory:
+    - slot: 0
+      item: bow
+      count: 1
+    - slot: 1
+      item: arrow
+      count: 12
+evaluator:
+  name: target_lock
+  parameters: {}
+capabilities:
+  primary:
+  - within_episode_learning
+  secondary:
+  - spatial_interaction
