@@ -1,0 +1,486 @@
+id: ridge_glide_delivery
+game: veloren
+task_type: visual_motor
+task: Land from a glide within about five metres of the low central stone plinth on the plateau opposite
+  your starting ridge, after at least twenty-five metres of actual airborne gliding during that flight.
+  Any lawful takeoff point is allowed. Then bring at least one animal hide to the small stone shelter
+  on that plateau, finishing alive, grounded and still. Walking into the landing zone after landing elsewhere
+  does not count. The destination plateau lies north, straight ahead of your initial facing, and below
+  the ridge; the shelter is on the far side of the landing plinth. Manage your heading, descent and braking. During
+  gliding, forward/backward inputs lower/raise glider pitch. The outer stairs permit another attempt after
+  a missed landing. Ordinary death and recovery remain legal without replenishment.
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/veloren_0_18_0_0.bin
+  world_seed: 130626853
+  time_of_day: '12:00'
+  day_length: 30
+  calendar: none
+  platform:
+    origin:
+    - 18700
+    - 10800
+    - 470
+    size:
+    - 30
+    - 66
+    block: Rock
+  player_state:
+    position:
+    - 18716
+    - 10810
+    - 513
+    look:
+    - 0
+    - 1
+    - 0
+    health: 100
+    inventory:
+      common.items.crafting_ing.hide.animal_hide: 1
+      common.items.food.apple: 3
+      common.items.consumable.potion_minor: 2
+    equipment:
+      active_mainhand: common.items.weapons.sword.starter
+      chest: common.items.armor.misc.chest.worker_purple_brown
+      feet: common.items.armor.misc.foot.sandals
+      glider: common.items.glider.basic_white
+      lantern: common.items.lantern.black_0
+      legs: common.items.armor.misc.pants.worker_brown
+  blocks:
+  - origin:
+    - 18710
+    - 10804
+    - 512
+    size:
+    - 12
+    - 12
+    - 1
+  - origin:
+    - 18703
+    - 10804
+    - 498
+    size:
+    - 8
+    - 4
+    - 1
+  - origin:
+    - 18711
+    - 10815
+    - 512
+    size:
+    - 3
+    - 8
+    - 1
+  - origin:
+    - 18708
+    - 10821
+    - 512
+    size:
+    - 6
+    - 2
+    - 1
+  - origin:
+    - 18710
+    - 10843
+    - 482
+    size:
+    - 12
+    - 15
+    - 1
+  - origin:
+    - 18715
+    - 10848
+    - 483
+    size:
+    - 2
+    - 2
+    - 1
+  - origin:
+    - 18712
+    - 10855
+    - 483
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18720
+    - 10855
+    - 483
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18712
+    - 10855
+    - 486
+    size:
+    - 9
+    - 1
+    - 1
+  - origin:
+    - 18704
+    - 10833
+    - 471
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18704
+    - 10832
+    - 472
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18704
+    - 10831
+    - 473
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18704
+    - 10830
+    - 474
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18704
+    - 10829
+    - 475
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18704
+    - 10828
+    - 476
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18704
+    - 10827
+    - 477
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18704
+    - 10826
+    - 478
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18704
+    - 10825
+    - 479
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18704
+    - 10824
+    - 480
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18704
+    - 10823
+    - 481
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18704
+    - 10822
+    - 482
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18704
+    - 10821
+    - 483
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18704
+    - 10820
+    - 484
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18704
+    - 10819
+    - 485
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18704
+    - 10818
+    - 486
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18704
+    - 10817
+    - 487
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18704
+    - 10816
+    - 488
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18704
+    - 10815
+    - 489
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18704
+    - 10814
+    - 490
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18704
+    - 10813
+    - 491
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18704
+    - 10812
+    - 492
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18704
+    - 10811
+    - 493
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18704
+    - 10810
+    - 494
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18704
+    - 10809
+    - 495
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18704
+    - 10808
+    - 496
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18704
+    - 10807
+    - 497
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18704
+    - 10806
+    - 498
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18708
+    - 10808
+    - 499
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18708
+    - 10809
+    - 500
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18708
+    - 10810
+    - 501
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18708
+    - 10811
+    - 502
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18708
+    - 10812
+    - 503
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18708
+    - 10813
+    - 504
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18708
+    - 10814
+    - 505
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18708
+    - 10815
+    - 506
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18708
+    - 10816
+    - 507
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18708
+    - 10817
+    - 508
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18708
+    - 10818
+    - 509
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18708
+    - 10819
+    - 510
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18708
+    - 10820
+    - 511
+    size:
+    - 3
+    - 1
+    - 1
+  - origin:
+    - 18708
+    - 10821
+    - 512
+    size:
+    - 3
+    - 1
+    - 1
+  glide_evidence: true
+  respawn_at_start: true
+evaluator:
+  name: state
+  parameters:
+    glide_landing:
+      target:
+      - 18716
+      - 10849
+      - 483
+      horizontal_tolerance: 5
+      vertical_tolerance: 1
+      min_distance: 25
+    inventory:
+    - item: common.items.crafting_ing.hide.animal_hide
+      min_count: 1
+    position:
+      target:
+      - 18716
+      - 10854
+      - 483
+      horizontal_tolerance: 3
+      vertical_tolerance: 1
+      max_speed: 0.1
+    min_health: 0
+capabilities:
+  primary:
+  - spatial_interaction
+  secondary: []
