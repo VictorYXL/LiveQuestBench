@@ -14,7 +14,7 @@ class VirtualDisplay:
         with log_path.open("xb") if log_path is not None else nullcontext(None) as log:
             self.process = await asyncio.create_subprocess_exec(
                 "Xvfb", "-displayfd", "1", "-screen", "0", "1024x768x24",
-                "-nolisten", "tcp",
+                "-nolisten", "tcp", "-noreset",
                 stdout=asyncio.subprocess.PIPE, stderr=log,
             )
         assert self.process.stdout is not None
