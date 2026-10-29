@@ -6,7 +6,7 @@ import os
 import pytest
 
 from game.veloren.evaluators.deaths import death_snapshot
-from game.veloren.runtime.journal import snapshot_rows
+from game.veloren.runtime.journal import snapshot_binding, snapshot_rows
 
 
 def journal_rows():
@@ -166,6 +166,30 @@ def test_prefix_resumes_at_last_complete_row_not_partial_tail(tmp_path):
     with path.open("ab") as stream:
         stream.write(encoded[20:])
     assert snapshot_rows(path, "game", prefix=prefix) == snapshot_rows(path, "game")
+
+
+def test_setup_binding_uses_latest_suffix_not_stale_prepared_entity(tmp_path):
+    rows = journal_rows()
+    path = tmp_path / "journal.ndjson"
+    write_rows(path, rows[:4])
+    prefix = {}
+    snapshot_rows(path, "game", prepare_prefix=prefix)
+    latest = {**rows[4], "data": {"bindings": [
+        {"uid": 73, "server_entity": "new-generation", "health": 90, "dead": False},
+    ]}}
+    with path.open("ab") as stream:
+        stream.write(json.dumps(latest).encode() + b"\n")
+    assert snapshot_binding(path, "game", 73, prefix=prefix) == latest["data"]["bindings"][0]
+    assert snapshot_binding(path, "game", 73, prefix=prefix) == snapshot_binding(path, "game", 73)
+    for bindings in ([], latest["data"]["bindings"] * 2):
+        with path.open("ab") as stream:
+            stream.write(json.dumps({**latest, "sequence": 5 if not bindings else 6,
+                                     "data": {"bindings": bindings}}).encode() + b"\n")
+        if bindings:
+            with pytest.raises(ValueError, match="ambiguous"):
+                snapshot_binding(path, "game", 73, prefix=prefix)
+        else:
+            assert snapshot_binding(path, "game", 73, prefix=prefix) is None
 
 
 @pytest.mark.parametrize("contracts", [False, True])

@@ -5,6 +5,18 @@ import os
 from pathlib import Path
 
 
+def snapshot_binding(path: Path, run_id: str, uid: int, *, prefix: dict | None = None) -> dict | None:
+    """Read an entity only from the latest validated native binding snapshot."""
+    rows = snapshot_rows(path, run_id, prefix=prefix)
+    latest = next((row for row in reversed(rows) if row["event"] == "combat_entity_bindings"), None)
+    if latest is None:
+        return None
+    matches = [binding for binding in latest["data"]["bindings"] if binding["uid"] == uid]
+    if len(matches) > 1:
+        raise ValueError("ambiguous native entity binding")
+    return matches[0] if matches else None
+
+
 def snapshot_rows(
     path: Path, run_id: str, *, after_sequence: int | None = None, encounters: bool = False,
     contracts: bool = False, equipment_uid: int | None = None, pickups: bool = False,

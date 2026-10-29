@@ -180,6 +180,27 @@ class Session:
         protected = await protect_administrator(admin)
         self.setup_administrator = (admin, administrator, protected["self_identity"]["uid"])
 
+    async def encounter_binding(self, actor, uid: int) -> dict:
+        from game.veloren.runtime.journal import snapshot_binding
+
+        if self.running or actor is not self.actor:
+            raise RuntimeError("Encounter binding requires this session's setup actor")
+        deadline = asyncio.timeout(10)
+        try:
+            async with deadline:
+                while True:
+                    binding = await asyncio.to_thread(
+                        snapshot_binding, self.oracle_output / "private-native-oracle.ndjson",
+                        self.oracle_output.name, uid, prefix=getattr(self, "snapshot_prefix", None),
+                    )
+                    if binding is not None:
+                        return binding
+                    await asyncio.sleep(.1)
+        except TimeoutError as error:
+            if not deadline.expired():
+                raise
+            raise RuntimeError(f"private native UID/entity binding unavailable: {uid}") from error
+
     async def finish_setup(self, *, finalize_encounters: bool = True) -> None:
         initialized = self.initialized
         if initialized.get("encounters_pending") and finalize_encounters:
@@ -197,6 +218,7 @@ class Session:
             from game.veloren.fixture import initialize_encounters
             initialized.update(await initialize_encounters(
                 admin, self.actor, self.fixture, initialized.get("contract"),
+                binding_reader=self.encounter_binding,
             ))
             initialized["encounters_pending"] = False
         await observe_remote_supplies(admin, initialized["supplies"])

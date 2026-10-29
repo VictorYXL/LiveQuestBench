@@ -72,7 +72,8 @@ def test_deferred_encounter_spawns_once_then_retires_admin_before_play(monkeypat
         events.append("absence_verified")
         return opening
 
-    async def spawn(admin, actor, task, contract):
+    async def spawn(admin, actor, task, contract, *, binding_reader):
+        assert binding_reader == session.encounter_binding
         events.append("spawn")
         return {"encounters": [{"role": "wolf"}], "source_binding": {"uid": 2}, "opening": opening}
 
@@ -115,6 +116,58 @@ def test_deferred_encounter_spawns_once_then_retires_admin_before_play(monkeypat
     assert session.setup_administrator is None
     assert session.initialized["encounters_pending"] is False
     assert session.initialized["encounters"] == [{"role": "wolf"}]
+
+
+def test_encounter_binding_uses_prevalidated_prefix_and_waits_for_current_uid(monkeypatch, tmp_path):
+    from game.veloren.runtime import journal
+
+    worker = load_worker(monkeypatch)
+    session = object.__new__(worker.Session)
+    session.running = False
+    session.actor = object()
+    session.oracle_output = tmp_path / "Alpha"
+    session.snapshot_prefix = {"prepared": True}
+    binding = {"uid": 12, "server_entity": "original-generation", "health": 100}
+    calls = []
+
+    def read(path, run_id, uid, *, prefix):
+        calls.append((path, run_id, uid, prefix))
+        return binding if len(calls) == 2 else None
+
+    monkeypatch.setattr(journal, "snapshot_binding", read)
+    assert asyncio.run(session.encounter_binding(session.actor, 12)) == binding
+    assert calls == [(session.oracle_output / "private-native-oracle.ndjson", "Alpha",
+                      12, session.snapshot_prefix)] * 2
+    session.running = True
+    with pytest.raises(RuntimeError, match="setup actor"):
+        asyncio.run(session.encounter_binding(session.actor, 12))
+    session.running = False
+    with pytest.raises(RuntimeError, match="setup actor"):
+        asyncio.run(session.encounter_binding(object(), 12))
+    assert len(calls) == 2
+
+
+def test_encounter_initialization_uses_same_reader_for_target_and_source(monkeypatch):
+    from game.veloren import fixture
+
+    declared, opening = player_scene()
+    opening["self_identity"] = {"uid": 12}
+    declared["encounters"] = [{"role": "wolf", "position": [10, 0, 1]}]
+    actor = SimpleNamespace(request=AsyncMock(return_value=opening))
+    reader = AsyncMock(return_value={"uid": 12, "health": 35, "dead": False})
+    spawn = AsyncMock(return_value={"role": "wolf"})
+    monkeypatch.setattr(fixture, "initialize_encounter", spawn)
+    result = asyncio.run(fixture.initialize_encounters(
+        "admin", actor, declared, binding_reader=reader,
+    ))
+    spawn.assert_awaited_once_with("admin", actor, declared["encounters"][0],
+                                   [10, 0, 1], binding_reader=reader)
+    reader.assert_awaited_once_with(actor, 12)
+    assert result["source_binding"]["uid"] == 12
+    opening["position"] = [1, 0, 1]
+    with pytest.raises(fixture.FixtureMismatch, match="Initial player position"):
+        asyncio.run(fixture.initialize_encounters("admin", actor, declared, binding_reader=reader))
+    assert reader.await_count == 1
 
 
 @pytest.mark.parametrize("count", [1, 3])

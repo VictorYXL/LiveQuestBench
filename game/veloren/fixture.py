@@ -358,9 +358,10 @@ async def wait_player(actor, fixture: dict, observation: dict, *, timeout: float
         raise FixtureMismatch(f"Player setup did not synchronize within {timeout}s: {mismatch}") from error
 
 
-async def initialize_encounter(admin, actor, spec: dict, position: list) -> dict:
+async def initialize_encounter(admin, actor, spec: dict, position: list, *, binding_reader=None) -> dict:
     from scripts.rpg_benchmark import setup
-    from scripts.rpg_benchmark.combat_support import native_binding
+    if binding_reader is None:
+        from scripts.rpg_benchmark.combat_support import native_binding as binding_reader
 
     expected = (
         {"BipedSmall": {"species": "GreenLegoom", "body_type": "Male"}}
@@ -398,7 +399,7 @@ async def initialize_encounter(admin, actor, spec: dict, position: list) -> dict
                 for entry in row["nearby_entities"]), "declared finite initial enemy health",
         )
         target = next(entry for entry in after["nearby_entities"] if entry["uid"] == target["uid"])
-    binding = await native_binding(actor, target["uid"])
+    binding = await binding_reader(actor, target["uid"])
     if (binding["body"] != expected or binding["alignment"] != "Enemy"
             or binding["dead"] or binding["health"] <= 0
             or target["health"]["dead"] or target["health"]["current"] <= 0):
@@ -548,8 +549,9 @@ async def initialize_equipment(admin, actor, equipment: dict[str, str]) -> None:
         )
 
 
-async def initialize_encounters(admin, actor, fixture: dict, contract=None) -> dict:
-    from scripts.rpg_benchmark.combat_support import native_binding
+async def initialize_encounters(admin, actor, fixture: dict, contract=None, *, binding_reader=None) -> dict:
+    if binding_reader is None:
+        from scripts.rpg_benchmark.combat_support import native_binding as binding_reader
 
     encounters = []
     if contract is not None:
@@ -558,10 +560,12 @@ async def initialize_encounters(admin, actor, fixture: dict, contract=None) -> d
             "binding": contract["target"]["binding"], "public": contract["target"]["public"],
         })
     for enemy in fixture.get("encounters", []):
-        encounters.append(await initialize_encounter(admin, actor, enemy, enemy["position"]))
+        encounters.append(await initialize_encounter(
+            admin, actor, enemy, enemy["position"], binding_reader=binding_reader,
+        ))
     opening = await actor.request("observe", origin="private-validation")
     verify_player(fixture, opening)
-    source = await native_binding(actor, opening["self_identity"]["uid"])
+    source = await binding_reader(actor, opening["self_identity"]["uid"])
     if source["health"] <= 0 or source["dead"]:
         raise RuntimeError("Encounter player is not alive at initialization")
     return {"encounters": encounters, "source_binding": source, "opening": opening}

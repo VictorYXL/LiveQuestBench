@@ -158,7 +158,12 @@ repositioning players after play starts.
 The immutable setup-journal prefix is validated before spawning the encounter;
 initial snapshots validate its new suffix rather than repeatedly parsing the
 entire construction history while an enemy can attack. The native journal and
-scored damage/healing/death events remain intact.
+its scoring events are unchanged. Deferred encounter target and player binding
+reads use that same validated prefix, off the worker event loop, and select only
+the latest native binding snapshot; an absent target is not recovered from an
+older snapshot. This removes repeated full-journal reads between spawning the
+enemy and retiring the administrator. It does not relax opening position or
+health verification or guarantee a successful opening on every fixture.
 
 Choose an existing fixture pattern for platforms, terrain obstacles, stations,
 supplies, encounters or a native settlement. Supplies can expire according to
