@@ -2,6 +2,7 @@
 
 import asyncio
 import json
+import os
 from pathlib import Path
 import time
 
@@ -10,7 +11,9 @@ class NativeBindingCursor:
     """Reuse across polls; the first poll still scans all existing complete rows.
 
     Bindings are the latest complete event, not an atomic live-state query or
-    evidence that an absent actor died.
+    evidence that an absent actor died. Each poll stops at its captured file
+    boundary; incomplete tail records are retried. The producer must append
+    only: inode/length checks cannot detect same-inode rewrite-and-regrowth.
     """
 
     def __init__(self, path: Path, run_id: str, *, binding_event="loaded_actor_bindings"):
@@ -19,15 +22,28 @@ class NativeBindingCursor:
         self.path, self.run_id = path, run_id
         self.binding_event = binding_event
         self.offset = self.sequence = 0
+        self.file_identity = None
         self.bindings: list[dict] = []
 
     def poll(self) -> list[dict]:
         with self.path.open("rb") as stream:
-            if self.path.stat().st_size < self.offset:
+            boundary = os.fstat(stream.fileno())
+            identity = (boundary.st_dev, boundary.st_ino)
+            if self.file_identity is not None and identity != self.file_identity:
+                raise ValueError("Native binding journal was replaced")
+            if boundary.st_size < self.offset:
                 raise ValueError("Native binding journal was truncated")
+            self.file_identity = identity
             stream.seek(self.offset)
-            while line := stream.readline():
+            remaining = boundary.st_size - self.offset
+            while remaining:
+                line = stream.readline(remaining)
+                if not line:
+                    raise ValueError("Native binding journal was truncated during poll")
+                remaining -= len(line)
                 if not line.endswith(b"\n"):
+                    if remaining:
+                        raise ValueError("Native binding journal was truncated during poll")
                     break
                 row = json.loads(line)
                 if (row["schema"], row["version"], row["private"], row["sequence"]) != (

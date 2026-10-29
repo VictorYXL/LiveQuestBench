@@ -1,4 +1,10 @@
-"""Validated private journal projection for snapshot consumers."""
+"""Validated private journal projection for snapshot consumers.
+
+Validated prefixes require an immutable append-only producer. Descriptor
+identity/length checks reject observed rotation and truncation, not an in-place
+rewrite that regrows before the next read. Incomplete records are deferred only
+at the captured boundary; an earlier EOF is corruption, not an empty suffix.
+"""
 
 import json
 import os
@@ -56,6 +62,8 @@ def snapshot_rows(
                 raise ValueError("private native journal truncated during snapshot")
             remaining -= len(line)
             if not line.endswith(b"\n"):
+                if remaining:
+                    raise ValueError("private native journal truncated during snapshot")
                 break
             row = json.loads(line)
             if (row["schema"], row["version"], row["private"], row["sequence"]) != (

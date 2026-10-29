@@ -1,5 +1,6 @@
 import asyncio
 import json
+import os
 from types import SimpleNamespace
 
 import pytest
@@ -86,3 +87,48 @@ def test_combat_binding_rejects_ambiguous_latest_snapshot(tmp_path):
         1, "combat_entity_bindings", {"bindings": [{"uid": 7}, {"uid": 7}]}))
     with pytest.raises(ValueError, match="ambiguous"):
         asyncio.run(combat_binding(SimpleNamespace(out=tmp_path), 7))
+
+
+def test_incremental_bindings_reject_equal_length_rotation(tmp_path):
+    path = tmp_path / "oracle.ndjson"
+    payload = event(0, "opened", {"run_id": "market"})
+    path.write_bytes(payload)
+    cursor = NativeBindingCursor(path, "market")
+    cursor.poll()
+    replacement = tmp_path / "replacement.ndjson"
+    replacement.write_bytes(payload)
+    replacement.replace(path)
+    with pytest.raises(ValueError, match="replaced"):
+        cursor.poll()
+
+
+@pytest.mark.parametrize("truncate", [False, True])
+def test_incremental_bindings_use_descriptor_boundary(tmp_path, monkeypatch, truncate):
+    path = tmp_path / "oracle.ndjson"
+    initial = event(0, "opened", {"run_id": "market"})
+    suffix = event(1, "loaded_actor_bindings", {"bindings": [{"uid": 7}]})
+    path.write_bytes(initial)
+    cursor = NativeBindingCursor(path, "market")
+    cursor.poll()
+    path.write_bytes(initial + suffix)
+    appended = event(2, "loaded_actor_bindings", {"bindings": []})
+    original_stat = os.fstat
+
+    def stat_then_change(fd):
+        boundary = original_stat(fd)
+        if truncate:
+            path.write_bytes(initial + suffix[:len(suffix) // 2])
+        else:
+            with path.open("ab") as stream:
+                stream.write(appended)
+        return boundary
+
+    monkeypatch.setattr(os, "fstat", stat_then_change)
+    if truncate:
+        with pytest.raises(ValueError, match="truncated during poll"):
+            cursor.poll()
+    else:
+        assert cursor.poll() == [{"uid": 7}]
+        assert cursor.offset == len(initial + suffix)
+        monkeypatch.setattr(os, "fstat", original_stat)
+        assert cursor.poll() == []

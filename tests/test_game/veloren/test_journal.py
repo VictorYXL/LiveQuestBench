@@ -186,6 +186,30 @@ def test_prefix_resumes_at_last_complete_row_not_partial_tail(tmp_path):
     assert snapshot_rows(path, "game", prefix=prefix) == snapshot_rows(path, "game")
 
 
+@pytest.mark.parametrize("use_prefix", [False, True])
+def test_snapshot_rejects_truncation_to_partial_line_after_captured_boundary(
+    tmp_path, monkeypatch, use_prefix,
+):
+    rows = journal_rows()
+    path = tmp_path / "journal.ndjson"
+    write_rows(path, rows[:4])
+    prefix = {}
+    snapshot_rows(path, "game", prepare_prefix=prefix)
+    validated = path.read_bytes()
+    suffix = json.dumps(rows[4]).encode() + b"\n"
+    path.write_bytes(validated + suffix)
+    original_stat = os.fstat
+
+    def stat_then_truncate(fd):
+        boundary = original_stat(fd)
+        path.write_bytes(validated + suffix[:len(suffix) // 2])
+        return boundary
+
+    monkeypatch.setattr(os, "fstat", stat_then_truncate)
+    with pytest.raises(ValueError, match="truncated during snapshot"):
+        snapshot_rows(path, "game", prefix=prefix if use_prefix else None)
+
+
 def test_setup_binding_uses_latest_suffix_not_stale_prepared_entity(tmp_path):
     rows = journal_rows()
     path = tmp_path / "journal.ndjson"
