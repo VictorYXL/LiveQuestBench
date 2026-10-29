@@ -34,6 +34,44 @@ def test_level_crossing_accepts_detour_but_rejects_blocked_headroom(tmp_path):
     assert not evaluate_crossing(after, after, **goal)["success"]
 
 
+@pytest.mark.parametrize("material", ["yellow_wool", "grass_block"])
+def test_crossing_rejects_bank_material_used_as_new_deck(tmp_path, material):
+    from game.minecraft.evaluators.crossing import evaluate_crossing
+
+    before, after = tmp_path / "before", tmp_path / "after"
+    banks = {(0, 0, 0): "yellow_wool", (1, 0, 0): "grass_block",
+             (5, 0, 0): "grass_block", (6, 0, 0): "yellow_wool"}
+    _save_world(before, banks)
+    _save_world(after, banks | {(2, 0, 0): "oak_planks", (3, 0, 0): material,
+                                (4, 0, 0): "cobblestone"})
+    goal = {"region": {"min": [0, 0, 0], "max": [6, 2, 1]},
+            "start": [0, 0, 0], "end": [6, 0, 0]}
+    result = evaluate_crossing(before, after, **goal)
+    assert not result["initially_connected"]
+    assert not result["finally_connected"]
+    assert not result["success"]
+
+    legal = tmp_path / "legal"
+    _save_world(legal, banks | {(x, 0, 0): "oak_planks" for x in range(2, 5)})
+    assert evaluate_crossing(before, legal, **goal)["success"]
+
+
+def test_crossing_preserves_bank_repairs_without_expanding_bank_exception(tmp_path):
+    from game.minecraft.evaluators.crossing import evaluate_crossing
+
+    before, after = tmp_path / "before", tmp_path / "after"
+    banks = {(0, 0, 0): "yellow_wool", (2, 0, 0): "grass_block"}
+    _save_world(before, banks)
+    _save_world(after, banks | {(1, 0, 0): "oak_planks", (2, 0, 0): "yellow_wool"})
+    goal = {"region": {"min": [0, 0, 0], "max": [2, 2, 0]},
+            "start": [0, 0, 0], "end": [2, 0, 0]}
+    assert evaluate_crossing(before, after, **goal)["success"]
+    assert not evaluate_crossing(after, after, **goal)["success"]
+    legal = tmp_path / "legal"
+    _save_world(legal, banks | {(1, 0, 0): "oak_planks", (2, 0, 0): "cobblestone"})
+    assert evaluate_crossing(before, legal, **goal)["success"]
+
+
 def _save_world(root: Path, blocks: dict[tuple[int, int, int], str]) -> None:
     """Write small real-format chunks with five-bit, padded palette indices."""
     region = root / "region"
@@ -41,7 +79,7 @@ def _save_world(root: Path, blocks: dict[tuple[int, int, int], str]) -> None:
     nbtlib.File({"Data": nbtlib.Compound({"DataVersion": nbtlib.Int(3700)})}, gzipped=True).save(root / "level.dat")
     names = ["air", "oak_planks", "glass", "stone", "dirt", "sand", "gravel", "granite",
              "andesite", "diorite", "cobblestone", "bedrock", "obsidian", "gold_block",
-             "iron_block", "diamond_block", "emerald_block"]
+             "iron_block", "diamond_block", "emerald_block", "yellow_wool", "grass_block"]
     palette = nbtlib.List[nbtlib.Compound]([
         nbtlib.Compound({"Name": nbtlib.String("minecraft:" + name)}) for name in names
     ])

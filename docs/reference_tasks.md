@@ -80,6 +80,25 @@ Do not turn a count of unrelated private checks into a universal progress score.
 
 ## Changes made for this release
 
+### Crossing bank-material scoring correction
+
+The crossing scorer distinguishes existing grass/yellow-wool bank cells from
+new construction. Grass/yellow-wool support counts only at cells occupied by
+those bank materials initially; new deck cells must use the four publicly
+declared construction materials. Reusing the spare camp marker inside a mixed plank/wool bridge
+previously passed despite violating that material rule. Legal detours, rebuilding
+banks with declared materials, and arbitrary division of work remain allowed.
+
+This is a scoring-source correction, not a change to the frozen task/fixture or
+historical outcomes. Retained ST success and VM failure require separate replay
+against this source. Neither those replays nor synthetic regression worlds
+establish full VM shelter/reunion feasibility. Chat and equal contributions are
+not additional requirements; one player may build while the other later joins.
+The [revision-2 scoring record](evidence/minecraft-crossing-bank-v2.json) pins
+both scorer versions and the unchanged definitions. It also distinguishes a
+later assisted VM shelter/reunion diagnostic from original-condition admission:
+the diagnostic completes the shelter and both endpoints but fails crossing.
+
 ### Learning tasks
 
 Both old learning definitions are replaced by `route_schema_transfer`.
