@@ -72,10 +72,15 @@ def validate_fixture(value: object) -> dict:
     optional = {"blocks", "stations", "supplies", "recipe_groups", "recipes", "encounters",
                 "motion_evidence", "glide_evidence", "platform", "native_site", "merchant",
                 "sword_skill_points", "companion", "contract", "respawn_at_start", "route_evidence",
-                "public_energy", "pickup_evidence", "peer_group", "harvest_sites"}
+                "public_energy", "pickup_evidence", "peer_group", "harvest_sites",
+                "message_contract", "market"}
     if not isinstance(value, dict) or required - value.keys() or value.keys() - required - optional:
         raise ValueError(f"Veloren fixture requires exactly {sorted(required)} plus optional {sorted(optional)}")
     fixture = value
+    if "message_contract" in fixture and "market" in fixture:
+        raise ValueError("Message and market preparation require separate fixtures")
+    if {"message_contract", "market"} & fixture.keys() and "harvest_sites" in fixture:
+        raise ValueError("Information-task preparation cannot share a native harvest plot")
     for flag in ("motion_evidence", "glide_evidence", "respawn_at_start", "route_evidence",
                  "public_energy", "pickup_evidence", "peer_group"):
         if flag in fixture and type(fixture[flag]) is not bool:
@@ -157,6 +162,35 @@ def validate_fixture(value: object) -> dict:
     encounters = fixture.get("encounters", [])
     if not isinstance(encounters, list) or len(encounters) > 4:
         raise ValueError("encounters must contain at most four designated native enemies")
+    if "message_contract" in fixture:
+        if "platform" not in fixture or encounters or {"merchant", "contract", "companion"} & fixture.keys():
+            raise ValueError("Message contracts require a separate authored scene without injected encounters")
+        if not isinstance(fixture["message_contract"], dict):
+            raise ValueError("message_contract must be a mapping")
+        if ("initialization_protocol" in fixture["message_contract"]
+                and fixture["message_contract"]["initialization_protocol"] not in
+                ("initial-message-v2", "initial-message-v3")):
+            raise ValueError("Unsupported native Message initialization protocol")
+        message = fields({key: value for key, value in fixture["message_contract"].items()
+                          if key != "initialization_protocol"},
+                         {"giver_position", "recipient_position", "distractor_positions"}, "message_contract")
+        if not isinstance(message["distractor_positions"], list) or len(message["distractor_positions"]) != 2:
+            raise ValueError("Message contracts require two distinct native distractor positions")
+        points = [message["giver_position"], message["recipient_position"], *message["distractor_positions"]]
+        for spawn in points:
+            require_standing_point(vector(spawn, "Message participant"), occupied, "Message participant")
+        if len({tuple(spawn) for spawn in points}) != 4:
+            raise ValueError("Message participants require distinct initial positions")
+        if not 2 <= math.dist(message["giver_position"], point) <= 5:
+            raise ValueError("Message giver must begin 2-5 metres from the player")
+        if (fixture["message_contract"].get("initialization_protocol") == "initial-message-v3"
+                and math.dist(message["giver_position"], point) >= 5):
+            raise ValueError("Atomic Message giver must begin strictly within the native 5m range")
+        if not 20 <= math.dist(message["recipient_position"], point) <= 64:
+            raise ValueError("Message recipient must begin 20-64 metres from the player")
+    if "market" in fixture:
+        from game.veloren.market import validate_market
+        validate_market(fixture, occupied, require_standing_point)
     if "contract" in fixture:
         if "platform" not in fixture or encounters or "merchant" in fixture or "companion" in fixture:
             raise ValueError("Native Slay contracts require a separate authored scene without injected encounters")
@@ -685,6 +719,13 @@ async def initialize_fixture(admin, actor, fixture: dict, *, shared_world: bool 
     if "merchant" in fixture and not shared_world:
         from game.veloren.settlement import initialize_merchant
         merchant = await initialize_merchant(admin, actor, fixture)
+    message = market = None
+    if "message_contract" in fixture and not shared_world:
+        from game.veloren.message_contract import initialize_message
+        message = await initialize_message(admin, actor, fixture)
+    if "market" in fixture and not shared_world:
+        from game.veloren.market import initialize_market
+        market = await initialize_market(admin, actor, fixture)
     contract = None
     if "native_site" in fixture:
         point = fixture["player_state"]["position"]
@@ -711,6 +752,7 @@ async def initialize_fixture(admin, actor, fixture: dict, *, shared_world: bool 
     result = {"fixture": fixture, "construction": construction, "blocks": blocks,
             "stations": stations, "supplies": supplies, "opening": opening, "harvest": harvest,
             "encounters": [], "source_binding": None, "merchant": merchant,
+            "message_contract": message, "market": market,
             "companion": companion, "contract": contract, "initial_waypoint_receipt": waypoint}
     if not shared_world and (fixture.get("encounters") or contract is not None):
         if defer_encounters:

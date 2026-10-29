@@ -46,6 +46,10 @@ async def fixture_server(output: Path, record: dict, native: NativeConfig, fixtu
     }
     environment.pop("VELOREN_PRIVATE_NATIVE_FIXTURE", None)
     environment.pop("VELOREN_PRIVATE_ORACLE_PATH", None)
+    environment.pop("VELOREN_INITIAL_MESSAGE_PROTOCOL", None)
+    protocol = fixture.get("message_contract", {}).get("initialization_protocol")
+    if protocol in ("initial-message-v2", "initial-message-v3"):
+        environment["VELOREN_INITIAL_MESSAGE_PROTOCOL"] = protocol
     environment.update(
         VELOREN_PRIVATE_ORACLE_PATH=str(output / "private-native-oracle.ndjson"),
         VELOREN_SESSION_ID=output.name,

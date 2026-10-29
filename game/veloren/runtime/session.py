@@ -9,6 +9,25 @@ from uuid import uuid4
 from game.veloren.fixture import solid_voxels
 
 
+def runtime_configuration(fixture: dict) -> tuple[Path, dict]:
+    protocol = fixture.get("message_contract", {}).get("initialization_protocol")
+    override = {
+        "initial-message-v2": "LIVEQUEST_VELOREN_INITIAL_MESSAGE_V2_RUNTIME",
+        "initial-message-v3": "LIVEQUEST_VELOREN_INITIAL_MESSAGE_V3_RUNTIME",
+    }.get(protocol)
+    if "market" in fixture:
+        override = "LIVEQUEST_VELOREN_MARKET_RUNTIME"
+    selected = (os.environ.get(override) if override else None) or os.environ.get("LIVEQUEST_VELOREN_RUNTIME")
+    if not selected:
+        setting = override or "LIVEQUEST_VELOREN_RUNTIME"
+        raise RuntimeError(f"Set {setting} to the prepared runtime.json; see game/veloren/README.md")
+    path = Path(selected).resolve()
+    runtime = json.loads(path.read_text())
+    if protocol is not None and runtime.get("initial_message_protocol") != protocol:
+        raise ValueError(f"{protocol} requires its matching native runtime; configure {override}")
+    return path, runtime
+
+
 class VelorenSession:
     def __init__(self, output: Path, display: str, track: str, fixture: dict):
         self.output, self.display, self.track, self.fixture = output, display, track, fixture
@@ -20,11 +39,7 @@ class VelorenSession:
         self.attachment: dict | None = None
 
     async def start(self) -> dict:
-        selected = os.environ.get("LIVEQUEST_VELOREN_RUNTIME")
-        if not selected:
-            raise RuntimeError("Set LIVEQUEST_VELOREN_RUNTIME to the prepared runtime.json; see game/veloren/README.md")
-        runtime_path = Path(selected).resolve()
-        runtime = json.loads(runtime_path.read_text())
+        runtime_path, runtime = runtime_configuration(self.fixture)
         environment = {key: os.environ[key] for key in (
             "PATH", "LANG", "LC_ALL", "XAUTHORITY", "VK_ICD_FILENAMES", "VK_DRIVER_FILES",
             "LD_LIBRARY_PATH", "NVIDIA_VISIBLE_DEVICES", "NVIDIA_DRIVER_CAPABILITIES",

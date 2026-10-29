@@ -117,6 +117,10 @@ class Session:
             if hashlib.sha256(Path(path).read_bytes()).hexdigest() != digest:
                 raise ValueError(f"Prepared runtime changed: {path}")
         selected = runtime.load_runtime(Path(cfg["upstream_runtime"]), cfg["upstream_sha256"], backend="renderer")
+        protocol = self.fixture.get("message_contract", {}).get("initialization_protocol")
+        if (protocol in ("initial-message-v2", "initial-message-v3")
+                and cfg.get("initial_message_protocol") != protocol):
+            raise ValueError("Message initialization requires its matching source-bound native runtime")
         from game.veloren.runtime.server_extension import select_server
         server = select_server(cfg, Path(selected["renderer"]["paths"]["server"]))
         renderer = selected["renderer"]
@@ -128,6 +132,10 @@ class Session:
             seed=self.fixture["world_seed"], small_world=False,
         )
         journal = Journal(self.output / "native.jsonl")
+        if "market" in self.fixture:
+            from game.veloren.market_trades import MarketTradeJournal
+            journal = MarketTradeJournal(journal)
+            self.market_trade_journal = journal
         self.stack.callback(journal.close)
         if self.attachment:
             port, userdata = self.attachment["port"], Path(self.attachment["userdata"])
@@ -344,7 +352,8 @@ class Session:
                 self.oracle_output / "private-native-oracle.ndjson", self.oracle_output.name,
                 after_sequence=registry["opening_sequence"] if registry is not None else None,
                 encounters=bool(self.initialized["encounters"]),
-                contracts=self.initialized.get("contract") is not None,
+                contracts=(self.initialized.get("contract") is not None
+                           or self.initialized.get("message_contract") is not None),
                 equipment_uid=observation["self_identity"]["uid"],
                 pickups=self.fixture.get("pickup_evidence", False),
                 prefix=getattr(self, "snapshot_prefix", None),
@@ -376,6 +385,17 @@ class Session:
                 from game.veloren.settlement import verify_merchant
                 verify_merchant(observation, self.initialized["merchant"])
                 self.merchant_opening = True
+            if self.initialized.get("market") is not None:
+                history = self.market_trade_journal.snapshot(
+                    observation, getattr(self, "market_trade_registry", None),
+                )
+                self.market_trade_registry = history["registry"]
+                observation["private_market_evidence"] = {
+                    "schema": "livequest-native-market/2",
+                    "merchants": [row["player_target"] for row in self.initialized["market"]["merchants"]],
+                    "offers": self.initialized["market"]["offers"],
+                    "trade_history": history,
+                }
             if self.fixture.get("route_evidence"):
                 observation["private_route_evidence"] = await self.actor.request(
                     "route_evidence", await self.frame_fence(), origin="private-validation",
@@ -449,6 +469,12 @@ class Session:
                     observation["private_contract_evidence"] = contract_snapshot(
                         self.contract_registry, self.contract_opening, observation, rows,
                     )
+            if self.initialized.get("message_contract") is not None:
+                from game.veloren.message_contract import message_registry, message_snapshot
+                if not hasattr(self, "message_registry"):
+                    self.message_registry = message_registry(
+                        self.initialized["message_contract"], observation, rows)
+                observation["private_message_evidence"] = message_snapshot(self.message_registry, rows)
             return observation
         if operation == "inspect_frame":
             return await self.actor.request("frame", await self.frame_fence(), origin="private-validation")

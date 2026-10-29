@@ -1,0 +1,254 @@
+--- a/server/src/cmd.rs
++++ b/server/src/cmd.rs
+@@ -1957,7 +1957,7 @@
+     args: Vec<String>,
+     action: &ServerChatCommand,
+ ) -> CmdResult<()> {
+-    if args.first().is_some_and(|arg| arg == "initial-message-v2") {
++    if args.first().is_some_and(|arg| arg == "initial-message-v3") {
+         let client_uuid = uuid(server, client, "client")?;
+         if client != _target || !matches!(real_role(server, client_uuid, "client")?, AdminRole::Admin) {
+             return Err(Content::Plain("native_message_authorization_denied".into()));
+--- a/server/src/initial_message.rs
++++ b/server/src/initial_message.rs
+@@ -1,8 +1,10 @@
+ //! Private, one-shot initialization protocol. No player action or quest shortcut.
+ use crate::{Server, rtsim::RtSim};
+ use common::{
+-    comp::{Health, Inventory, Presence},
+-    rtsim::{Actor, ItemResource, Profession, Role, RtSimEntity},
++    comp::{Agent, CharacterState, ControlAction, Controller, Health, Inventory, PhysicsState, Pos, Presence, Vel},
++    link::Is,
++    mounting::{Rider, VolumeRider},
++    rtsim::{Actor, ItemResource, NpcActivity, Profession, Role, RtSimController, RtSimEntity},
+     uid::{IdMaps, Uid},
+ };
+ use rand::seq::IndexedRandom;
+@@ -10,6 +12,7 @@
+     rule::npc_ai::initial_message::Proposal};
+ use serde_json::{Value, json};
+ use specs::{Entity, WorldExt};
++use vek::Vec3;
+ use std::{collections::HashMap, num::{NonZeroU32, NonZeroU64},
+     sync::{Mutex, OnceLock}, time::{Duration, Instant}};
+ 
+@@ -66,14 +69,39 @@
+         .ok_or("native_message_unavailable:no_fully_eligible_existing_recipient")
+ }
+ 
++fn checked_distance(source: Vec3<f32>, player: Vec3<f32>) -> Result<f32, &'static str> {
++    let distance = source.distance(player);
++    if !source.map(f32::is_finite).reduce_and()
++        || !player.map(f32::is_finite).reduce_and()
++        || !distance.is_finite() || distance >= common::consts::MAX_INTERACT_RANGE {
++        return Err("native_message_source_out_of_range");
++    }
++    Ok(distance)
++}
++
++fn commit_opening_motion(
++    position: &mut Pos, velocity: &mut Vel, controls: &mut Controller,
++    activity: &mut RtSimController, point: Vec3<f32>, messenger: Actor,
++) {
++    position.0 = point;
++    velocity.0 = Vec3::zero();
++    controls.reset();
++    activity.activity = Some(NpcActivity::Talk(messenger));
++}
++
++fn controls_quiescent(controls: &Controller) -> bool {
++    controls.events.is_empty() && controls.actions.iter().all(|action| matches!(action,
++        ControlAction::Stand | ControlAction::Talk(_) | ControlAction::Wield | ControlAction::Unwield))
++}
++
+ pub(crate) fn request(server: &Server, owner: Entity, args: &[String]) -> Result<Value, &'static str> {
+-    if std::env::var("VELOREN_INITIAL_MESSAGE_PROTOCOL").as_deref() != Ok("initial-message-v2") {
++    if std::env::var("VELOREN_INITIAL_MESSAGE_PROTOCOL").as_deref() != Ok("initial-message-v3") {
+         return Err("native_message_protocol_disabled");
+     }
+     if !crate::private_oracle::enabled() { return Err("native_message_private_evidence_required"); }
+     let result = handle(server, owner, args);
+     if let Err(error) = result {
+-        crate::private_oracle::event("initial_message_v2_error", json!({"error": error}));
++        crate::private_oracle::event("initial_message_v3_error", json!({"error": error}));
+     }
+     result
+ }
+@@ -153,17 +181,17 @@
+             let proposal = choose(&candidates)?;
+             let recipient = data.npcs.get(proposal.instance.target_actor.npc().unwrap()).unwrap();
+             gate.ticket = format!("{:032x}", rand::random::<u128>());
+-            let result = json!({"protocol": "initial-message-v2", "phase": "prepared",
++            let result = json!({"protocol": "initial-message-v3", "phase": "prepared",
+                 "proposal_id": gate.ticket, "recipient_rtsim_uid": recipient.uid,
+                 "recipient_name": proposal.target_name, "instance": proposal.instance,
+                 "eligible_proposals": candidates.len(), "accepted_quests_created": 0});
+             gate.pending = Some(Pending { proposal, source, player, source_uid, player_uid });
+             gate.phase = Phase::Prepared;
+-            crate::private_oracle::event("initial_message_v2_prepared", result.clone());
++            crate::private_oracle::event("initial_message_v3_prepared", result.clone());
+             Ok(result)
+         },
+         Some("publish") => {
+-            if args.len() != 2 || gate.phase != Phase::Prepared {
++            if args.len() != 5 || gate.phase != Phase::Prepared {
+                 return Err("native_message_authorization_closed");
+             }
+             gate.authorize(owner, &args[1])?;
+@@ -180,17 +208,65 @@
+             if coins(pending.source) < pending.proposal.instance.get_reward().ceil() as u64 {
+                 return Err("native_message_source_unfunded");
+             }
++            let coordinate = |index: usize| args[index].parse::<f32>()
++                .map_err(|_| "native_message_invalid_placement");
++            let point = Vec3::new(coordinate(2)?, coordinate(3)?, coordinate(4)?);
++            let positions = ecs.read_storage::<Pos>();
++            let player_position = positions.get(pending.player)
++                .ok_or("native_message_party_changed")?.0;
++            let previous_position = positions.get(pending.source)
++                .ok_or("native_message_party_changed")?.0;
++            let distance = checked_distance(point, player_position)?;
++            if ecs.read_storage::<Is<Rider>>().get(pending.source).is_some()
++                || ecs.read_storage::<Is<VolumeRider>>().get(pending.source).is_some()
++                || !ecs.read_storage::<PhysicsState>().get(pending.source)
++                    .is_some_and(|state| state.on_ground.is_some())
++                || !matches!(ecs.read_storage::<CharacterState>().get(pending.source),
++                    Some(CharacterState::Idle(_) | CharacterState::Wielding(_) | CharacterState::Talk(_))) {
++                return Err("native_message_source_not_quiescent");
++            }
++            drop(positions);
++            let mut velocities = ecs.write_storage::<Vel>();
++            let velocity = velocities.get_mut(pending.source)
++                .ok_or("native_message_source_not_quiescent")?;
++            let previous_velocity = velocity.0;
++            let mut controls = ecs.write_storage::<Controller>();
++            let controls = controls.get_mut(pending.source)
++                .ok_or("native_message_source_not_quiescent")?;
++            if !controls_quiescent(controls) {
++                return Err("native_message_source_not_quiescent");
++            }
++            let mut agents = ecs.write_storage::<Agent>();
++            let agent = agents.get_mut(pending.source)
++                .filter(|agent| agent.target.is_none())
++                .ok_or("native_message_source_not_quiescent")?;
+             let mut data = simulation.state().data_mut();
+             if data.quests.related_to(pending.proposal.instance.messenger).count() != 0 {
+                 return Err("native_message_player_has_contract");
+             }
+             let npc = data.npcs.get_mut(pending.proposal.instance.source_actor.npc().unwrap())
+                 .filter(|npc| !npc.is_dead()).ok_or("native_message_party_changed")?;
++            // One server handler: the ordinary goto helper and normal Talk handoff
++            // commit together, before any subsequent physics or AI tick.
++            crate::state_ext::position_mut(
++                pending.source, false,
++                |position| commit_opening_motion(position, velocity, controls,
++                    &mut agent.rtsim_controller, point, pending.proposal.instance.messenger),
++                &maps, &mut ecs.write_storage(), ecs.write_storage(), ecs.write_storage(),
++                ecs.read_storage(), ecs.read_storage(), ecs.read_storage(),
++            ).map_err(|_| "native_message_invalid_placement")?;
++            npc.wpos = point;
++            npc.controller.do_talk(pending.proposal.instance.messenger);
+             npc.brain = Some(rtsim::rule::npc_ai::initial_message::brain(pending.proposal.clone()));
+             gate.phase = Phase::Published;
+-            let result = json!({"protocol": "initial-message-v2", "phase": "published",
+-                "proposal_id": gate.ticket, "accepted_quests_created": 0});
+-            crate::private_oracle::event("initial_message_v2_published", result.clone());
++            let result = json!({"protocol": "initial-message-v3", "phase": "published",
++                "proposal_id": gate.ticket, "accepted_quests_created": 0,
++                "atomic_placement": true, "source_position": point,
++                "source_previous_position": previous_position,
++                "source_previous_velocity": previous_velocity,
++                "player_position": player_position, "source_player_distance": distance,
++                "normal_talk_active": true, "setup_hold_active": false});
++            crate::private_oracle::event("initial_message_v3_published", result.clone());
+             Ok(result)
+         },
+         Some("close") => {
+@@ -198,10 +274,33 @@
+                 return Err("native_message_authorization_closed");
+             }
+             gate.authorize(owner, &args[1])?;
++            let published = gate.phase == Phase::Published;
++            let pending = gate.pending.take();
+             gate.phase = Phase::Closed;
+-            gate.pending = None;
+-            let result = json!({"protocol": "initial-message-v2", "phase": "closed"});
+-            crate::private_oracle::event("initial_message_v2_closed", result.clone());
++            let mut distance = None;
++            if published {
++                let pending = pending.ok_or("native_message_missing_proposal")?;
++                if maps.uid_entity(pending.source_uid) != Some(pending.source)
++                    || maps.uid_entity(pending.player_uid) != Some(pending.player)
++                    || !alive(pending.source) || !alive(pending.player) {
++                    return Err("native_message_party_changed");
++                }
++                let positions = ecs.read_storage::<Pos>();
++                distance = Some(checked_distance(
++                    positions.get(pending.source).ok_or("native_message_party_changed")?.0,
++                    positions.get(pending.player).ok_or("native_message_party_changed")?.0,
++                )?);
++                let data = simulation.state().data();
++                if !data.npcs.get(pending.proposal.instance.source_actor.npc().unwrap())
++                    .is_some_and(|npc| matches!(npc.controller.activity,
++                        Some(NpcActivity::Talk(actor)) if actor == pending.proposal.instance.messenger)) {
++                    return Err("native_message_source_not_talking");
++                }
++            }
++            let result = json!({"protocol": "initial-message-v3", "phase": "closed",
++                "ready": published, "source_player_distance": distance,
++                "setup_hold_active": false});
++            crate::private_oracle::event("initial_message_v3_closed", result.clone());
+             Ok(result)
+         },
+         _ => Err("native_message_invalid_operation"),
+@@ -235,4 +334,49 @@
+         assert!(uid(Some(&"0".to_string())).is_err());
+         assert!(uid(Some(&"not-an-identity".to_string())).is_err());
+     }
+-}
++
++    #[test]
++    fn atomic_publication_replaces_stale_walk_and_momentum_without_a_hold() {
++        let player = Vec3::new(18703.5, 10809.5, 501.0);
++        let point = Vec3::new(18705.5, 10809.5, 501.0);
++        let mut position = Pos(Vec3::new(18709.5254, 10809.8154, 501.0));
++        assert!(checked_distance(position.0, player).is_err());
++        assert_eq!(checked_distance(point, player), Ok(2.0));
++        let mut velocity = Vel(Vec3::new(4.0, 0.3, 0.0));
++        let mut controls = Controller::default();
++        controls.inputs.move_dir = vek::Vec2::unit_x();
++        let mut activity = RtSimController::with_destination(position.0 + Vec3::unit_x() * 20.0);
++        let messenger = Actor::Character(common::character::CharacterId(16));
++        commit_opening_motion(&mut position, &mut velocity, &mut controls,
++            &mut activity, point, messenger);
++        assert_eq!(position.0, point);
++        assert_eq!(velocity.0, Vec3::zero());
++        assert_eq!(controls.inputs.move_dir, vek::Vec2::zero());
++        assert!(matches!(activity.activity, Some(NpcActivity::Talk(actor)) if actor == messenger));
++        assert!(activity.actions.is_empty());
++    }
++
++    #[test]
++    fn pending_physical_or_inventory_actions_are_rejected_not_discarded() {
++        let mut controls = Controller::default();
++        controls.actions.push(ControlAction::Stand);
++        assert!(controls_quiescent(&controls));
++        controls.actions.push(ControlAction::basic_input(common::comp::InputKind::Jump));
++        assert!(!controls_quiescent(&controls));
++        assert_eq!(controls.actions.len(), 2);
++        controls.actions.clear();
++        controls.events.push(common::comp::ControlEvent::GiveUp);
++        assert!(!controls_quiescent(&controls));
++        assert_eq!(controls.events.len(), 1);
++    }
++
++    #[test]
++    fn native_range_and_finite_coordinates_are_not_relaxed() {
++        let player = Vec3::zero();
++        assert!(checked_distance(Vec3::unit_x() * 4.999, player).is_ok());
++        for x in [5.0, 6.033641, f32::NAN, f32::INFINITY] {
++            assert!(checked_distance(Vec3::new(x, 0.0, 0.0), player).is_err());
++        }
++        assert!(checked_distance(Vec3::zero(), Vec3::new(f32::NAN, 0.0, 0.0)).is_err());
++    }
++}

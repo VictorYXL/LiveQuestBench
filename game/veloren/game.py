@@ -151,7 +151,8 @@ class VelorenGame(BaseGame[MotorInterface | StructuredInterface]):
     async def _observe_structured(self) -> dict:
         session = self._check_running()
         observation = project(await session.request("observe"),
-                              rpg=any(key in self.fixture for key in ("native_site", "merchant", "contract")),
+                              rpg=any(key in self.fixture for key in (
+                                  "native_site", "merchant", "contract", "message_contract", "market")),
                               skills="sword_skill_points" in self.fixture, peer=self.team_role is not None,
                               energy=self.fixture.get("public_energy", False))
         if self.fixture.get("encounters"):

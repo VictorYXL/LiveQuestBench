@@ -1,0 +1,269 @@
+id: market_stock_reconciliation
+game: veloren
+task_type: structured_tool
+task: Complete a native trade with one of the courtyard's three merchants, then return to the starting
+  stone arch holding either a rawhide chestpiece and two apples, or rawhide boots and three raw mushrooms.
+  Retain at least five coins and finish alive, grounded and still. Keep the requested bundle in your bag,
+  not equipped. An old shopping sketch labels the western stall 'boots', the eastern stall 'chestpieces',
+  and the northern stall 'food'; its stock and locations may be outdated. Inspect current offers and find
+  the actual sellers before committing your limited money. Other goods may be traded; native prices and
+  ordinary merchant behaviour are unchanged. Death does not restore resources.
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/veloren_0_18_0_0.bin
+  world_seed: 130626853
+  time_of_day: '12:00'
+  day_length: 30
+  calendar: none
+  platform:
+    origin:
+    - 18700
+    - 10800
+    - 500
+    size:
+    - 44
+    - 40
+    block: Rock
+  player_state:
+    position: &id001
+    - 18722.5
+    - 10804.5
+    - 501
+    look:
+    - 0
+    - 1
+    - 0
+    health: 100
+    inventory:
+      common.items.utility.coins: 99
+      common.items.crafting_ing.hide.animal_hide: 2
+    equipment:
+      active_mainhand: common.items.weapons.sword.starter
+      chest: common.items.armor.misc.chest.worker_purple_brown
+      feet: common.items.armor.misc.foot.sandals
+      glider: common.items.glider.basic_white
+      lantern: common.items.lantern.black_0
+      legs: common.items.armor.misc.pants.worker_brown
+  blocks:
+  - origin:
+    - 18700
+    - 10800
+    - 501
+    size:
+    - 44
+    - 1
+    - 4
+  - origin:
+    - 18700
+    - 10839
+    - 501
+    size:
+    - 44
+    - 1
+    - 4
+  - origin:
+    - 18700
+    - 10801
+    - 501
+    size:
+    - 1
+    - 38
+    - 4
+  - origin:
+    - 18743
+    - 10801
+    - 501
+    size:
+    - 1
+    - 38
+    - 4
+  - origin:
+    - 18721
+    - 10819
+    - 501
+    size:
+    - 3
+    - 3
+    - 3
+  - origin:
+    - 18720
+    - 10804
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18724
+    - 10804
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18720
+    - 10804
+    - 504
+    size:
+    - 5
+    - 1
+    - 1
+  - origin:
+    - 18704
+    - 10822
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18708
+    - 10822
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18704
+    - 10822
+    - 504
+    size:
+    - 5
+    - 1
+    - 1
+  - origin:
+    - 18734
+    - 10822
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18738
+    - 10822
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18734
+    - 10822
+    - 504
+    size:
+    - 5
+    - 1
+    - 1
+  - origin:
+    - 18716
+    - 10834
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18720
+    - 10834
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18716
+    - 10834
+    - 504
+    size:
+    - 5
+    - 1
+    - 1
+  - origin:
+    - 18733
+    - 10834
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18737
+    - 10834
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18733
+    - 10834
+    - 504
+    size:
+    - 5
+    - 1
+    - 1
+  market:
+    merchants:
+    - role: western_seller
+      position:
+      - 18706.5
+      - 10820.5
+      - 501
+      stock:
+        common.items.armor.hide.rawhide.chest: 1
+    - role: eastern_seller
+      position:
+      - 18736.5
+      - 10820.5
+      - 501
+      stock:
+        common.items.armor.hide.rawhide.foot: 1
+        common.items.food.apple: 2
+    - role: relocated_seller
+      position:
+      - 18735.5
+      - 10832.5
+      - 501
+      stock:
+        common.items.food.mushroom: 3
+    bundles:
+    - common.items.armor.hide.rawhide.chest: 1
+      common.items.food.apple: 2
+    - common.items.armor.hide.rawhide.foot: 1
+      common.items.food.mushroom: 3
+    coin_reserve: 5
+  respawn_at_start: true
+evaluator:
+  name: market
+  parameters:
+    min_health: 0
+    bundles:
+    - common.items.armor.hide.rawhide.chest: 1
+      common.items.food.apple: 2
+    - common.items.armor.hide.rawhide.foot: 1
+      common.items.food.mushroom: 3
+    coin_reserve: 5
+    position:
+      target: *id001
+      horizontal_tolerance: 3
+      vertical_tolerance: 1
+      max_speed: 0.1
+tools:
+- MoveTool
+- TurnTool
+- LookTool
+- JumpTool
+- StopTool
+- InviteTradeTool
+- TradeOfferTool
+- TradeFinishTool
+- RespawnTool
+capabilities:
+  primary:
+  - information_adaptation
+  secondary:
+  - planning_resources
+  - spatial_interaction

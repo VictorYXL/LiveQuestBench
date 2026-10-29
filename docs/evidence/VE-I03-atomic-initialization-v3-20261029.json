@@ -1,0 +1,97 @@
+{
+  "task": "VE-I03",
+  "protocol": "initial-message-v3",
+  "authorization": "Parent22:47 directed the isolated minimal lifecycle fix and a proposed check. Parent23:11 subsequently authorized exactly ONE opening-only model-free component on a478+848c75f and the frozen8f515 runtime; that authorization is consumed.",
+  "status": "Implementation,5 native unit tests,67 Python tests, three native builds and strict runtime verification passed. The one authorized native opening component completed with canonical readiness, ordinary public Yes and real Coin150 native quest deposit. No delivery/payment or whole-task success claimed; no repeat queued.",
+  "native_component_terminal": {
+    "artifact": "docs/evidence/VE-I03-atomic-v3-opening-terminal-20261029.json",
+    "sha256": "f7aaa70af943fc3e7ca526c751a7efe113f8c84d33bec6afeaf52139dbbc9ec4",
+    "result": "Completed/valid,4 public actions,7.352931408seconds canonical public gate,100HP; whole-task evaluator false as expected for acceptance-only scope.",
+    "identity": "129 proposals; original instance distance86; source1262v1 UID35 Bizarre Jegoost; recipient524v1 UID21 Labaw; Character16 UID98; native Message Question150coins; quest0 deposit150; no player coin insertion.",
+    "limits": "The sampled source's pre-publication velocity was already approximately zero; this run validates the actual new transaction/public handoff, while stale-walk/momentum behavior is covered by targeted native unit regression. Recipient remained living on the platform but outside the unchanged32m public nearby projection; no public approach/reacquisition tested."
+  },
+  "frozen_runtime": {
+    "implementation_commit": "a478a092245c48b74493dd45c3e4f20842f90531",
+    "path": "output/i03-atomic-runtime/runtime.json",
+    "sha256": "8f5150543eb32629ca8dd61825c68c8e865efbe351cc59822dbc61f7776d96b4",
+    "source_manifest_sha256": "c119b1b6b7d2af068bd68c5c2fbe7ea3892b59de5390008fce60d940b6e4a7e3",
+    "source_tree_sha256": "0a19611c0bbd221de3ca62db669471941aa87a0b15b3e2be6c0da95d4d2fee1f",
+    "build_manifest_sha256": "6df304018daf1a932b4d0601e062993ed44f520b0effb7cb116fd7e7f0bfee01",
+    "build_completion_sha256": "48fa0fa2dd2863ea9c2c12e314ad4c35537c8fd1663cd167ed15ac0ed2348c06",
+    "controller_sha256": "23ba4801a682bbf876a1f353e5612d56de9a69fe969b1f1d3c64626d76f0721c",
+    "st_task_sha256": "987e6c7f35a7b4214b57582ab5c7f1d37e4c8ae5f92785281d6f5d6cc96028af",
+    "verification": "The installed native Python loaded the pinned upstream runtime with backend=renderer through scripts.rpg_benchmark.runtime.load_runtime; source/assets/package/binary/receipt checks passed. Every wrapper sha256 entry was independently recomputed and matched. This is packaging/preflight evidence, not an executed v3 opening."
+  },
+  "prior_history": {
+    "source_last_repair": "f6ff973d67600bda3f350da8ab95a89439281801",
+    "preserved": "The original6f2e2f1 native opening/zero-action controller failure and the distinct4622a0d initialization-unavailable147-proposal episode remain immutable. V3 is not a relabeling of either.",
+    "motivation": "Source-last removes the measured1.155155s staging gap but leaves an asynchronous goto-to-publish interval and residual movement. No measured global speed/latency upper bound was established; v3 therefore removes that transaction gap instead of asserting an unsupported timing margin."
+  },
+  "native_patch": {
+    "path": "game/veloren/patches/0010-initial-message-v3.patch",
+    "sha256": "822c47854bd87cc6b45f55c3ffc02a616f456e9a5ce30b67b3f88f5dcd16d98e",
+    "base": "Apply after0009-initial-message-v2.patch to the pinned original source.",
+    "changed_files": ["server/src/cmd.rs", "server/src/initial_message.rs"],
+    "reproduction": "Patch applied to an independent copy of the exact v2 files and reproduced both compiled v3 source files byte-for-byte.",
+    "isolated_source": "output/i03-atomic-build/source",
+    "v2_preservation": "V2 source, runtime and binaries remain unchanged. The new runtime accepts only its explicitly matching v3 task protocol; ordinary default fixtures do not enable the private protocol."
+  },
+  "supported_existing_primitives": {
+    "placement": "server/src/state_ext.rs::position_mut is the existing authoritative goto helper, including native position/ForceUpdate behavior. Mounted actors are rejected before it is called.",
+    "motion": "comp::Controller::reset and comp::Vel normalize only initial source motion. No ongoing freeze, invulnerability, AI-disable component or per-tick authoring hook is introduced.",
+    "normal_talk": "NpcActivity::Talk is the existing native dialogue activity. server/agent/src/action_nodes.rs uses it to Stand/look/Talk instead of idle wandering when there is no combat target. V3 rejects an existing source target rather than clearing genuine combat intent.",
+    "handoff": "Both the ECS Agent's native activity and the rtsim NPC controller receive normal Talk in the same synchronous handler as placement and Brain installation. This prevents a stale prior Goto activity or velocity from surviving until a later rtsim-to-ECS synchronization.",
+    "continuation": "The actual Message Brain is byte-identical to v2 and uses unchanged native statement/question, create_deposit, Quest::courier, create_quest and normal think/repeat. Normal behavior is already active before readiness; there is no hold token to restore later."
+  },
+  "atomic_publication": {
+    "request": "Authenticated setup administrator: rtsim_info initial-message-v3 publish <one-shot-token> <authored-source-x> <authored-source-y> <authored-source-z>.",
+    "validation_before_commit": [
+      "Existing one-shot owner/token/deadline and exact source/player UID/ECS incarnation, living recipient and genuine giver funds",
+      "No accepted player contract and a living exact native giver",
+      "Finite authored source point and actual current authoritative player position, strictly less than the unchanged MAX_INTERACT_RANGE5m",
+      "Source not mounted, grounded, in ordinary Idle/Wielding/Talk state and without a combat target",
+      "No queued unsafe ControlAction or ControlEvent; pending actions are rejected, not silently discarded"
+    ],
+    "commit": "Within one server handler with no await or intervening physics/AI tick: native position helper places the same giver at its declared point; initial velocity/held movement inputs reset; ECS and rtsim normal Talk installed; the unchanged genuine Message Brain installed.",
+    "receipt": "Private published event binds proposal, authored/current player positions, source's previous position/velocity, actual distance, atomic_placement=true, normal_talk_active=true and setup_hold_active=false.",
+    "failure": "Explicit error, no fallback recipient or re-selection, no extra offer loop and no accepted quest. The source-range rule is not widened."
+  },
+  "public_ready_order": [
+    "Prepare selects one finite eligible real native Message proposal, retaining its original recipient/site/distance/reward inputs",
+    "Stage recipient/distractors and settle the ordinary player at the unchanged authored start",
+    "Native v3 publish atomically validates and places/quiesces the giver while handing it directly to the ordinary native dialogue Brain",
+    "Initializer acknowledges only the real native Statement and observes the exact selected unanswered Message Question; no Yes submitted",
+    "Native close consumes the one-shot capability, then requires the exact living parties still within the original5m range and source's ordinary Talk activity; failed readiness remains revoked and fails initialization",
+    "Administrator disconnects and is confirmed absent; ordinary player/fixture opening checks complete",
+    "The private before-snapshot joins exact native phases and parties and requires atomic publication, ready closure, finite sub5m distances and no setup hold",
+    "Only begin opens public actions and the episode clock; genuine public Yes still creates the native escrow/quest, and ordinary claim/payment remains unchanged"
+  ],
+  "default_noninterference": {
+    "byte_identical_to_v2": [
+      "rtsim/src/rule/npc_ai/quest.rs",
+      "rtsim/src/rule/npc_ai/dialogue.rs",
+      "rtsim/src/rule/npc_ai/util.rs",
+      "rtsim/src/data/quest.rs",
+      "rtsim/src/rule/npc_ai/initial_message.rs"
+    ],
+    "transport": "Same authenticated administrator-only private command boundary, separately named v3. No new public ST tool, VM privilege, typed player menu, recipient label or protocol metadata.",
+    "physical_task": "New ST/VM native_message_courier_initial_v3 definitions differ from v2 only in ID/version disclosure and initialization protocol. World/geometry/resources/HP/AI,2700s task limit, public controls and evaluator are unchanged.",
+    "no_gameplay_authoring": "No gameplay teleport, pause, protection, repeated position correction or timer extension. Ordinary dialogue timeouts and movement/combat remain native."
+  },
+  "validation": {
+    "native": "5 passed,11 filtered out; exact deployed worldgen,persistent_world,simd feature set. Cases cover stale out-of-range source plus momentum becoming one in-range native Talk placement, pending-action rejection without loss, strict5m/nonfinite negatives, one-shot authorization/deadline and invalid identity/empty eligibility.",
+    "Python": "67 passed,6 existing opt-in native tests skipped. Cases cover moving-source atomic publication, failed native publication cleanup, no initializer Yes, strict private readiness/no-hold proofs, strict native5m fixture boundary and actual serialized public Controls.",
+    "task_definitions": "Both v3 task definitions validated and compared structurally with v2 after removing only ID/disclosure/protocol fields; all other fields equal.",
+    "native_build": "All completed with returncode0: server3m08s, bridge1m49s, renderer6m07s. Independent source/cache/target/home/work paths; no shared source/runtime/environment mutation. Build completion and exact binary/log hashes are retained in the frozen runtime receipts.",
+    "initial_compile_correction": "The first native-test compilation required the explicit CharacterId newtype in a test. Corrected tests passed; the separate compile log is retained. No episode was involved."
+  },
+  "proposed_one_check": {
+    "permission": "Parent23:11 approved; executed once under lease e18eba457bb444a09e1390d23b7ff1d3 and fully cleaned. No further launch authorized.",
+    "scope": "One v3 ST opening check with --opening-only, unchanged startup/task budgets and at most30seconds public time.",
+    "discriminator": "Audit native atomic source previous/current motion, real Question, revoked/no-hold close and ordinary current-range public Yes. Stop after the three native source statements; retrospectively verify exact source/target/messenger quest creation and real deposit mechanism.",
+    "not_requested": "No navigation, delivery/payment chase, default-offer sampling, full campaign, model calls or unchanged retry. Goal evaluation may correctly remain false because this is an acceptance-prefix check.",
+    "remaining_gate": "The actual v3 opening/acceptance component is now evidenced separately. Downstream public discovery/navigation, delivery/payment composition and moderate-difficulty review are not established by this short stationary check; no task admission or calibration inferred."
+  },
+  "other_tasks": "I02 original-guide same-condition ST witness and slow-VM public reacquisition limits, and I04 constructive trade/return evidence plus5ae09025 initializer repair, were handed to the independent reviewer separately rather than waiting on I03.",
+  "integration": "No main integration, ledger promotion, push or shared runtime change."
+}

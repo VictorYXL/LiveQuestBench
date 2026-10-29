@@ -96,6 +96,32 @@ identity changes, nonfinite samples and overflow likewise remain fail-closed.
 Private rejection diagnostics identify the guard without resetting its history.
 Historical route/1 evidence does not qualify a rebuilt route/2 task.
 
+### Versioned information-task runtimes
+
+`native_message_courier_initial_v3` requires the separately rebuilt
+`initial-message-v3` runtime, not the stock random-offer runtime or v2. Set
+`LIVEQUEST_VELOREN_INITIAL_MESSAGE_V3_RUNTIME` to its prepared `runtime.json`.
+The matching protocol is checked before starting a worker and again before
+native initialization. The ordinary unanswered offer, public acceptance,
+native escrow/delivery/payment and 2700-second task budget remain unchanged.
+The default installer does not silently apply the optional Message patches;
+`scripts/veloren_initial_message_runtime.py` packages an independently completed
+build with its source and binary bindings.
+
+`market_stock_reconciliation` can use its separately qualified runtime through
+`LIVEQUEST_VELOREN_MARKET_RUNTIME`. Its retained evidence uses route/1, but the
+task does not request route evidence: this does not qualify a route/2 observer.
+Both task-specific settings leave other tasks' `LIVEQUEST_VELOREN_RUNTIME`
+selection untouched. Without an override the generic setting is used, subject
+to the same capability checks; it is not an implicit version-equivalence claim.
+
+Exact runtime hashes, configuration hashes and bounded four-gate decisions are
+recorded in `docs/evidence/VE-I03-I04-main-integration-bridge-20261029.json`.
+I03's new native receipt demonstrates opening, ordinary Yes and150coin escrow,
+not delivery. I04's placement repair has focused regression coverage, not a
+new whole-native run. Historical failures and provisional difficulty
+calibration remain separate from constructive task feasibility.
+
 Combined peer fixtures retain both readiness barriers: Group setup cannot
 finalize supplies, and original supplies are created and pre-aged before deferred
 enemies spawn. Cached journal projections retain original drop and merge events

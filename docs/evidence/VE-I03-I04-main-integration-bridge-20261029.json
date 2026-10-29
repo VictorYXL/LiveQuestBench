@@ -1,0 +1,661 @@
+{
+  "schema": "livequest-information-exact-main-bridge/1",
+  "candidate_base": "cc623d38ee7aceb3d6e0ee665ab025e53da59aa5",
+  "scope": "Only signed I03 v3 and I04 original task integrations; no I02 admission, native episode, paid model or default runtime mutation.",
+  "tasks": {
+    "VE-I03": {
+      "task_id": "native_message_courier_initial_v3",
+      "reviewed_revision": "a478a092245c48b74493dd45c3e4f20842f90531",
+      "exact_imports": {
+        "game/veloren/message_contract.py": "21ace2d5e9b59429f7e248f7668f23d02db9d1b1bf49a8721e580a07886a3fac",
+        "game/veloren/evaluators/message.py": "c80b2382e1ca83a60729c6c7baf7195988c4eef1fc38a52108e51976defa3413",
+        "game/veloren/patches/0009-initial-message-v2.patch": "89ebd4ab7ccfafd4b5671b382baa1fb8efcf30b7d67518b0a8b25e261f618031",
+        "game/veloren/patches/0010-initial-message-v3.patch": "822c47854bd87cc6b45f55c3ffc02a616f456e9a5ce30b67b3f88f5dcd16d98e"
+      },
+      "configurations": {
+        "st": {
+          "path": "config/veloren/tasks/structured_tools/native_message_courier_initial_v3.yaml",
+          "sha256": "987e6c7f35a7b4214b57582ab5c7f1d37e4c8ae5f92785281d6f5d6cc96028af"
+        },
+        "vm": {
+          "path": "config/veloren/tasks/visual_motor/native_message_courier_initial_v3.yaml",
+          "sha256": "70644503e61deb48e5d623b886ce9ba1455bdf262e9f506f640fbf473eb20170"
+        }
+      },
+      "runtime": {
+        "wrapper_files_verified": 17,
+        "strict_upstream_load": "passed",
+        "selected_server": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/worktrees/resume-information-20261029/output/i03-atomic-build/target/debug/veloren-server-cli",
+        "server_sha256": "f5a01a0e6d6016f398711b21a8b2206792cfcbde0e66e620d52ab1da0813d757",
+        "renderer_sha256": "2eda797019195052f6177e8833d27fa3c37398586cab172d0396258dec062051",
+        "source_manifest_sha256": "c119b1b6b7d2af068bd68c5c2fbe7ea3892b59de5390008fce60d940b6e4a7e3",
+        "initial_message_protocol": "initial-message-v3",
+        "route_evidence": "native-client-route/1",
+        "native_launched": false,
+        "environment_key": "LIVEQUEST_VELOREN_INITIAL_MESSAGE_V3_RUNTIME",
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/worktrees/resume-information-20261029/output/i03-atomic-runtime/runtime.json",
+        "sha256": "8f5150543eb32629ca8dd61825c68c8e865efbe351cc59822dbc61f7776d96b4"
+      }
+    },
+    "VE-I04": {
+      "task_id": "market_stock_reconciliation",
+      "reviewed_revision": "5ae09025ae3546471f22514350c06e98d9cf3872",
+      "exact_imports": {
+        "game/veloren/market.py": "c5853007871c9e0d5f33a707ea794fdbfd7c753c85239fc00597d9aeb53fe8c9",
+        "game/veloren/market_trades.py": "ce6adc1f28a802c8795cd23f88c797c757bb6348c90b8bee524c833274cf4cb5",
+        "game/veloren/evaluators/market.py": "dffc40af54bf9f5bff86a49e7135301735093a3fa74166c58505360ceaead08b"
+      },
+      "configurations": {
+        "st": {
+          "path": "config/veloren/tasks/structured_tools/market_stock_reconciliation.yaml",
+          "sha256": "3d4a59e733059fc7550375acb343d4cb6573f9f4f12a87245760018c11e40395"
+        },
+        "vm": {
+          "path": "config/veloren/tasks/visual_motor/market_stock_reconciliation.yaml",
+          "sha256": "9d91b8637abf60dacabfcb7f4672fffcc5b6227f40c3bf594cc8178fa3bf0ce9"
+        }
+      },
+      "runtime": {
+        "wrapper_files_verified": 8,
+        "strict_upstream_load": "passed",
+        "selected_server": "/home/msra/GameAgent/velorenbench-auto-525af64d/binding-95145618/native/binaries/veloren-server-cli",
+        "server_sha256": "f2100bec7ace29a3a44256dce255a435697774551953cd8ee2a834507f7ef6be",
+        "renderer_sha256": "478b0addc202cb37aaa5543cf369fa59e4f4cb3031deb56bb6544d49fc9a4897",
+        "source_manifest_sha256": "f303e8aa0d93c19089db8b070ecefe04dc2afea1e84d1ccf3dee522bd4141ba1",
+        "initial_message_protocol": null,
+        "route_evidence": "native-client-route/1",
+        "native_launched": false,
+        "environment_key": "LIVEQUEST_VELOREN_MARKET_RUNTIME",
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/veloren-native-route-20261027/runtime.json",
+        "sha256": "387e3485fb1fa1edcfb810e36ed2f1cef4d07bfeb487f73d8be433fd82e653d7"
+      }
+    }
+  },
+  "independent_reviews": [
+    {
+      "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/checks/veloren-acceptance-policy-audit-20261029.json",
+      "addendum": 32,
+      "sha256": "14433155088c97bb918200d0e4b1c1492050597641bb0b6dbe8a1374aa70aaa9",
+      "scope": "Existing exact task-quality verdict/checkpoint, not independent review of new main hooks."
+    },
+    {
+      "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/checks/veloren-acceptance-policy-audit-20261029.json",
+      "addendum": 34,
+      "sha256": "c6d1991417ca1ceb83c50b2c310f95b8a9609fe1a4db57cd460b4bcc053a0b51",
+      "scope": "Existing exact task-quality verdict/checkpoint, not independent review of new main hooks."
+    },
+    {
+      "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/checks/veloren-acceptance-policy-audit-20261029.json",
+      "addendum": 37,
+      "sha256": "fd99644fcff0950ba1cb8790289b78284aea8ee87f271891750720e36ac5c40d",
+      "scope": "Existing exact task-quality verdict/checkpoint, not independent review of new main hooks."
+    }
+  ],
+  "integration_files_sha256": {
+    "checks/veloren_information_main_admission.py": "b861a74e257e45e1f9d7c10a610c4258830a3a4288afc5cd8531af51e0ef3bee",
+    "config/veloren/tasks/structured_tools/market_stock_reconciliation.yaml": "3d4a59e733059fc7550375acb343d4cb6573f9f4f12a87245760018c11e40395",
+    "config/veloren/tasks/structured_tools/native_message_courier_initial_v3.yaml": "987e6c7f35a7b4214b57582ab5c7f1d37e4c8ae5f92785281d6f5d6cc96028af",
+    "config/veloren/tasks/visual_motor/market_stock_reconciliation.yaml": "9d91b8637abf60dacabfcb7f4672fffcc5b6227f40c3bf594cc8178fa3bf0ce9",
+    "config/veloren/tasks/visual_motor/native_message_courier_initial_v3.yaml": "70644503e61deb48e5d623b886ce9ba1455bdf262e9f506f640fbf473eb20170",
+    "docs/evidence/VE-I02-I03-I04-final-four-gate-handoff-20261029.json": "2e95854b7b4dc969cf8551d891b825ba56a7ef63f6f947138f7da17e13b7d4a3",
+    "docs/evidence/VE-I03-atomic-initialization-v3-20261029.json": "0d6c6085c3892a325acfe5b571505cd946139603d9e01edb9be152cfb181b396",
+    "docs/evidence/VE-I03-atomic-v3-opening-terminal-20261029.json": "f7aaa70af943fc3e7ca526c751a7efe113f8c84d33bec6afeaf52139dbbc9ec4",
+    "docs/evidence/VE-I04-market-preparation-landing-repair-20261029.json": "a34dcddc641f4bd59fe030bc5568ec4824bb4e5c7cb98ab7869ac4bd8e90af25",
+    "game/veloren/README.md": "e293241fc143efd3d04ecd54cda40416c6565eb62a8e98b2fcabcacb0ef9439a",
+    "game/veloren/binding.py": "344409c30f99569bed3fdf285d8ea395db37a244c38e9f8e4409f5f7c13044a8",
+    "game/veloren/evaluators/market.py": "dffc40af54bf9f5bff86a49e7135301735093a3fa74166c58505360ceaead08b",
+    "game/veloren/evaluators/message.py": "c80b2382e1ca83a60729c6c7baf7195988c4eef1fc38a52108e51976defa3413",
+    "game/veloren/fixture.py": "dfd974b57fc68b0c88d4655c593b32eab674284f3b08bc93724145a64add50d0",
+    "game/veloren/game.py": "b22626b5d15a72071db19348253ce7562dc14ccaa21802e6c1badfca0fa58182",
+    "game/veloren/market.py": "c5853007871c9e0d5f33a707ea794fdbfd7c753c85239fc00597d9aeb53fe8c9",
+    "game/veloren/market_trades.py": "ce6adc1f28a802c8795cd23f88c797c757bb6348c90b8bee524c833274cf4cb5",
+    "game/veloren/message_contract.py": "21ace2d5e9b59429f7e248f7668f23d02db9d1b1bf49a8721e580a07886a3fac",
+    "game/veloren/patches/0009-initial-message-v2.patch": "89ebd4ab7ccfafd4b5671b382baa1fb8efcf30b7d67518b0a8b25e261f618031",
+    "game/veloren/patches/0010-initial-message-v3.patch": "822c47854bd87cc6b45f55c3ffc02a616f456e9a5ce30b67b3f88f5dcd16d98e",
+    "game/veloren/runtime/server.py": "6bc343604dd4eedf1f19319be0d692ff8409913c3964e75a716e442404df1e03",
+    "game/veloren/runtime/session.py": "dc040e7b0154e34b05b7a66407f3c0809051927c7eba5ff0581b2cfa22d45533",
+    "game/veloren/runtime/worker.py": "b4125397cd09eb939e636e7e36651f1de41e4de4d5b5961c17aed781ec421771",
+    "scripts/veloren_initial_message_check.py": "23ba4801a682bbf876a1f353e5612d56de9a69fe969b1f1d3c64626d76f0721c",
+    "scripts/veloren_initial_message_runtime.py": "e7cf0e9cecbab5ad9fd0d37e9fce0ebf78cfb79945eeafb60fa28b5fcf9849cd",
+    "tests/test_game/veloren/test_information_runtime_selection.py": "32d2af4dbfc882eeea63b5842aa20fc25cc52409bbee4ceeb4de4abdda5fa440",
+    "tests/test_game/veloren/test_market.py": "c98ef85260d1c3a0dc1072933025189c387df7444d93c4cc01dadd41a26e82ce",
+    "tests/test_game/veloren/test_message.py": "f2f3d0aac47f63da21ca9a45cf84eb6f3dc5ed38d0de5eb735856d7ebe80c117"
+  },
+  "shared_hook_diff_scope": {
+    "classification": "New main-framework integration glue, not byte-identical independently signed adapter files.",
+    "files": {
+      "game/veloren/binding.py": {
+        "base_sha256": "5825a2549bb0268d00e198fdd85615796c73b25674af7fcfe60134df7298b50e",
+        "candidate_sha256": "344409c30f99569bed3fdf285d8ea395db37a244c38e9f8e4409f5f7c13044a8"
+      },
+      "game/veloren/fixture.py": {
+        "base_sha256": "377b1f09c35ec837f8dd1fdc55870821f0a4e689e690ed339866519f22482443",
+        "candidate_sha256": "dfd974b57fc68b0c88d4655c593b32eab674284f3b08bc93724145a64add50d0"
+      },
+      "game/veloren/game.py": {
+        "base_sha256": "ed7db2975a5d80dcb27fdcf9fdc10925840f992f507c2ee8121932d9abc557dd",
+        "candidate_sha256": "b22626b5d15a72071db19348253ce7562dc14ccaa21802e6c1badfca0fa58182"
+      },
+      "game/veloren/runtime/server.py": {
+        "base_sha256": "bbbb74bc200e18d5f50189aead15eb76bec9c315db0119146d08c1026e772d4d",
+        "candidate_sha256": "6bc343604dd4eedf1f19319be0d692ff8409913c3964e75a716e442404df1e03"
+      },
+      "game/veloren/runtime/worker.py": {
+        "base_sha256": "96e75fcae881cab9e3d8794e6de06a7226ed3ec75b4e8e60365f0b5a7b460470",
+        "candidate_sha256": "b4125397cd09eb939e636e7e36651f1de41e4de4d5b5961c17aed781ec421771"
+      },
+      "game/veloren/runtime/session.py": {
+        "base_sha256": "d19880666c3d12f8e25c3d2b7809b4cee2aff05957fd1c267e19d6c5e2b760f9",
+        "candidate_sha256": "dc040e7b0154e34b05b7a66407f3c0809051927c7eba5ff0581b2cfa22d45533"
+      }
+    },
+    "changes": [
+      "Add only message/market fixture validation and original reviewed initialization calls; retain main initialization/deferred peer lifecycle and reject incompatible mixed new scenes.",
+      "Register exact native message and immutable-market evaluators without changing existing evaluator selections.",
+      "Expose existing ordinary RPG projection for only the new fixtures; no private fields or new Agent tool permissions.",
+      "Enable setup-only native Message protocol only for an explicitly versioned fixture; clear inherited environment flag on default scenes.",
+      "Require matching Message runtime before worker spawn and before authoritative native initialization.",
+      "Select optional task-scoped runtimes while preserving other tasks' generic default and fail-closed capability checks.",
+      "Enable existing Message quest-state journal projection and private snapshot only on its fixture.",
+      "Wrap the native Journal for immutable market trade receipts only on its fixture."
+    ],
+    "early_ready_order": "Original reviewed initializers finish in initialize_fixture; main administrator retirement/player checks and closed-gate private Message/market snapshot remain before begin. No post-ready preparation, hold, freeze or acceptance.",
+    "test_only_adaptation": "The original public-dialogue projection test loads the signed v3 YAML instead of adding the old unavailable random-offer YAML to main discovery."
+  },
+  "inherited_main_dependencies_unchanged": {
+    "game/veloren/native_bindings.py": "9f8c8c4feb1b7f6b6cf3b4e519387db80d45e105fb4b3de5554c32387d3dd862",
+    "game/veloren/runtime/records.py": "f4aeed2682ccc7334aa3347a8e7087dd3c47e7fdb705eb9f47677bdf896f2bc7",
+    "game/veloren/evaluators/endpoints.py": "ca445973cf0a7295f8801f8667e413da1d4f92e2d146d710d560ceb5bec1fc9c",
+    "game/veloren/runtime/journal.py": "a30bf051c734e49f82591c5fb4419d0d548f3a730f835c175e3865b144fd6818",
+    "game/veloren/structured_tools/interface.py": "cb53fabd08b08167aaa30f06f2413ac88e8accfb8b706ab38efd530bb40111fc",
+    "game/veloren/runtime/server_extension.py": "eb8961a8c24af1ece20873c1fd964afb2edf0a3590b7009fdc451526752b9830"
+  },
+  "runtime_bridge": {
+    "strict_preflight": {
+      "I03": {
+        "runtime_path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/worktrees/resume-information-20261029/output/i03-atomic-runtime/runtime.json",
+        "runtime_sha256": "8f5150543eb32629ca8dd61825c68c8e865efbe351cc59822dbc61f7776d96b4",
+        "wrapper_files_verified": 17,
+        "strict_upstream_load": "passed",
+        "selected_server": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/worktrees/resume-information-20261029/output/i03-atomic-build/target/debug/veloren-server-cli",
+        "server_sha256": "f5a01a0e6d6016f398711b21a8b2206792cfcbde0e66e620d52ab1da0813d757",
+        "renderer_sha256": "2eda797019195052f6177e8833d27fa3c37398586cab172d0396258dec062051",
+        "source_manifest_sha256": "c119b1b6b7d2af068bd68c5c2fbe7ea3892b59de5390008fce60d940b6e4a7e3",
+        "initial_message_protocol": "initial-message-v3",
+        "route_evidence": "native-client-route/1",
+        "native_launched": false
+      },
+      "I04": {
+        "runtime_path": "/home/msra/GameAgent/LiveQuestBench/output/temp/veloren-native-route-20261027/runtime.json",
+        "runtime_sha256": "387e3485fb1fa1edcfb810e36ed2f1cef4d07bfeb487f73d8be433fd82e653d7",
+        "wrapper_files_verified": 8,
+        "strict_upstream_load": "passed",
+        "selected_server": "/home/msra/GameAgent/velorenbench-auto-525af64d/binding-95145618/native/binaries/veloren-server-cli",
+        "server_sha256": "f2100bec7ace29a3a44256dce255a435697774551953cd8ee2a834507f7ef6be",
+        "renderer_sha256": "478b0addc202cb37aaa5543cf369fa59e4f4cb3031deb56bb6544d49fc9a4897",
+        "source_manifest_sha256": "f303e8aa0d93c19089db8b070ecefe04dc2afea1e84d1ccf3dee522bd4141ba1",
+        "initial_message_protocol": null,
+        "route_evidence": "native-client-route/1",
+        "native_launched": false
+      },
+      "installed_setup_goto": {
+        "horizontal_tolerance_supported": true,
+        "source_sha256": "032d846d7a965f32da2cb77aa6a387b0f6c1c99a09f217e4c20194f916803a7d"
+      }
+    },
+    "scope": "Exact source-bound runtime selections, not replacing either with the generic route/2 installation.",
+    "route": "Both signed fixtures do not request route_evidence. Main's route/2 requirement remains unchanged for actual route tasks; their historical route/1 runtime labels are preserved.",
+    "capabilities": "I03=initial-message-v3/8f515; I04=original renderer478b0add/sourcef303/387e348. Every pinned wrapper file and both strict upstream loaders verified without launching native.",
+    "default_installer": "Unchanged; Message patches0009/0010 remain opt-in artifacts, not automatic default native changes."
+  },
+  "tests": {
+    "offline_checker_correction": "The first offline checker attempt used the parsed renderer.paths schema on the raw upstream descriptor and raised KeyError before registration. Corrected to resolve raw renderer.server against the descriptor directory; subsequent exact-runtime checks cover both actual descriptors. No native process or task state was created.",
+    "task_runtime_and_dependency": {
+      "passed": 83,
+      "command": "python -m pytest -q tests/test_game/veloren/test_message.py tests/test_game/veloren/test_market.py tests/test_game/veloren/test_information_runtime_selection.py tests/test_game/veloren/test_native_bindings.py tests/test_game/veloren/test_fixture_records.py"
+    },
+    "existing_initialization_and_lifecycle": {
+      "passed": 33,
+      "skipped": 8,
+      "skip_scope": "Existing opt-in checks; no new native run.",
+      "command": "python -m pytest -q tests/test_game/veloren/test_initialization.py tests/test_game/veloren/test_game.py"
+    }
+  },
+  "frozen_replays": [
+    {
+      "stable_id": "VE-I03",
+      "label": "exact-v3-opening-no-delivery",
+      "run": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/worktrees/resume-information-20261029/output/VE-I03-initial-message-v3-atomic-opening-20261029",
+      "expected_success": false,
+      "expected_evaluation": {
+        "success": false,
+        "checks": [
+          {
+            "kind": "health",
+            "actual": 100.0,
+            "minimum": 0,
+            "passed": true
+          },
+          {
+            "kind": "ordinary_native_message_acceptance",
+            "sequences": [
+              19204
+            ],
+            "passed": true
+          },
+          {
+            "kind": "native_message_resolution",
+            "passed": false
+          },
+          {
+            "kind": "actual_native_reward_inserted",
+            "passed": false
+          }
+        ],
+        "semantics": "simultaneous terminal state; no action attribution or continuous-survival claim A unique new Courier/Message contract follows the exact ordinary acceptance response. Native source, recipient, messenger and recipient-arbiter must match. Native resolution and causally linked reward insertion are required; talking twice or receiving unrelated coins is insufficient. No continuous-survival or tactical-efficiency claim."
+      },
+      "sha256": {
+        "before/observation.json": "cb8f4f854a781a952a85336084b21cd1367a8fe1bd5aef74d5a0a9706791b8ab",
+        "after/observation.json": "c3510baf19429c59cd71cb562ef6985f35c4d0eaa3f71fc2c0013a78214b1d6d"
+      }
+    },
+    {
+      "stable_id": "VE-I03",
+      "label": "historical-native-801-not-v3-reward",
+      "run": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/experiments/VE-I03-native-ack-reference-st",
+      "expected_success": true,
+      "expected_evaluation": {
+        "success": true,
+        "checks": [
+          {
+            "kind": "health",
+            "actual": 100.0,
+            "minimum": 0,
+            "passed": true
+          },
+          {
+            "kind": "ordinary_native_message_acceptance",
+            "sequences": [
+              21264
+            ],
+            "passed": true
+          },
+          {
+            "kind": "native_message_resolution",
+            "passed": true
+          },
+          {
+            "kind": "actual_native_reward_inserted",
+            "passed": true
+          }
+        ],
+        "semantics": "simultaneous terminal state; no action attribution or continuous-survival claim A unique new Courier/Message contract follows the exact ordinary acceptance response. Native source, recipient, messenger and recipient-arbiter must match. Native resolution and causally linked reward insertion are required; talking twice or receiving unrelated coins is insufficient. No continuous-survival or tactical-efficiency claim."
+      },
+      "sha256": {
+        "before/observation.json": "1b2764d54c490140c422a817e48e019edd3002a1d5c6b422e5f6680d77e8fbcf",
+        "after/observation.json": "508bef9c6e49a315b5043f688fd4ad08cb526bc3c506ded3e8e7f2ae1779f39d"
+      }
+    },
+    {
+      "stable_id": "VE-I04",
+      "label": "historical-original-condition-joint-ST",
+      "run": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/experiments/VE-I04-declared-time-whole-task-st",
+      "expected_success": true,
+      "expected_evaluation": {
+        "success": true,
+        "checks": [
+          {
+            "kind": "health",
+            "actual": 100.0,
+            "minimum": 0,
+            "passed": true
+          },
+          {
+            "kind": "inventory",
+            "item": "common.items.utility.coins",
+            "min_count": 5,
+            "before": 99,
+            "after": 51,
+            "delta": -48,
+            "passed": true
+          },
+          {
+            "kind": "position",
+            "actual": [
+              18722.984375,
+              10805.349609375,
+              501.0
+            ],
+            "horizontal_error": 0.9779852916649057,
+            "vertical_error": 0.0,
+            "speed": 1.436000503126595e-09,
+            "on_ground": true,
+            "passed": true
+          },
+          {
+            "kind": "new_completed_market_trade",
+            "passed": true
+          },
+          {
+            "kind": "accepted_market_bundle",
+            "passed": true
+          }
+        ],
+        "semantics": "simultaneous terminal state; no action attribution or continuous-survival claim At least one new native completed trade must bind this player and an initialized merchant. A qualifying bundle is held simultaneously with the reserve and return. Individual item provenance and plan revision are not inferred from terminal holdings.",
+        "bundle_checks": [
+          {
+            "success": false,
+            "checks": [
+              {
+                "kind": "health",
+                "actual": 100.0,
+                "minimum": 0,
+                "passed": true
+              },
+              {
+                "kind": "inventory",
+                "item": "common.items.armor.hide.rawhide.chest",
+                "min_count": 1,
+                "min_delta": 1,
+                "before": 0,
+                "after": 0,
+                "delta": 0,
+                "passed": false
+              },
+              {
+                "kind": "inventory",
+                "item": "common.items.food.apple",
+                "min_count": 2,
+                "min_delta": 2,
+                "before": 0,
+                "after": 0,
+                "delta": 0,
+                "passed": false
+              }
+            ],
+            "semantics": "simultaneous terminal state; no action attribution or continuous-survival claim"
+          },
+          {
+            "success": true,
+            "checks": [
+              {
+                "kind": "health",
+                "actual": 100.0,
+                "minimum": 0,
+                "passed": true
+              },
+              {
+                "kind": "inventory",
+                "item": "common.items.armor.hide.rawhide.foot",
+                "min_count": 1,
+                "min_delta": 1,
+                "before": 0,
+                "after": 1,
+                "delta": 1,
+                "passed": true
+              },
+              {
+                "kind": "inventory",
+                "item": "common.items.food.mushroom",
+                "min_count": 3,
+                "min_delta": 3,
+                "before": 0,
+                "after": 3,
+                "delta": 3,
+                "passed": true
+              }
+            ],
+            "semantics": "simultaneous terminal state; no action attribution or continuous-survival claim"
+          }
+        ]
+      },
+      "sha256": {
+        "before/observation.json": "f336d9537e3a2d32f476e2bd671e3bac45fa232e5102fab90e0590679a643d9f",
+        "after/observation.json": "f263b7e748c6ccc25dadfe82b061211816d255453ebff9e555c75a189bea3914"
+      }
+    },
+    {
+      "stable_id": "VE-I04",
+      "label": "historical-VM-boots-only",
+      "run": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/experiments/VE-I04-corrected-pointer-operator-vm",
+      "expected_success": false,
+      "expected_evaluation": {
+        "success": false,
+        "checks": [
+          {
+            "kind": "health",
+            "actual": 100.0,
+            "minimum": 0,
+            "passed": true
+          },
+          {
+            "kind": "inventory",
+            "item": "common.items.utility.coins",
+            "min_count": 5,
+            "before": 99,
+            "after": 81,
+            "delta": -18,
+            "passed": true
+          },
+          {
+            "kind": "position",
+            "actual": [
+              18740.818359375,
+              10836.416015625,
+              501.0
+            ],
+            "horizontal_error": 36.79937966279995,
+            "vertical_error": 0.0,
+            "speed": 1.981735293180747e-45,
+            "on_ground": true,
+            "passed": false
+          },
+          {
+            "kind": "new_completed_market_trade",
+            "passed": true
+          },
+          {
+            "kind": "accepted_market_bundle",
+            "passed": false
+          }
+        ],
+        "semantics": "simultaneous terminal state; no action attribution or continuous-survival claim At least one new native completed trade must bind this player and an initialized merchant. A qualifying bundle is held simultaneously with the reserve and return. Individual item provenance and plan revision are not inferred from terminal holdings.",
+        "bundle_checks": [
+          {
+            "success": false,
+            "checks": [
+              {
+                "kind": "health",
+                "actual": 100.0,
+                "minimum": 0,
+                "passed": true
+              },
+              {
+                "kind": "inventory",
+                "item": "common.items.armor.hide.rawhide.chest",
+                "min_count": 1,
+                "min_delta": 1,
+                "before": 0,
+                "after": 0,
+                "delta": 0,
+                "passed": false
+              },
+              {
+                "kind": "inventory",
+                "item": "common.items.food.apple",
+                "min_count": 2,
+                "min_delta": 2,
+                "before": 0,
+                "after": 0,
+                "delta": 0,
+                "passed": false
+              }
+            ],
+            "semantics": "simultaneous terminal state; no action attribution or continuous-survival claim"
+          },
+          {
+            "success": false,
+            "checks": [
+              {
+                "kind": "health",
+                "actual": 100.0,
+                "minimum": 0,
+                "passed": true
+              },
+              {
+                "kind": "inventory",
+                "item": "common.items.armor.hide.rawhide.foot",
+                "min_count": 1,
+                "min_delta": 1,
+                "before": 0,
+                "after": 1,
+                "delta": 1,
+                "passed": true
+              },
+              {
+                "kind": "inventory",
+                "item": "common.items.food.mushroom",
+                "min_count": 3,
+                "min_delta": 3,
+                "before": 0,
+                "after": 0,
+                "delta": 0,
+                "passed": false
+              }
+            ],
+            "semantics": "simultaneous terminal state; no action attribution or continuous-survival claim"
+          }
+        ]
+      },
+      "sha256": {
+        "before/observation.json": "c0c1cab2d1797550179bee0a556575812f854dab78dcbaaeb0101fb0a4f1e6ad",
+        "after/observation.json": "58b21ca7ebfa0e35f5282e1fa52967b4f3c7f9ac6b1021440c7925da63c8fb45"
+      }
+    },
+    {
+      "stable_id": "VE-I04",
+      "label": "historical-VM-mushroom-prefix-only",
+      "run": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/experiments/VE-I04-complete-bundle-operator-vm",
+      "expected_success": false,
+      "expected_evaluation": {
+        "success": false,
+        "checks": [
+          {
+            "kind": "health",
+            "actual": 100.0,
+            "minimum": 0,
+            "passed": true
+          },
+          {
+            "kind": "inventory",
+            "item": "common.items.utility.coins",
+            "min_count": 5,
+            "before": 99,
+            "after": 69,
+            "delta": -30,
+            "passed": true
+          },
+          {
+            "kind": "position",
+            "actual": [
+              18733.0859375,
+              10827.765625,
+              501.0
+            ],
+            "horizontal_error": 25.560739022855564,
+            "vertical_error": 0.0,
+            "speed": 0.0020828333165175718,
+            "on_ground": true,
+            "passed": false
+          },
+          {
+            "kind": "new_completed_market_trade",
+            "passed": true
+          },
+          {
+            "kind": "accepted_market_bundle",
+            "passed": false
+          }
+        ],
+        "semantics": "simultaneous terminal state; no action attribution or continuous-survival claim At least one new native completed trade must bind this player and an initialized merchant. A qualifying bundle is held simultaneously with the reserve and return. Individual item provenance and plan revision are not inferred from terminal holdings.",
+        "bundle_checks": [
+          {
+            "success": false,
+            "checks": [
+              {
+                "kind": "health",
+                "actual": 100.0,
+                "minimum": 0,
+                "passed": true
+              },
+              {
+                "kind": "inventory",
+                "item": "common.items.armor.hide.rawhide.chest",
+                "min_count": 1,
+                "min_delta": 1,
+                "before": 0,
+                "after": 0,
+                "delta": 0,
+                "passed": false
+              },
+              {
+                "kind": "inventory",
+                "item": "common.items.food.apple",
+                "min_count": 2,
+                "min_delta": 2,
+                "before": 0,
+                "after": 0,
+                "delta": 0,
+                "passed": false
+              }
+            ],
+            "semantics": "simultaneous terminal state; no action attribution or continuous-survival claim"
+          },
+          {
+            "success": false,
+            "checks": [
+              {
+                "kind": "health",
+                "actual": 100.0,
+                "minimum": 0,
+                "passed": true
+              },
+              {
+                "kind": "inventory",
+                "item": "common.items.armor.hide.rawhide.foot",
+                "min_count": 1,
+                "min_delta": 1,
+                "before": 0,
+                "after": 0,
+                "delta": 0,
+                "passed": false
+              },
+              {
+                "kind": "inventory",
+                "item": "common.items.food.mushroom",
+                "min_count": 3,
+                "min_delta": 3,
+                "before": 0,
+                "after": 3,
+                "delta": 3,
+                "passed": true
+              }
+            ],
+            "semantics": "simultaneous terminal state; no action attribution or continuous-survival claim"
+          }
+        ]
+      },
+      "sha256": {
+        "before/observation.json": "3abaf72ca7365c0f4975a1132d215b8da49e099af3824db83705a3bf89b8aa3c",
+        "after/observation.json": "b32b1f4951bce2fd4da1de2f5a2d946ee39d7b8e52bd2c87f038eef63230d960"
+      }
+    }
+  ],
+  "history_and_limits": {
+    "I03": "Retain0b4a39a unavailable,8cc812c controller0action failure,4622 initialization failure/f6ff973 ordering repair, then a478 v3/00a9d4c publicYes150escrow. Historical801 receipt is a source-bound mechanism witness, not a v3 payment or current whole success.",
+    "I04": "Retain failed nearby diagnostic/old GUI failures;5ae setup tolerance fix is regression/source reviewed, not native-retested. VM prefixes remain individually incomplete and are not spliced into a synthetic whole result.",
+    "I02": "fe444f4 fixes a controller-only cursor hazard.338s component does not close workshop-return reacquisition; keep VM pending and both declared tracks. No rerun or admission in this integration.",
+    "difficulty": "Independent bounded moderate-design support is not statistical calibration; no controller/model win prerequisite, no new whole-native result."
+  },
+  "integration_protocol": "Refresh current HEAD/clean index/no active Git operation under integration.lock; apply only this exact scoped patch if nonconflicting, protect existing dirty files, commit with coauthor, verify four registrations and frozen replays against committed bytes, then separately update each latest ledger row with archived prior revision."
+}

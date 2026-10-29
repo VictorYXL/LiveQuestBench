@@ -102,6 +102,19 @@ def create_binding(
             tuple(point) for point in parameters["source_cells"]
         } <= {tuple(point) for point in fixture["harvest_sites"]}:
             raise ValueError("Scored harvest sources must be declared native mushroom cells")
+    elif evaluator == "message":
+        from game.veloren.evaluators.message import evaluate_message, validate_message
+        evaluators[evaluator] = evaluate_message
+        validators[evaluator] = validate_message
+        if "message_contract" not in fixture:
+            raise ValueError("Message scoring requires unprotected native Message preparation")
+    elif evaluator == "market":
+        from game.veloren.evaluators.market import evaluate_market, validate_market
+        evaluators[evaluator] = evaluate_market
+        validators[evaluator] = validate_market
+        if ("market" not in fixture or parameters.get("bundles") != fixture["market"]["bundles"]
+                or parameters.get("coin_reserve") != fixture["market"]["coin_reserve"]):
+            raise ValueError("Scored market bundles and reserve must match native preparation")
     if evaluator not in evaluators:
         raise ValueError(f"Unknown Veloren evaluator: {evaluator}")
     score = evaluators[evaluator]
