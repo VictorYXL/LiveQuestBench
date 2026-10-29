@@ -1,10 +1,10 @@
 {
   "schema": "livequest-parallel-spatial-replay/1",
-  "source_commit": "6614b93b1224f3515d80a0b09cc70ac0fbcec776",
+  "source_commit": "b55faf0d6d887229c3a2413dc78b326c655a6445",
   "no_native_or_model_start": true,
   "replay_script": {
     "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/worktrees/parallel-spatial-20261029/checks/veloren_spatial_closure.py",
-    "sha256": "2cc5d8cc2eabc22fa609cc6aca96dbf349820a73b247ad73cc99e9e4aead1db7"
+    "sha256": "0d43ab113a1a68925242445864e76445203630280a80b6363772759f96b38b2f"
   },
   "runtime": {
     "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/veloren-route-v2-contact-fix/candidate-runtime.json",
@@ -132,7 +132,8 @@
             "final_tick": 19882,
             "opening_prefix_preserved": true,
             "new_sample_count": 1146,
-            "maximum_recorded_step_m": 173.20508075688772,
+            "whole_history_including_setup_maximum_step_m": 173.20508075688772,
+            "post_readiness_maximum_recorded_step_m": 1.0224567402313562,
             "post_readiness_visits": [
               {
                 "sequence": 97160,
@@ -223,7 +224,8 @@
             "final_tick": 18383,
             "opening_prefix_preserved": true,
             "new_sample_count": 1061,
-            "maximum_recorded_step_m": 173.20508075688772,
+            "whole_history_including_setup_maximum_step_m": 173.20508075688772,
+            "post_readiness_maximum_recorded_step_m": 0.265625,
             "post_readiness_visits": [
               {
                 "sequence": 88113,
@@ -325,7 +327,123 @@
           ]
         }
       ],
-      "current_route2": null,
+      "current_route2": {
+        "artifact": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/experiments/VE-S04-parallel-route2-20261029-st",
+        "snapshots": [
+          {
+            "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/experiments/VE-S04-parallel-route2-20261029-st/before/observation.json",
+            "sha256": "4edc2378a7a39f68ca72b9b6bb0c07093451cd70324538480fa0adb43cb6f10c"
+          },
+          {
+            "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/experiments/VE-S04-parallel-route2-20261029-st/after/observation.json",
+            "sha256": "65001c8c28122a8feadf6e4087db4498f30c780eaf2b7a453faa2238ade0acea"
+          }
+        ],
+        "reference": {
+          "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/experiments/VE-S04-parallel-route2-20261029-st/reference.json",
+          "sha256": "34556441eccb5e40866816d0dd86ef31e20c7ddcd6e117942beceef997ff7d6a"
+        },
+        "initial_success": false,
+        "terminal_success": true,
+        "exact_archived_evaluation_equal": true,
+        "actual_fixture": {
+          "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/experiments/VE-S04-parallel-route2-20261029-st/game/fixture.json",
+          "sha256": "7570a4b16debc648b9fab248c846dd74a95c62580a6e3751971aa926c08065ce"
+        },
+        "fixture_and_world_byte_parity": true,
+        "elapsed_seconds": 18.84083287604153,
+        "native_route_schemas": [
+          "native-client-route/2"
+        ],
+        "checks": [
+          {
+            "kind": "health",
+            "actual": 100.0,
+            "minimum": 0,
+            "passed": true
+          },
+          {
+            "kind": "inventory",
+            "item": "common.items.crafting_ing.hide.tough_hide",
+            "min_count": 1,
+            "min_delta": 1,
+            "before": 0,
+            "after": 1,
+            "delta": 1,
+            "passed": true
+          },
+          {
+            "kind": "position",
+            "actual": [
+              18704.044921875,
+              10804.517578125,
+              501.0
+            ],
+            "horizontal_error": 0.5452053194274898,
+            "vertical_error": 0.0,
+            "speed": 1.9310283918784496e-09,
+            "on_ground": true,
+            "passed": true
+          },
+          {
+            "kind": "native_region_visit",
+            "index": 0,
+            "sequence": 109665,
+            "passed": true
+          }
+        ],
+        "route_boundary": {
+          "actor_uid": 78,
+          "session_id": "Player878383c56e",
+          "opening_sequence": 108584,
+          "final_sequence": 111613,
+          "opening_tick": 21714,
+          "final_tick": 22278,
+          "opening_prefix_preserved": true,
+          "new_sample_count": 532,
+          "whole_history_including_setup_maximum_step_m": 173.20508075688772,
+          "post_readiness_maximum_recorded_step_m": 0.2696179236773149,
+          "post_readiness_visits": [
+            {
+              "sequence": 109665,
+              "position": [
+                18731.6796875,
+                10820.0302734375,
+                501.0
+              ]
+            }
+          ]
+        },
+        "native_admission": {
+          "environment": {
+            "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/experiments/VE-S04-parallel-route2-20261029-st/game/environment.json",
+            "sha256": "0e1fa2799c36f7951e69d5603e4a3002d7ed2161647807aae918fbd5c60134b2"
+          },
+          "runtime_exactly_equals_pinned_config": true,
+          "source_manifest": {
+            "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/experiments/VE-S04-parallel-route2-20261029-st/source-manifest.json",
+            "sha256": "aac139d0a76eb723154a2c98dfc37646c48de1111141098f3034e95737f867b6"
+          },
+          "source_commit": "6614b93b1224f3515d80a0b09cc70ac0fbcec776",
+          "adapter_files_verified": 32,
+          "ready_supply_age_host_seconds_upper_bound": 1.5738782295957208,
+          "worker_cleanup": {
+            "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/experiments/VE-S04-parallel-route2-20261029-st/game/cleanup.json",
+            "sha256": "54b05233cd2364961867e7e0123dc3175d75c8ac16e044a8b76f26a5f246a002"
+          },
+          "native_cleanup": {
+            "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/experiments/VE-S04-parallel-route2-20261029-st/game/native-cleanup.json",
+            "sha256": "b21aa4a1bb2dc9c3e1a211b5f5ca4077f4913d0a6f1874a6f56923dfc7e99518"
+          },
+          "lease": {
+            "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/leases/292ffd37be3247f4b33e405767bca165.json",
+            "sha256": "85da775c5ef5e8527ee28dd82c0711311752f76d729216f7e266955a46614a4a"
+          },
+          "worker_returncode": 0,
+          "server_stopped": true,
+          "renderer_process_gone": true
+        }
+      },
       "historical_vm_resource_timing": {
         "journal": {
           "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/experiments/VE-S04-contained-image-reference-vm/game/native.jsonl",

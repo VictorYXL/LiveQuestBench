@@ -74,14 +74,19 @@ def replay(task, artifact):
         first, last = (row["private_route_evidence"] for row in (initial, final))
         samples = last["route_samples"]
         added = samples[len(first["route_samples"]):]
+        measured = first["route_samples"][-1:] + added
         result_row["route_boundary"] = {
             "actor_uid": first["uid"], "session_id": first["session_id"],
             "opening_sequence": first["samples"], "final_sequence": last["samples"],
             "opening_tick": first["through_tick"], "final_tick": last["through_tick"],
             "opening_prefix_preserved": samples[:len(first["route_samples"])] == first["route_samples"],
             "new_sample_count": len(added),
-            "maximum_recorded_step_m": max(
+            "whole_history_including_setup_maximum_step_m": max(
                 (math.dist(a["position"], b["position"]) for a, b in zip(samples, samples[1:])),
+                default=0,
+            ),
+            "post_readiness_maximum_recorded_step_m": max(
+                (math.dist(a["position"], b["position"]) for a, b in zip(measured, measured[1:])),
                 default=0,
             ),
             "post_readiness_visits": [
@@ -276,6 +281,38 @@ def main():
     if (artifact / "after").exists() and (artifact / "reference.json").exists():
         task = load_task(ROOT / "config/veloren/tasks/structured_tools/subterranean_switchback.yaml")
         switchback["current_route2"] = replay(task, artifact)
+        current = switchback["current_route2"]
+        assert current["terminal_success"]
+        assert current["native_route_schemas"] == ["native-client-route/2"]
+        assert current["route_boundary"]["post_readiness_maximum_recorded_step_m"] <= 4
+        environment = load(artifact / "game/environment.json")
+        assert environment["runtime"] == runtime_config
+        manifest = load(artifact / "source-manifest.json")
+        for name, expected in manifest["sha256"].items():
+            assert digest(ROOT / name) == expected
+        cleanup = load(artifact / "game/cleanup.json")
+        native_cleanup = load(artifact / "game/native-cleanup.json")
+        lease_path = dev / "leases/292ffd37be3247f4b33e405767bca165.json"
+        lease = load(lease_path)
+        assert cleanup["worker_returncode"] == 0 and native_cleanup["server_stopped"]
+        assert lease["status"] == "finished" and lease["returncode"] == 0
+        assert not Path("/proc", str(environment["renderer_pid"])).exists()
+        setup = load(artifact / "game/fixture.json")
+        boundaries = load(artifact / "game/boundaries.json")
+        current["native_admission"] = {
+            "environment": pin(artifact / "game/environment.json"),
+            "runtime_exactly_equals_pinned_config": True,
+            "source_manifest": pin(artifact / "source-manifest.json"),
+            "source_commit": manifest["head"],
+            "adapter_files_verified": len(manifest["sha256"]),
+            "ready_supply_age_host_seconds_upper_bound": (
+                boundaries["ready_at_ns"] / 1e9 - setup["supplies"][0]["creation_wall_interval"][0]
+            ),
+            "worker_cleanup": pin(artifact / "game/cleanup.json"),
+            "native_cleanup": pin(artifact / "game/native-cleanup.json"),
+            "lease": pin(lease_path),
+            "worker_returncode": 0, "server_stopped": True, "renderer_process_gone": True,
+        }
     historical_vm = dev / "experiments/VE-S04-contained-image-reference-vm"
     switchback["historical_vm_resource_timing"] = pickup_timing(historical_vm)
     switchback["unchanged_vm_controls"] = []

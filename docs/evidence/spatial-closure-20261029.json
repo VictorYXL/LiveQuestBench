@@ -9,11 +9,34 @@
     "exact_task_import": "cc5fa62",
     "exact_regression_import": "227b5c0",
     "current_native_evidence": "output/temp/task_development/veloren-route-v2-contact-fix/vm-dogleg-stdlib-verification.json",
+    "current_construct": "Actual upper-arch access and a lower grounded/still endpoint exercise 3D spatial control. The supplied hide is not an acquisition subtask. No prescribed climb path, continuous survival or no-death descent is required; ordinary respawn is lawful and can simplify return.",
+    "difficulty": {"st": 3, "vm": 4, "uncertainty": "high; provisional mechanics judgment, not inferred from controller or model failures; nonblocking calibration deferred"},
     "historical_evidence_boundary": "cliff_ledge_ascent.json retains route/1 history only. Its baseline and witness outcomes do not qualify route/2. Current acceptance instead uses the retained route/2 ST and VM witnesses and exact current-scorer replay.",
     "experiment_boundary": "Missing or interrupted model outcomes are not task acceptance blockers."
   },
   "VE-S04": {
     "task": "subterranean_switchback",
+    "targeted_check_status": "completed_success_and_cleaned",
+    "native_evidence": "output/temp/task_development/experiments/VE-S04-parallel-route2-20261029-st",
+    "native_source_commit": "6614b93b1224f3515d80a0b09cc70ac0fbcec776",
+    "native_result": {
+      "active_seconds": 18.84083287604153,
+      "public_actions": 40,
+      "initial_success": false,
+      "whole_success": true,
+      "health": 100,
+      "tough_hide_delta": 1,
+      "return_error_m": 0.5452053194274898,
+      "native_region_sequence": 109665,
+      "native_region_position": [18731.6796875, 10820.0302734375, 501.0],
+      "new_post_readiness_samples": 532,
+      "post_readiness_maximum_recorded_step_m": 0.2696179236773149,
+      "opening_prefix_preserved": true
+    },
+    "version_bridge": "Current route2 ST proves affected observer behavior on the exact task. Historical whole VM remains route1-labelled and supplies unchanged physical/public-input/resource/return feasibility. Same VM facade/session bytes, passive-observer transform-equality tests and runtime/source pins support transfer; no invented current-route2 VM transcript or mandatory VM victory.",
+    "historical_vm_resource_evidence": "Same-player native Collected event at native.jsonl line56127, initial hide0 and final1. Creation-to-pickup host age is at most128.632721s, approximately171.367279s below300; these are host estimates, not exact server Object spawned_at clocks. Current initializer readiness age is separately measured at1.573878s.",
+    "replay": "checks/parallel-spatial-replay.json",
+    "difficulty": {"st": 2, "vm": 3, "uncertainty": "high; independent provisional spatial judgment, nonblocking calibration deferred"},
     "specific_uncertainty": "The historical ground-route successes use native-client-route/1. Current itinerary requires native-client-route/2 ordered actual lower-workshop samples.",
     "authorized_targeted_check": "One model-free ST native execution of the unchanged archived bounded public controller, under the exact current adapter and checksum-pinned contact-fixed route/2 runtime.",
     "controller": "output/temp/task_development/experiments/VE-S04-contained-public-reference-st/reference-controller.py",
@@ -29,6 +52,9 @@
     "recovered_status": "finished_with_returncode_minus15_before_readiness",
     "no_terminal_artifacts": ["before", "after", "reference.json", "control.json"],
     "classification": "Interrupted initialization; neither a gameplay failure nor a success. Previous valid failed references and ST155.424s whole success remain unchanged.",
-    "remaining_review": "Public-image bow line acquisition and native-grounded composition of both lethal targets and return, within original resources and time. No required model victory."
+    "remaining_review": "Public-image bow line acquisition and native-grounded composition of both lethal targets and return, within original resources and time. No required model victory.",
+    "current_scorer_replay": "All three retained ended episodes reproduce their exact full evaluations: whole ST success and two valid VM failures. Automatic c7f initialization interruption adds no gameplay evidence.",
+    "no_speculative_patch": "No blocking task/interface/scoring bug was demonstrated by the interrupted initialization or retained VM aiming limitations. Do not modify task HP, observations, goal, resources or lethal attribution to manufacture acceptance.",
+    "next_specific_gate": "An exact original-condition public-VM firing-line/aim witness, or independently reviewed native-grounded equivalent, must connect image-visible target access to lawful bow hits and jointly attainable two-target/return resources and timing. A whole controller/model win is not required."
   }
 }
