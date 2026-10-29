@@ -1,0 +1,70 @@
+id: quarry_clue_triangulation
+game: minecraft
+task_type: structured_tool
+task: "Recover the original Survey Token from the active quarry and return to the yellow field-station marker. The\
+  \ notice chest ahead contains two current survey clues and a visibly dated old note. Compare the clues with the\
+  \ landmarks at three quarry entrances roughly 25\u201345 blocks from camp. Other sites may be explored; ordinary\
+  \ resources there are not the token. Finish with at least 1 HP, grounded and still."
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/quarry_clue_triangulation
+  instance: 1.20.4
+  difficulty: easy
+  player_state:
+    position:
+    - 0.5
+    - 72
+    - 0.5
+    dimension: minecraft:overworld
+    yaw: 0
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+    - slot: 0
+      item: stone_pickaxe
+      count: 1
+    - slot: 1
+      item: torch
+      count: 16
+    - slot: 2
+      item: bread
+      count: 8
+evaluator:
+  name: quarry
+  parameters:
+    position:
+      target:
+      - 0.5
+      - 72
+      - 0.5
+      horizontal_tolerance: 3
+      vertical_tolerance: 1
+      max_speed: 0.1
+    cargo:
+    - id: quarry_survey_token
+      item: minecraft:amethyst_shard
+      chest:
+      - 34
+      - 72
+      - 8
+capabilities:
+  primary:
+  - information_adaptation
+  secondary:
+  - spatial_interaction
+tools:
+- MoveTool
+- LookAtPositionTool
+- SelectTool
+- StopTool
+- JumpTool
+- DigTool
+- PlaceTool
+- UseHeldItemTool
+- RespawnTool
+- InspectContainerTool
+- TakeContainerItemTool

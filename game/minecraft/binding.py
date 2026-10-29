@@ -114,6 +114,11 @@ def create_binding(
         from game.minecraft.evaluators.switch_transfer import evaluate_switch, verify_initial_switch
         validate_state(**parameters)
         score = evaluate_switch
+    elif evaluator == "quarry":
+        from game.minecraft.evaluators.quarry import evaluate_quarry
+        inspect.signature(evaluate_quarry).bind(Path(), Path(), None, **parameters)
+        validate_cargo(**parameters)
+        score = evaluate_quarry
     elif evaluator == "route_transfer":
         from game.minecraft.evaluators.route_transfer import evaluate_route, validate_route, verify_layout
         validate_route(**parameters)
@@ -148,7 +153,7 @@ def create_binding(
             verify_initial_shielded_cargo(before, game.player_uuid, **parameters)
         if evaluator == "expedition":
             verify_expedition(before, game.player_uuid)
-        if evaluator == "cargo":
+        if evaluator in ("cargo", "quarry"):
             verify_initial_cargo(before, game.player_uuid, **parameters)
         if evaluator == "switch_transfer":
             verify_initial_switch(before, game.player_uuid, **parameters)

@@ -1,0 +1,15 @@
+{
+  "schema": "minecraft-quarry-visits/1",
+  "sha256": {
+    "pack.mcmeta": "856e76c593d145309ca5c8e9d7f49fa46f55b8f76700df0819b06aad556b5c31",
+    "data/minecraft/tags/functions/tick.json": "ba8a09ce941fa62c6decbad8bd740050078971f1d4ed3e1affcc37b68852591f",
+    "data/livequest_quarry/predicates/site0.json": "adf012df0268ec1d253a9410cead0886f4805cdc9441c451cf95d6f9c8696767",
+    "data/livequest_quarry/functions/enter0.mcfunction": "348afb831b144618e0e2340b5fcd9b31852d4fb6340f7fec3fabc3d6e1ce964b",
+    "data/livequest_quarry/predicates/site1.json": "7d584333bab629955a7775c4204791c683ec1236a7477df17dc51fe699386c92",
+    "data/livequest_quarry/functions/enter1.mcfunction": "e1a24129e5a594977135f53c44f0d6914be19767271598baae31ef1df4ed382f",
+    "data/livequest_quarry/predicates/site2.json": "d7590f7f4b7473407e7c4701ce3783038acb4e4d7fbf45161320d0dcb14700c4",
+    "data/livequest_quarry/functions/enter2.mcfunction": "c96cf31b46cab91b05bd312f9468856301dade130f437ce47c2ff5334b34111f",
+    "data/livequest_quarry/functions/sample.mcfunction": "ef84bbc95c361203165e00e76097f12a1358ea827ac88ab8de74baa477503e43",
+    "data/livequest_quarry/functions/tick.mcfunction": "44118679f63c28c83e2531f12fbd6583f61068351e86b4cbf2e3762a1415a472"
+  }
+}
