@@ -1,0 +1,522 @@
+{
+  "schema": "livequest-shared-route2-observer-repair/1",
+  "status": "native_observer_repaired_task_qualification_not_implied",
+  "source_commit": "ead53156a06cf3bdc91f3e5a8ca72bd23fc9dccd",
+  "prior_main": "252d65799912d040aca5a0f6508c24777c9c536c",
+  "diagnosis": {
+    "probe": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/veloren-route-v2-diagnostic/opening-probe/diagnostic.json",
+    "probe_sha256": "fd658a5af3074ccc4a0a5e4572bb73b5f6ddd7a8a7f0f98bfa2d3491f58f964a",
+    "runtime_sha256": "04109dc8b8be0f1d2cd06dcf601934c205b5ae7af57fe70273880812e702c632",
+    "public_actions": 0,
+    "error": "NativeRefusal: native route_evidence refused: {'code': 'invalid_motion_evidence', 'message': 'native actor or samples changed: invalid=true samples=10364 sampled_uid=Some(76) current_uid=Some(76) route_rejection_bits=8 trace_entity_changed=false nonfinite_route=false nonfinite_glide=false nonfinite_motion=false motion_uid_changed=false'}",
+    "last_valid": {
+      "phase": "during_unchanged_fixture_authoring",
+      "tick": 10330,
+      "actor": {
+        "lifecycle": "1320599-1793266371331526894-1:Entity(0, Generation(1))",
+        "uid": 76
+      },
+      "position": [
+        18682.5,
+        10814.5,
+        501.0
+      ],
+      "velocity": [
+        0.0,
+        1.401298464324817e-45,
+        0.0
+      ],
+      "valid": true,
+      "samples": 51656,
+      "schema": "native-client-route/2",
+      "stored_points": 6
+    },
+    "first_rejected": {
+      "phase": "during_unchanged_fixture_authoring",
+      "tick": 10362,
+      "actor": {
+        "lifecycle": "1320599-1793266371331526894-1:Entity(0, Generation(1))",
+        "uid": 76
+      },
+      "position": [
+        18682.5,
+        10814.5,
+        501.0
+      ],
+      "velocity": [
+        4.76837158203125e-07,
+        -2.086162567138672e-07,
+        2.86102294921875e-06
+      ],
+      "valid": false,
+      "error": "NativeRefusal: native route_evidence refused: {'code': 'invalid_motion_evidence', 'message': 'native actor or samples changed: invalid=true samples=10364 sampled_uid=Some(76) current_uid=Some(76) route_rejection_bits=8 trace_entity_changed=false nonfinite_route=false nonfinite_glide=false nonfinite_motion=false motion_uid_changed=false'}"
+    },
+    "finding": "NativeRouteTrace.reject(8) ran after the voxel bounding-sphere broad-phase check, before narrow-phase collision. Merely nearby volumes poisoned sticky evidence even without voxel contact.",
+    "excluded_observed_causes": [
+      "pending overflow",
+      "nonfinite points",
+      "nonfinite motion",
+      "actor UID change",
+      "trace entity change"
+    ],
+    "regression_confirmation": "The uncorrected producer fails the empty-volume candidate case with invalid=true; corrected producer admits empty/distant-voxel candidates and still rejects real wall/floor contact."
+  },
+  "correction": {
+    "patch_sha256": "6208f2ff059bbde5af61eaf64a1bf50043a5f8305d5cad958ac2fba60a3c07e7",
+    "behavior": "Native collision resolution reports actual solid resolution, ground snap, adjacent wall or liquid contact. Only actual collider-local contacts reject; coarse candidates alone do not. Physics position/velocity/orientation are unchanged with the observer on/off.",
+    "preserved_guarantees": [
+      "route/2 only; no route/1 union acceptance",
+      "accepted native terrain increments, no interpolation",
+      "4m distance gap gate unchanged",
+      "identity, monotonic counters and append-only history unchanged",
+      "4096 pending / 1048576 stored limits and sticky invalidity unchanged",
+      "no readiness reset or false-valid fallback",
+      "actual unsupported collider contact remains fail-closed"
+    ],
+    "diagnostics": "Private error detail distinguishes overflow, nonfinite points, unsupported collider/local contact, entity changes, UID changes and missing samples."
+  },
+  "runtime": {
+    "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/veloren-route-v2-contact-fix/candidate-runtime.json",
+    "sha256": "f90ca9a97e20a106e6d749368319cdd45243a2f902605e7797c6f8e3613c3793",
+    "renderer_sha256": "5141b9ac796d5e71f5ba999f910777d364480cfb2b0344731425e1a65d1c5878",
+    "source_manifest_sha256": "2b93892d262d632081f626dd683847359e41e45780d01c69f63088d2d7df2a7c",
+    "build_receipt_sha256": "86eb93b4b3cf2a47002ad61a124c553289c0cf9437e4a1a928c768677cc0065e",
+    "folded_patch_equivalence": {
+      "original_patch_sha256": "e2fc491d5bb5d91fdc2b6435ef485e3c756674e31df30661a8dd0c3a1e683b8a",
+      "folded_patch_sha256": "6208f2ff059bbde5af61eaf64a1bf50043a5f8305d5cad958ac2fba60a3c07e7",
+      "pre_0008_sha256": {
+        "common/src/comp/mod.rs": "60cd631df10594b70334caa232218f0991cdb540504c37d8e5fdf56a26e4398e",
+        "common/src/comp/phys.rs": "a64d854f6ab822a3f116905a6661c103096c07728c4a12f1e4943abb7b5a7612",
+        "common/systems/src/phys/collision.rs": "862bd0fef2d2981bd76c4a9c1ee0c069d4be520e66f60fed4b22eedef4622843",
+        "common/systems/src/phys/mod.rs": "9b3ce603f2ecbc214a70c6a6923e6254aa069b6b0adb7d4ffa07edba79934453",
+        "common/systems/tests/phys/fixture_authoring.rs": "5137b9d3af257248c92a83bf8869941fdb95c1ba5ff0119367ad02c46099d8e3",
+        "voxygen/src/native_agent.rs": "baf629310e767d082ad2c49e2a8d295639e641df239c3f3bd76a6e904ba32d09"
+      },
+      "compiled_source_manifest_sha256": "2b93892d262d632081f626dd683847359e41e45780d01c69f63088d2d7df2a7c",
+      "equivalent_file_count": 1160,
+      "all_compiled_files_equal": true,
+      "raw_build_runtime_sha256": "3ccce6a0962e99f53af4c2d3a3630c1da4f811ec3f9644f52999bc3997b7a894",
+      "scope": "Source-equivalent patch folding only; no binary modification or schema relabeling."
+    },
+    "scope": "One shared corrected renderer, existing owned cache, offline -j2. No per-task duplicate builds, no original runtime overwrite, no new dependencies."
+  },
+  "regression": {
+    "failing_before": {
+      "command": [
+        "/home/msra/GameAgent/velorenbench-auto-525af64d/toolchain/cargo/bin/cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "-p",
+        "veloren-common-systems",
+        "--test",
+        "phys",
+        "-j",
+        "2",
+        "route_trace_distinguishes_voxel_candidates_from_actual_contacts"
+      ],
+      "returncode": 101,
+      "elapsed_seconds": 103.69115148298442,
+      "test_sha256": "5de4e9d50bdce3625431415d3329daef29445b0c22f0d4162a171b3365d3de61",
+      "log_sha256": "b53c02d3b43d8626e2db2f0121f72c9bb9ed18f89c931c30066452228938d78f"
+    },
+    "native_tests": [
+      {
+        "command": [
+          "/home/msra/GameAgent/velorenbench-auto-525af64d/toolchain/cargo/bin/cargo",
+          "test",
+          "--offline",
+          "--locked",
+          "-p",
+          "veloren-common-systems",
+          "--test",
+          "phys",
+          "-j",
+          "2",
+          "route_trace"
+        ],
+        "returncode": 0,
+        "log_sha256": "bdab180aaa3aa79973afa5e349560cde05f633687fac828f1098b6e9e5b69c67"
+      },
+      {
+        "command": [
+          "/home/msra/GameAgent/velorenbench-auto-525af64d/toolchain/cargo/bin/cargo",
+          "test",
+          "--offline",
+          "--locked",
+          "-p",
+          "veloren-voxygen",
+          "--lib",
+          "--no-default-features",
+          "--features",
+          "simd,shaderc-from-source",
+          "-j",
+          "2",
+          "route_"
+        ],
+        "returncode": 0,
+        "log_sha256": "57dd313371198f144e5f359eb6fb9acbadd78651f136c0c8cd675edc3db55a99"
+      }
+    ],
+    "native_result": "5 physics tests and 2 renderer tests passed.",
+    "offline_result": "67 composed task-admission, itinerary, route-distance, public-energy and cancellation tests passed.",
+    "not_a_substitute_for_native": true
+  },
+  "native_validation": {
+    "classification": "route_v2_local_native_validation_not_formal_baseline",
+    "runtime_sha256": "f90ca9a97e20a106e6d749368319cdd45243a2f902605e7797c6f8e3613c3793",
+    "adapter_commit": "ead53156a06cf3bdc91f3e5a8ca72bd23fc9dccd",
+    "main_integrated": false,
+    "model_runs": 0,
+    "azure_requests": 0,
+    "checks": [
+      {
+        "track": "st",
+        "artifact": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/experiments/VE-S03-contact-fixed-route-v2-reference-st",
+        "task_sha256": "81dd32e178c971a0dfa21f4ee1a78bad2d188ebc478c813e451dc3e4f3ab95b2",
+        "source_manifest_sha256": "2c634081d1e4c80bd983006c0a1df774c751d60dffe83f0e98ae55954f960ac9",
+        "reference_sha256": "997c8abcad1e510f0a8f1d0eb972d785e298637aac7f87460db09304a3cf5b4e",
+        "controller_sha256": "5d37f3ac57438b53b259d01fa8d033650f24a647efaf040152e52982ccf28b7c",
+        "returncode": 0,
+        "status": "completed",
+        "public_action_count": 107,
+        "configured_native_schema": "native-client-route/2",
+        "environment_sha256": "bff2a3e4cd131ef9f7f427480dc48329b723b4f656c060ad5b6de79f5b4328e3",
+        "worker_returncode": 0,
+        "server_stopped": true,
+        "renderer_process_gone": true,
+        "native_success": true,
+        "initial_success": false,
+        "opening_valid": true,
+        "classification": "valid_native_game_success",
+        "controller_returncode": 0,
+        "active_seconds": 90.32538704387844,
+        "native_schema": "native-client-route/2",
+        "native_route_counters": [
+          85987,
+          99803
+        ],
+        "native_tick_boundaries": [
+          17195,
+          19882
+        ],
+        "stored_route_points": [
+          33,
+          1179
+        ],
+        "maximum_measured_adjacent_gap": 1.0224567402313562,
+        "evaluation": {
+          "success": true,
+          "checks": [
+            {
+              "kind": "health",
+              "actual": 95.28125,
+              "minimum": 0,
+              "passed": true
+            },
+            {
+              "kind": "inventory",
+              "item": "common.items.crafting_ing.hide.animal_hide",
+              "min_count": 1,
+              "before": 1,
+              "after": 1,
+              "delta": 0,
+              "passed": true
+            },
+            {
+              "kind": "position",
+              "actual": [
+                18711.787109375,
+                10808.5205078125,
+                503.0
+              ],
+              "horizontal_error": 0.2878408650390451,
+              "vertical_error": 0.0,
+              "speed": 2.4780521547014994e-09,
+              "on_ground": true,
+              "passed": true
+            },
+            {
+              "kind": "native_region_visit",
+              "index": 0,
+              "sequence": 97160,
+              "passed": true
+            }
+          ],
+          "semantics": "simultaneous terminal state; no action attribution or continuous-survival claim Ordered three-dimensional native route visits after readiness. Item counts do not attribute pickups to a particular source UID."
+        },
+        "before_snapshot_sha256": "3c0b2beaa329f022e752c8629f85228a51ffe417c301e18a74a3868e132c186d",
+        "after_snapshot_sha256": "6a4f14d5e45494149bca5ed1f349a2ddec19c0ccf050efeb19ba0561b441bcf5",
+        "terminal_health": {
+          "can_have_death_protection": true,
+          "current": 95.28125,
+          "dead": false,
+          "death_protection": true,
+          "downed": false,
+          "fraction": 0.9528124928474426,
+          "maximum": 100.0
+        },
+        "maximum_measured_height": 541.1184692382812
+      },
+      {
+        "track": "vm",
+        "artifact": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/experiments/VE-S03-contact-fixed-route-v2-reference-vm",
+        "task_sha256": "0a147bc4259a39b3a1e7e04e8a4c31c287ac2f051f78d6cde05fde5fd85464a2",
+        "source_manifest_sha256": "2c634081d1e4c80bd983006c0a1df774c751d60dffe83f0e98ae55954f960ac9",
+        "reference_sha256": "61ac28bbb921928f31596766cb5b5947cf20598ba1637b60a8a95e18af304dc0",
+        "controller_sha256": "8d735eb215710cb51b1041641a1ef9e70ddb456f15c5cb99137559b6c21c0f03",
+        "returncode": 0,
+        "status": "completed",
+        "public_action_count": 12,
+        "configured_native_schema": "native-client-route/2",
+        "environment_sha256": "03a6206a563dcb73a10dbc0982748fd4a06188285c86771ca5e1953dc9727c52",
+        "worker_returncode": 0,
+        "server_stopped": true,
+        "renderer_process_gone": true,
+        "native_success": false,
+        "initial_success": false,
+        "opening_valid": true,
+        "classification": "valid_native_game_failure",
+        "controller_returncode": 0,
+        "active_seconds": 91.29899351671338,
+        "native_schema": "native-client-route/2",
+        "native_route_counters": [
+          87125,
+          97425
+        ],
+        "native_tick_boundaries": [
+          17421,
+          19377
+        ],
+        "stored_route_points": [
+          47,
+          1260
+        ],
+        "maximum_measured_adjacent_gap": 0.3107884505076906,
+        "evaluation": {
+          "success": false,
+          "checks": [
+            {
+              "kind": "health",
+              "actual": 97.12890625,
+              "minimum": 0,
+              "passed": true
+            },
+            {
+              "kind": "inventory",
+              "item": "common.items.crafting_ing.hide.animal_hide",
+              "min_count": 1,
+              "before": 1,
+              "after": 1,
+              "delta": 0,
+              "passed": true
+            },
+            {
+              "kind": "position",
+              "actual": [
+                18709.396484375,
+                10802.919921875,
+                501.0
+              ],
+              "horizontal_error": 5.963392479597721,
+              "vertical_error": 2.0,
+              "speed": 3.413727646396437e-10,
+              "on_ground": true,
+              "passed": false
+            },
+            {
+              "kind": "native_region_visit",
+              "index": 0,
+              "sequence": null,
+              "passed": false
+            }
+          ],
+          "semantics": "simultaneous terminal state; no action attribution or continuous-survival claim Ordered three-dimensional native route visits after readiness. Item counts do not attribute pickups to a particular source UID."
+        },
+        "before_snapshot_sha256": "67766e70072c8b850337988a3f23ba23a7b3b35c8d7bccc0766fe9ef87295f73",
+        "after_snapshot_sha256": "30eaa0349f762db2957e37b924618f133ccc2685115059adf05549bc1a319593",
+        "terminal_health": {
+          "can_have_death_protection": true,
+          "current": 97.12890625,
+          "dead": false,
+          "death_protection": true,
+          "downed": false,
+          "fraction": 0.9712890386581421,
+          "maximum": 100.0
+        },
+        "maximum_measured_height": 541.07275390625,
+        "motor_plan_sha256": "0b0dbe770d9b5655b49c5305c19bf43b453e832f508919119f0cc0c4461f5294",
+        "public_motor_operation_count": 393
+      }
+    ],
+    "baseline_gate": "A new authorized final ST and VM Baseline pair is still required for the frozen route/2 condition. Changed sampled region coverage and runtime/scorer provenance do not permit transplanting route/1 measurements. Historical valid failures remain preserved.",
+    "central_leases": [
+      {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/leases/05dc55909f4c4109b02c1eb6a2e93815.json",
+        "sha256": "8bc8f6b134bd77f5cfb0770f7f3ca317a673c3e32eb6208baf9d990f3e9e68a0",
+        "task": "VE-S03",
+        "track": "st",
+        "kind": "reference",
+        "cwd": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/worktrees/VE-S03-route-v2",
+        "credential_owner": null,
+        "uses_model": false,
+        "episode_slot": 6,
+        "lease_pid": 1364532,
+        "started_at": 1793267499.3064811,
+        "status": "finished",
+        "command_pid": 1364533,
+        "returncode": 0,
+        "finished_at": 1793268193.6006558
+      },
+      {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/leases/320055d1e79e44b1a28d06f89db6966f.json",
+        "sha256": "f13aefd72a6d56dc5cbaf6ada9c8b7c94927670c0a1796a53550687b64f7d32e",
+        "task": "VE-S03",
+        "track": "vm",
+        "kind": "reference",
+        "cwd": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/worktrees/VE-S03-route-v2",
+        "credential_owner": null,
+        "uses_model": false,
+        "episode_slot": 6,
+        "lease_pid": 1387155,
+        "started_at": 1793268193.6367033,
+        "status": "finished",
+        "command_pid": 1387156,
+        "returncode": 0,
+        "finished_at": 1793268916.773935
+      }
+    ],
+    "paired_native_success": false,
+    "both_openings_valid_and_measurement_completed": true
+  },
+  "current_scorer_replay": {
+    "classification": "offline_current_scorer_replay_of_new_native_boundaries",
+    "main_commit": "d3d29d7508708f0590e49641787257ba9711ce09",
+    "main_source_sha256": {
+      "game/route_transfer.py": "2019501c84aeaaa02b7e2e626b306af017671a0635666005e58c0b0935fc2ece",
+      "game/veloren/evaluators/itinerary.py": "80211f112c5f10d6a2e969fe7389d108377fa27d1592e1c2eed5f053ad1a80d4",
+      "game/veloren/evaluators/endpoints.py": "ca445973cf0a7295f8801f8667e413da1d4f92e2d146d710d560ceb5bec1fc9c"
+    },
+    "native_adapter_commit": "ead53156a06cf3bdc91f3e5a8ca72bd23fc9dccd",
+    "native_source_not_relabelled": true,
+    "scorer_delta": "Main additionally rejects downed health in state_checks; no native producer/control change.",
+    "checks": [
+      {
+        "track": "st",
+        "evaluation": {
+          "success": true,
+          "checks": [
+            {
+              "kind": "health",
+              "actual": 95.28125,
+              "minimum": 0,
+              "passed": true
+            },
+            {
+              "kind": "inventory",
+              "item": "common.items.crafting_ing.hide.animal_hide",
+              "min_count": 1,
+              "before": 1,
+              "after": 1,
+              "delta": 0,
+              "passed": true
+            },
+            {
+              "kind": "position",
+              "actual": [
+                18711.787109375,
+                10808.5205078125,
+                503.0
+              ],
+              "horizontal_error": 0.2878408650390451,
+              "vertical_error": 0.0,
+              "speed": 2.4780521547014994e-09,
+              "on_ground": true,
+              "passed": true
+            },
+            {
+              "kind": "native_region_visit",
+              "index": 0,
+              "sequence": 97160,
+              "passed": true
+            }
+          ],
+          "semantics": "simultaneous terminal state; no action attribution or continuous-survival claim Ordered three-dimensional native route visits after readiness. Item counts do not attribute pickups to a particular source UID."
+        },
+        "exactly_equals_recorded_evaluation": true
+      },
+      {
+        "track": "vm",
+        "evaluation": {
+          "success": false,
+          "checks": [
+            {
+              "kind": "health",
+              "actual": 97.12890625,
+              "minimum": 0,
+              "passed": true
+            },
+            {
+              "kind": "inventory",
+              "item": "common.items.crafting_ing.hide.animal_hide",
+              "min_count": 1,
+              "before": 1,
+              "after": 1,
+              "delta": 0,
+              "passed": true
+            },
+            {
+              "kind": "position",
+              "actual": [
+                18709.396484375,
+                10802.919921875,
+                501.0
+              ],
+              "horizontal_error": 5.963392479597721,
+              "vertical_error": 2.0,
+              "speed": 3.413727646396437e-10,
+              "on_ground": true,
+              "passed": false
+            },
+            {
+              "kind": "native_region_visit",
+              "index": 0,
+              "sequence": null,
+              "passed": false
+            }
+          ],
+          "semantics": "simultaneous terminal state; no action attribution or continuous-survival claim Ordered three-dimensional native route visits after readiness. Item counts do not attribute pickups to a particular source UID."
+        },
+        "exactly_equals_recorded_evaluation": true
+      }
+    ],
+    "both_complete_evaluations_equal": true
+  },
+  "scope": "Only shared observer contact classification, private diagnostics, native regressions and provenance. No task definitions or scorer gates changed.",
+  "remaining_limits": {
+    "formal_baselines": "After whole-task VM native feasibility is established, at least one new authorized final ST and one final VM Baseline remain required on the corrected /2 source/runtime/scorer binding. No model or Azure run was authorized or launched.",
+    "vm_policy_boundary": "The unchanged predeclared open-loop motor plan executed all393 public operations without interface errors. It reached height541.073 but missed the upper 3D region and the return floor. This is a genuine game failure, not infrastructure invalidity or a difficulty rating. Historical plan success does not establish reliability on this condition; no unchanged retry was made. A separately bounded public-image-feedback VM proof remains needed before claiming supported whole-task VM feasibility.",
+    "difficulty": {
+      "st": 3,
+      "vm": 4,
+      "status": "Historical provisional engineering judgement; not recalibrated from failures or guided success."
+    },
+    "measurement": "Sampled 3D visits plus ordinary endpoint conditions; not continuous survival or item-source identity.",
+    "pickup_server_composition": "This manifest does not declare native-server-pickups/1. Existing select_server rejects an older pickup runtime whose base renderer differs. No guard was waived; authenticated client/server composition needs separate source binding and native validation.",
+    "shared_tasks": {
+      "VE-S03": "This report covers only the exact frozen candidate and newly recorded outcomes.",
+      "VE-S04": "subterranean_switchback retains /1 historical boundaries; fresh legal whole-task ST/VM /2 measurement and separately authorized final Baselines remain needed. Shared repair alone does not qualify it.",
+      "VE-L01": "route_schema_transfer is the only original-six route-enabled task. Needs whole-task ST/VM /2 evidence with the unchanged 4m gap gate; historical VM did not establish full-route feasibility.",
+      "original_six_not_route_enabled": [
+        "mountain_workshop_circuit",
+        "self_funded_expedition",
+        "hostile_route_supply_recovery",
+        "native_contract_settlement",
+        "coordinated_route_hunt"
+      ]
+    },
+    "audit_source": "output/temp/task_development/checks/veloren-independent-quality.json",
+    "no_original_task_definition_edits": true
+  },
+  "task_admission": "S03 remains unadmitted pending whole-task VM proof and new authorized final gates. S04 and original L01 are not requalified by this shared fix."
+}

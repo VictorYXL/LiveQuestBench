@@ -11,7 +11,7 @@
      poise::{Poise, PoiseChange, PoiseState},
 --- a/common/src/comp/phys.rs
 +++ b/common/src/comp/phys.rs
-@@ -18,6 +18,45 @@
+@@ -18,6 +18,54 @@
  
  impl Component for Pos {
      type Storage = VecStorage<Self>;
@@ -21,7 +21,7 @@
 +pub struct NativeRouteTrace {
 +    pub entity: specs::Entity,
 +    points: std::sync::Mutex<Vec<Vec3<f32>>>,
-+    invalid: std::sync::atomic::AtomicBool,
++    invalid: std::sync::atomic::AtomicU8,
 +}
 +
 +impl NativeRouteTrace {
@@ -29,12 +29,16 @@
 +        Self {
 +            entity,
 +            points: std::sync::Mutex::new(Vec::new()),
-+            invalid: std::sync::atomic::AtomicBool::new(false),
++            invalid: std::sync::atomic::AtomicU8::new(0),
 +        }
 +    }
 +
-+    pub fn reject(&self) {
-+        self.invalid.store(true, std::sync::atomic::Ordering::Relaxed);
++    pub fn reject(&self, reason: u8) {
++        self.invalid.fetch_or(reason, std::sync::atomic::Ordering::Relaxed);
++    }
++
++    pub fn rejection_reasons(&self) -> u8 {
++        self.invalid.load(std::sync::atomic::Ordering::Relaxed)
 +    }
 +
 +    pub fn record(&self, points: &[Vec3<f32>]) {
@@ -42,7 +46,12 @@
 +        if pending.len() + points.len() > 4096
 +            || points.iter().any(|point| !point.x.is_finite() || !point.y.is_finite() || !point.z.is_finite())
 +        {
-+            self.reject();
++            if pending.len() + points.len() > 4096 {
++                self.reject(1);
++            }
++            if points.iter().any(|point| !point.x.is_finite() || !point.y.is_finite() || !point.z.is_finite()) {
++                self.reject(2);
++            }
 +            return;
 +        }
 +        pending.extend_from_slice(points);
@@ -50,7 +59,7 @@
 +
 +    pub fn take(&self) -> (bool, Vec<Vec3<f32>>) {
 +        (
-+            self.invalid.load(std::sync::atomic::Ordering::Relaxed),
++            self.rejection_reasons() != 0,
 +            std::mem::take(&mut *self.points.lock().unwrap()),
 +        )
 +    }
@@ -59,15 +68,25 @@
  /// Velocity
 --- a/common/systems/src/phys/collision.rs
 +++ b/common/systems/src/phys/collision.rs
-@@ -35,6 +35,7 @@
+@@ -35,7 +35,8 @@
      ori: &Ori,
      // Get the proportion of surface friction that should be applied based on the current velocity
      friction_factor: impl Fn(Vec3<f32>) -> f32,
+-) {
 +    mut route: Option<&mut Vec<Vec3<f32>>>,
- ) {
++) -> bool {
      // We cap out scale at 10.0 to prevent an enormous amount of lag
      let scale = read.scales.get(entity).map_or(1.0, |s| s.0.min(10.0));
-@@ -125,6 +126,9 @@
+ 
+@@ -114,6 +115,7 @@
+ 
+     let mut on_ground = None::<Block>;
+     let mut on_ceiling = false;
++    let mut voxel_contact = false;
+     // Don't loop infinitely here
+     let mut attempts = 0;
+ 
+@@ -125,6 +127,9 @@
      let increments = ((pos_delta.map(|e| e.abs()).reduce_partial_max() / min_step).ceil() as usize)
          .clamped(1, MAX_INCREMENTS);
      let old_pos = pos.0;
@@ -77,7 +96,15 @@
      for _ in 0..increments {
          //prof_span!("increment");
          const MAX_ATTEMPTS: usize = 16;
-@@ -276,7 +280,14 @@
+@@ -181,6 +186,7 @@
+             .then(|| try_colliding_block(pos))
+             .flatten()
+         {
++            voxel_contact = true;
+             // Calculate the player's AABB
+             let player_aabb = player_aabb(pos.0, radius, z_range.clone());
+ 
+@@ -276,7 +282,14 @@
          if attempts == MAX_ATTEMPTS {
              vel.0 = Vec3::zero();
              pos.0 = old_pos;
@@ -92,7 +119,15 @@
          }
      }
  
-@@ -316,6 +327,10 @@
+@@ -305,6 +318,7 @@
+         }
+     {
+         //prof_span!("snap!!");
++        voxel_contact = true;
+         let snap_height = terrain
+             .get(Vec3::new(pos.0.x, pos.0.y, pos.0.z - 0.1).map(|e| e.floor() as i32))
+             .ok()
+@@ -316,6 +330,10 @@
              .get(Vec3::new(pos.0.x, pos.0.y, pos.0.z - 0.01).map(|e| e.floor() as i32))
              .ok()
              .copied();
@@ -103,6 +138,14 @@
      }
  
      // Find liquid immersion and wall collision all in one round of iteration
+@@ -521,6 +539,7 @@
+         }
+         physics_state.skating_active = false;
+     }
++    voxel_contact || physics_state.on_wall.is_some() || liquid.is_some()
+ }
+ 
+ pub(super) fn point_voxel_collision(
 --- a/common/systems/src/phys/mod.rs
 +++ b/common/systems/src/phys/mod.rs
 @@ -161,6 +161,7 @@
@@ -122,7 +165,7 @@
 +                    if let Some(trace) = route_trace
 +                        && !matches!(collider, Collider::CapsulePrism(_))
 +                    {
-+                        trace.reject();
++                        trace.reject(4);
 +                    }
                      // Defer the writes of positions, velocities and orientations
                      // to allow an inner loop over terrain-like entities.
@@ -143,25 +186,37 @@
                                  );
  
                                  // Sticky things shouldn't move when on a surface
-@@ -1202,6 +1212,10 @@
+@@ -1202,7 +1212,6 @@
                                          {
                                              return;
                                          }
-+                                        if let Some(trace) = route_trace {
-+                                            // Collider-local coordinates are not a world-space route.
-+                                            trace.reject();
-+                                        }
- 
+-
                                          let mut physics_state_delta = PhysicsState::default();
  
-@@ -1298,6 +1312,7 @@
+                                         // Helper function for computing a transformation matrix and its
+@@ -1275,7 +1284,7 @@
+                                                 * (vel.0 - vel_other);
+ 
+                                             // Perform collision resolution
+-                                            collision::box_voxel_collision(
++                                            let voxel_contact = collision::box_voxel_collision(
+                                                 (radius, z_min, z_max),
+                                                 &voxel_collider.volume(),
+                                                 entity,
+@@ -1298,7 +1307,13 @@
                                                  read,
                                                  &ori,
                                                  |vel| friction_factor(previous_cache_other.ori * vel),
 +                                                None,
                                              );
++                                            if voxel_contact && let Some(trace) = route_trace {
++                                                // An overlapping broad-phase sphere is not contact.
++                                                // Actual collider-local contacts remain unsupported.
++                                                trace.reject(8);
++                                            }
  
                                              // Transform entity attributes back into world space now
+                                             // that we've performed
 @@ -1362,6 +1377,10 @@
                              );
                      }
@@ -175,10 +230,65 @@
                      } else {
 --- a/common/systems/tests/phys/fixture_authoring.rs
 +++ b/common/systems/tests/phys/fixture_authoring.rs
-@@ -3,6 +3,81 @@
+@@ -3,6 +3,154 @@
  use specs::WorldExt;
  use std::time::Duration;
  use vek::Vec3;
++
++#[test]
++fn route_trace_distinguishes_voxel_candidates_from_actual_contacts() {
++    use common::{
++        comp::{Collider, NativeRouteTrace, PhysicsState, PreviousPhysCache, body::ship::figuredata::VoxelCollider},
++        terrain::{Block, BlockKind},
++    };
++    use common_ecs::dispatch;
++    use std::sync::Arc;
++    for (name, wall, floor, expected_invalid) in [
++        ("empty candidate", None, None, false),
++        ("distant voxels in overlapping sphere", Some(30), None, false),
++        ("contact with voxel wall", Some(19), None, true),
++        ("contact with voxel floor", None, Some(15), true),
++    ] {
++        let mut state = utils::setup(|builder| {
++            dispatch::<veloren_common_systems::phys::Sys>(builder, &[]);
++        });
++        let player = utils::create_player(&mut state);
++        let volume_entity = utils::create_player(&mut state);
++        let origin = Pos(Vec3::new(16., 16., 270.));
++        let volume = VoxelCollider::from_fn(Vec3::broadcast(32), |point| {
++            if wall == Some(point.y) || floor == Some(point.z) {
++                Block::new(BlockKind::Rock, vek::Rgb::zero())
++            } else {
++                Block::empty()
++            }
++        });
++        state.ecs_mut().write_storage::<Collider>().insert(
++            volume_entity, Collider::Volume(Arc::new(volume)),
++        ).unwrap();
++        state.ecs_mut().write_storage::<FixtureAuthoring>().insert(volume_entity, FixtureAuthoring {
++            owner: "test-volume".into(), position: origin,
++            restore_position: origin, restore_velocity: Vel::zero(),
++        }).unwrap();
++        let reset = |state: &mut common_state::State| {
++            state.ecs_mut().write_storage::<Pos>().insert(player, origin).unwrap();
++            state.ecs_mut().write_storage::<Vel>().insert(player, Vel(Vec3::new(0., 24., -1.))).unwrap();
++            state.ecs_mut().write_storage::<PhysicsState>().remove(player);
++            state.ecs_mut().write_storage::<PreviousPhysCache>().remove(player);
++        };
++        reset(&mut state);
++        utils::tick(&mut state, Duration::from_millis(200));
++        let unobserved = utils::get_transform(&state, player).unwrap();
++        reset(&mut state);
++        state.ecs_mut().insert(NativeRouteTrace::new(player));
++        utils::tick(&mut state, Duration::from_millis(200));
++        assert_eq!(utils::get_transform(&state, player).unwrap(), unobserved, "{name}");
++        let trace = state.ecs().read_resource::<NativeRouteTrace>();
++        let (invalid, points) = trace.take();
++        assert_eq!(invalid, expected_invalid, "{name}");
++        assert_eq!(trace.rejection_reasons(), if expected_invalid { 8 } else { 0 }, "{name}");
++        assert_eq!(points.last(), Some(&unobserved.0.0), "{name}");
++    }
++}
 +
 +#[test]
 +fn route_trace_captures_slow_frame_increments_without_changing_physics() {
@@ -254,6 +364,24 @@
 +    trace.record(&[Vec3::zero()]);
 +    assert!(trace.take().0);
 +}
++
++#[test]
++fn route_trace_rejection_reasons_preserve_sticky_invalidity() {
++    use common::comp::NativeRouteTrace;
++    let mut state = utils::setup(veloren_common_systems::add_local_systems);
++    let player = utils::create_player(&mut state);
++    let trace = NativeRouteTrace::new(player);
++    trace.record(&[Vec3::zero(); 4097]);
++    assert_eq!(trace.rejection_reasons(), 1);
++    assert!(trace.take().0);
++    trace.record(&[Vec3::new(f32::NAN, 0., 0.)]);
++    assert_eq!(trace.rejection_reasons(), 3);
++    trace.reject(4);
++    trace.reject(8);
++    assert_eq!(trace.rejection_reasons(), 15);
++    assert!(trace.take().0);
++    assert!(trace.take().0);
++}
  
  #[test]
  fn fixture_authoring_stays_fixed_across_delays_bootstrap_and_moves_then_releases() {
@@ -267,16 +395,25 @@
  use crate::session::interactable::Interactables;
  use serde::Deserialize;
  use serde_json::{Value, json};
-@@ -33,6 +34,7 @@
+@@ -33,6 +34,13 @@
      route_samples: Vec<(u64, [f32; 3])>,
      route_overflow: bool,
      route_enabled: bool,
 +    route_sequence: u64,
++    route_rejection_reasons: u8,
++    trace_entity_changed: bool,
++    nonfinite_route: bool,
++    nonfinite_glide: bool,
++    nonfinite_motion: bool,
++    motion_uid_changed: bool,
  }
  
  impl MotionEvidence {
-@@ -44,14 +46,15 @@
+@@ -42,16 +50,18 @@
+         }
+         if point.iter().any(|value| !value.is_finite()) {
              self.invalid = true;
++            self.nonfinite_route = true;
              return;
          }
 +        self.route_sequence += 1;
@@ -293,7 +430,24 @@
              }
          }
      }
-@@ -282,6 +285,18 @@
+@@ -59,6 +69,7 @@
+     fn sample_glide(&mut self, grounded: bool, point: [f32; 3], gliding: bool) {
+         if point.iter().any(|value| !value.is_finite()) {
+             self.invalid = true;
++            self.nonfinite_glide = true;
+             return;
+         }
+         if gliding && !grounded {
+@@ -77,6 +88,8 @@
+     fn sample(&mut self, uid: u64, grounded: bool, z: f32, vz: f32, rolling: bool) {
+         if self.uid.is_some_and(|previous| previous != uid) || !z.is_finite() || !vz.is_finite() {
+             self.invalid = true;
++            self.motion_uid_changed |= self.uid.is_some_and(|previous| previous != uid);
++            self.nonfinite_motion |= !z.is_finite() || !vz.is_finite();
+             return;
+         }
+         self.uid = Some(uid);
+@@ -282,6 +295,20 @@
      /// Returns false only on explicit close, input failure or EOF.
      pub fn poll(&mut self, client: &mut Client, hud: &mut crate::hud::Hud,
                  talk: &Interactables) -> bool {
@@ -305,6 +459,8 @@
 +            let trace = client.state().ecs().read_resource::<comp::NativeRouteTrace>();
 +            let (invalid, points) = trace.take();
 +            self.motion.invalid |= invalid || trace.entity != entity;
++            self.motion.route_rejection_reasons |= trace.rejection_reasons();
++            self.motion.trace_entity_changed |= trace.entity != entity;
 +            for point in points {
 +                self.motion.sample_route([point.x, point.y, point.z]);
 +            }
@@ -312,7 +468,22 @@
          if let (Some(uid), Some(position), Some(velocity), Some(physics), Some(character)) = (
              client.uid(), client.current::<comp::Pos>(), client.current::<comp::Vel>(),
              client.current::<comp::PhysicsState>(), client.current::<comp::CharacterState>(),
-@@ -376,7 +391,11 @@
+@@ -352,7 +379,13 @@
+                     } else if self.motion.invalid || self.motion.samples == 0
+                         || self.motion.uid != client.uid().map(|uid| uid.0.get())
+                     {
+-                        self.error(request.id, "invalid_motion_evidence", "native actor or samples changed");
++                        self.error(request.id, "invalid_motion_evidence", format!(
++                            "native actor or samples changed: invalid={} samples={} sampled_uid={:?} current_uid={:?} route_rejection_bits={} trace_entity_changed={} nonfinite_route={} nonfinite_glide={} nonfinite_motion={} motion_uid_changed={}",
++                            self.motion.invalid, self.motion.samples, self.motion.uid,
++                            client.uid().map(|uid| uid.0.get()), self.motion.route_rejection_reasons,
++                            self.motion.trace_entity_changed, self.motion.nonfinite_route,
++                            self.motion.nonfinite_glide, self.motion.nonfinite_motion, self.motion.motion_uid_changed,
++                        ));
+                     } else if request.cmd == "glide_evidence" && self.motion.glide_overflow {
+                         self.error(request.id, "invalid_glide_evidence", "native glide landing capacity exceeded");
+                     } else if request.cmd == "route_evidence" && self.motion.route_overflow {
+@@ -376,7 +409,11 @@
                              );
                          }
                          if request.cmd == "route_evidence" {
@@ -325,7 +496,7 @@
                              result["route_samples"] = json!(
                                  self.motion.route_samples.iter().map(|(sequence, point)|
                                      json!({"sequence": sequence, "position": point})
-@@ -584,6 +603,22 @@
+@@ -584,6 +621,22 @@
      }
  
      #[test]

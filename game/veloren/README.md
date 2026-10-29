@@ -53,6 +53,11 @@ Route evidence version 2 records accepted native terrain-collision increments,
 not interpolated points between rendered frames. Route tasks require a rebuilt
 runtime; the original distance-gap validity check remains unchanged. This
 observer does not alter physics, controls, or the game clock.
+An overlapping voxel-collider bounding sphere alone is not contact. Actual
+collider-local voxel contacts remain unsupported and invalidate route evidence;
+identity changes, nonfinite samples and overflow likewise remain fail-closed.
+Private rejection diagnostics identify the guard without resetting its history.
+Historical route/1 evidence does not qualify a rebuilt route/2 task.
 
 Combined peer fixtures retain both readiness barriers: Group setup cannot
 finalize supplies, and original supplies are created and pre-aged before deferred
