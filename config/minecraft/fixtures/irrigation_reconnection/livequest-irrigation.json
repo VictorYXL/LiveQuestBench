@@ -1,0 +1,11 @@
+{
+  "schema": "minecraft-irrigation-reconnection/1",
+  "sha256": {
+    "pack.mcmeta": "1b0b5fa2d72607eeabfc6f44c70664d5ff81c5142342d8597ca7070c42e04fff",
+    "data/minecraft/tags/functions/tick.json": "db68511222ef16a4f561f85213e6bdef49142210083fc3fd3c0265b6bee06a70",
+    "data/livequest_irrigation/predicates/water_nearby.json": "f5e9537198de789fdf67abd6ad4325769f3552ab32c3484013850995a849d388",
+    "data/livequest_irrigation/functions/tick.mcfunction": "5ef31a70bf213b2fd6d4542417cb3e0effa190bc354abbd76d1c48d301264750",
+    "data/livequest_irrigation/functions/clock.mcfunction": "4978687ec0be3560f94a61da1b5a34cbe02a802fd21ef84c11002134e76a0052",
+    "data/livequest_irrigation/functions/sample.mcfunction": "31eed6cb21024d6bd2d3ae5229bc9f0047edfa237eae1b74b10381aea0400dcd"
+  }
+}

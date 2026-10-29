@@ -1,0 +1,59 @@
+id: irrigation_reconnection
+game: minecraft
+task_type: visual_motor
+task: >-
+  Restore water access to both marked terraced wheat fields. All twelve farmland cells must be fully hydrated
+  while the white walkway remains dry and unobstructed for at least five seconds. Leave water in place supplying
+  every field cell. Then return to the yellow marker with at least 1 HP, grounded and still. Two empty buckets, stone, a pickaxe
+  and a hoe are supplied; the blue-edged water source is nearby. The existing channels are incomplete, and water
+  may spill downhill. Native hydration can take time. Control note: after closing a menu, verify that camera
+  movement actually applies; a harmless tiny first movement can prime native mouse recapture.
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/irrigation_reconnection
+  instance: 1.20.4
+  difficulty: easy
+  player_state:
+    position:
+    - 0.5
+    - 72
+    - 0.5
+    dimension: minecraft:overworld
+    yaw: 0
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+    - slot: 0
+      item: bucket
+      count: 2
+    - slot: 1
+      item: cobblestone
+      count: 16
+    - slot: 2
+      item: iron_pickaxe
+      count: 1
+    - slot: 3
+      item: bread
+      count: 8
+    - slot: 4
+      item: stone_hoe
+      count: 1
+evaluator:
+  name: irrigation
+  parameters:
+    position:
+      target:
+      - 0.5
+      - 72
+      - 0.5
+      horizontal_tolerance: 3
+      vertical_tolerance: 1
+      max_speed: 0.1
+capabilities:
+  primary:
+  - spatial_interaction
+  secondary: []

@@ -84,6 +84,11 @@ def create_binding(
         inspect.signature(evaluate_shelter).bind(Path(), Path(), None, **parameters)
         validate_state(**parameters)
         score = evaluate_shelter
+    elif evaluator == "irrigation":
+        from game.minecraft.evaluators.irrigation import evaluate_irrigation, stable_ticks
+        validate_state(**parameters)
+        stable_ticks(world_path)
+        score = evaluate_irrigation
     elif evaluator == "structure":
         from game.minecraft.evaluators.structure import evaluate_structure, validate_config
         inspect.signature(evaluate_structure).bind(Path(), Path(), **parameters)
