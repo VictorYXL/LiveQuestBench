@@ -1,0 +1,96 @@
+{
+  "schema": "livequest-qualified-task-integration/1",
+  "review_date": "2026-10-29",
+  "base_commit": "8325849a108cf7d9184e5a47411a33942a520b28",
+  "task_assembly_commit": "aa9fb6f",
+  "status": "task_only_patch_ready_shared_harvest_dependency_pending",
+  "tasks": {
+    "VE-I05": {
+      "source_commit": "f826a89e04c4d1e56138fb7eaef545c765f31f48",
+      "source_integration_report_commit": "e55d4421da5b42dd45f6ae7720e677fe89763a2d",
+      "source_integration_report": "docs/evidence/VE-I05-integration.json",
+      "task_id": "landmark_resource_survey",
+      "difficulty": {"st": 3, "vm": 3},
+      "time_limit_seconds": 2700,
+      "min_health": 0,
+      "frozen_file_sha256": {
+        "config/veloren/tasks/structured_tools/landmark_resource_survey.yaml": "04b2ae5aa7465294d1ed8433dbfe753c3bb3c5bb7dae9373ac700519fc49c5bc",
+        "config/veloren/tasks/visual_motor/landmark_resource_survey.yaml": "c141d30747e3ef60a46f89e66dec6f383e51b148555fa4ab9d0797d106efb665",
+        "game/veloren/evaluators/harvest.py": "323f7373f37a1b3ab218be825109bf4b997e7430b2fcf79790468628807cc286"
+      },
+      "guided_native_reference": {
+        "st": "output/temp/task_development/experiments/VE-I05-contained-public-reference-st",
+        "vm": "output/temp/task_development/experiments/VE-I05-contained-image-reference-vm"
+      },
+      "final_formal_valid_failure": {
+        "st": "output/temp/task_development/experiments/VE-I05-formal-st",
+        "vm": "output/temp/task_development/experiments/VE-I05-contained-formal-vm"
+      },
+      "evidence_sha256_at_review": {
+        "output/temp/task_development/assessments/VE-I05.json": "b76f95d63cee9bf97edd889d9f05fcf1c707769a8895e2d0431cc6848d1ae897",
+        "output/temp/task_development/assessments/VE-I05-harvest-replay.json": "c5349bc35d415765db57acc1f73b973813990f1e294ec5ce779631136d559d81"
+      },
+      "claim_boundary": "Native source plants become Empty and fungible mushroom holdings meet the endpoint goal. Not player-attributed harvest events or original returned-item identity."
+    },
+    "VE-R02": {
+      "source_commit": "d60ebc5d294151ee0c351a79b783553ea20f7c64",
+      "source_integration_report_commit": "bed1402e214dc74525b7f95a4406234ccdc447d8",
+      "source_integration_report": "docs/evidence/VE-R02-integration.json",
+      "task_id": "staggered_expiring_supplies",
+      "difficulty": {"st": 2, "vm": 2},
+      "time_limit_seconds": 900,
+      "min_health": 0,
+      "frozen_file_sha256": {
+        "config/veloren/tasks/structured_tools/staggered_expiring_supplies.yaml": "9ca2bf2fbb52b09302d76e31c1744bd119b8bc67793074599e9fc9babf06b73e",
+        "config/veloren/tasks/visual_motor/staggered_expiring_supplies.yaml": "aebe8d8c4c0483e86cc37ff9b8c029a021aa15434903e24b076921a6d70be711"
+      },
+      "guided_native_reference": {
+        "st": "output/temp/task_development/veloren-interaction/VE-R02-reference-return-st",
+        "vm": "output/temp/task_development/veloren-interaction/VE-R02-fixed-public-motor-vm"
+      },
+      "final_formal_valid_failure": {
+        "st": "output/temp/task_development/veloren-interaction/VE-R02-baseline-st",
+        "vm": "output/temp/task_development/veloren-interaction/VE-R02-baseline-vm"
+      },
+      "evidence_sha256_at_review": {
+        "output/temp/task_development/assessments/VE-R02.json": "83bda84e9d8f8664d4cb097f9f4aacc9d893f9673ca52b6a215007b28b0305ea",
+        "output/temp/task_development/veloren-interaction/VE-R02-qualification-replay.json": "ba4d0ac091469e5160cee63302ebd295bb85438ea4df9e7ff1c4f068ccb6f5c4"
+      },
+      "claim_boundary": "Original-source pickup lineage, actual expiry, intact final quantities and grounded stationary return. Oldest-first is not necessary. Explicitly easier 2/2; no formal success or statistical success-rate claim."
+    }
+  },
+  "shared_dependencies": {
+    "already_on_base": {
+      "source_pickups": "01cfd9c2abd1c7f47153407cfea7cc2a71dd09c6",
+      "alive_only_health": "e211fa59f96e7b95ad703aac9aaa7eb24551214d",
+      "deferred_native_records": "4b6dcec1a90f8393046883c5b96c949d009d2395"
+    },
+    "harvest_shared_owner": "80b8163d-5d8f-4250-9b31-e39fc3fc19c3",
+    "harvest_source_commit": "f826a89e04c4d1e56138fb7eaef545c765f31f48",
+    "harvest_required_files_and_hunks": {
+      "game/veloren/harvest.py": "Exact native mushroom preparation, terrain_cell and harvest_snapshot implementation.",
+      "game/veloren/fixture.py": "Bounded distinct harvest_sites validation, no injected actors, before-readiness Mushroom setup and harvest initialization record; retain existing clock and other fixture changes.",
+      "game/veloren/runtime/worker.py": "Opening/terminal private_harvest_evidence snapshots, collect/inspect_terrain dispatch and native terrain refusals; retain pickup and route evidence.",
+      "game/veloren/game.py": "Terrain schema validation and public response adapter without leaking private evidence.",
+      "game/veloren/structured_tools/interface.py": "Bounded integer-voxel CollectTool/InspectTerrainTool and position conversion; retain current public controls and VM restrictions."
+    },
+    "native_runtime_requirement": "Existing admitted native terrain query/ordinary collection plus native-server-pickups/1; separately pinned native server, source manifest, build receipt and base runtime.",
+    "existing_pickup_runtime": "output/temp/task_development/veloren-interaction/native-pickups/runtime.json",
+    "integration_order": [
+      "Parent reconciles shared dependency chain; do not replay already integrated pickup/alive-health/deferred-record ancestors.",
+      "Apply task-only aa9fb6f and the follow-up task admission/provenance commit; do not cherry-pick whole I05 ancestry or duplicate R02 YAMLs.",
+      "Run the focused checks against the composed tree before claiming full integration; parent alone merges main."
+    ]
+  },
+  "validation": {
+    "completed": "R02 ST/VM admission/scorer plus existing pickup/server-extension tests: 34 passed, 16 I05 cases deselected.",
+    "pending": "I05 admission/scorer and original harvest tests require the shared harvest dependency.",
+    "focused_command": "mkdir -p output/test && python -m pytest -q tests/test_game/veloren/test_qualified_tasks.py tests/test_game/veloren/test_harvest.py tests/test_game/veloren/test_pickups.py tests/test_game/veloren/test_server_extension.py --basetemp=output/test/qualified-integration",
+    "all_four_task_files_byte_identical_to_source": true,
+    "harvest_evaluator_byte_identical_to_source": true,
+    "new_native_or_model_episodes": 0,
+    "main_modified": false,
+    "existing_task_worktrees_or_evidence_modified": false
+  },
+  "evidence_policy": "Paths refer to the original repository evidence, not this isolated worktree. Checksums anchor the review-time files; source commits permanently anchor task YAMLs and scorer. Native references remain references and final formal failures remain failures. No semantic change, budget adjustment or health-goal adaptation is made here. Any later semantic change requires explicit invalidation of the old qualification for that changed condition, not silent reuse. Offline synthetic tests are integration checks, never native qualification."
+}
