@@ -1,0 +1,393 @@
+id: landmark_resource_survey
+game: veloren
+task_type: structured_tool
+task: >-
+  Among the three rock-marked mushroom patches inside this enclosure, clear both plants
+  from the one matching both clues: a forked rock stands beyond it, and three ascending
+  stone steps line its eastern side. Finish at that patch's small field arch, alive,
+  grounded and still, carrying at least two raw mushrooms. The field arches look alike.
+  Other mushrooms may contribute to your inventory but do not replace clearing the
+  matching patch. Ordinary death does not replenish harvested plants.
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/veloren_0_18_0_0.bin
+  world_seed: 130626853
+  time_of_day: '12:00'
+  day_length: 30
+  calendar: none
+  platform:
+    origin:
+    - 18700
+    - 10800
+    - 500
+    size:
+    - 60
+    - 40
+    block: Rock
+  player_state:
+    position:
+    - 18730.5
+    - 10804.5
+    - 501
+    look:
+    - 0
+    - 1
+    - 0
+    health: 100
+    inventory:
+      common.items.food.apple: 3
+      common.items.consumable.potion_minor: 2
+    equipment:
+      active_mainhand: common.items.weapons.sword.starter
+      chest: common.items.armor.misc.chest.worker_purple_brown
+      feet: common.items.armor.misc.foot.sandals
+      glider: common.items.glider.basic_white
+      lantern: common.items.lantern.black_0
+      legs: common.items.armor.misc.pants.worker_brown
+  blocks:
+  - origin:
+    - 18700
+    - 10800
+    - 501
+    size:
+    - 60
+    - 1
+    - 8
+  - origin:
+    - 18700
+    - 10839
+    - 501
+    size:
+    - 60
+    - 1
+    - 8
+  - origin:
+    - 18700
+    - 10801
+    - 501
+    size:
+    - 1
+    - 38
+    - 8
+  - origin:
+    - 18759
+    - 10801
+    - 501
+    size:
+    - 1
+    - 38
+    - 8
+  - origin:
+    - 18708
+    - 10826
+    - 501
+    size:
+    - 1
+    - 1
+    - 2
+  - origin:
+    - 18712
+    - 10826
+    - 501
+    size:
+    - 1
+    - 1
+    - 2
+  - origin:
+    - 18708
+    - 10826
+    - 503
+    size:
+    - 5
+    - 1
+    - 1
+  - origin:
+    - 18707
+    - 10833
+    - 501
+    size:
+    - 7
+    - 2
+    - 2
+  - origin:
+    - 18707
+    - 10833
+    - 503
+    size:
+    - 2
+    - 2
+    - 2
+  - origin:
+    - 18712
+    - 10833
+    - 503
+    size:
+    - 2
+    - 2
+    - 2
+  - origin:
+    - 18715
+    - 10824
+    - 501
+    size:
+    - 1
+    - 8
+    - 1
+  - origin:
+    - 18716
+    - 10824
+    - 501
+    size:
+    - 1
+    - 8
+    - 2
+  - origin:
+    - 18717
+    - 10824
+    - 501
+    size:
+    - 1
+    - 8
+    - 3
+  - origin:
+    - 18728
+    - 10826
+    - 501
+    size:
+    - 1
+    - 1
+    - 2
+  - origin:
+    - 18732
+    - 10826
+    - 501
+    size:
+    - 1
+    - 1
+    - 2
+  - origin:
+    - 18728
+    - 10826
+    - 503
+    size:
+    - 5
+    - 1
+    - 1
+  - origin:
+    - 18727
+    - 10833
+    - 501
+    size:
+    - 7
+    - 2
+    - 2
+  - origin:
+    - 18727
+    - 10833
+    - 503
+    size:
+    - 2
+    - 2
+    - 2
+  - origin:
+    - 18732
+    - 10833
+    - 503
+    size:
+    - 2
+    - 2
+    - 2
+  - origin:
+    - 18735
+    - 10824
+    - 501
+    size:
+    - 1
+    - 8
+    - 1
+  - origin:
+    - 18736
+    - 10824
+    - 501
+    size:
+    - 1
+    - 8
+    - 1
+  - origin:
+    - 18737
+    - 10824
+    - 501
+    size:
+    - 1
+    - 8
+    - 1
+  - origin:
+    - 18748
+    - 10826
+    - 501
+    size:
+    - 1
+    - 1
+    - 2
+  - origin:
+    - 18752
+    - 10826
+    - 501
+    size:
+    - 1
+    - 1
+    - 2
+  - origin:
+    - 18748
+    - 10826
+    - 503
+    size:
+    - 5
+    - 1
+    - 1
+  - origin:
+    - 18747
+    - 10834
+    - 501
+    size:
+    - 1
+    - 1
+    - 2
+  - origin:
+    - 18748
+    - 10832
+    - 501
+    size:
+    - 1
+    - 1
+    - 2
+  - origin:
+    - 18750
+    - 10831
+    - 501
+    size:
+    - 1
+    - 1
+    - 2
+  - origin:
+    - 18752
+    - 10832
+    - 501
+    size:
+    - 1
+    - 1
+    - 2
+  - origin:
+    - 18753
+    - 10834
+    - 501
+    size:
+    - 1
+    - 1
+    - 2
+  - origin:
+    - 18752
+    - 10836
+    - 501
+    size:
+    - 1
+    - 1
+    - 2
+  - origin:
+    - 18750
+    - 10837
+    - 501
+    size:
+    - 1
+    - 1
+    - 2
+  - origin:
+    - 18748
+    - 10836
+    - 501
+    size:
+    - 1
+    - 1
+    - 2
+  - origin:
+    - 18755
+    - 10824
+    - 501
+    size:
+    - 1
+    - 8
+    - 1
+  - origin:
+    - 18756
+    - 10824
+    - 501
+    size:
+    - 1
+    - 8
+    - 2
+  - origin:
+    - 18757
+    - 10824
+    - 501
+    size:
+    - 1
+    - 8
+    - 3
+  harvest_sites:
+  - - 18709
+    - 10829
+    - 501
+  - - 18711
+    - 10829
+    - 501
+  - - 18729
+    - 10829
+    - 501
+  - - 18731
+    - 10829
+    - 501
+  - - 18749
+    - 10829
+    - 501
+  - - 18751
+    - 10829
+    - 501
+  respawn_at_start: true
+evaluator:
+  name: harvest
+  parameters:
+    min_health: 0
+    source_cells:
+    - - 18709
+      - 10829
+      - 501
+    - - 18711
+      - 10829
+      - 501
+    inventory:
+    - item: common.items.food.mushroom
+      min_count: 2
+      min_delta: 2
+    position:
+      target:
+      - 18710
+      - 10826
+      - 501
+      horizontal_tolerance: 2.5
+      vertical_tolerance: 0.5
+      max_speed: 0.1
+tools:
+- MoveTool
+- TurnTool
+- LookTool
+- JumpTool
+- StopTool
+- InspectTerrainTool
+- CollectTool
+- UseItemTool
+- RespawnTool
+capabilities:
+  primary:
+  - information_adaptation
+  secondary:
+  - spatial_interaction

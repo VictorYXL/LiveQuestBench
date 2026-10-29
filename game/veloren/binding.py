@@ -81,6 +81,14 @@ def create_binding(
         validators[evaluator] = validate_itinerary
         if not fixture.get("route_evidence"):
             raise ValueError("Itinerary scoring requires native route evidence")
+    elif evaluator == "harvest":
+        from game.veloren.evaluators.harvest import evaluate_harvest, validate_harvest
+        evaluators[evaluator] = evaluate_harvest
+        validators[evaluator] = validate_harvest
+        if not fixture.get("harvest_sites") or not {
+            tuple(point) for point in parameters["source_cells"]
+        } <= {tuple(point) for point in fixture["harvest_sites"]}:
+            raise ValueError("Scored harvest sources must be declared native mushroom cells")
     if evaluator not in evaluators:
         raise ValueError(f"Unknown Veloren evaluator: {evaluator}")
     score = evaluators[evaluator]

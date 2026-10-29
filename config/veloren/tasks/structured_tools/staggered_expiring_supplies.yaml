@@ -1,0 +1,258 @@
+id: staggered_expiring_supplies
+game: veloren
+task_type: structured_tool
+task: 'Collect all four cheese, three apples and four mushrooms from their original
+  arch-marked ground bundles. Return alive to the camp arch, grounded and stationary,
+  carrying at least those quantities.
+
+  The cheese is oldest, with roughly three native minutes remaining at opening; apples
+  have roughly four and mushrooms roughly five. These are approximate windows, not
+  paused timers. No bundle is replenished. Collecting another source or merely possessing
+  matching food does not count.
+
+  The enclosed court has a long divider and broad ground-level bays. Cheese is beyond
+  the divider, apples toward the back, and mushrooms at the far bay. Choose your collection
+  order and route while time continues. Ordinary death recovery does not reset the
+  bundles or their history.'
+time_limit_seconds: 900
+fixture:
+  world_path: ../../fixtures/veloren_0_18_0_0.bin
+  world_seed: 130626853
+  time_of_day: '12:00'
+  day_length: 30
+  calendar: none
+  platform:
+    origin:
+    - 18700
+    - 10800
+    - 500
+    size:
+    - 66
+    - 38
+    block: Rock
+  blocks:
+  - origin:
+    - 18700
+    - 10800
+    - 501
+    size:
+    - 66
+    - 1
+    - 5
+  - origin:
+    - 18700
+    - 10837
+    - 501
+    size:
+    - 66
+    - 1
+    - 5
+  - origin:
+    - 18700
+    - 10801
+    - 501
+    size:
+    - 1
+    - 36
+    - 5
+  - origin:
+    - 18765
+    - 10801
+    - 501
+    size:
+    - 1
+    - 36
+    - 5
+  - origin:
+    - 18715
+    - 10801
+    - 501
+    size:
+    - 1
+    - 27
+    - 3
+  - origin:
+    - 18754
+    - 10810
+    - 501
+    size:
+    - 10
+    - 1
+    - 3
+  - origin:
+    - 18754
+    - 10826
+    - 501
+    size:
+    - 10
+    - 1
+    - 3
+  - origin:
+    - 18702
+    - 10818
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18706
+    - 10818
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18702
+    - 10818
+    - 504
+    size:
+    - 5
+    - 1
+    - 1
+  - origin:
+    - 18725
+    - 10806
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18729
+    - 10806
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18725
+    - 10806
+    - 504
+    size:
+    - 5
+    - 1
+    - 1
+  - origin:
+    - 18737
+    - 10835
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18741
+    - 10835
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18737
+    - 10835
+    - 504
+    size:
+    - 5
+    - 1
+    - 1
+  - origin:
+    - 18757
+    - 10818
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18761
+    - 10818
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18757
+    - 10818
+    - 504
+    size:
+    - 5
+    - 1
+    - 1
+  player_state:
+    position: &id001
+    - 18704.5
+    - 10818.5
+    - 501
+    look:
+    - 0
+    - 1
+    - 0
+    health: 100
+    inventory:
+      common.items.consumable.potion_minor: 2
+    equipment:
+      active_mainhand: common.items.weapons.sword.starter
+      chest: common.items.armor.misc.chest.worker_purple_brown
+      feet: common.items.armor.misc.foot.sandals
+      glider: common.items.glider.basic_white
+      lantern: common.items.lantern.black_0
+      legs: common.items.armor.misc.pants.worker_brown
+  supplies:
+  - position:
+    - 18727.5
+    - 10806.5
+    - 501
+    item: common.items.food.cheese
+    amount: 4
+    pre_age_seconds: 60
+  - position:
+    - 18739.5
+    - 10835.5
+    - 501
+    item: common.items.food.apple
+    amount: 3
+    pre_age_seconds: 60
+  - position:
+    - 18759.5
+    - 10818.5
+    - 501
+    item: common.items.food.mushroom
+    amount: 4
+  respawn_at_start: true
+  pickup_evidence: true
+evaluator:
+  name: source_supplies
+  parameters:
+    supplies:
+    - item: common.items.food.cheese
+      amount: 4
+    - item: common.items.food.apple
+      amount: 3
+    - item: common.items.food.mushroom
+      amount: 4
+    min_health: 0
+    position:
+      target: *id001
+      horizontal_tolerance: 3
+      vertical_tolerance: 0.5
+      max_speed: 0.1
+tools:
+- MoveTool
+- TurnTool
+- LookTool
+- JumpTool
+- PickupTool
+- UseItemTool
+- StopTool
+- RespawnTool
+capabilities:
+  primary:
+  - realtime_execution
+  secondary:
+  - planning_resources
+  - spatial_interaction
