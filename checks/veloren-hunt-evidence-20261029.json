@@ -1,0 +1,1775 @@
+{
+  "schema": "livequest-c01-constructive-evidence/1",
+  "updated_at_utc": "2026-10-29T13:33:51.151807+00:00",
+  "scope": [
+    "veloren/coordinated_route_hunt"
+  ],
+  "status": "ready_for_independent_constructive_acceptance_review",
+  "not_a_new_native_or_model_measurement": true,
+  "source": {
+    "commit": "966d21875301276c906cbb33f0f7cc796c2e1398",
+    "worktree": "output/temp/task_development/worktrees/parallel-ve-hunt-20261029",
+    "clean": true,
+    "changes": [],
+    "commits": [],
+    "main_integration": false,
+    "ledger_mutation": false,
+    "files": [
+      {
+        "path": "output/temp/task_development/worktrees/parallel-ve-hunt-20261029/game/team.py",
+        "sha256": "bc80b21d245fce6f2d0f37cc457c5339e6d8f97a26fe4d7f7b4b62c37ed86245"
+      },
+      {
+        "path": "output/temp/task_development/worktrees/parallel-ve-hunt-20261029/game/veloren/evaluators/encounter.py",
+        "sha256": "85ff1a3e8f6590492d2cd1a178e5c3a7ce0543a9c3df0508ac99099b42611551"
+      },
+      {
+        "path": "output/temp/task_development/worktrees/parallel-ve-hunt-20261029/game/veloren/evaluators/endpoints.py",
+        "sha256": "ca445973cf0a7295f8801f8667e413da1d4f92e2d146d710d560ceb5bec1fc9c"
+      },
+      {
+        "path": "output/temp/task_development/worktrees/parallel-ve-hunt-20261029/game/veloren/evaluators/deaths.py",
+        "sha256": "144d424a3e9efe8196cc54c78700be2f32d63ecb784586b285032869baa38724"
+      },
+      {
+        "path": "output/temp/task_development/worktrees/parallel-ve-hunt-20261029/game/veloren/visual_motor/interface.py",
+        "sha256": "89479670c13073a7b7dfb409b3768d7f502fdad90750585191885598ea6d1052"
+      },
+      {
+        "path": "output/temp/task_development/worktrees/parallel-ve-hunt-20261029/game/backends/x11/interface.py",
+        "sha256": "3ea1390d072b2e8dabb1ebebb0b588150fba807865eecffd4a7b677eb087b3cc"
+      },
+      {
+        "path": "output/temp/task_development/worktrees/parallel-ve-hunt-20261029/game/backends/x11/actions.py",
+        "sha256": "6e5749eb8e242943eb0d402bf7daf51500b7dca1c00be9a27586cbda36f3eb0e"
+      },
+      {
+        "path": "output/temp/task_development/worktrees/parallel-ve-hunt-20261029/config/veloren/tasks/structured_tools/coordinated_route_hunt.yaml",
+        "sha256": "fd5512da6774684b06568dd7aa594c47d4693d1800fd1452b013a537555d1e57"
+      },
+      {
+        "path": "output/temp/task_development/worktrees/parallel-ve-hunt-20261029/config/veloren/tasks/visual_motor/coordinated_route_hunt.yaml",
+        "sha256": "de0124f5d0a964781c8630ac223fa00c4f07cbca36e0ca1e23bc9e7af1ba1aef"
+      },
+      {
+        "path": "output/temp/task_development/worktrees/parallel-ve-hunt-20261029/game/veloren/fixture.py",
+        "sha256": "8679dc8b2dbee74e7c3cc60060ed3bd903e6de3c7cfe76e0b8bb98a3c912354f"
+      }
+    ],
+    "reused_replay": {
+      "path": "output/review/parallel-ve-originals-20261029/archive-replay-e72dfae.json",
+      "sha256": "aa6f9f3f1c5a3c3ed2e36b3e649eaf35469c67c2a4d4f57007bc6ae1edc4f18e"
+    },
+    "replay_source": "e72dfae11a07782ba21e0d46c7c101b5d400e9c0",
+    "bridge": "All listed scoring/control/task files equal replay source. Only fixture delta is under the absent contract branch.",
+    "fixture_delta": "diff --git a/game/veloren/fixture.py b/game/veloren/fixture.py\nindex feb7f11..1db7e57 100644\n--- a/game/veloren/fixture.py\n+++ b/game/veloren/fixture.py\n@@ -705,6 +705,8 @@ async def initialize_fixture(admin, actor, fixture: dict, *, shared_world: bool\n     if \"contract\" in fixture and not shared_world:\n         from game.veloren.contracts import initialize_contract\n         contract = await initialize_contract(admin, actor, fixture)\n+        # Native NPCs keep moving during contract identity readback and can push the player.\n+        await setup.goto(admin, actor, fixture[\"player_state\"][\"position\"])\n     result = {\"fixture\": fixture, \"construction\": construction, \"blocks\": blocks,\n             \"stations\": stations, \"supplies\": supplies, \"opening\": opening, \"harvest\": harvest,\n             \"encounters\": [], \"source_binding\": None, \"merchant\": merchant,"
+  },
+  "inputs": [
+    {
+      "path": "checks/veloren-original-reference-closure.json",
+      "sha256": "84b0c58891cd06406d0525abb2fa783100ed0817f961fb16c175dc6071632509"
+    },
+    {
+      "path": "output/temp/task_development/checks/veloren-independent-quality.json",
+      "sha256": "979a0d61203dc4fa6db1fc2ff78ff89665f86fa2148e91911fc6d3dcf40e933e"
+    },
+    {
+      "path": "output/temp/task_development/checks/veloren-acceptance-policy-audit-20261029.json",
+      "sha256": "edb88f3ccd31e90075eceee18098ddfb66403f91d366462aa86d3bc8274d5c04"
+    },
+    {
+      "path": "output/temp/task_development/checks/task-delivery-status.json",
+      "sha256": "9a23e7e4e86eb80b2d9010a42afeca1fa63b5136f488d7c4fca0f7e1c4d3e309"
+    },
+    {
+      "path": "output/temp/task_development/checks/parallel-ve-originals-20261029.json",
+      "sha256": "c66232ec6a6139a58a331f6a5ebf0493b5d66ff6694216223b1595d41cce9d97"
+    },
+    {
+      "path": "output/survey/task_difficulty_and_capability_acceptance_20261027.md",
+      "sha256": "78cbd05396de9cf96a06030a40c14c990e7d5ceb9521d639aea5bebb68828a23"
+    }
+  ],
+  "runtime": {
+    "receipt": {
+      "path": "output/temp/veloren-native-20261022/runtime.json",
+      "sha256": "71de989307966e8d984d7be651823844985d0c0c0c39cdd14e6097707637aa79"
+    },
+    "native_source_manifest": {
+      "path": "output/temp/veloren-native-20261022/source.json",
+      "sha256": "f303e8aa0d93c19089db8b070ecefe04dc2afea1e84d1ccf3dee522bd4141ba1"
+    },
+    "renderer": {
+      "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/veloren-native-20261022/target/debug/veloren-voxygen",
+      "sha256": "075994fb76ca49baf885ba252c256858d231d81e6d29c19fc6897978f3a85e4a"
+    },
+    "server": {
+      "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/binding-95145618/native/binaries/veloren-server-cli",
+      "sha256": "f2100bec7ace29a3a44256dce255a435697774551953cd8ee2a834507f7ef6be"
+    },
+    "route_capability": null,
+    "native_protection": "disabled by explicit renderer launch environment",
+    "binary_verification": "Preserve the previous exact replay's constituent verification; no expensive binary rehash or new process.",
+    "native_sources_newly_hash_checked": {
+      "voxygen/src/settings/control.rs": {
+        "path": "output/temp/veloren-native-20261022/source/voxygen/src/settings/control.rs",
+        "sha256": "c38d88688f92e958ff58905b4379bd56133938fe0e84aa7f42e2c587ef734da8",
+        "matches_native_source_manifest": true,
+        "behavior": "Default W/A/S/D movement, left primary, R wield, Space respawn."
+      },
+      "server/src/cmd.rs": {
+        "path": "output/temp/veloren-native-20261022/source/server/src/cmd.rs",
+        "sha256": "92d1e1352fd6eeae8260a9cbede790fec03a081cbbda66c2f69afe130d31ffbe",
+        "matches_native_source_manifest": true,
+        "behavior": "set_waypoint stores the target character's position."
+      },
+      "server/src/events/entity_manipulation.rs": {
+        "path": "output/temp/veloren-native-20261022/source/server/src/events/entity_manipulation.rs",
+        "sha256": "3b34cd4f431d6399862d4e214c465b895802f0ebc2085a96020c4b6be7b77bbf",
+        "matches_native_source_manifest": true,
+        "behavior": "Native same-entity respawn; player inventory retained."
+      },
+      "common/src/comp/location.rs": {
+        "path": "output/temp/veloren-native-20261022/source/common/src/comp/location.rs",
+        "sha256": "98516a6a6a2f40602ec19024201217f5ad1bec426cbd3d25c19c20e0e2e42711",
+        "matches_native_source_manifest": true,
+        "behavior": "Waypoint jitter is at most 0.125m per axis."
+      },
+      "common/src/comp/health.rs": {
+        "path": "output/temp/veloren-native-20261022/source/common/src/comp/health.rs",
+        "sha256": "a2e61693e274bd68f35c5399c4b05c1511180ea1969c331217c27ee955ed2497",
+        "matches_native_source_manifest": true,
+        "behavior": "revive restores full health."
+      },
+      "common/src/comp/inventory/item/mod.rs": {
+        "path": "output/temp/veloren-native-20261022/source/common/src/comp/inventory/item/mod.rs",
+        "sha256": "70b4806fac7ed97151051209ebf6181642924825eccf2436ad04035f2d566820",
+        "matches_native_source_manifest": true,
+        "behavior": "Early death wear retains equipment and full stat multiplier."
+      }
+    },
+    "source_caveat": "The local renderer session/mod.rs is patched and does not equal the base manifest. Do not claim whole-file equality; original real VM combat and pinned renderer establish the input effects."
+  },
+  "original_st": {
+    "whole_success": true,
+    "joint_active_seconds": 213.998130101,
+    "player_deaths": 0,
+    "evidence": "Reused unchanged archive-replay-e72dfae.json record structured_tool, not replayed again.",
+    "scope": "Both identity-bound full-health native targets dead, actual peer contributions, both live grounded stationary arch endpoints. Added recovery unused.",
+    "source_limits": "Alive-contract revision and public social-field projection addition remain explicit; exact full public projections were not equal."
+  },
+  "original_vm": {
+    "archive": "output/temp/anchor-development-20261026/unified-stage-one-v2/probes/veloren-coordinated_route_hunt-visual_motor-03/results/baseline/coordinated_route_hunt.visual_motor/episode_1",
+    "outcome": "valid historical failure, unchanged",
+    "joint_active_seconds": 1124.227395753,
+    "pins": [
+      {
+        "path": "output/temp/anchor-development-20261026/unified-stage-one-v2/probes/veloren-coordinated_route_hunt-visual_motor-03/results/baseline/coordinated_route_hunt.visual_motor/episode_1/before/Alpha/observation.json",
+        "sha256": "3449af17a33fd1120fc5dedc6f5be34909173a683a343494a31588a9c3f792dc"
+      },
+      {
+        "path": "output/temp/anchor-development-20261026/unified-stage-one-v2/probes/veloren-coordinated_route_hunt-visual_motor-03/results/baseline/coordinated_route_hunt.visual_motor/episode_1/before/Beta/observation.json",
+        "sha256": "a0ecbfd526a52caa33b6413af8dbc71981c5e976b11f1341eb004477161eb32c"
+      },
+      {
+        "path": "output/temp/anchor-development-20261026/unified-stage-one-v2/probes/veloren-coordinated_route_hunt-visual_motor-03/results/baseline/coordinated_route_hunt.visual_motor/episode_1/after/Alpha/observation.json",
+        "sha256": "5f473cd9d707908bfbb77282fe8605526ffee7de810ba6b56793dacc5242d465"
+      },
+      {
+        "path": "output/temp/anchor-development-20261026/unified-stage-one-v2/probes/veloren-coordinated_route_hunt-visual_motor-03/results/baseline/coordinated_route_hunt.visual_motor/episode_1/after/Beta/observation.json",
+        "sha256": "2e750d5c1b4842ff425a1ebd94e5daf3bc5c1dea8f1650905cbfdf12bc3b9eaa"
+      },
+      {
+        "path": "output/temp/anchor-development-20261026/unified-stage-one-v2/probes/veloren-coordinated_route_hunt-visual_motor-03/results/baseline/coordinated_route_hunt.visual_motor/episode_1/results/result.json",
+        "sha256": "7441c56e18214bd40963544f6d607e1195b3f75610b94094f80e9eed4e2cd4f2"
+      }
+    ],
+    "same_episode_first_fight": {
+      "target": "passage_legoom",
+      "native_uid": 1812,
+      "native_health": 25,
+      "attacking_player": "Alpha",
+      "native_player_uid": 78,
+      "registered_hits": 8,
+      "native_death_sequence": 30384,
+      "first_injury_to_native_death_seconds": 16.851152181625366,
+      "first_successful_hit_to_native_death_seconds": 11.277847051620483,
+      "player_health_before": 100,
+      "player_health_after": 26.71875,
+      "player_health_cost": 73.28125,
+      "no_heal_in_this_native_health_interval": true,
+      "native_damage_events": [
+        {
+          "data": {
+            "after": 94.05078125,
+            "before": 100.0,
+            "cause": {
+              "Attack": "Melee"
+            },
+            "change_time": 773.5263216199955,
+            "changed": true,
+            "contributor": {
+              "Group": {
+                "entity_uid": 1812,
+                "group": 4294967295
+              }
+            },
+            "contributor_ability_at_effect": {
+              "ability": {
+                "ability": "ToolPrimary",
+                "context_index": null
+              },
+              "ability_meta": {
+                "capabilities": "",
+                "contextual_stats": null,
+                "init_event": null,
+                "precision_power_mult": null,
+                "requirements": {
+                  "item": null,
+                  "stance": null
+                }
+              },
+              "hand": "TwoHanded",
+              "input": "Primary",
+              "input_attr": {
+                "select_pos": null,
+                "target_entity": null
+              },
+              "tool": "Hammer"
+            },
+            "contributor_actor": null,
+            "contributor_entity": "Entity(89, Generation(4))",
+            "contributor_group": 4294967295,
+            "instance": 7512269906539324769,
+            "requested_amount": -5.948464393615723,
+            "scope": "single_native_health_application;contemporaneous_ability_not_delayed_cast_proof;not_exclusive_net_HP",
+            "server_time": 773.5263216199955,
+            "target_actor": {
+              "Character": 16
+            },
+            "target_entity": "Entity(13, Generation(2))",
+            "target_group": null,
+            "target_uid": 78
+          },
+          "event": "health_effect_applied",
+          "host_unix_ns": "1793075976207993627",
+          "private": true,
+          "schema": "rpg-native-oracle",
+          "sequence": 29792,
+          "server_tick": null,
+          "version": "1.1"
+        },
+        {
+          "data": {
+            "after": 84.53125,
+            "before": 94.05078125,
+            "cause": {
+              "Attack": "Melee"
+            },
+            "change_time": 774.9583874639956,
+            "changed": true,
+            "contributor": {
+              "Group": {
+                "entity_uid": 1812,
+                "group": 4294967295
+              }
+            },
+            "contributor_ability_at_effect": {
+              "ability": {
+                "ability": "ToolPrimary",
+                "context_index": null
+              },
+              "ability_meta": {
+                "capabilities": "",
+                "contextual_stats": null,
+                "init_event": null,
+                "precision_power_mult": null,
+                "requirements": {
+                  "item": null,
+                  "stance": null
+                }
+              },
+              "hand": "TwoHanded",
+              "input": "Primary",
+              "input_attr": {
+                "select_pos": null,
+                "target_entity": null
+              },
+              "tool": "Hammer"
+            },
+            "contributor_actor": null,
+            "contributor_entity": "Entity(89, Generation(4))",
+            "contributor_group": 4294967295,
+            "instance": 4209051334561132263,
+            "requested_amount": -9.517542839050293,
+            "scope": "single_native_health_application;contemporaneous_ability_not_delayed_cast_proof;not_exclusive_net_HP",
+            "server_time": 774.9583874639956,
+            "target_actor": {
+              "Character": 16
+            },
+            "target_entity": "Entity(13, Generation(2))",
+            "target_group": null,
+            "target_uid": 78
+          },
+          "event": "health_effect_applied",
+          "host_unix_ns": "1793075977640933751",
+          "private": true,
+          "schema": "rpg-native-oracle",
+          "sequence": 29840,
+          "server_tick": null,
+          "version": "1.1"
+        },
+        {
+          "data": {
+            "after": 78.58203125,
+            "before": 84.53125,
+            "cause": {
+              "Attack": "Melee"
+            },
+            "change_time": 777.2341365069959,
+            "changed": true,
+            "contributor": {
+              "Group": {
+                "entity_uid": 1812,
+                "group": 4294967295
+              }
+            },
+            "contributor_ability_at_effect": {
+              "ability": {
+                "ability": "ToolPrimary",
+                "context_index": null
+              },
+              "ability_meta": {
+                "capabilities": "",
+                "contextual_stats": null,
+                "init_event": null,
+                "precision_power_mult": null,
+                "requirements": {
+                  "item": null,
+                  "stance": null
+                }
+              },
+              "hand": "TwoHanded",
+              "input": "Primary",
+              "input_attr": {
+                "select_pos": null,
+                "target_entity": null
+              },
+              "tool": "Hammer"
+            },
+            "contributor_actor": null,
+            "contributor_entity": "Entity(89, Generation(4))",
+            "contributor_group": 4294967295,
+            "instance": 14737042235555340518,
+            "requested_amount": -5.948464393615723,
+            "scope": "single_native_health_application;contemporaneous_ability_not_delayed_cast_proof;not_exclusive_net_HP",
+            "server_time": 777.2341365069959,
+            "target_actor": {
+              "Character": 16
+            },
+            "target_entity": "Entity(13, Generation(2))",
+            "target_group": null,
+            "target_uid": 78
+          },
+          "event": "health_effect_applied",
+          "host_unix_ns": "1793075979914538442",
+          "private": true,
+          "schema": "rpg-native-oracle",
+          "sequence": 29914,
+          "server_tick": null,
+          "version": "1.1"
+        },
+        {
+          "data": {
+            "after": 69.0625,
+            "before": 78.58203125,
+            "cause": {
+              "Attack": "Melee"
+            },
+            "change_time": 778.6649176629961,
+            "changed": true,
+            "contributor": {
+              "Group": {
+                "entity_uid": 1812,
+                "group": 4294967295
+              }
+            },
+            "contributor_ability_at_effect": {
+              "ability": {
+                "ability": "ToolPrimary",
+                "context_index": null
+              },
+              "ability_meta": {
+                "capabilities": "",
+                "contextual_stats": null,
+                "init_event": null,
+                "precision_power_mult": null,
+                "requirements": {
+                  "item": null,
+                  "stance": null
+                }
+              },
+              "hand": "TwoHanded",
+              "input": "Primary",
+              "input_attr": {
+                "select_pos": null,
+                "target_entity": null
+              },
+              "tool": "Hammer"
+            },
+            "contributor_actor": null,
+            "contributor_entity": "Entity(89, Generation(4))",
+            "contributor_group": 4294967295,
+            "instance": 1239810185611719469,
+            "requested_amount": -9.517542839050293,
+            "scope": "single_native_health_application;contemporaneous_ability_not_delayed_cast_proof;not_exclusive_net_HP",
+            "server_time": 778.6649176629961,
+            "target_actor": {
+              "Character": 16
+            },
+            "target_entity": "Entity(13, Generation(2))",
+            "target_group": null,
+            "target_uid": 78
+          },
+          "event": "health_effect_applied",
+          "host_unix_ns": "1793075981350027072",
+          "private": true,
+          "schema": "rpg-native-oracle",
+          "sequence": 29963,
+          "server_tick": null,
+          "version": "1.1"
+        },
+        {
+          "data": {
+            "after": 22.10546875,
+            "before": 25.0,
+            "cause": {
+              "Attack": "Melee"
+            },
+            "change_time": 779.1000613279963,
+            "changed": true,
+            "contributor": {
+              "Solo": 78
+            },
+            "contributor_ability_at_effect": {
+              "ability": {
+                "ability": "ToolPrimary",
+                "context_index": 5
+              },
+              "ability_meta": {
+                "capabilities": "",
+                "contextual_stats": null,
+                "init_event": null,
+                "precision_power_mult": null,
+                "requirements": {
+                  "item": null,
+                  "stance": null
+                }
+              },
+              "hand": "TwoHanded",
+              "input": "Primary",
+              "input_attr": {
+                "select_pos": {
+                  "x": 18755.103515625,
+                  "y": 10826.0078125,
+                  "z": 502.9615783691406
+                },
+                "target_entity": null
+              },
+              "tool": "Sword"
+            },
+            "contributor_actor": {
+              "Character": 16
+            },
+            "contributor_entity": "Entity(13, Generation(2))",
+            "contributor_group": null,
+            "instance": 2860888747799011436,
+            "requested_amount": -2.8929998874664307,
+            "scope": "single_native_health_application;contemporaneous_ability_not_delayed_cast_proof;not_exclusive_net_HP",
+            "server_time": 779.1000613279963,
+            "target_actor": null,
+            "target_entity": "Entity(89, Generation(4))",
+            "target_group": 4294967295,
+            "target_uid": 1812
+          },
+          "event": "health_effect_applied",
+          "host_unix_ns": "1793075981781298749",
+          "private": true,
+          "schema": "rpg-native-oracle",
+          "sequence": 29980,
+          "server_tick": null,
+          "version": "1.1"
+        },
+        {
+          "data": {
+            "after": 18.0546875,
+            "before": 22.10546875,
+            "cause": {
+              "Attack": "Melee"
+            },
+            "change_time": 779.4337990839964,
+            "changed": true,
+            "contributor": {
+              "Solo": 78
+            },
+            "contributor_ability_at_effect": {
+              "ability": {
+                "ability": "ToolPrimary",
+                "context_index": 5
+              },
+              "ability_meta": {
+                "capabilities": "",
+                "contextual_stats": null,
+                "init_event": null,
+                "precision_power_mult": null,
+                "requirements": {
+                  "item": null,
+                  "stance": null
+                }
+              },
+              "hand": "TwoHanded",
+              "input": "Primary",
+              "input_attr": {
+                "select_pos": {
+                  "x": 18755.103515625,
+                  "y": 10826.0078125,
+                  "z": 502.9615783691406
+                },
+                "target_entity": null
+              },
+              "tool": "Sword"
+            },
+            "contributor_actor": {
+              "Character": 16
+            },
+            "contributor_entity": "Entity(13, Generation(2))",
+            "contributor_group": null,
+            "instance": 10247564654332192156,
+            "requested_amount": -4.05019998550415,
+            "scope": "single_native_health_application;contemporaneous_ability_not_delayed_cast_proof;not_exclusive_net_HP",
+            "server_time": 779.4337990839964,
+            "target_actor": null,
+            "target_entity": "Entity(89, Generation(4))",
+            "target_group": 4294967295,
+            "target_uid": 1812
+          },
+          "event": "health_effect_applied",
+          "host_unix_ns": "1793075982115897967",
+          "private": true,
+          "schema": "rpg-native-oracle",
+          "sequence": 29994,
+          "server_tick": null,
+          "version": "1.1"
+        },
+        {
+          "data": {
+            "after": 63.11328125,
+            "before": 69.0625,
+            "cause": {
+              "Attack": "Melee"
+            },
+            "change_time": 780.9714774449963,
+            "changed": true,
+            "contributor": {
+              "Group": {
+                "entity_uid": 1812,
+                "group": 4294967295
+              }
+            },
+            "contributor_ability_at_effect": {
+              "ability": {
+                "ability": "ToolPrimary",
+                "context_index": null
+              },
+              "ability_meta": {
+                "capabilities": "",
+                "contextual_stats": null,
+                "init_event": null,
+                "precision_power_mult": null,
+                "requirements": {
+                  "item": null,
+                  "stance": null
+                }
+              },
+              "hand": "TwoHanded",
+              "input": "Primary",
+              "input_attr": {
+                "select_pos": null,
+                "target_entity": null
+              },
+              "tool": "Hammer"
+            },
+            "contributor_actor": null,
+            "contributor_entity": "Entity(89, Generation(4))",
+            "contributor_group": 4294967295,
+            "instance": 2514191866193528061,
+            "requested_amount": -5.948464393615723,
+            "scope": "single_native_health_application;contemporaneous_ability_not_delayed_cast_proof;not_exclusive_net_HP",
+            "server_time": 780.9714774449963,
+            "target_actor": {
+              "Character": 16
+            },
+            "target_entity": "Entity(13, Generation(2))",
+            "target_group": null,
+            "target_uid": 78
+          },
+          "event": "health_effect_applied",
+          "host_unix_ns": "1793075983650460005",
+          "private": true,
+          "schema": "rpg-native-oracle",
+          "sequence": 30048,
+          "server_tick": null,
+          "version": "1.1"
+        },
+        {
+          "data": {
+            "after": 53.59375,
+            "before": 63.11328125,
+            "cause": {
+              "Attack": "Melee"
+            },
+            "change_time": 782.4065500299962,
+            "changed": true,
+            "contributor": {
+              "Group": {
+                "entity_uid": 1812,
+                "group": 4294967295
+              }
+            },
+            "contributor_ability_at_effect": {
+              "ability": {
+                "ability": "ToolPrimary",
+                "context_index": null
+              },
+              "ability_meta": {
+                "capabilities": "",
+                "contextual_stats": null,
+                "init_event": null,
+                "precision_power_mult": null,
+                "requirements": {
+                  "item": null,
+                  "stance": null
+                }
+              },
+              "hand": "TwoHanded",
+              "input": "Primary",
+              "input_attr": {
+                "select_pos": null,
+                "target_entity": null
+              },
+              "tool": "Hammer"
+            },
+            "contributor_actor": null,
+            "contributor_entity": "Entity(89, Generation(4))",
+            "contributor_group": 4294967295,
+            "instance": 4744298118751135222,
+            "requested_amount": -9.517542839050293,
+            "scope": "single_native_health_application;contemporaneous_ability_not_delayed_cast_proof;not_exclusive_net_HP",
+            "server_time": 782.4065500299962,
+            "target_actor": {
+              "Character": 16
+            },
+            "target_entity": "Entity(13, Generation(2))",
+            "target_group": null,
+            "target_uid": 78
+          },
+          "event": "health_effect_applied",
+          "host_unix_ns": "1793075985084088028",
+          "private": true,
+          "schema": "rpg-native-oracle",
+          "sequence": 30096,
+          "server_tick": null,
+          "version": "1.1"
+        },
+        {
+          "data": {
+            "after": 15.3046875,
+            "before": 18.0546875,
+            "cause": {
+              "Attack": "Melee"
+            },
+            "change_time": 784.6700685529961,
+            "changed": true,
+            "contributor": {
+              "Solo": 78
+            },
+            "contributor_ability_at_effect": {
+              "ability": {
+                "ability": "ToolPrimary",
+                "context_index": 5
+              },
+              "ability_meta": {
+                "capabilities": "",
+                "contextual_stats": null,
+                "init_event": null,
+                "precision_power_mult": null,
+                "requirements": {
+                  "item": null,
+                  "stance": null
+                }
+              },
+              "hand": "TwoHanded",
+              "input": "Primary",
+              "input_attr": {
+                "select_pos": null,
+                "target_entity": 1812
+              },
+              "tool": "Sword"
+            },
+            "contributor_actor": {
+              "Character": 16
+            },
+            "contributor_entity": "Entity(13, Generation(2))",
+            "contributor_group": null,
+            "instance": 15672993733029852047,
+            "requested_amount": -2.75,
+            "scope": "single_native_health_application;contemporaneous_ability_not_delayed_cast_proof;not_exclusive_net_HP",
+            "server_time": 784.6700685529961,
+            "target_actor": null,
+            "target_entity": "Entity(89, Generation(4))",
+            "target_group": 4294967295,
+            "target_uid": 1812
+          },
+          "event": "health_effect_applied",
+          "host_unix_ns": "1793075987350975868",
+          "private": true,
+          "schema": "rpg-native-oracle",
+          "sequence": 30170,
+          "server_tick": null,
+          "version": "1.1"
+        },
+        {
+          "data": {
+            "after": 49.20703125,
+            "before": 53.59375,
+            "cause": {
+              "Attack": "Melee"
+            },
+            "change_time": 784.7369468529961,
+            "changed": true,
+            "contributor": {
+              "Group": {
+                "entity_uid": 1812,
+                "group": 4294967295
+              }
+            },
+            "contributor_ability_at_effect": {
+              "ability": {
+                "ability": "ToolPrimary",
+                "context_index": null
+              },
+              "ability_meta": {
+                "capabilities": "",
+                "contextual_stats": null,
+                "init_event": null,
+                "precision_power_mult": null,
+                "requirements": {
+                  "item": null,
+                  "stance": null
+                }
+              },
+              "hand": "TwoHanded",
+              "input": "Primary",
+              "input_attr": {
+                "select_pos": null,
+                "target_entity": null
+              },
+              "tool": "Hammer"
+            },
+            "contributor_actor": null,
+            "contributor_entity": "Entity(89, Generation(4))",
+            "contributor_group": 4294967295,
+            "instance": 361479652811596417,
+            "requested_amount": -4.385964870452881,
+            "scope": "single_native_health_application;contemporaneous_ability_not_delayed_cast_proof;not_exclusive_net_HP",
+            "server_time": 784.7369468529961,
+            "target_actor": {
+              "Character": 16
+            },
+            "target_entity": "Entity(13, Generation(2))",
+            "target_group": null,
+            "target_uid": 78
+          },
+          "event": "health_effect_applied",
+          "host_unix_ns": "1793075987417538783",
+          "private": true,
+          "schema": "rpg-native-oracle",
+          "sequence": 30176,
+          "server_tick": null,
+          "version": "1.1"
+        },
+        {
+          "data": {
+            "after": 11.453125,
+            "before": 15.3046875,
+            "cause": {
+              "Attack": "Melee"
+            },
+            "change_time": 785.0041466999961,
+            "changed": true,
+            "contributor": {
+              "Solo": 78
+            },
+            "contributor_ability_at_effect": {
+              "ability": {
+                "ability": "ToolPrimary",
+                "context_index": 5
+              },
+              "ability_meta": {
+                "capabilities": "",
+                "contextual_stats": null,
+                "init_event": null,
+                "precision_power_mult": null,
+                "requirements": {
+                  "item": null,
+                  "stance": null
+                }
+              },
+              "hand": "TwoHanded",
+              "input": "Primary",
+              "input_attr": {
+                "select_pos": null,
+                "target_entity": 1812
+              },
+              "tool": "Sword"
+            },
+            "contributor_actor": {
+              "Character": 16
+            },
+            "contributor_entity": "Entity(13, Generation(2))",
+            "contributor_group": null,
+            "instance": 11074171141284492556,
+            "requested_amount": -3.8500001430511475,
+            "scope": "single_native_health_application;contemporaneous_ability_not_delayed_cast_proof;not_exclusive_net_HP",
+            "server_time": 785.0041466999961,
+            "target_actor": null,
+            "target_entity": "Entity(89, Generation(4))",
+            "target_group": 4294967295,
+            "target_uid": 1812
+          },
+          "event": "health_effect_applied",
+          "host_unix_ns": "1793075987684990668",
+          "private": true,
+          "schema": "rpg-native-oracle",
+          "sequence": 30189,
+          "server_tick": null,
+          "version": "1.1"
+        },
+        {
+          "data": {
+            "after": 8.703125,
+            "before": 11.453125,
+            "cause": {
+              "Attack": "Melee"
+            },
+            "change_time": 785.705717294996,
+            "changed": true,
+            "contributor": {
+              "Solo": 78
+            },
+            "contributor_ability_at_effect": {
+              "ability": {
+                "ability": "ToolPrimary",
+                "context_index": 5
+              },
+              "ability_meta": {
+                "capabilities": "",
+                "contextual_stats": null,
+                "init_event": null,
+                "precision_power_mult": null,
+                "requirements": {
+                  "item": null,
+                  "stance": null
+                }
+              },
+              "hand": "TwoHanded",
+              "input": "Primary",
+              "input_attr": {
+                "select_pos": null,
+                "target_entity": 1812
+              },
+              "tool": "Sword"
+            },
+            "contributor_actor": {
+              "Character": 16
+            },
+            "contributor_entity": "Entity(13, Generation(2))",
+            "contributor_group": null,
+            "instance": 2599527291747235853,
+            "requested_amount": -2.75,
+            "scope": "single_native_health_application;contemporaneous_ability_not_delayed_cast_proof;not_exclusive_net_HP",
+            "server_time": 785.705717294996,
+            "target_actor": null,
+            "target_entity": "Entity(89, Generation(4))",
+            "target_group": 4294967295,
+            "target_uid": 1812
+          },
+          "event": "health_effect_applied",
+          "host_unix_ns": "1793075988388646444",
+          "private": true,
+          "schema": "rpg-native-oracle",
+          "sequence": 30214,
+          "server_tick": null,
+          "version": "1.1"
+        },
+        {
+          "data": {
+            "after": 4.8515625,
+            "before": 8.703125,
+            "cause": {
+              "Attack": "Melee"
+            },
+            "change_time": 786.0075421939961,
+            "changed": true,
+            "contributor": {
+              "Solo": 78
+            },
+            "contributor_ability_at_effect": {
+              "ability": {
+                "ability": "ToolPrimary",
+                "context_index": 5
+              },
+              "ability_meta": {
+                "capabilities": "",
+                "contextual_stats": null,
+                "init_event": null,
+                "precision_power_mult": null,
+                "requirements": {
+                  "item": null,
+                  "stance": null
+                }
+              },
+              "hand": "TwoHanded",
+              "input": "Primary",
+              "input_attr": {
+                "select_pos": null,
+                "target_entity": 1812
+              },
+              "tool": "Sword"
+            },
+            "contributor_actor": {
+              "Character": 16
+            },
+            "contributor_entity": "Entity(13, Generation(2))",
+            "contributor_group": null,
+            "instance": 4712073371809260232,
+            "requested_amount": -3.8500001430511475,
+            "scope": "single_native_health_application;contemporaneous_ability_not_delayed_cast_proof;not_exclusive_net_HP",
+            "server_time": 786.0075421939961,
+            "target_actor": null,
+            "target_entity": "Entity(89, Generation(4))",
+            "target_group": 4294967295,
+            "target_uid": 1812
+          },
+          "event": "health_effect_applied",
+          "host_unix_ns": "1793075988688658361",
+          "private": true,
+          "schema": "rpg-native-oracle",
+          "sequence": 30228,
+          "server_tick": null,
+          "version": "1.1"
+        },
+        {
+          "data": {
+            "after": 42.1875,
+            "before": 49.20703125,
+            "cause": {
+              "Attack": "Melee"
+            },
+            "change_time": 786.141659407996,
+            "changed": true,
+            "contributor": {
+              "Group": {
+                "entity_uid": 1812,
+                "group": 4294967295
+              }
+            },
+            "contributor_ability_at_effect": {
+              "ability": {
+                "ability": "ToolPrimary",
+                "context_index": null
+              },
+              "ability_meta": {
+                "capabilities": "",
+                "contextual_stats": null,
+                "init_event": null,
+                "precision_power_mult": null,
+                "requirements": {
+                  "item": null,
+                  "stance": null
+                }
+              },
+              "hand": "TwoHanded",
+              "input": "Primary",
+              "input_attr": {
+                "select_pos": null,
+                "target_entity": null
+              },
+              "tool": "Hammer"
+            },
+            "contributor_actor": null,
+            "contributor_entity": "Entity(89, Generation(4))",
+            "contributor_group": 4294967295,
+            "instance": 6680267852680837525,
+            "requested_amount": -7.017543792724609,
+            "scope": "single_native_health_application;contemporaneous_ability_not_delayed_cast_proof;not_exclusive_net_HP",
+            "server_time": 786.141659407996,
+            "target_actor": {
+              "Character": 16
+            },
+            "target_entity": "Entity(13, Generation(2))",
+            "target_group": null,
+            "target_uid": 78
+          },
+          "event": "health_effect_applied",
+          "host_unix_ns": "1793075988822357694",
+          "private": true,
+          "schema": "rpg-native-oracle",
+          "sequence": 30236,
+          "server_tick": null,
+          "version": "1.1"
+        },
+        {
+          "data": {
+            "after": 36.23828125,
+            "before": 42.1875,
+            "cause": {
+              "Attack": "Melee"
+            },
+            "change_time": 788.4739732909964,
+            "changed": true,
+            "contributor": {
+              "Group": {
+                "entity_uid": 1812,
+                "group": 4294967295
+              }
+            },
+            "contributor_ability_at_effect": {
+              "ability": {
+                "ability": "ToolPrimary",
+                "context_index": null
+              },
+              "ability_meta": {
+                "capabilities": "",
+                "contextual_stats": null,
+                "init_event": null,
+                "precision_power_mult": null,
+                "requirements": {
+                  "item": null,
+                  "stance": null
+                }
+              },
+              "hand": "TwoHanded",
+              "input": "Primary",
+              "input_attr": {
+                "select_pos": null,
+                "target_entity": null
+              },
+              "tool": "Hammer"
+            },
+            "contributor_actor": null,
+            "contributor_entity": "Entity(89, Generation(4))",
+            "contributor_group": 4294967295,
+            "instance": 16673296155536672536,
+            "requested_amount": -5.948464393615723,
+            "scope": "single_native_health_application;contemporaneous_ability_not_delayed_cast_proof;not_exclusive_net_HP",
+            "server_time": 788.4739732909964,
+            "target_actor": {
+              "Character": 16
+            },
+            "target_entity": "Entity(13, Generation(2))",
+            "target_group": null,
+            "target_uid": 78
+          },
+          "event": "health_effect_applied",
+          "host_unix_ns": "1793075991154871609",
+          "private": true,
+          "schema": "rpg-native-oracle",
+          "sequence": 30312,
+          "server_tick": null,
+          "version": "1.1"
+        },
+        {
+          "data": {
+            "after": 26.71875,
+            "before": 36.23828125,
+            "cause": {
+              "Attack": "Melee"
+            },
+            "change_time": 789.9410599689967,
+            "changed": true,
+            "contributor": {
+              "Group": {
+                "entity_uid": 1812,
+                "group": 4294967295
+              }
+            },
+            "contributor_ability_at_effect": {
+              "ability": {
+                "ability": "ToolPrimary",
+                "context_index": null
+              },
+              "ability_meta": {
+                "capabilities": "",
+                "contextual_stats": null,
+                "init_event": null,
+                "precision_power_mult": null,
+                "requirements": {
+                  "item": null,
+                  "stance": null
+                }
+              },
+              "hand": "TwoHanded",
+              "input": "Primary",
+              "input_attr": {
+                "select_pos": null,
+                "target_entity": null
+              },
+              "tool": "Hammer"
+            },
+            "contributor_actor": null,
+            "contributor_entity": "Entity(89, Generation(4))",
+            "contributor_group": 4294967295,
+            "instance": 16408105332580658605,
+            "requested_amount": -9.517542839050293,
+            "scope": "single_native_health_application;contemporaneous_ability_not_delayed_cast_proof;not_exclusive_net_HP",
+            "server_time": 789.9410599689967,
+            "target_actor": {
+              "Character": 16
+            },
+            "target_entity": "Entity(13, Generation(2))",
+            "target_group": null,
+            "target_uid": 78
+          },
+          "event": "health_effect_applied",
+          "host_unix_ns": "1793075992625949719",
+          "private": true,
+          "schema": "rpg-native-oracle",
+          "sequence": 30361,
+          "server_tick": null,
+          "version": "1.1"
+        },
+        {
+          "data": {
+            "after": 1.671875,
+            "before": 4.8515625,
+            "cause": {
+              "Attack": "Melee"
+            },
+            "change_time": 790.0422785719967,
+            "changed": true,
+            "contributor": {
+              "Solo": 78
+            },
+            "contributor_ability_at_effect": {
+              "ability": {
+                "ability": "ToolPrimary",
+                "context_index": 5
+              },
+              "ability_meta": {
+                "capabilities": "",
+                "contextual_stats": null,
+                "init_event": null,
+                "precision_power_mult": null,
+                "requirements": {
+                  "item": null,
+                  "stance": null
+                }
+              },
+              "hand": "TwoHanded",
+              "input": "Primary",
+              "input_attr": {
+                "select_pos": null,
+                "target_entity": 1812
+              },
+              "tool": "Sword"
+            },
+            "contributor_actor": {
+              "Character": 16
+            },
+            "contributor_entity": "Entity(13, Generation(2))",
+            "contributor_group": null,
+            "instance": 17492702896948706363,
+            "requested_amount": -3.178999900817871,
+            "scope": "single_native_health_application;contemporaneous_ability_not_delayed_cast_proof;not_exclusive_net_HP",
+            "server_time": 790.0422785719967,
+            "target_actor": null,
+            "target_entity": "Entity(89, Generation(4))",
+            "target_group": 4294967295,
+            "target_uid": 1812
+          },
+          "event": "health_effect_applied",
+          "host_unix_ns": "1793075992724705720",
+          "private": true,
+          "schema": "rpg-native-oracle",
+          "sequence": 30368,
+          "server_tick": null,
+          "version": "1.1"
+        },
+        {
+          "data": {
+            "after": 0.0,
+            "before": 1.671875,
+            "cause": {
+              "Attack": "Melee"
+            },
+            "change_time": 790.3763375869966,
+            "changed": true,
+            "contributor": {
+              "Solo": 78
+            },
+            "contributor_ability_at_effect": {
+              "ability": {
+                "ability": "ToolPrimary",
+                "context_index": 5
+              },
+              "ability_meta": {
+                "capabilities": "",
+                "contextual_stats": null,
+                "init_event": null,
+                "precision_power_mult": null,
+                "requirements": {
+                  "item": null,
+                  "stance": null
+                }
+              },
+              "hand": "TwoHanded",
+              "input": "Primary",
+              "input_attr": {
+                "select_pos": null,
+                "target_entity": 1812
+              },
+              "tool": "Sword"
+            },
+            "contributor_actor": {
+              "Character": 16
+            },
+            "contributor_entity": "Entity(13, Generation(2))",
+            "contributor_group": null,
+            "instance": 7852252561211030780,
+            "requested_amount": -4.05019998550415,
+            "scope": "single_native_health_application;contemporaneous_ability_not_delayed_cast_proof;not_exclusive_net_HP",
+            "server_time": 790.3763375869966,
+            "target_actor": null,
+            "target_entity": "Entity(89, Generation(4))",
+            "target_group": 4294967295,
+            "target_uid": 1812
+          },
+          "event": "health_effect_applied",
+          "host_unix_ns": "1793075993058954833",
+          "private": true,
+          "schema": "rpg-native-oracle",
+          "sequence": 30383,
+          "server_tick": null,
+          "version": "1.1"
+        }
+      ],
+      "native_death_event": {
+        "data": {
+          "cause": {
+            "amount": -4.05019998550415,
+            "by": {
+              "Solo": 78
+            },
+            "cause": {
+              "Attack": "Melee"
+            },
+            "instance": 7852252561211030780,
+            "precise": true,
+            "time": 790.3763375869966
+          },
+          "entity": "Entity(89, Generation(4))",
+          "scope": "actual_native_DestroyEvent_first_dead_transition;not_disappearance",
+          "uid": 1812
+        },
+        "event": "native_entity_death",
+        "host_unix_ns": "1793075993059145793",
+        "private": true,
+        "schema": "rpg-native-oracle",
+        "sequence": 30384,
+        "server_tick": null,
+        "version": "1.1"
+      }
+    },
+    "remaining_enemy": {
+      "native_uid": 1825,
+      "native_health": 25,
+      "native_opening_binding_differences_from_first": [
+        "server_entity",
+        "uid"
+      ],
+      "same_native_body_equipment_alignment_group_health": true,
+      "original_damage": 0,
+      "original_native_death": false
+    },
+    "separate_player_resources": {
+      "Alpha": {
+        "opening_health": 100.0,
+        "final_health": 100.0,
+        "opening_items": {
+          "common.items.consumable.potion_minor": 3,
+          "common.items.food.apple": 3
+        },
+        "final_items": {
+          "common.items.consumable.potion_minor": 3,
+          "common.items.food.apple": 3,
+          "common.items.quest.legoom_leaf": 1
+        },
+        "final_position": [
+          18672.59765625,
+          10820.880859375,
+          383.0
+        ],
+        "native_deaths": 1
+      },
+      "Beta": {
+        "opening_health": 100.0,
+        "final_health": 55.57421875,
+        "opening_items": {
+          "common.items.consumable.potion_minor": 3,
+          "common.items.food.apple": 3
+        },
+        "final_items": {
+          "common.items.consumable.potion_minor": 3,
+          "common.items.food.apple": 3
+        },
+        "final_position": [
+          18640.58984375,
+          10853.8779296875,
+          386.0
+        ],
+        "native_deaths": 0
+      }
+    },
+    "correction_to_previous_proposal": {
+      "Beta_fall": {
+        "data": {
+          "after": 55.57421875,
+          "before": 100.0,
+          "cause": "Falling",
+          "change_time": 864.1887626499984,
+          "changed": true,
+          "contributor": null,
+          "contributor_ability_at_effect": null,
+          "contributor_actor": null,
+          "contributor_entity": null,
+          "contributor_group": null,
+          "instance": 2160591867185449935,
+          "requested_amount": -44.42197799682617,
+          "scope": "single_native_health_application;contemporaneous_ability_not_delayed_cast_proof;not_exclusive_net_HP",
+          "server_time": 864.2220402569983,
+          "target_actor": {
+            "Character": 33
+          },
+          "target_entity": "Entity(75, Generation(9))",
+          "target_group": null,
+          "target_uid": 1848
+        },
+        "event": "health_effect_applied",
+        "host_unix_ns": "1793076066903161586",
+        "private": true,
+        "schema": "rpg-native-oracle",
+        "sequence": 32703,
+        "server_tick": null,
+        "version": "1.1"
+      },
+      "finding": "Beta fell with zero deaths: 100->55.57421875HP and ended at z386, 115m below the platform. This is not a respawn-location failure. Alpha alone died and revived below the platform.",
+      "cause_boundary": "The prior Beta trace holds W+Space for5s immediately before the recorded fall. The event proves Falling, not a fully reconstructed causal camera/position trajectory.",
+      "joint_time": "1124.227395753s, not Alpha's1025.927654566s endpoint interval.",
+      "not_a_continuation": "Do not claim both archived failed endpoints become feasible merely by changing the waypoint."
+    },
+    "public_motor": {
+      "Alpha": {
+        "trace": {
+          "path": "output/temp/anchor-development-20261026/unified-stage-one-v2/probes/veloren-coordinated_route_hunt-visual_motor-03/results/baseline/coordinated_route_hunt.visual_motor/episode_1/participants/Alpha/recording/chat/agent.jsonl",
+          "sha256": "18a7fe624d13eab36dcf68d4f0e12b6b83380571426aac0ba7268fdff2eb8178"
+        },
+        "action_calls": 101,
+        "invalid_calls": [],
+        "current_action_schema_equals_archived": true,
+        "meaning": "Schema legality only; actual combat effects are proven by the native journal."
+      },
+      "Beta": {
+        "trace": {
+          "path": "output/temp/anchor-development-20261026/unified-stage-one-v2/probes/veloren-coordinated_route_hunt-visual_motor-03/results/baseline/coordinated_route_hunt.visual_motor/episode_1/participants/Beta/recording/chat/agent.jsonl",
+          "sha256": "538123a9ca7f892e7bfb1534dc14b4158626a9a193c8b1648f0f7d6426ebbeb0"
+        },
+        "action_calls": 129,
+        "invalid_calls": [],
+        "current_action_schema_equals_archived": true,
+        "meaning": "Schema legality only; actual combat effects are proven by the native journal."
+      }
+    },
+    "selected_original_motor_calls": {
+      "Alpha": [
+        {
+          "line": 82,
+          "seconds_from_first_message": 84.033474701,
+          "timestamp": "2026-10-27T04:39:32.370648+00:00",
+          "tool_call": {
+            "id": "call_sJ9IG9nAJWJaqBquyuhCangy",
+            "name": "action",
+            "arguments": {
+              "commands": [
+                {
+                  "name": "mouse_move_relative",
+                  "arguments": {
+                    "dx": -160,
+                    "dy": -60
+                  }
+                },
+                {
+                  "name": "key_down",
+                  "arguments": {
+                    "key": "w"
+                  }
+                },
+                {
+                  "name": "key_down",
+                  "arguments": {
+                    "key": "r"
+                  }
+                },
+                {
+                  "name": "key_up",
+                  "arguments": {
+                    "key": "r"
+                  }
+                },
+                {
+                  "name": "wait",
+                  "arguments": {
+                    "milliseconds": 2500
+                  }
+                },
+                {
+                  "name": "key_up",
+                  "arguments": {
+                    "key": "w"
+                  }
+                },
+                {
+                  "name": "mouse_down",
+                  "arguments": {
+                    "button": "left"
+                  }
+                },
+                {
+                  "name": "wait",
+                  "arguments": {
+                    "milliseconds": 2000
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "line": 88,
+          "seconds_from_first_message": 93.916340319,
+          "timestamp": "2026-10-27T04:39:42.253514+00:00",
+          "tool_call": {
+            "id": "call_MgQV0iOEpQNT5aYxD7kaR72s",
+            "name": "action",
+            "arguments": {
+              "commands": [
+                {
+                  "name": "mouse_up",
+                  "arguments": {
+                    "button": "left"
+                  }
+                },
+                {
+                  "name": "mouse_move_relative",
+                  "arguments": {
+                    "dx": 450,
+                    "dy": 0
+                  }
+                },
+                {
+                  "name": "mouse_scroll",
+                  "arguments": {
+                    "steps": -5
+                  }
+                },
+                {
+                  "name": "wait",
+                  "arguments": {
+                    "milliseconds": 400
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "line": 94,
+          "seconds_from_first_message": 98.597649408,
+          "timestamp": "2026-10-27T04:39:46.934823+00:00",
+          "tool_call": {
+            "id": "call_TFpmCP5JFxotOSPDuLJvP7o4",
+            "name": "action",
+            "arguments": {
+              "commands": [
+                {
+                  "name": "mouse_down",
+                  "arguments": {
+                    "button": "left"
+                  }
+                },
+                {
+                  "name": "wait",
+                  "arguments": {
+                    "milliseconds": 9000
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "Beta": [
+        {
+          "line": 142,
+          "seconds_from_first_message": 170.395947781,
+          "timestamp": "2026-10-27T04:40:58.868200+00:00",
+          "tool_call": {
+            "id": "call_YsN4Lv7luetDzb5SJ4qC8wc6",
+            "name": "action",
+            "arguments": {
+              "commands": [
+                {
+                  "name": "mouse_move_relative",
+                  "arguments": {
+                    "dx": 0,
+                    "dy": -160
+                  }
+                },
+                {
+                  "name": "key_down",
+                  "arguments": {
+                    "key": "w"
+                  }
+                },
+                {
+                  "name": "key_down",
+                  "arguments": {
+                    "key": "space"
+                  }
+                },
+                {
+                  "name": "wait",
+                  "arguments": {
+                    "milliseconds": 5000
+                  }
+                },
+                {
+                  "name": "release_all",
+                  "arguments": {}
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "actual_observation_images": {
+      "Alpha": {
+        "path": "output/temp/anchor-development-20261026/unified-stage-one-v2/probes/veloren-coordinated_route_hunt-visual_motor-03/results/baseline/coordinated_route_hunt.visual_motor/episode_1/participants/Alpha/recording/chat/images/226206896caba80e091bf910ec82c70f6965c39c9717c7b460078afa659ce026.png",
+        "sha256": "226206896caba80e091bf910ec82c70f6965c39c9717c7b460078afa659ce026"
+      },
+      "Beta": {
+        "path": "output/temp/anchor-development-20261026/unified-stage-one-v2/probes/veloren-coordinated_route_hunt-visual_motor-03/results/baseline/coordinated_route_hunt.visual_motor/episode_1/participants/Beta/recording/chat/images/10b8d5b6e5ca59b7494842a8865e915cc51b171a62aa5ebd4270b8f1a26bcace.png",
+        "sha256": "10b8d5b6e5ca59b7494842a8865e915cc51b171a62aa5ebd4270b8f1a26bcace"
+      }
+    }
+  },
+  "geometry": {
+    "task_pins": [
+      {
+        "path": "output/temp/task_development/worktrees/parallel-ve-hunt-20261029/config/veloren/tasks/structured_tools/coordinated_route_hunt.yaml",
+        "sha256": "fd5512da6774684b06568dd7aa594c47d4693d1800fd1452b013a537555d1e57"
+      },
+      {
+        "path": "output/temp/task_development/worktrees/parallel-ve-hunt-20261029/config/veloren/tasks/visual_motor/coordinated_route_hunt.yaml",
+        "sha256": "de0124f5d0a964781c8630ac223fa00c4f07cbca36e0ca1e23bc9e7af1ba1aef"
+      }
+    ],
+    "tracks_equal_except_interface": true,
+    "routes": {
+      "Alpha": {
+        "reviewer_only_waypoints_not_agent_inputs": [
+          [
+            18708.5,
+            10806.5,
+            501
+          ],
+          [
+            18720.5,
+            10806.5,
+            501
+          ],
+          [
+            18720.5,
+            10822.5,
+            501
+          ],
+          [
+            18753.5,
+            10822.5,
+            501
+          ],
+          [
+            18796.5,
+            10822.5,
+            501
+          ]
+        ],
+        "outbound_length_m": 104,
+        "return_to_common_arch_length_m": 104,
+        "all_cells_have_3_by_3_floor_and_3_high_headroom": true,
+        "no_jump_climb_glide_or_world_coordinates_in_motor_actions_required": true
+      },
+      "Beta": {
+        "reviewer_only_waypoints_not_agent_inputs": [
+          [
+            18721.5,
+            10812.5,
+            501
+          ],
+          [
+            18720.5,
+            10812.5,
+            501
+          ],
+          [
+            18720.5,
+            10822.5,
+            501
+          ],
+          [
+            18753.5,
+            10822.5,
+            501
+          ],
+          [
+            18796.5,
+            10822.5,
+            501
+          ]
+        ],
+        "outbound_length_m": 87,
+        "return_to_common_arch_length_m": 104,
+        "all_cells_have_3_by_3_floor_and_3_high_headroom": true,
+        "no_jump_climb_glide_or_world_coordinates_in_motor_actions_required": true
+      }
+    },
+    "interpretation": "Source-grounded collision-clear walking construction, not a new native trajectory. Existing ST whole success establishes actual traversal and return in the identical fixture; original VM reaches and kills the first target.",
+    "discoverability": "Original public task gives passage, yard and arch; real screenshots show walls, passage, enemies, health and landmarks. Coordinates here are reviewer geometry, never allowed VM observations."
+  },
+  "constructive_vm_review": {
+    "status": "evidence-grounded lawful construction submitted for independent review, not an observed success",
+    "starting_condition": "The unchanged current C01 initial state, not the two failed historical terminal positions.",
+    "plan": [
+      "Keep one healthy player in the supported camp while the other locates and defeats the passage opponent using screenshot-guided walking, camera alignment, R and left primary. The original VM proves this full25HPkill from100HP with no healing,8actual hits and26.71875HP remaining.",
+      "Use the healthy teammate, with identical starting equipment and100HP, for the remaining original opponent; both native enemy bindings are identical except UID/entity generation. Do not send the26HPactor into another fight without recovery. Roles can be exchanged: this is a lawful witness strategy, not an evaluator requirement.",
+      "Approach along the center of the supported passage into the enclosed yard; use visible target/health feedback for melee, release movement before reasoning and avoid the unnecessary jumping that preceded Beta's fall. The second opponent is a native moving enemy, not a frozen or reduced-health diagnostic.",
+      "Both players walk back through the same clear passage to the common arch. Beta's own spawn is13m east and6m north of the common arch; neither the spawn nor final predicate is silently relocated. Release all inputs and wait until grounded/stationary before finalizing either loop."
+    ],
+    "resources": "Two separate100HPplayers, same sword/rawhide,3minor potions+3apples EACH. Proposed main construction uses one healthy character per identical target; it neither transfers inventory nor assumes guaranteed reproduction of the observed73.28125HPcost. The six retained potions are contingency, not six additive instantaneous50HPrestores; potion sickness is not ignored.",
+    "recovery": "Fallback only: same-native-source per-player waypoint, same identity, full health, inventory retention and unchanged completed enemies. Shared fresh I01 evidence validates that primitive, not C01 VM completion. Space is the default visible-client respawn binding; no ST RespawnTool is smuggled into VM. Beta has a separate camp waypoint and must still walk to the arch. Do not assume a living fallen player can respawn.",
+    "recovery_reference": {
+      "facts": {
+        "path": "output/review/parallel-ve-originals-20261029/constructive-originals-e72dfae.json",
+        "sha256": "eeda29edbfea08ff24a29298d4142a7c53470043a88d7d45a3dac112f4db0c8d"
+      },
+      "pointer": "/fresh_current_waypoint_recovery",
+      "record": {
+        "before": {
+          "path": "output/review/parallel-ve-originals-20261029/I01-opening-e72dfae/before/observation.json",
+          "sha256": "5fade58ba6873cff8ad78b8accd7a2a52b566e2adff8e8bb565b532e8c9cc4e8"
+        },
+        "after": {
+          "path": "output/review/parallel-ve-originals-20261029/I01-opening-e72dfae/after/observation.json",
+          "sha256": "b155b08a679671f63088773e7e381b83bef0312341d8bad1f37c6cb326cf90ec"
+        },
+        "public_trace": {
+          "path": "output/review/parallel-ve-originals-20261029/I01-opening-e72dfae/public-trace.jsonl",
+          "sha256": "8272ff7847b68984599e9d66ba3d889c18a7ea58c74507a43fcece9f90bb31c9"
+        },
+        "result": {
+          "path": "output/review/parallel-ve-originals-20261029/I01-opening-e72dfae/result.json",
+          "sha256": "c30c4cf561638d7241d0bf11234ff95e3f5ee0626cee64eb6b38629d0c62c506"
+        },
+        "native_deaths": 1,
+        "public_action": "RespawnTool; observed_alive=true, sent=true",
+        "position": [
+          18708.302734375,
+          10806.56640625,
+          501.0
+        ],
+        "health": {
+          "can_have_death_protection": true,
+          "current": 100.0,
+          "dead": false,
+          "death_protection": true,
+          "downed": false,
+          "fraction": 1.0,
+          "maximum": 100.0
+        },
+        "inventory_preserved": {
+          "common.items.consumable.potion_minor": 8,
+          "common.items.food.apple": 4
+        },
+        "scope": "Incidental ordinary Ogre death/recovery during the exact original I01 offer diagnostic. Same player identity, full health, inventory retained and grounded arch return native-verified. Shared waypoint/respawn primitive transfers to route-disabled originals on the same runtime; this does not substitute for their task outcomes or original Ogre combat/settlement. Terminal speed0.353m/s was not stationary: release inputs and wait before a final endpoint."
+      }
+    },
+    "time_budget": {
+      "limit_seconds": 2700,
+      "actual_vm_first_kill_seconds_from_first_message_approx": 105,
+      "observed_fight_seconds": 16.851152181625366,
+      "longest_full_walking_route_m": 208,
+      "combined_full_walking_routes_m": 399,
+      "illustrative_walk_allocation_seconds": 798,
+      "illustrative_second_fight_and_contingency_allocation_seconds": 600,
+      "illustrative_total_seconds": 1503,
+      "interpretation": "105+798+600=1503s is a constructive schedule (both full routes399m at walking0.5m/s average), not a measured VM second fight or latency guarantee. It conservatively counts both walking routes serially and repeats the first approach allocation; no simultaneous-controller speedup is required. The actual first kill is relevant motor timing;213.998sST is not converted into VM timing."
+    },
+    "composition": "One fresh same-task episode with sequential single-enemy engagements and two retained native actors. No state transplant, target reset, administrative movement, hidden coordinates, pause, unlimited healing, or cross-run score concatenation.",
+    "remaining_question": "Independent reviewer must accept or reject transfer of the demonstrated ordinary VM melee to the stat-identical remaining opponent, with the healthy peer and the verified clear route. Full controller victory is not a required gate; no new native check is authorized or launched."
+  },
+  "acceptance_judgments": {
+    "known_blocking_bug": "None identified in the scoped source/archived-evidence review; this is not a zero-bug guarantee. No speculative task or interface edits.",
+    "capability": "Meaningful basic cooperative completion/rendezvous: independent controls/views/health, allocating exposure to a healthy peer, shared kill progress and both-player live return. Legal single-fighter shortcuts remain; no causal chat advantage, equal damage, required roles or empirical cooperation discrimination is claimed.",
+    "difficulty": "Keep independent ST2(range2-3),VM3(range3-4),high uncertainty only as provisional native-mechanism judgments. Nonblocking calibration deferred under October29policy; not completed here.",
+    "experiments": "Historical STsuccess and VMfailure retained. No fresh model/native measurement; missing experiments separate from acceptance.",
+    "diagnostics": "No reducedHP, hints or task variant used. A later diagnostic must be separately authorized and cannot qualify original difficulty/resources.",
+    "admission": "No ledger promotion or independent signature fabricated. Parent/reviewer signoff is the remaining decision."
+  },
+  "validation": {
+    "evidence_command": "PYTHONDONTWRITEBYTECODE=1 .venv/bin/python output/review/parallel-ve-hunt-20261029/analyze.py",
+    "evidence_script": {
+      "path": "output/review/parallel-ve-hunt-20261029/analyze.py",
+      "sha256": "abb25d2ff4908ef179c5837f36c6374d17c40b1ef364793b1e72f8004305f0a3"
+    },
+    "light_tests": {
+      "log": {
+        "path": "output/review/parallel-ve-hunt-20261029/veloren-light-tests.log",
+        "sha256": "55f97df976560fcd67c83ff2918395e9bdab5a924674254446a3b443ab951780"
+      },
+      "result": "16 passed,1deselected",
+      "command": "cd output/temp/task_development/worktrees/parallel-ve-hunt-20261029 && PYTHONDONTWRITEBYTECODE=1 /home/msra/GameAgent/LiveQuestBench/.venv/bin/python -m pytest -q -p no:cacheprovider tests/test_game/veloren/test_encounter.py::test_team_encounter_accepts_peer_damage_not_unregistered_or_other_session tests/test_game/veloren/test_encounter.py::test_respawn_is_native_parameter_free_and_death_evidence_is_private tests/test_game/veloren/test_initialization.py::test_initialize_waits_for_actual_health tests/test_game/veloren/test_initialization.py::test_optional_native_recovery_fields_preserve_legacy_defaults tests/test_benchmark/test_team.py -k 'not test_team_goal_composition_uses_each_native_players_inventory' --basetemp=output/tests/parallel-ve-hunt-20261029-veloren"
+    },
+    "initial_attempts": [
+      "Initial project-local pytest basetemp parent absent: created that directory; no product defect.",
+      "Broader team file:16passed, unrelated Minecraft inventory test failed to import nbtlib. Deselected only that test; installed nothing and changed no environment."
+    ],
+    "native_processes_started": 0,
+    "models_called": 0,
+    "heavy_builds": 0,
+    "subagents": 0,
+    "source_changes": [],
+    "ledger_changes": [],
+    "pushes": 0
+  }
+}

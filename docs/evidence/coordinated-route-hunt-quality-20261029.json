@@ -1,0 +1,85 @@
+{
+  "date": "2026-10-29",
+  "kind": "C01-exact-original-condition-constructive-quality-acceptance",
+  "task_id": "VE-C01",
+  "ledger_stable_id": "veloren/coordinated_route_hunt",
+  "disposition": "supported",
+  "decision": "Accept the bounded basic-cooperation construct and evidence-grounded lawful ST/VM feasibility on the exact pinned condition. A new complete VM controller victory or formal model measurement is not required. This is a quality decision, not an observed VM success, automatic integration or a robustness guarantee.",
+  "receipt": {
+    "path": "output/temp/task_development/checks/parallel-ve-hunt-20261029.json",
+    "sha256": "007291a0af91c1c9668f9c144fa1321ae0085ca40ba4548575efad8e3313529f",
+    "frozen_reviewed_copy": "output/review/parallel-ve-hunt-20261029/reviewed-evidence-007291a0.json",
+    "preservation_note": "The owner subsequently added a signoff pointer to the mutable handoff. This independently hash-verified frozen copy retains the exact reviewed bytes.",
+    "receipt_updated_at_utc": "2026-10-29T13:33:51.151807+00:00",
+    "source_commit": "966d21875301276c906cbb33f0f7cc796c2e1398",
+    "task_st_sha256": "fd5512da6774684b06568dd7aa594c47d4693d1800fd1452b013a537555d1e57",
+    "task_vm_sha256": "de0124f5d0a964781c8630ac223fa00c4f07cbca36e0ca1e23bc9e7af1ba1aef",
+    "runtime_manifest": "output/temp/veloren-native-20261022/runtime.json",
+    "runtime_manifest_sha256": "71de989307966e8d984d7be651823844985d0c0c0c39cdd14e6097707637aa79",
+    "native_source_manifest_sha256": "f303e8aa0d93c19089db8b070ecefe04dc2afea1e84d1ccf3dee522bd4141ba1"
+  },
+  "review_performed": [
+    "Read exact public VM task, handoff construction, evidence-extraction script, selected team/fixture recovery implementation and reused current-scorer replay records.",
+    "Independently verified26 cited task/scorer/control/native-source/runtime/snapshot/image/replay file hashes; no expensive binary rehash or runtime launch.",
+    "Inspected actual archived native bindings for both enemies: body, equipment, alignment, group and full25HP match; only UID/entity generation differ.",
+    "Viewed actual public Alpha corridor/kill and Beta below-platform screenshots. Read the actual fall and native first-kill/resource summaries, keeping their different scopes explicit.",
+    "Independently recomputed the authored104m Alpha and87m Beta outbound center routes with full3-by-3 floor support and3m headroom; both have zero blocking cells. Used existing project Python after system Python lacked yaml; installed nothing.",
+    "Did not run tests, scorer replay, game, model or a new native diagnostic."
+  ],
+  "bug_and_source_status": {
+    "known_blocking_bug": "None identified in this bounded exact-condition review. Historical fall/recovery errors are not silently erased, and no blanket zero-bug certification is made.",
+    "selected_source_bridge": "Receipt source966d218 scoring/control/task bytes match the existing e72dfae replay source. The disclosed fixture difference is only under the contract branch, absent from C01. Existing replay preserves ST success and VM failure with actual native identities and stronger current terminal guards.",
+    "historical_provenance_limit": "Archived executions were not entirely clean matches to their declared31cf02 revision: some files differ and some did not exist in that revision. Actual archived provenance hashes and the selected semantic replay remain the basis; neither historical execution is relabeled966d218 or a new current run.",
+    "runtime_limit": "Acceptance is restricted to the explicit20261022 runtime/source pin. C01 does not request route-based native_efficiency. No default-runtime, route/2 or arbitrary patched-runtime transfer is claimed.",
+    "public_interface_limit": "Archived230 VM action calls satisfy the current public physical-input schema. That establishes control legality, not that every call was effective. Actual first-target native damage/death supplies the separate effectiveness evidence."
+  },
+  "feasibility_argument": {
+    "starting_condition": "Construct a lawful policy from the declared fresh initial state with two independent100HP actors and original full-health native enemies. This is NOT a continuation from the two failed historical low-platform endpoints.",
+    "direct_ST_evidence": "Actual whole independent-player ST success at213.998s has both source-bound original deaths and both living grounded stationary arch endpoints, with zero player deaths. Added recovery waypoint is unused on this witness; same physical fixture and resources remain relevant.",
+    "public_VM_combat_anchor": "In the original VM episode Alpha reaches the passage, inflicts all25damage through8actual native hits and kills original1812. First injury to death is16.851s, first successful hit to death11.278s; Alpha survives at26.71875HP without healing during that interval. Actual screenshot shows the supported corridor, opponent loot and health; motor actions are ordinary camera/movement/wield/primary inputs.",
+    "dynamic_second_enemy_transfer": "Original1825 is the same native25HP Green Legoom body/equipment/alignment/group as1812, not a different unseen attack family or reduced-health variant. Its encounter is in a supported, bounded20-by-16m yard connected to the same passage; the existing same-fixture ST whole witness demonstrates that this original can be reached, fought and left. The public task explicitly locates that yard, and normal screenshots/rendered moving bodies and health are the observation channel. Transfer the demonstrated closed-loop native melee capability to a fresh healthy peer there, with visual reacquisition rather than fixed spawn coordinates or a frozen-target assumption. No second VM kill is falsely claimed observed.",
+    "why_joint_resources_are_achievable": "Keep the second player healthy at supported camp during the first engagement, then allocate that peer to the second stat-identical target. Both start with the same sword/rawhide,100HP,3potions and3apples; no inventory transplant is needed. The first low-health player can retreat through the supported passage instead of spending its remaining26HP on a second fight. The observed73.28125HP combat cost is an existence anchor, not a promised upper bound for every AI/control trajectory. A competent lawful engagement has demonstrated positive survival margin; native potion/food/ordinary death recovery are reserve options, not assumed unlimited or instantaneous additive healing.",
+    "safe_topology_and_return": "A verified center route connects camp, passage and enclosed yard without jumps, climbs or glides. Alpha outbound104m/return104m and Beta outbound87m/return104m give399m total if both complete the full route serially. Public visible wall openings and arch, not private numeric coordinates, guide the actors. Release movement before observation pauses, stay on the broad supported route and stop at separate nonoverlapping positions inside the common3m arch radius. Ordinary movement/release/grounded settling already exists in the native evidence; ST demonstrates simultaneous endpoint attainability.",
+    "independent_recovery": "Fallback is ordinary death-dependent recovery, not an action that can teleport a living fallen player. game/team.py substitutes each participant's own player_state; initialize_fixture sets each actor's waypoint after strict position/health readback even for the shared-world peer. Alpha's waypoint is the common arch; Beta's is13m east/6m north and still requires a supported walk back. Native Space binding, same-identity revival/inventory retention, bounded waypoint jitter and health restoration are source-bound; separate exact-runtime I01 evidence corroborates that primitive only. The principal no-death construction does not depend on manufacturing deaths or borrowing an I01 task outcome.",
+    "shared_budget": "Declared2700s is one shared episode budget. The existing VM first kill occurs approximately105s from its first message; an illustrative serial schedule105+798+600=1503s counts all399m walking at an effective0.5m/s plus substantial second-fight/reacquisition/settling contingency. It does not convert ST elapsed time into VM time, promise arbitrary model latency, or claim a measured second fight. The remaining1197s margin and direct ordinary-VM first-engagement evidence make this a reasonable bounded constructive allowance, not a tight ungrounded deadline.",
+    "composition_conclusion": "The evidence grounds a feasible fresh same-episode policy using two actual separate health/resource pools, repeated identical native combat, supported routes and jointly attainable endpoints. It does not combine incompatible historical inventories, reset enemy progress or require an observed full VM victory."
+  },
+  "historical_failure_corrections_preserved": {
+    "Beta": "Fell100-to-55.57421875HP and ended atz386 with ZERO native deaths. Its prior W+Space5s input precedes the fall, but the complete causal camera/pose path was not reconstructed. Changing respawn waypoints cannot rescue that living terminal state.",
+    "Alpha": "Had one actual native death and revived below the platform under the older no-start-waypoint condition. Current waypoint changes that recovery behavior; the old failure cannot be called a current waypoint failure.",
+    "shared_time": "Historical whole VM interval is1124.227395753s, not Alpha's1025.927654566s participant endpoint interval.",
+    "outcome": "Historical VM remains valid failure. Its first kill and ordinary controls support only their actual components."
+  },
+  "construct_status": {
+    "accepted": "Meaningful LIMITED cooperative completion/rendezvous: two independent views/controls/health pools, lawful allocation of exposure to a fresh peer, shared original-target progress and both-player live return.",
+    "not_claimed": "Necessary information sharing, equal damage, required chat, fixed roles, balanced labor, empirical cooperation speedup or inability of one fighter to do both kills.",
+    "shortcut_adjudication": "A solo-dominant combat policy is lawful and limits the construct to basic team completion, but does not remove the independently controlled second actor's positioning/survival endpoint. Do not strengthen scoring secretly to force a division of labor."
+  },
+  "difficulty_status": {
+    "st": 2,
+    "vm": 3,
+    "st_range": [
+      2,
+      3
+    ],
+    "vm_range": [
+      3,
+      4
+    ],
+    "uncertainty": "high",
+    "calibrated_rating": null,
+    "rationale": "Two sequential ordinary encounters, shared resource/exposure allocation and joint return justify provisional modest-to-moderate demand. The old fall, model latency and missing winning VM policy do not inflate difficulty. Nonblocking calibration is deferred."
+  },
+  "experiment_status": "Actual historical ST success and VM valid failure are retained. No new native/model measurement is claimed or required by this quality signoff.",
+  "diagnostic_transfer_boundary": "No reduced-health, revealed-coordinate or reset variant is used to qualify C01. The cross-task I01 evidence transfers only the unchanged native waypoint/revival primitive, not combat survival, task success or difficulty.",
+  "remaining_actions": {
+    "material_feasibility_or_construct_blocker": "None identified for the precisely limited pinned construction; uncertainty concerns robust execution by arbitrary controllers, not a required winning badge.",
+    "smallest_check": "No further native episode requested. Parent should verify exact release source/runtime pins and preserve the declared per-player waypoint/common-arch distinction during administrative admission.",
+    "administrative_boundary": "Parent-owned integration/admission receipt and experiment inventory reconciliation remain separate. This addendum does not mutate canonical tasks, main or ledger."
+  },
+  "confidence": "Moderate-to-high for bounded VM constructive feasibility and limited cooperation; high for verified topology, identity/resource evidence and historical-failure corrections. No universal dynamic combat guarantee.",
+  "completed_changes": [
+    "Appended this English C01 quality verdict to the audit only."
+  ],
+  "preservation": "All original snapshots, historical outcomes, earlier proposals and ledger records are preserved. No new source commit, game/model call or promotion was performed by this reviewer."
+}
