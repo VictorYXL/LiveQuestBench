@@ -4,7 +4,7 @@ task_type: visual_motor
 task: "Return to the yellow dispatch board with either an iron axe and 8 cooked chicken, or an iron shovel and 8\
   \ cooked porkchops; retain at least 2 emeralds. The dated stock sheet in the notice chest is not authoritative.\
   \ Actual native offers are available at three stalls about 20\u201330 blocks from dispatch; one listed offer has\
-  \ changed. Either complete bundle is acceptable. Finish alive, grounded and still."
+  \ changed. Either complete bundle is acceptable. Finish with at least 1 HP, grounded and still."
 time_limit_seconds: 2700
 fixture:
   world_path: ../../fixtures/revised_supply_order
