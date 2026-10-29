@@ -1,0 +1,230 @@
+id: subterranean_switchback
+game: veloren
+task_type: visual_motor
+task: Visit the lower workshop underneath the overhead stone bridge, then return alive to the starting
+  stone arch with at least one tough hide in your bag. A hide supply lies inside the workshop; loose supplies
+  expire about five minutes after creation and are not replenished. Reaching the roof above the workshop
+  does not count as entering it. Look for the broad ground-level openings rather than assuming the nearest
+  opening reaches the correct floor. Finish standing still on the ground at the arch. Death does not restore
+  resources.
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/veloren_0_18_0_0.bin
+  world_seed: 130626853
+  time_of_day: '12:00'
+  day_length: 30
+  calendar: none
+  platform:
+    origin:
+    - 18700
+    - 10800
+    - 500
+    size:
+    - 46
+    - 32
+    block: Rock
+  player_state:
+    position: &id001
+    - 18703.5
+    - 10804.5
+    - 501
+    look:
+    - 0
+    - 1
+    - 0
+    health: 100
+    inventory:
+      common.items.crafting_ing.leather.simple_leather: 2
+      common.items.food.apple: 3
+    equipment:
+      active_mainhand: common.items.weapons.sword.starter
+      chest: common.items.armor.misc.chest.worker_purple_brown
+      feet: common.items.armor.misc.foot.sandals
+      glider: common.items.glider.basic_white
+      lantern: common.items.lantern.black_0
+      legs: common.items.armor.misc.pants.worker_brown
+  recipes: {}
+  stations:
+  - position:
+    - 18737.5
+    - 10819.5
+    - 501
+    sprite: CraftingBench
+  route_evidence: true
+  supplies:
+  - position:
+    - 18734.5
+    - 10819.5
+    - 501
+    item: common.items.crafting_ing.hide.tough_hide
+    amount: 1
+  blocks:
+  - origin: [18700, 10800, 501]
+    size: [46, 1, 8]
+  - origin: [18700, 10831, 501]
+    size: [46, 1, 8]
+  - origin: [18700, 10801, 501]
+    size: [1, 30, 8]
+  - origin: [18745, 10801, 501]
+    size: [1, 30, 8]
+  - origin:
+    - 18724
+    - 10807
+    - 501
+    size:
+    - 1
+    - 20
+    - 6
+  - origin:
+    - 18724
+    - 10807
+    - 507
+    size:
+    - 19
+    - 20
+    - 1
+  - origin:
+    - 18742
+    - 10807
+    - 501
+    size:
+    - 1
+    - 12
+    - 6
+  - origin:
+    - 18742
+    - 10824
+    - 501
+    size:
+    - 1
+    - 3
+    - 6
+  - origin:
+    - 18725
+    - 10807
+    - 501
+    size:
+    - 4
+    - 1
+    - 6
+  - origin:
+    - 18734
+    - 10807
+    - 501
+    size:
+    - 8
+    - 1
+    - 6
+  - origin:
+    - 18725
+    - 10826
+    - 501
+    size:
+    - 17
+    - 1
+    - 6
+  - origin:
+    - 18715
+    - 10811
+    - 506
+    size:
+    - 9
+    - 7
+    - 1
+  - origin:
+    - 18704
+    - 10811
+    - 501
+    size:
+    - 9
+    - 7
+    - 1
+  - origin:
+    - 18705
+    - 10811
+    - 502
+    size:
+    - 8
+    - 7
+    - 1
+  - origin:
+    - 18706
+    - 10811
+    - 503
+    size:
+    - 7
+    - 7
+    - 1
+  - origin:
+    - 18709
+    - 10811
+    - 504
+    size:
+    - 4
+    - 7
+    - 1
+  - origin:
+    - 18712
+    - 10811
+    - 505
+    size:
+    - 4
+    - 7
+    - 1
+  - origin:
+    - 18713
+    - 10811
+    - 506
+    size:
+    - 2
+    - 7
+    - 1
+  - origin:
+    - 18702
+    - 10802
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18702
+    - 10806
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18702
+    - 10802
+    - 504
+    size:
+    - 1
+    - 5
+    - 1
+  respawn_at_start: true
+evaluator:
+  name: itinerary
+  parameters:
+    min_health: 0
+    visits:
+    - target:
+      - 18735.5
+      - 10819.5
+      - 501
+      horizontal_tolerance: 4
+      vertical_tolerance: 1
+    inventory:
+    - item: common.items.crafting_ing.hide.tough_hide
+      min_count: 1
+      min_delta: 1
+    position:
+      target: *id001
+      horizontal_tolerance: 3
+      vertical_tolerance: 1
+      max_speed: 0.1
+capabilities:
+  primary:
+  - spatial_interaction
+  secondary: []
