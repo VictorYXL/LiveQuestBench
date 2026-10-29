@@ -1,0 +1,73 @@
+{
+  "schema": "livequest-qualified-spatial-additions/1",
+  "review_date": "2026-10-29",
+  "integration_base": "0cedeb230a3a700e5765c56969e4e1395c98b853",
+  "scope": "Three independently qualified paired additions; frozen twelve-reference experiments and manifest unchanged.",
+  "tasks": {
+    "MC-S04": {
+      "task_id": "irrigation_reconnection",
+      "qualified_source": "2d0041001ba1058a8b51e55a2b863ab5a4ce1b80",
+      "integration_commit": "0f48949",
+      "evidence": "docs/evidence/minecraft-irrigation-reconnection.md",
+      "native_success": {"st": true, "vm": true},
+      "formal_measurements": {"st": "valid_success", "vm": "valid_success"},
+      "sha256": {
+        "config/minecraft/tasks/structured_tools/irrigation_reconnection.yaml": "0382cfd6f3e2bc599311ea82bf4f3cd82a306bbfe1807dba46143b2b3f734220",
+        "config/minecraft/tasks/visual_motor/irrigation_reconnection.yaml": "6796c89a7eb3719aee6f341077995634f6a7f6dec79dbd96cf4019a8b0b5734b",
+        "config/minecraft/fixtures/irrigation_reconnection.source.json": "ebce83998f55aee228e29432d4b5183cd161a12ab1cb3af31e01e3d9cb10fae6",
+        "game/minecraft/evaluators/irrigation.py": "f5d1393df3b68012802d14a703b1f6cab6c5117bbb86565a77e43142dea7c796"
+      }
+    },
+    "MC-S05": {
+      "task_id": "occluded_target_gallery",
+      "qualified_source": "59afdaaeed7122d4a727d2c5bc15f3a5ec45434e",
+      "integration_commit": "04a6577",
+      "evidence": "docs/evidence/minecraft-occluded-target-gallery.md",
+      "native_success": {"st": true, "vm": true},
+      "formal_measurements": {"st": "valid_failure", "vm": "valid_success"},
+      "failure_boundary": "The ST model completed all three native hits and lamp latches but failed the grounded return. A separate admitted ST native success establishes feasibility without replacing that formal failure.",
+      "sha256": {
+        "config/minecraft/tasks/structured_tools/occluded_target_gallery.yaml": "470c741235e18ced4085ae490048048d20373cf38f90c414b9428286a362d9a1",
+        "config/minecraft/tasks/visual_motor/occluded_target_gallery.yaml": "b4c65376ab7bcd4db64cab684ac3634974dd8cf2180fe963dc5cabea426b0344",
+        "config/minecraft/fixtures/occluded_target_gallery.source.json": "28c58b8387e461e17e2b7537c4cae2d2e37cdc77f91def5e83db00b7d8b7dc9b",
+        "game/minecraft/evaluators/gallery.py": "66e07e8acd8361844a977c2f5dc6910a078a0b186bf10c0bcea06ae6ca776366"
+      }
+    },
+    "VE-S02": {
+      "task_id": "ridge_glide_delivery",
+      "qualified_source": "7df2bc92a0e439cff69153ed6563c54cfe8694c2",
+      "qualification_commit": "29e5b03c9167dcc4d6eddce739b7a533bdcfaf26",
+      "integration_commit": "b255034",
+      "evidence_integration_commit": "c4e3060",
+      "evidence": "docs/evidence/ridge_glide_delivery.json",
+      "evidence_boundary": "The original qualification document describes its pre-integration state and is preserved byte-for-byte; this manifest records subsequent integration.",
+      "native_success": {"st": true, "vm": true},
+      "formal_measurements": {"st": "valid_failure", "vm": "valid_failure"},
+      "difficulty": {"st": 2, "vm": 2, "kind": "provisional_engineering_judgment"},
+      "sha256": {
+        "config/veloren/tasks/structured_tools/ridge_glide_delivery.yaml": "afc8eb966feb6332d2e07b239794e5af2bca645b8e40dd9e7d1e5bbd4a447445",
+        "config/veloren/tasks/visual_motor/ridge_glide_delivery.yaml": "410740ce04147139a1d4bcd763fb3de8fae3f609a7f77b3b9dcb5bb307d27ab8",
+        "game/veloren/evaluators/endpoints.py": "67433487082e51dd6f87074af57be1450ae19a848dc7ae1c82520caa3b50892e",
+        "game/veloren/evaluators/glide_route.py": "6ff34ef400d2c8b1372908e492353e0a9b5fb204c4ddd5428cffafae8c414098",
+        "game/veloren/patches/0004-native-glide-evidence.patch": "8d7cdc264cfc9424699ca90ed1b68c1d4476691be5fef0af08d17f333ada6160"
+      }
+    }
+  },
+  "compatibility": [
+    "All qualified task, fixture, task-specific scorer and observer bytes are retained. Minecraft binding conflicts are additive evaluator dispatch only.",
+    "Existing Minecraft state gamemode and player respawn options are unused; these fixtures have no active effects. Added vital-inspection tools are outside their explicit allowlists. Team-cargo changes are irrelevant to these single-player scorers.",
+    "The catalog correction 280b2eb already matches main and is not reapplied. Existing paired-addition admission tests cover all six definitions.",
+    "Veloren state/glide scorers and native glide patch match qualified hashes. Alive-only min_health=0 support already exists on main.",
+    "S02 enables glide evidence but not route evidence. NativeRouteTrace installation/draining and route_sequence are conditional on route_enabled; the independent glide/1 contract remains unchanged. Main route/2 is retained without an itinerary-v1 fork.",
+    "Existing shared native voxel scheduling changes initialization order, not the declared voxel set. Other shared team, pickup, harvest and energy paths are not enabled by S02.",
+    "Historical glide runs retain their recorded renderer and route/1 runtime provenance. They are not relabeled as runs of a rebuilt route/2 binary. Source compatibility and frozen endpoint replay do not claim new native runtime qualification."
+  ],
+  "validation": {
+    "focused_tests": "15 passed, 13 deselected",
+    "retained_endpoint_replay_rows": 12,
+    "initial_admission": true,
+    "full_evaluations_identical": true,
+    "new_native_or_model_episodes": 0,
+    "local_receipt": "output/temp/task_development/checks/s04-s05-s02-integration.json"
+  }
+}

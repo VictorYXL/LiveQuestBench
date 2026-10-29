@@ -180,6 +180,25 @@ not new evaluations under the current checkout.
 
 ## Follow-up, not a claim of completed validation
 
+### Separately admitted spatial additions (October 29)
+
+The frozen twelve-reference experiments and their manifest remain unchanged.
+Three further paired objectives are available as standalone task definitions:
+`irrigation_reconnection`, `occluded_target_gallery`, and `ridge_glide_delivery`.
+Their [integration manifest](evidence/spatial-task-integration.json) records exact
+qualified source hashes and the distinction between native feasibility and formal
+measurements. Irrigation's two final measurements succeeded; the gallery's ST
+measurement failed despite completing its hits, while VM succeeded. Both glide
+measurements are valid failures; separate guided native successes establish
+feasibility, not model success. Glide retains the explicitly accepted ST2/VM2
+engineering ratings.
+
+All six definitions retain their qualified goals, fixtures, budgets and scoring.
+Retained endpoints were replayed offline; no new native or model episode was
+started. Glide uses independent `native-client-glide/1` evidence without enabling
+route evidence. Main retains `native-client-route/2`; historical runtime provenance
+is not rewritten or presented as a fresh qualification of a rebuilt binary.
+
 The reference set is ready for further task development. The highest-value
 next research checks are complete Veloren VM transfer and contract-chain
 witnesses, representative difficulty repeats, and matched learning/cooperation
