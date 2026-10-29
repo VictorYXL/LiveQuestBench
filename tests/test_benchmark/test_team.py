@@ -13,6 +13,42 @@ from game.bindings import Controls, GameBinding
 from game.team import TeamGame
 
 
+@pytest.mark.parametrize("fail_ready", [False, True])
+def test_original_veloren_supplies_wait_for_every_native_peer(tmp_path, fail_ready):
+    async def scenario():
+        events = []
+        members = {}
+        for role in ("Alpha", "Beta"):
+            async def start(role=role):
+                events.append("start:" + role)
+
+            async def ready(operation, role=role):
+                assert events[:2] == ["start:Alpha", "start:Beta"]
+                assert operation == "setup_team_ready"
+                if fail_ready and role == "Beta":
+                    raise RuntimeError("native readiness failed")
+                events.append("ready:" + role)
+
+            members[role] = SimpleNamespace(game=SimpleNamespace(
+                start=start, close=AsyncMock(), _session=SimpleNamespace(request=ready),
+            ))
+        team = TeamGame(SimpleNamespace(game="veloren", fixture={"supplies": [{"amount": 4}]}),
+                        members, tmp_path / "team")
+        if fail_ready:
+            with pytest.raises(RuntimeError, match="native readiness failed"):
+                await team.start()
+            assert team.phase == "failed"
+            for member in members.values():
+                member.game.close.assert_awaited_once()
+        else:
+            await team.start()
+            assert team.phase == "ready"
+            assert events == ["start:Alpha", "start:Beta", "ready:Alpha", "ready:Beta"]
+            await team.close()
+
+    asyncio.run(scenario())
+
+
 def test_team_configuration_is_explicit_and_singleton_remains_default(tmp_path):
     path = Path("tests/fixtures/legacy/config/minecraft/tasks/structured_tools/reach_nearby_point.yaml")
     assert load_task(path).participants == ()

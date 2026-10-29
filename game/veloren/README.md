@@ -170,6 +170,15 @@ supplies, encounters or a native settlement. Supplies can expire according to
 native game rules; expose relevant deadlines in the objective rather than
 silently replenishing resources.
 
+For native teams, the owner defers the first creation of declared supplies
+until all peer clients have attached and acknowledged setup readiness. The
+administrator disconnects during peer attachment, then reconnects only for
+that original drop and its private readback before admission. This avoids
+spending the source's native lifetime on renderer attachment. It does not
+recreate an expired source, pause expiry, alter pre-age settings, extend the
+deadline, or bypass identity and remaining-lifetime checks. Single-player
+supply initialization keeps its existing ordering.
+
 For dialogue, trading, skills, gliding or companions, start from a task that
 already admits those features. Do not assume that every task exposes every
 available tool.

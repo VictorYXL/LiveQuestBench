@@ -7,6 +7,7 @@ from types import ModuleType, SimpleNamespace
 import sys
 import os
 from pathlib import Path
+from unittest.mock import AsyncMock
 from uuid import uuid4
 
 import pytest
@@ -358,6 +359,92 @@ def test_begin_does_not_open_public_gate_before_private_setup_finishes(monkeypat
     with pytest.raises(RuntimeError, match="Distant supply missing"):
         asyncio.run(session.dispatch("begin", {}))
     assert session.running is False
+
+
+@pytest.mark.parametrize("shared_world", [False, True])
+def test_team_initialization_defers_original_supplies_without_duplicate_drop(monkeypatch, shared_world):
+    fixture, opening = player_scene()
+    fixture.update(time_of_day="12:00", supplies=[{"item": "leather", "amount": 4}])
+    actor = SimpleNamespace(name="Alpha", request=AsyncMock(return_value=opening))
+    upstream(monkeypatch, SimpleNamespace(
+        ready_observation=AsyncMock(return_value=opening),
+        command=AsyncMock(), goto=AsyncMock(),
+    ))
+    monkeypatch.setattr(fixtures, "validate_fixture", lambda value: value)
+    drop = AsyncMock()
+    monkeypatch.setattr(fixtures, "initialize_supplies", drop)
+    result = asyncio.run(fixtures.initialize_fixture(
+        object(), actor, fixture, shared_world=shared_world, defer_supplies=True,
+    ))
+    assert result["supplies"] == []
+    assert result.get("supplies_pending", False) is not shared_world
+    drop.assert_not_awaited()
+
+
+def test_deferred_original_supplies_require_ready_peers_and_spawn_once(monkeypatch, tmp_path):
+    from game.veloren.runtime import records
+
+    fixture, opening = player_scene()
+    opening["nearby_entities"] = []
+    fixture["supplies"] = [{"item": "leather", "amount": 4}]
+    events = []
+    source = {"uid": 7, "item": "leather", "amount": 4}
+
+    async def wait(actor, predicate, reason):
+        assert predicate(opening)
+        return opening
+
+    async def close():
+        events.append("admin_retired")
+
+    async def drop(admin, specifications):
+        assert session.team_ready and specifications == fixture["supplies"]
+        events.append("original_drop")
+        return [source]
+
+    worker = load_worker(monkeypatch, SimpleNamespace(wait_observation=wait))
+    session = object.__new__(worker.Session)
+    session.running, session.team_role = False, "Alpha"
+    session.actor = SimpleNamespace(request=AsyncMock(return_value=opening))
+    session.fixture, session.output = fixture, tmp_path
+    session.record = {"world_fixture": {}}
+    session.initialized = {"supplies": [], "supplies_pending": True}
+    administrator = (SimpleNamespace(process=SimpleNamespace(returncode=0), cleanup={}),
+                     SimpleNamespace(aclose=close), 99)
+    session.setup_administrator = administrator
+    monkeypatch.setattr(fixtures, "initialize_supplies", drop)
+    monkeypatch.setattr(fixtures, "observe_remote_supplies", AsyncMock())
+    verified = []
+    monkeypatch.setattr(fixtures, "verify_aged_supplies",
+                        lambda initialized, observation: verified.append(list(initialized["supplies"])))
+    monkeypatch.setattr(worker, "recipe_observation", AsyncMock(return_value=opening))
+    monkeypatch.setattr(records, "write_fixture_record", lambda *args: None)
+
+    async def reconnect():
+        events.append("admin_reconnected")
+        session.setup_administrator = administrator
+
+    session.reconnect_setup_administrator = reconnect
+
+    async def run():
+        with pytest.raises(RuntimeError, match="all peers ready"):
+            await session.finish_setup()
+        await session.finish_setup(finalize_supplies=False)
+        assert events == ["admin_retired"]
+        await session.dispatch("setup_team_ready", {})
+        assert events == ["admin_retired"]
+        await session.finish_setup()
+        await session.finish_setup()
+        session.running = True
+        with pytest.raises(PermissionError, match="before declared peer play"):
+            await session.dispatch("setup_team_ready", {})
+
+    asyncio.run(run())
+    assert events == ["admin_retired", "admin_reconnected", "original_drop", "admin_retired"]
+    assert verified == [[], [source]]
+    assert source["player_target"] is None
+    assert session.initialized["supplies_pending"] is False
+    assert session.setup_administrator is None
 
 
 @pytest.mark.parametrize("alignment", ["Enemy", "Npc"])

@@ -571,8 +571,45 @@ async def initialize_encounters(admin, actor, fixture: dict, contract=None, *, b
     return {"encounters": encounters, "source_binding": source, "opening": opening}
 
 
+async def initialize_supplies(admin, specifications: list[dict]) -> list[dict]:
+    from scripts.rpg_benchmark import setup
+
+    supplies = []
+    for supply in specifications:
+        if inventory_counts(await admin.request("observe")).get(supply["item"], 0):
+            origin = (await setup.ready_observation(admin))["position"]
+            await setup.goto(admin, admin, [value + 100 for value in origin], settle=False)
+            while inventory_counts(observed := await admin.request("observe")).get(supply["item"], 0):
+                stack = next(row for row in observed["inventory"]["items"]
+                             if item_id(row["item"]) == supply["item"])
+                await setup.action(admin, "drop", **setup.slot(stack))
+                if inventory_counts(await admin.request("observe")).get(supply["item"], 0) >= (
+                    inventory_counts(observed)[supply["item"]]
+                ):
+                    raise RuntimeError("Administrator supply cleanup did not remove the native stack")
+            await setup.goto(admin, admin, origin)
+        supplies.append(await setup.drop_supply(
+            admin, supply["position"], supply["item"], supply["amount"], "flat",
+        ))
+        if supply.get("pre_age_seconds"):
+            await asyncio.sleep(supply["pre_age_seconds"])
+    return supplies
+
+
+def bind_supplies(supplies: list[dict], opening: dict) -> None:
+    current = {row["uid"]: row for row in opening["nearby_entities"]}
+    for supply in supplies:
+        entity = current.get(supply["uid"])
+        if entity is not None and (
+            item_id(entity.get("pickup") or {}) != supply["item"]
+            or entity["pickup"]["amount"] != supply["amount"]
+        ):
+            raise RuntimeError("Expiring supply cannot be bound in the player's native client")
+        supply["player_target"] = entity["control_target"] if entity is not None else None
+
+
 async def initialize_fixture(admin, actor, fixture: dict, *, shared_world: bool = False,
-                             defer_encounters: bool = False) -> dict:
+                             defer_encounters: bool = False, defer_supplies: bool = False) -> dict:
     """Author absolute geometry, set player/time fields and verify native readback."""
     from scripts.rpg_benchmark import setup
 
@@ -615,25 +652,8 @@ async def initialize_fixture(admin, actor, fixture: dict, *, shared_world: bool 
             and group["available_points"] == fixture["sword_skill_points"]
             for group in row["skill_tree"]["groups"]
         ), "declared unspent native Sword points")
-    supplies = []
-    for supply in (() if shared_world else fixture.get("supplies", [])):
-        if inventory_counts(await admin.request("observe")).get(supply["item"], 0):
-            origin = (await setup.ready_observation(admin))["position"]
-            await setup.goto(admin, admin, [value + 100 for value in origin], settle=False)
-            while inventory_counts(observed := await admin.request("observe")).get(supply["item"], 0):
-                stack = next(row for row in observed["inventory"]["items"]
-                             if item_id(row["item"]) == supply["item"])
-                await setup.action(admin, "drop", **setup.slot(stack))
-                if inventory_counts(await admin.request("observe")).get(supply["item"], 0) >= (
-                    inventory_counts(observed)[supply["item"]]
-                ):
-                    raise RuntimeError("Administrator supply cleanup did not remove the native stack")
-            await setup.goto(admin, admin, origin)
-        supplies.append(await setup.drop_supply(
-            admin, supply["position"], supply["item"], supply["amount"], "flat",
-        ))
-        if supply.get("pre_age_seconds"):
-            await asyncio.sleep(supply["pre_age_seconds"])
+    supplies = ([] if shared_world or defer_supplies else
+                await initialize_supplies(admin, fixture.get("supplies", [])))
     merchant = None
     if "merchant" in fixture and not shared_world:
         from game.veloren.settlement import initialize_merchant
@@ -654,15 +674,7 @@ async def initialize_fixture(admin, actor, fixture: dict, *, shared_world: bool 
     if fixture.get("respawn_at_start", False):
         waypoint = await setup.command(admin, "sudo", actor.name, "set_waypoint")
     if not shared_world and supplies:
-        current = {row["uid"]: row for row in opening["nearby_entities"]}
-        for supply in supplies:
-            entity = current.get(supply["uid"])
-            if entity is not None and (
-                item_id(entity.get("pickup") or {}) != supply["item"]
-                or entity["pickup"]["amount"] != supply["amount"]
-            ):
-                raise RuntimeError("Expiring supply cannot be bound in the player's native client")
-            supply["player_target"] = entity["control_target"] if entity is not None else None
+        bind_supplies(supplies, opening)
     if merchant is not None:
         from game.veloren.settlement import bind_merchant
         merchant = bind_merchant(opening, merchant)
@@ -678,4 +690,6 @@ async def initialize_fixture(admin, actor, fixture: dict, *, shared_world: bool 
             result["encounters_pending"] = True
         else:
             result.update(await initialize_encounters(admin, actor, fixture, contract))
+    if defer_supplies and not shared_world and fixture.get("supplies"):
+        result["supplies_pending"] = True
     return result

@@ -42,6 +42,11 @@ class TeamGame(BaseGame[object]):
                     leader.game._session.request("setup_peer_group", mode="verify", uid=second["uid"]),
                     other.game._session.request("setup_peer_group", mode="verify", uid=first["uid"]),
                 )
+            if self.task.game == "veloren" and self.task.fixture.get("supplies"):
+                await asyncio.gather(*(
+                    member.game._session.request("setup_team_ready")
+                    for member in self.members.values()
+                ))
             self.phase = "ready"
         except BaseException as error:
             self.phase = "failed"
