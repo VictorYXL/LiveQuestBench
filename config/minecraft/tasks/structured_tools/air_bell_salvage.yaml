@@ -8,7 +8,7 @@ capabilities:
   - spatial_interaction
   - planning_resources
 task: Recover both original Salvage Samples from two side alcoves in this roughly 35-block flooded passage,
-  then return alive and standing still to the yellow surface platform without dying. The bedrock-roofed
+  then return with at least 1 health point and standing still to the yellow surface platform without dying. The bedrock-roofed
   passage is about six blocks deep. Two large air bells contain dry standing shelves and remain usable
   after your initial three-minute water-breathing effect expires. Safe waiting, digging ordinary blocks
   and any legal route are allowed. Release controls before finishing.
