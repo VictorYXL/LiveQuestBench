@@ -2950,7 +2950,7 @@
     },
     {
       "path": "config/veloren/tasks/structured_tools/route_schema_transfer.yaml",
-      "sha256": "97521653c3c670447f92b788b9f46ec3a48589afd8a17f9ab2dd655a6c88165f",
+      "sha256": "1e37a3c481c91d9ce74d35bad52fd69e1df9442e48c0ee99555ba46a71361325",
       "definition": {
         "id": "route_schema_transfer",
         "game": "veloren",
@@ -10085,6 +10085,7 @@
         "evaluator": {
           "name": "route_transfer",
           "parameters": {
+            "min_health": 0,
             "variant": 5,
             "origin": [
               18702,
@@ -11875,12 +11876,12 @@
     },
     {
       "path": "config/veloren/tasks/visual_motor/route_schema_transfer.yaml",
-      "sha256": "95a0d1fbc26142b90403f9cddf8aaa22c26ce7f6f0b47cb1011fde65cf607f12",
+      "sha256": "91c3a1ae9ce02ab31f3dec9040c27ebdcfe8bfe432603c4f497db4de332b20f8",
       "definition": {
-        "id": "route_schema_transfer",
+        "id": "route_schema_transfer_local_solid_v1",
         "game": "veloren",
         "task_type": "visual_motor",
-        "task": "Explore the first three-module wing, then traverse two application wings and finish alive and stationary at the centre of the final enlarged chamber. Complete the route without dying or respawning.\nEach module has one, two or three shallow niches in the wall beside its entrance. Within this instance, a given niche pattern always has the same continuing exit side relative to the direction in which you enter. One branch continues; the other ends at a solid wall. Learn the architecture through ordinary exploration.\nAfter the first wing, descend the connecting staircase. Later wings rearrange the module order and rotate their orientation. Reuse what you discovered; an absolute compass direction or blindly replaying the first turn sequence will not suffice.\nThe two application wings together allow at most 344 metres of sampled native travel, including detours and backtracking. Practice travel and connecting stairs are outside that distance allowance, but still consume episode time. All movement remains ordinary native movement; there are no modified controls, recipes or physics. Complete the application wings in order and remain in the final chamber.",
+        "task": "Explore the first three-module wing, then traverse two application wings and finish alive and stationary at the centre of the final enlarged chamber. Complete the route without dying or respawning.\nEach module has one, two or three shallow niches in the wall beside its entrance. Within this instance, a given niche pattern always has the same continuing exit side relative to the direction in which you enter. One branch continues; the other ends at a solid wall. Learn the architecture through ordinary exploration.\nAfter the first wing, descend the connecting staircase. Later wings rearrange the module order and rotate their orientation. Reuse what you discovered; an absolute compass direction or blindly replaying the first turn sequence will not suffice.\nThe two application wings together allow at most 344 metres of sampled native travel, including detours and backtracking. Practice travel and connecting stairs are outside that distance allowance, but still consume episode time. All movement remains ordinary native movement; there are no modified controls, recipes or physics. Complete the application wings in order and remain in the final chamber.\nObservation contract native-route-local-view/1: the voxel minimap layer is unavailable, including attempts to enable it through ordinary UI controls. The static world map, compass and ordinary native camera remain available. Geometry, movement rules and the declared distance/time budgets are unchanged.\nAdditional observation contract native-local-camera/1: camera distance is limited to 10m and the camera cannot cross solid or unloaded terrain from the player's actual eye position, including zoom, mode changes and interpolation. If a safe local view cannot be established, the world view is withheld; the HUD and static world map remain available.\nAdditional observation contract native-solid-scene/1: experimental scene shaders, including wireframe and debug buffer views, are unavailable through commands or saved preferences. The normal solid scene, ordinary graphics controls, static world map and compass remain available.",
         "time_limit_seconds": 2700,
         "fixture": {
           "world_path": "../../fixtures/veloren_0_18_0_0.bin",
@@ -19005,11 +19006,15 @@
               "lantern": "common.items.lantern.black_0",
               "legs": "common.items.armor.misc.pants.worker_brown"
             }
-          }
+          },
+          "route_observation": "native-route-local-view/1",
+          "camera_observation": "native-local-camera/1",
+          "scene_observation": "native-solid-scene/1"
         },
         "evaluator": {
           "name": "route_transfer",
           "parameters": {
+            "min_health": 0,
             "variant": 5,
             "origin": [
               18702,

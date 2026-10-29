@@ -1,0 +1,94 @@
+{
+  "source": "output/temp/task_development/checks/veloren-acceptance-policy-audit-20261029.json",
+  "pointer": "/dated_addenda/10",
+  "entry": {
+    "date": "2026-10-29",
+    "kind": "L01-current-route2-ST-conjunction-and-settling-closure",
+    "task_id": "VE-L01",
+    "track": "structured_tool",
+    "track_disposition": "supported",
+    "paired_task_disposition": "needs targeted review",
+    "decision": "Current exact-condition ST route/2 traversal, acquired-map reuse and finite endpoint settling are now sufficiently grounded for bounded ST quality acceptance. Preserve the measured whole=false. The separately identified original-VM minimap learning blocker remains; this is not paired-task admission.",
+    "evidence_refs": [
+      {
+        "path": "output/review/parallel-ve-originals-20261029/L01-route2-e72dfae/result.json",
+        "sha256": "f40563328eb7fd2890518cf64991213e8d02db5a381a5532062af0fabb2c9727"
+      },
+      {
+        "path": "output/review/parallel-ve-originals-20261029/L01-route2-e72dfae/before/observation.json",
+        "sha256": "c402bad3a9c662f52506059d9db68450d632508947126377d04cc92d32f378bf"
+      },
+      {
+        "path": "output/review/parallel-ve-originals-20261029/L01-route2-e72dfae/after/observation.json",
+        "sha256": "68e9f0df82c6836a5724b3df7fa6257e50f8bc4a690b9e33845ecf90d4aace8c"
+      },
+      {
+        "path": "output/review/parallel-ve-originals-20261029/L01-route2-e72dfae/after/_livequest_snapshot.json",
+        "sha256": "348201f8288eea77f679d794af50531ead59654ff739e71cb026252c52c0082f"
+      },
+      {
+        "path": "output/review/parallel-ve-originals-20261029/L01-route2-e72dfae/game/environment.json",
+        "sha256": "e42c151ca70405e2b4048d6eba1b0f224dbc7b7f24dfc7b4da20ff672fb45e26"
+      },
+      {
+        "path": "output/review/parallel-ve-originals-20261029/L01-route2-e72dfae/public-trace.jsonl",
+        "sha256": "97c72547c54665ac78945da839daf453fef88903d89c44beb2a2f41acace7582"
+      },
+      {
+        "path": "output/review/parallel-ve-originals-20261029/L01-route2-e72dfae/post-gate-native-lifecycle-readback.json",
+        "sha256": "ca048127b0daa4e358179b0d282cfc0a739edbbd2e20db69885b23acc7a2a6d6"
+      },
+      {
+        "path": "output/review/parallel-ve-originals-20261029/L01-route2-e72dfae/game/cleanup.json",
+        "sha256": "4c5191759e14205d12d96b5adb5a38c1bac3558b7c90465115cea4cdf8544e78"
+      },
+      {
+        "path": "output/review/parallel-ve-originals-20261029/L01-route2-e72dfae/game/native-cleanup.json",
+        "sha256": "973b9a7d3eaa9c8dc4224a99ff29dad0bb8032172e0d31b4c8dff4923ac85c6c"
+      },
+      {
+        "path": "output/temp/task_development/leases/73ac52238fe34ce1ba418cad1e3f8d3d.json",
+        "sha256": "70e6a0f2d88261ec79f51fd7301a8f8d8ebd3a919f081a1805f17ddc17f70375"
+      }
+    ],
+    "exact_scope": {
+      "task_sha256": "1e37a3c481c91d9ce74d35bad52fd69e1df9442e48c0ee99555ba46a71361325",
+      "source_version": "e72dfae11a07782ba21e0d46c7c101b5d400e9c0",
+      "runtime_manifest_sha256": "f90ca9a97e20a106e6d749368319cdd45243a2f902605e7797c6f8e3613c3793",
+      "condition_check": "Independently compared captured resolved fixture and evaluator to the pinned original ST task, normalizing only world-path resolution. Saved execution runtime equals the exact f90ca9 candidate manifest.",
+      "provenance_limit": "The packet does not contain a complete archived interpreter/loaded-module inventory or a frozen wrapper copy. Selected reviewed source, exact resolved condition, runtime binding and authenticated native snapshots support this versioned constructive judgment; no whole-process attestation is invented."
+    },
+    "bug_status": "No new blocking task/adapter/scorer bug identified. The wrapper's missing final release/settle is an execution-policy endpoint issue, not permission to change the scorer or erase false outcome.",
+    "feasibility_status": {
+      "actual_traversal": "137.639069729s,296 declared public LookTool/MoveTool actions. Current native route/2 records all3ordered wings, zero deaths and application324.391378389m<=344m. Health100, correct floor637 and final chamber error0.702422745m are actual captured endpoint facts.",
+      "sample_binding": "Same session Player7d493f2fc2 and UID82 at both boundaries. Opening37sample prefix exactly preserved;4257new samples all occur after opening counter250796. Final counter274720/through_tick54612. Maximum measured adjacent3D displacement1.001098030m, below the4m rejection threshold. No historical route/1 substitution.",
+      "sole_measured_failure": "Captured endpoint position[18597.486328125,10869.5068359375,637],grounded,velocity[0.0016297741,-0.2995667458,0] has speed0.299571179>0.1. Original whole=false remains correct.",
+      "independent_settling_evidence": "Actual same-player post-gate lifecycle readback at native tick54611 is Idle,grounded,alive/notdowned,100HP,position[18597.486328125,10869.47265625,637],speed approximately1.98e-45 and goal error0.678173264m. Drift from scored pose is only0.034179688m. This actual later readback strengthens ordinary friction/settling feasibility; it is not substituted into the score.",
+      "chronology": "Scored pose comes from native snapshot tick54282 at host monotonic7469913.599688554. Separate lifecycle readback is tick54611 at7469924.580468641,approximately10.98s later after the public gate. The appended private route observer reaches54612; that does not make the older scored public pose a settled54612 pose. Snapshot metadata explicitly describes non-atomic capture.",
+      "lawful_completion": "Before ending the episode, use the already-declared StopTool and wait for ordinary settling in the threat-free final supported chamber. More than2562s of the2700s budget remains; the actual small post-gate drift and same-native earlier public deceleration ground this continuation without a new full victory. All ordered wings have already completed; final settling introduces no enemy, resource, death or application-distance conjunction.",
+      "footing_check": "Independently verified actual settled body's full0.45m horizontal footprint remains over generated Rock atz636. No relocation, refill, health change or private coordinate feed to the policy is required."
+    },
+    "construct_status": "This current route/2 public trace independently retains the same real cue1/3 left-dead-end then right-continuation discovery, cue2 left-continuation discovery, and all6reordered/rotated application choices from acquired memory. It supports the limited ST mechanism already judged in dated_addenda[8], not a measured causal gain or unscaffolded model capability.",
+    "difficulty_status": {
+      "st": 2,
+      "st_range": [
+        2,
+        3
+      ],
+      "uncertainty": "high",
+      "calibration": "Still provisional. The fast authored run does not convert the historical null or establish novice-agent difficulty."
+    },
+    "experiment_status": "New native model-free nonformal ST valid failure with all route gates true; constructive quality supported. No formal/model success or measured whole success claimed.",
+    "cleanup_status": "Actual worker_returncode0, native server_stopped true and lease finished/returncode0. No fresh process-liveness inference or new run by this reviewer.",
+    "diagnostic_transfer_boundary": "The lifecycle readback demonstrates unchanged settling after the gate, not a lawful scored replacement endpoint. Original ST condition is unchanged; original VM minimap and new local-view candidates are separate conditions.",
+    "remaining_gates": {
+      "ST_quality_blocker": null,
+      "original_VM_learning": "Still blocked by the nonlocal minimap channel documented in dated_addenda[8]. ST success/constructive completion cannot close it.",
+      "new_local_view_version": "Any proposed observation change requires explicit version adoption, actual runtime support and its own appropriate evidence. Unit tests or this ST traversal do not establish GUI non-disclosure.",
+      "administrative": "Parent may record per-track ST quality closure. Do not silently promote the paired task or update ledger counts from this addendum."
+    },
+    "recommended_actions": "Retain the original result and later readback as separate artifacts; no retry solely to obtain a true badge. If a future wrapper is used, call its existing public StopTool/release-wait before ending. Focus remaining engineering on the explicit versioned VM observation issue.",
+    "completed_changes": "Persistent audit addendum only; no new native/model run, source change, scoreboard rewrite, main integration or ledger mutation.",
+    "confidence": "High for exact current native route predicates and observed settling; moderate-to-high for bounded versioned ST acceptance given the disclosed process-provenance limit."
+  }
+}

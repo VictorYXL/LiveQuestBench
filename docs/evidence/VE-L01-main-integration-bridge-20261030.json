@@ -1,0 +1,101 @@
+{
+  "schema": "livequest-L01-exact-main-bridge/1",
+  "base_main": "df3f7fcb3ca658b8002ca7b583e6a5947d932e65",
+  "original_source": "e72dfae11a07782ba21e0d46c7c101b5d400e9c0",
+  "qualified_evidence_source": "e6f15f985ab2e332f28f55c926536a7992ab112a",
+  "executed_source": "b60cf1026d3e29f2ccc9edf2501c533922e15196",
+  "shared_implementation_already_integrated": "128461f239e6b699cb88b67984fd27eac663592a",
+  "native_source": "e664297689f29e24a8c3e28d23d9c1590e5a50a1",
+  "qualified_VM": {
+    "path": "output/review/parallel-ve-originals-20261029/L01-solid-public-component-v1/task.yaml",
+    "sha256": "e27c2ca19ce69be109e6dc9ddfe4b565742c082547f75e13838f96608d5683cf"
+  },
+  "tracks": {
+    "st": {
+      "path": "config/veloren/tasks/structured_tools/route_schema_transfer.yaml",
+      "sha256": "1e37a3c481c91d9ce74d35bad52fd69e1df9442e48c0ee99555ba46a71361325",
+      "frozen_run": "output/review/parallel-ve-originals-20261029/L01-route2-e72dfae",
+      "frozen_sha256": {
+        "before/observation.json": "c402bad3a9c662f52506059d9db68450d632508947126377d04cc92d32f378bf",
+        "before/_livequest_snapshot.json": "48ba1c12fed96ff0b17eda11df4e890e62d2ae7439509ebd12811702125ac849",
+        "after/observation.json": "68e9f0df82c6836a5724b3df7fa6257e50f8bc4a690b9e33845ecf90d4aace8c",
+        "after/_livequest_snapshot.json": "348201f8288eea77f679d794af50531ead59654ff739e71cb026252c52c0082f",
+        "result.json": "f40563328eb7fd2890518cf64991213e8d02db5a381a5532062af0fabb2c9727"
+      },
+      "observation_profiles": {
+        "route_observation": null,
+        "camera_observation": null,
+        "scene_observation": null
+      },
+      "experiment": "config/veloren/experiments/structured_tools.yaml"
+    },
+    "vm": {
+      "path": "config/veloren/tasks/visual_motor/route_schema_transfer.yaml",
+      "sha256": "91c3a1ae9ce02ab31f3dec9040c27ebdcfe8bfe432603c4f497db4de332b20f8",
+      "frozen_run": "output/review/parallel-ve-originals-20261029/L01-solid-public-component-v1",
+      "frozen_sha256": {
+        "before/observation.json": "8aadeed85264a30f6f46da7f9e734998ee6dd2f963bb4fc5b8a00a18cb83412a",
+        "before/_livequest_snapshot.json": "5a9376c08f14fe077e2d1bb7d638d975c70c9e0931f7cba7447183aeddf4748c",
+        "after/observation.json": "0474d1521700a4c14b3f15aff0eb62539bdaed726f570734ac2db0e93a3dd003",
+        "after/_livequest_snapshot.json": "71604e37eb7e6134f4c666a94609e9ebd7913ed4bdd0b8ba8dee79ad670ee21b",
+        "result.json": "5bc3a0b4ca0a376413d784883aa92b106b9d0e0ea4821c01082ef7bd66d2c96d"
+      },
+      "observation_profiles": {
+        "route_observation": "native-route-local-view/1",
+        "camera_observation": "native-local-camera/1",
+        "scene_observation": "native-solid-scene/1"
+      },
+      "experiment": "config/veloren/experiments/visual_motor.yaml"
+    }
+  },
+  "runtimes": {
+    "st": {
+      "path": "output/temp/task_development/veloren-route-v2-contact-fix/candidate-runtime.json",
+      "sha256": "f90ca9a97e20a106e6d749368319cdd45243a2f902605e7797c6f8e3613c3793",
+      "renderer_sha256": "5141b9ac796d5e71f5ba999f910777d364480cfb2b0344731425e1a65d1c5878",
+      "selection_environment": "LIVEQUEST_VELOREN_RUNTIME"
+    },
+    "vm": {
+      "path": "output/temp/task_development/veloren-solid-local-view-20261029/candidate-runtime.json",
+      "sha256": "2f95878023ca912f04a15209a4121558251a01e58ff5127288499fc567cd943b",
+      "renderer_sha256": "165f2a692d87e4cc83e17e5c66540ee1a78cac25293b8c99b13b300b33289df3",
+      "selection_environment": "LIVEQUEST_VELOREN_LOCAL_SOLID_RUNTIME"
+    }
+  },
+  "integration_files_sha256": {
+    "config/veloren/tasks/visual_motor/route_schema_transfer.yaml": "91c3a1ae9ce02ab31f3dec9040c27ebdcfe8bfe432603c4f497db4de332b20f8",
+    "tests/test_game/veloren/test_route_observation.py": "bee8e493ff6c13845caf4d969da91fa7036a67755f70af87ecc0d061839af1e2",
+    "checks/veloren_l01_main_admission.py": "2206cc0f2d19cdd64909b031c8c062a3798cc19798ef234735a582ecec95d802",
+    "docs/evidence/VE-L01-local-solid-acceptance.json": "7444fb1458f951d759aa2466b35f4d7a956d660ac48475cb908b9ea8f460cd2f",
+    "docs/evidence/VE-L01-original-ST-acceptance.json": "21665d1e70efe6248df83061f6d366f881c510e3d1fdc50068c2a755170a4d4c",
+    "docs/reference_tasks_manifest.json": "65bc4d1aaef12b0708014e3696343acbbbfaac089d5d84abb87fcea659d7de37"
+  },
+  "inherited_source_sha256": {
+    "config/veloren/tasks/structured_tools/route_schema_transfer.yaml": "1e37a3c481c91d9ce74d35bad52fd69e1df9442e48c0ee99555ba46a71361325",
+    "game/veloren/fixture.py": "00adc7b9ec334dfdfd33e62a57d681bc15aab05a42516f12cf93ab0848cd8ac2",
+    "game/veloren/runtime/session.py": "238afbcece6ab27db8d7c24d1c1b4c299d3f076e518a2839f67463c2800529ea",
+    "game/veloren/runtime/worker.py": "45ee8716bb3795df28fe7bf7fabe249f9dc4e1499f23aea655256e9457fd658e",
+    "game/veloren/evaluators/route_transfer.py": "726f9a663b4f15cf7d7cfc6d3bfb672ec14ab8416d48c238a96d227eca805f46",
+    "game/veloren/evaluators/endpoints.py": "ca445973cf0a7295f8801f8667e413da1d4f92e2d146d710d560ceb5bec1fc9c",
+    "game/route_transfer.py": "2019501c84aeaaa02b7e2e626b306af017671a0635666005e58c0b0935fc2ece",
+    "game/veloren/binding.py": "e75ed0e856da667d1303a03da77f555b40b5d3333377dbaffbf6537f5902eabb",
+    "config/veloren/experiments/structured_tools.yaml": "9792ab628031d0b70446166c40771dcd5396ee20243668b89f410d03393b2d3c",
+    "config/veloren/experiments/visual_motor.yaml": "0be37b227917662463307364b3c2f60787b725a293a2656c791e07855bc4df25"
+  },
+  "version_boundary": "Existing original family row pairs unchanged original ST with explicitly named route_schema_transfer_local_solid_v1 VM. The old unrestricted/minimap VM is not retroactively accepted. Only world_path is normalized from the exact signed VM definition. Both tracks measure native-client-route/2; route-local-view/1 is solely an observation profile.",
+  "native_hooks_added": false,
+  "registration_scope": "Only the two Veloren route_schema_transfer entries; ST definition refreshed to already committed e72 bytes. Every other registry row and metadata unchanged.",
+  "limits": [
+    "Both original ST and new VM frozen outcomes remain false.",
+    "New VM has zero completed wings/application distance; no whole VM win or measured causal transfer.",
+    "51.956s release-to-capture is not a four-second settling bound.",
+    "72m is not a universal peeking lower bound.",
+    "Legal static map/compass retained. Generic defaults, I02 route1 task hook, I03/I04 and original71de hooks unchanged.",
+    "No new native, model or build."
+  ],
+  "launch_contract": {
+    "st": "Set LIVEQUEST_VELOREN_RUNTIME to the frozen f90ca9 route/2 descriptor; original ST observation and task definition remain unchanged.",
+    "vm": "Set LIVEQUEST_VELOREN_LOCAL_SOLID_RUNTIME to the frozen2f958 descriptor. Existing exact-checksum selector rejects unsupported fallback. Existing visual_motor experiment path now resolves the explicitly named local-solid-v1 candidate.",
+    "public_controls": "Static map/compass, ordinary solid rendering and controls remain legal. No shared native hook is added or duplicated."
+  }
+}

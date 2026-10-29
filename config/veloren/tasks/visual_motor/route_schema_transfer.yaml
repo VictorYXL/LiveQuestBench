@@ -1,4 +1,4 @@
-id: route_schema_transfer
+id: route_schema_transfer_local_solid_v1
 game: veloren
 task_type: visual_motor
 task: 'Explore the first three-module wing, then traverse two application wings and
@@ -18,7 +18,23 @@ task: 'Explore the first three-module wing, then traverse two application wings 
   including detours and backtracking. Practice travel and connecting stairs are outside
   that distance allowance, but still consume episode time. All movement remains ordinary
   native movement; there are no modified controls, recipes or physics. Complete the
-  application wings in order and remain in the final chamber.'
+  application wings in order and remain in the final chamber.
+
+  Observation contract native-route-local-view/1: the voxel minimap layer is unavailable,
+  including attempts to enable it through ordinary UI controls. The static world map,
+  compass and ordinary native camera remain available. Geometry, movement rules and
+  the declared distance/time budgets are unchanged.
+
+  Additional observation contract native-local-camera/1: camera distance is limited
+  to 10m and the camera cannot cross solid or unloaded terrain from the player''s
+  actual eye position, including zoom, mode changes and interpolation. If a safe local
+  view cannot be established, the world view is withheld; the HUD and static world
+  map remain available.
+
+  Additional observation contract native-solid-scene/1: experimental scene shaders,
+  including wireframe and debug buffer views, are unavailable through commands or
+  saved preferences. The normal solid scene, ordinary graphics controls, static world
+  map and compass remain available.'
 time_limit_seconds: 2700
 fixture:
   world_path: ../../fixtures/veloren_0_18_0_0.bin
@@ -4776,6 +4792,9 @@ fixture:
       glider: common.items.glider.basic_white
       lantern: common.items.lantern.black_0
       legs: common.items.armor.misc.pants.worker_brown
+  route_observation: native-route-local-view/1
+  camera_observation: native-local-camera/1
+  scene_observation: native-solid-scene/1
 evaluator:
   name: route_transfer
   parameters:

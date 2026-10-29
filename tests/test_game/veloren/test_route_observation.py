@@ -20,7 +20,7 @@ PROFILES = [("route_observation", SCHEMA), ("camera_observation", CAMERA), ("sce
 
 
 def test_route_observation_is_explicit_versioned_and_route_only():
-    fixture = load_task(Path("config/veloren/tasks/visual_motor/route_schema_transfer.yaml")).fixture
+    fixture = load_task(Path("config/veloren/tasks/structured_tools/route_schema_transfer.yaml")).fixture
     assert "route_observation" not in validate_fixture(fixture)
     assert validate_fixture({**fixture, "route_observation": SCHEMA})["route_observation"] == SCHEMA
     for changed in (
