@@ -4,7 +4,7 @@ task_type: visual_motor
 task: Return to the yellow dispatch marker with 8 iron ingots, 8 cooked beef and 8 glass, retaining at least 1 coal
   and 2 oak planks. Two furnaces are about 18 blocks apart around camp. Fuel burns continuously; all production
   orders and reserves must be satisfied together. Extra timber can be gathered at the grove about 35 blocks beyond
-  camp. Any legal production schedule is allowed. Finish alive, grounded and still.
+  camp. Any legal production schedule is allowed. Finish with at least 1 HP, grounded and still.
 time_limit_seconds: 2700
 fixture:
   world_path: ../../fixtures/shared_fuel_dispatch
