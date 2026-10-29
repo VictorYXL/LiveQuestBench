@@ -76,6 +76,19 @@ SPECS["WallJumpTool"] = (
     "steering, ledge selection or energy restoration.",
     "wall_jump", {},
 )
+for name, action, description in (
+    ("CollectTool", "collect",
+     "Try native collection of a currently observed collectible sprite at an integer voxel. "
+     "Requires ordinary native interaction range; no navigation or harvesting plan."),
+    ("InspectTerrainTool", "inspect_terrain",
+     "Read the native local terrain column at an integer voxel. Restricted by the engine to "
+     "ten horizontal metres and two vertical metres from the player; not a global map or route solver."),
+):
+    SPECS[name] = (
+        description, action,
+        {axis: {"type": "integer", "minimum": -(2**31), "maximum": 2**31 - 1}
+         for axis in ("x", "y", "z")},
+    )
 TARGET_FIELDS = {
     "uid": {"type": "integer", "minimum": 1, "maximum": 2**64 - 1},
     "lifecycle": {"type": "string", "minLength": 1, "maxLength": 128},
@@ -249,7 +262,7 @@ def validate_tool(name: str, arguments: dict) -> tuple[str, dict]:
         native = "move_" + converted.pop("direction")
     elif native == "attack":
         native = "attack_" + converted.pop("channel")
-    elif native == "look_at":
+    elif native in ("look_at", "collect", "inspect_terrain"):
         converted = {"position": [converted[axis] for axis in ("x", "y", "z")]}
     elif name == "UnlockSwordSkillTool":
         converted = {"skill": {"Sword": converted["skill_name"]}}

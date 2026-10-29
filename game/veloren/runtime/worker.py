@@ -359,6 +359,13 @@ class Session:
                 )
                 observation["private_pickup_evidence"] = evidence
                 self.pickup_registry = evidence["registry"]
+            if self.initialized.get("harvest") is not None:
+                from game.veloren.harvest import harvest_snapshot
+                observation["private_harvest_evidence"] = await harvest_snapshot(
+                    self.actor, observation, self.initialized["harvest"],
+                    getattr(self, "harvest_registry", None),
+                )
+                self.harvest_registry = observation["private_harvest_evidence"]["registry"]
             if not self.attachment and not hasattr(self, "supplies_opening"):
                 from game.veloren.fixture import verify_aged_supplies
                 verify_aged_supplies(self.initialized, observation)
@@ -474,7 +481,7 @@ class Session:
                 raise PermissionError("VM cannot invoke native skills")
             if args.get("action_type") not in (
                 "move_forward", "move_backward", "move_left", "move_right",
-                "turn", "jump", "wall_jump", "pickup", "use_item", "craft", "equip",
+                "turn", "jump", "wall_jump", "pickup", "use_item", "craft", "equip", "collect", "inspect_terrain",
                 "look_at", "attack_primary", "attack_secondary", "toggle_wield", "block", "roll", "stop",
                 "aimed_attack", "glide", "context_interact", "social_action", "dialogue_action", "trade_action",
                 "unlock_skill", "configure_auxiliary_ability", "attack_auxiliary",
@@ -493,6 +500,10 @@ class Session:
                     and (not self.team_role or args.get("invite_kind") != "Trade")):
                 raise PermissionError("Public invitation responses require a peer Trade invitation")
             try:
+                if args["action_type"] == "inspect_terrain":
+                    return await self.actor.request(
+                        "inspect_terrain", {"position": args["position"]}, origin="agent",
+                    )
                 if args["action_type"] == "glide":
                     result = await setup.action(
                         self.actor, origin="agent", require_completed=False,
@@ -526,6 +537,8 @@ class Session:
                 }
                 refusal = error.native_error
                 rpg_refusals = {
+                    "inspect_terrain": {"terrain_query_out_of_bounds", "terrain_query_unavailable",
+                                        "terrain_position_out_of_world_bounds"},
                     "unlock_skill": {"invalid_action", "skill_ineligible", "skill_state_unavailable"},
                     "configure_auxiliary_ability": {"ability_ineligible"},
                     "attack_auxiliary": {"auxiliary_ineligible"},

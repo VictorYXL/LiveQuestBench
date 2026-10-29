@@ -170,6 +170,10 @@ class VelorenGame(BaseGame[MotorInterface | StructuredInterface]):
             )
             try:
                 result = await self._active_tool
+                if native == "inspect_terrain" and result.get("status") != "refused":
+                    if result.get("terrain_query_schema_version") != "1.0":
+                        raise ValueError("Unsupported native terrain query response")
+                    return {"action_type": native, "status": "completed", "detail": result}
                 return {key: result[key] for key in (
                     "action_type", "status", "started_tick", "finished_tick", "detail",
                 ) if key in result}

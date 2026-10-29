@@ -65,7 +65,7 @@ def validate_fixture(value: object) -> dict:
     optional = {"blocks", "stations", "supplies", "recipe_groups", "recipes", "encounters",
                 "motion_evidence", "glide_evidence", "platform", "native_site", "merchant",
                 "sword_skill_points", "companion", "contract", "respawn_at_start", "route_evidence",
-                "public_energy", "pickup_evidence", "peer_group"}
+                "public_energy", "pickup_evidence", "peer_group", "harvest_sites"}
     if not isinstance(value, dict) or required - value.keys() or value.keys() - required - optional:
         raise ValueError(f"Veloren fixture requires exactly {sorted(required)} plus optional {sorted(optional)}")
     fixture = value
@@ -77,6 +77,10 @@ def validate_fixture(value: object) -> dict:
         type(fixture["sword_skill_points"]) is not int or not 1 <= fixture["sword_skill_points"] <= 16
     ):
         raise ValueError("sword_skill_points must be an integer in [1, 16]")
+    if "harvest_sites" in fixture and (
+        fixture.get("encounters") or any(key in fixture for key in ("merchant", "companion", "contract"))
+    ):
+        raise ValueError("Native harvest evidence requires a separate authored plot without injected actors")
     if not isinstance(fixture["world_path"], str) or not fixture["world_path"].strip():
         raise ValueError("world_path must explicitly identify a native map file")
     if not Path(fixture["world_path"]).is_file():
@@ -93,14 +97,14 @@ def validate_fixture(value: object) -> dict:
     point = vector(player["position"], "player_state.position")
     if ("platform" in fixture) == ("native_site" in fixture):
         raise ValueError("Declare exactly one authored platform or existing native_site")
-    for key in ("blocks", "stations", "supplies", "recipe_groups"):
+    for key in ("blocks", "stations", "supplies", "recipe_groups", "harvest_sites"):
         if key in fixture and not isinstance(fixture[key], list):
             raise ValueError(f"{key} must be a list")
     if "native_site" in fixture:
         site = fixture["native_site"]
         if not isinstance(site, str) or not site.strip() or len(site) > 128:
             raise ValueError("native_site must name an existing native settlement")
-        if {"blocks", "stations", "supplies", "encounters"} & fixture.keys():
+        if {"blocks", "stations", "supplies", "encounters", "harvest_sites"} & fixture.keys():
             raise ValueError("Natural settlement fixtures do not author terrain, supplies or encounters")
         occupied = set()
     else:
@@ -132,6 +136,15 @@ def validate_fixture(value: object) -> dict:
         for station in fixture.get("stations", []):
             x, y, z = station["position"]
             require_standing_point([x - 2, y, z], occupied, "Station approach")
+        if "harvest_sites" in fixture:
+            sites = fixture["harvest_sites"]
+            if not 1 <= len(sites) <= 16:
+                raise ValueError("Declare between one and sixteen native mushroom cells")
+            for site in sites:
+                vector(site, "harvest site", integer=True)
+                require_standing_point(site, occupied, "Harvest site")
+            if len({tuple(site) for site in sites}) != len(sites):
+                raise ValueError("Native harvest sites must be distinct")
         require_standing_point(point, occupied, "Player")
         require_standing_point(setup_start, occupied, "Native setup start")
     encounters = fixture.get("encounters", [])
@@ -631,6 +644,10 @@ async def initialize_fixture(admin, actor, fixture: dict, *, shared_world: bool 
     stations = []
     for station in (() if shared_world else fixture.get("stations", [])):
         stations.append(await setup.station(admin, station["position"], station["sprite"], "flat"))
+    harvest = None
+    if "harvest_sites" in fixture and not shared_world:
+        from game.veloren.harvest import initialize_harvest
+        harvest = await initialize_harvest(admin, actor, fixture["harvest_sites"])
     for group in fixture.get("recipe_groups", []):
         await setup.learn(admin, actor, group)
     await initialize_equipment(admin, actor, fixture["player_state"]["equipment"])
@@ -682,7 +699,7 @@ async def initialize_fixture(admin, actor, fixture: dict, *, shared_world: bool 
         from game.veloren.contracts import initialize_contract
         contract = await initialize_contract(admin, actor, fixture)
     result = {"fixture": fixture, "construction": construction, "blocks": blocks,
-            "stations": stations, "supplies": supplies, "opening": opening,
+            "stations": stations, "supplies": supplies, "opening": opening, "harvest": harvest,
             "encounters": [], "source_binding": None, "merchant": merchant,
             "companion": companion, "contract": contract, "initial_waypoint_receipt": waypoint}
     if not shared_world and (fixture.get("encounters") or contract is not None):
