@@ -51,6 +51,31 @@ experiments. Those local geometry/text changes are not frozen-reference changes.
 
 ## Goals and provisional difficulty
 
+### Supplementary C05 sheltered escort condition
+
+`caravan_protection_team_sheltered` is a separately reviewed ST/VM condition,
+not a replacement for the frozen twelve-task manifest or the older exposed
+caravan condition. Its original living Alpha-owned sheep must remain grouped
+and finish within four metres of Alpha; both living players must stop at the
+shelter. Avoiding enemies and ordinary player respawn remain legal. Friendly
+fire, sheep AI, resources and the 2700-second deadline are unchanged.
+
+Support is restricted to task hashes `035878e4…b5b909` (ST) and
+`c32fb2af…72455f` (VM), with the explicitly selected native runtime
+`f90ca9a9…c3793` through `LIVEQUEST_VELOREN_RUNTIME`; another/default runtime
+is not qualified by this integration. The
+[offline main bridge](../checks/VE-C05-main-admission-20261030.json) records
+exact source/runtime pins, both registrations and frozen endpoint replay.
+The ordinary VM interface remains pixels plus X11 input, not ST coordinates.
+
+Independent reviews support a bounded native-prefix-plus-finishing construction,
+not a newly observed win: the actual sheltered ST result remains a valid
+133.584656-second failure. The separate `c7170d7` controller correction was
+not executed or incorporated into the scorer. Cooperation is provisionally
+**2 (range 2–3)** and overall difficulty **3 (range 2–4)**, with high calibration
+uncertainty; these are distinct judgments. V's five-metre HUD prompt is not
+the four-metre escort predicate, and native Stay does not freeze the sheep.
+
 **2:** easier but substantive; **3:** standard; **4:** hard but useful as a
 reference. These are engineering/design judgments informed by development
 trajectories, not transformations of success rates. They are not the retired

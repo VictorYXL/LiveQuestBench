@@ -8,6 +8,38 @@ import pytest
 from game.veloren.native_bindings import NativeBindingCursor, combat_binding
 
 
+@pytest.mark.parametrize("binding_failure", [False, True])
+def test_companion_warms_native_cursor_before_spawn_and_fails_closed(monkeypatch, binding_failure):
+    from game.veloren.fixture import initialize_companion
+    import sys
+    from types import ModuleType
+    from unittest.mock import AsyncMock
+
+    calls = []
+    actor = SimpleNamespace(
+        name="Alpha", request=AsyncMock(return_value={"self_identity": {"uid": 1}, "nearby_entities": []}),
+    )
+
+    async def binding(actual_actor, uid):
+        assert actual_actor is actor and uid == 1
+        calls.append("warm")
+        if binding_failure:
+            raise RuntimeError("unavailable source binding")
+        return {"uid": 1}
+
+    async def spawn(*args):
+        calls.append("spawn")
+        raise RuntimeError("test stops at native spawn boundary")
+
+    monkeypatch.setattr("game.veloren.native_bindings.combat_binding", binding)
+    native_package = ModuleType("scripts.rpg_benchmark")
+    native_package.setup = SimpleNamespace(command=spawn)
+    monkeypatch.setitem(sys.modules, "scripts.rpg_benchmark", native_package)
+    with pytest.raises(RuntimeError, match="unavailable source" if binding_failure else "spawn boundary"):
+        asyncio.run(initialize_companion(None, actor, {}))
+    assert calls == (["warm"] if binding_failure else ["warm", "spawn"])
+
+
 def event(sequence, kind, data):
     return json.dumps({"schema": "rpg-native-oracle", "version": "1.1",
                        "private": True, "sequence": sequence, "event": kind,

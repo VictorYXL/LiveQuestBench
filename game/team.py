@@ -223,8 +223,14 @@ def create_team_binding(task: TaskConfig, output: Path, *, headless: bool,
         fallback = {"min_health": 1}
     parameters = task.evaluator_parameters
     if not parameters or set(parameters) - {"all", "any", "roles", "inventory_total", "no_death",
-                                           "crossing", "encounters", "cargo", "native_efficiency", "peer_support", "source_supplies"}:
+                                           "crossing", "encounters", "cargo", "native_efficiency", "peer_support", "source_supplies", "escort"}:
         raise ValueError("Unsupported team goal predicate")
+    if "escort" in parameters:
+        from game.veloren.evaluators.encounter import evaluate_escort, validate_encounter
+        if task.game != "veloren" or "companion" not in task.fixture:
+            raise ValueError("Team escort requires a Veloren native companion fixture")
+        validate_encounter(roles=[row["role"] for row in task.fixture["encounters"]],
+                           companion=parameters["escort"])
     if "source_supplies" in parameters:
         if task.game != "veloren" or not task.fixture.get("pickup_evidence"):
             raise ValueError("Native original team supplies require Veloren pickup evidence")
@@ -296,7 +302,10 @@ def create_team_binding(task: TaskConfig, output: Path, *, headless: bool,
     if task.tools is not None:
         member_tools = tuple(name for name in task.tools if name not in ("BroadcastTool", "ChatTool")) or None
     for role in task.participants:
-        member_task = replace(task, participants=(), fixture={**task.fixture, "player_state": role.player_state},
+        member_fixture = {**task.fixture, "player_state": role.player_state}
+        if task.game == "veloren" and members:
+            member_fixture.pop("companion", None)
+        member_task = replace(task, participants=(), fixture=member_fixture,
                               evaluator="state", evaluator_parameters=fallback, tools=member_tools)
         member = make_game(member_task, output / role.id, headless=headless, recording=recording,
                            recording_fps=recording_fps, recording_path=output.parent / "participants" / role.id / "recording/video.mp4")
@@ -322,6 +331,14 @@ def create_team_binding(task: TaskConfig, output: Path, *, headless: bool,
 
     def evaluate(before: Path, after: Path) -> dict:
         checks = []
+        if "escort" in parameters:
+            owner = next(iter(members))
+            result = evaluate_escort(
+                before / owner, after / owner,
+                roles=[row["role"] for row in task.fixture["encounters"]],
+                companion=parameters["escort"],
+            )
+            checks.append({"scope": "escort", "result": result, "passed": result["success"]})
         if "source_supplies" in parameters:
             from game.veloren.evaluators.endpoints import load_pair
             pairs = {role: load_pair(before / role, after / role) for role in members}
@@ -403,6 +420,13 @@ def create_team_binding(task: TaskConfig, output: Path, *, headless: bool,
             "count": sum(row["deaths"]["count"] for row in rows.values()),
             "semantics": "native_player_deaths_summed_across_participants",
         }}
+        if "escort" in parameters:
+            owner = next(iter(members))
+            result["escort"] = evaluate_escort(
+                before / owner, after / owner,
+                roles=[row["role"] for row in task.fixture["encounters"]],
+                companion=parameters["escort"],
+            )["diagnostics"]
         if parameters.get("native_efficiency"):
             if task.game == "minecraft":
                 from game.minecraft.evaluators.team_cargo import team_efficiency

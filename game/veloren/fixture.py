@@ -568,6 +568,8 @@ async def initialize_companion(admin, actor, fixture: dict) -> dict:
     from game.veloren.native_bindings import combat_binding as native_binding
 
     before = await actor.request("observe")
+    # Warm the bounded shared journal cursor before a live pet can wander.
+    await native_binding(actor, before["self_identity"]["uid"])
     existing = {row["uid"] for row in before["nearby_entities"]}
     receipt = await setup.command(admin, "sudo", actor.name, "spawn", "pet", "sheep", 1, "true")
     spawned = await setup.wait_observation(actor, lambda row: len([

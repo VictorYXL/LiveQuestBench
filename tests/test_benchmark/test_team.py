@@ -13,6 +13,28 @@ from game.bindings import Controls, GameBinding
 from game.team import TeamGame
 
 
+@pytest.mark.parametrize("track", ["structured_tools", "visual_motor"])
+def test_escort_companion_is_assigned_only_to_original_owner(tmp_path, monkeypatch, track):
+    from game.team import create_team_binding
+
+    task = load_task(Path(f"config/veloren/tasks/{track}/caravan_protection_team_sheltered.yaml"))
+    fixtures = []
+
+    def member(member_task, *args, **kwargs):
+        fixtures.append(member_task.fixture)
+        return GameBinding(SimpleNamespace(), None, None, None)
+
+    monkeypatch.setattr("benchmark.factory.make_game", member)
+    binding = create_team_binding(task, tmp_path / "game", headless=True,
+                                  recording=False, recording_fps=5)
+    assert list(binding.game.members) == ["Alpha", "Beta"]
+    assert fixtures[0]["companion"] == task.fixture["companion"]
+    assert "companion" not in fixtures[1]
+    assert fixtures[0]["player_state"] == task.participants[0].player_state
+    assert fixtures[1]["player_state"] == task.participants[1].player_state
+    assert "companion" in task.fixture
+
+
 @pytest.mark.parametrize("defect", ["missing_evidence", "mismatched_stock"])
 def test_original_team_supply_binding_rejects_unverifiable_fixture(tmp_path, defect):
     from dataclasses import replace

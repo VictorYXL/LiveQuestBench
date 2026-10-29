@@ -264,7 +264,7 @@ def test_encounter_can_allow_recovery_without_accepting_missing_target_evidence(
         encounter_checks(initial, final, roles=["enemy"], no_death=0)
 
 
-def test_companion_requires_original_living_owned_identity_not_replacement_or_disappearance():
+def companion_evidence():
     initial, final = evidence()
     pet = {"uid": 3, "server_entity": "sheep-generation-1", "alignment": {"Owned": 1},
            "group": 7, "health": 40, "maximum_health": 40, "dead": False}
@@ -279,13 +279,21 @@ def test_companion_requires_original_living_owned_identity_not_replacement_or_di
             "binding": deepcopy(pet), "player_target": deepcopy(target),
         }
         row["private_encounter_evidence"]["companion_binding"] = deepcopy(pet)
-    parameters = {"roles": ["enemy"], "companion": {"max_distance": 4, "min_health": 1}}
+    return initial, final
+
+
+@pytest.mark.parametrize("health_floor", [0, 1])
+def test_companion_requires_original_living_owned_identity_not_replacement_or_disappearance(health_floor):
+    initial, final = companion_evidence()
+    parameters = {"roles": ["enemy"], "companion": {"max_distance": 4, "min_health": health_floor}}
     assert encounter_checks(initial, final, **parameters)["success"]
     for change in (
         lambda row: row.update(nearby_entities=[]),
         lambda row: row["nearby_entities"][0]["companion"].update(owned_by_actor=False),
         lambda row: row["nearby_entities"][0].update(position=[4.01, 0, 0]),
         lambda row: row["private_encounter_evidence"]["companion_binding"].update(server_entity="replacement"),
+        lambda row: row["nearby_entities"][0]["health"].update(current=0),
+        lambda row: row["private_encounter_evidence"]["companion_binding"].update(health=0),
     ):
         changed = deepcopy(final)
         change(changed)
@@ -295,6 +303,25 @@ def test_companion_requires_original_living_owned_identity_not_replacement_or_di
     final["private_encounter_evidence"]["events"].append(death)
     final["private_encounter_evidence"]["through_sequence"] = 13
     assert not encounter_checks(initial, final, **parameters)["success"]
+
+
+def test_escort_allows_unengaged_enemies_but_not_original_pet_death(monkeypatch):
+    from game.veloren.evaluators.encounter import evaluate_escort
+
+    initial, final = companion_evidence()
+    final["private_encounter_evidence"].update(events=[], through_sequence=10)
+    monkeypatch.setattr("game.veloren.evaluators.encounter.load_pair", lambda *_: (initial, final))
+    result = evaluate_escort(Path("before"), Path("after"), roles=["enemy"],
+                             companion={"max_distance": 4, "min_health": 0})
+    assert result["success"]
+    assert all(row["kind"] != "encounter" for row in result["checks"])
+    final["private_encounter_evidence"].update(through_sequence=11, events=[{
+        "schema": "rpg-native-oracle", "version": "1.1", "private": True,
+        "event": "native_entity_death", "sequence": 11,
+        "data": {"uid": 3, "entity": "sheep-generation-1"},
+    }])
+    assert not evaluate_escort(Path("before"), Path("after"), roles=["enemy"],
+                               companion={"max_distance": 4, "min_health": 0})["success"]
 
 
 def test_injured_companion_needs_sourced_healing_before_target_lethal_damage():

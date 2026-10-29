@@ -42,8 +42,9 @@ def validate_encounter(*, roles: list[str], companion: dict | None = None,
                 or companion.keys() - {"max_distance", "min_health", "min_health_fraction", "healing_required",
                                        "heal_while_target_alive"}):
             raise ValueError("companion requires max_distance and min_health")
-        if any(finite(companion[key], key) <= 0 for key in ("max_distance", "min_health")):
-            raise ValueError("Companion distance and health thresholds must be positive")
+        if (finite(companion["max_distance"], "max_distance") <= 0
+                or finite(companion["min_health"], "min_health") < 0):
+            raise ValueError("Companion distance must be positive and health floor nonnegative")
         if "min_health_fraction" in companion and not 0 < finite(companion["min_health_fraction"], "fraction") <= 1:
             raise ValueError("Companion health fraction must be in (0, 1]")
         if "healing_required" in companion and type(companion["healing_required"]) is not bool:
@@ -158,13 +159,13 @@ def _combat_checks(
                 public["control_target"] == registered["player_target"]
                 and public["companion"]["owned_by_actor"] is True and public["same_native_group"] is True
                 and public["health"] is not None and public["health"]["dead"] is False
-                and finite(public["health"]["current"], "companion health") >= companion["min_health"]
+                and 0 < finite(public["health"]["current"], "companion health") >= companion["min_health"]
                 and distance <= companion["max_distance"]
             )
         native_alive = (
             current is not None and current["uid"] == pet["uid"] and current["server_entity"] == pet["server_entity"]
             and current["alignment"] == {"Owned": source["uid"]} and current["dead"] is False
-            and finite(current["health"], "native companion health") >= companion["min_health"]
+            and 0 < finite(current["health"], "native companion health") >= companion["min_health"]
             and public is not None and current["group"] == public["group"]
         )
         killed = bool(deaths(pet))
@@ -284,3 +285,37 @@ def evaluate_encounter(before: Path, after: Path, *, roles: list[str], **state) 
 
 def evaluate_damage(before: Path, after: Path, *, roles: list[str], **state) -> dict:
     return damage_checks(*load_pair(before, after), roles=roles, **state)
+
+
+def evaluate_escort(before: Path, after: Path, *, roles: list[str], companion: dict) -> dict:
+    """Validate original companion preservation without requiring enemy engagement."""
+    initial, final = load_pair(before, after)
+    result = _combat_checks(initial, final, roles=roles, require_death=False,
+                            no_death=False, companion=companion, min_health=0)
+    result["checks"] = [row for row in result["checks"] if row["kind"] != "encounter"]
+    result["success"] = all(row["passed"] for row in result["checks"])
+    result["semantics"] = (
+        "Original native owned companion remains alive, grouped and within the declared distance. "
+        "Avoiding or defeating enemies is legal; no damage quotas or NPC path controller."
+    )
+    evidence = final["private_encounter_evidence"]
+    pet = evidence["registry"]["companion"]["binding"]
+    changes = [row["data"] for row in evidence["events"]
+               if row["event"] == "health_effect_applied" and row["data"]["changed"] is True
+               and row["data"]["target_uid"] == pet["uid"]
+               and row["data"]["target_entity"] == pet["server_entity"]]
+    current = evidence["companion_binding"]
+    terminal_health = (current["health"] if current is not None
+                       and current["uid"] == pet["uid"]
+                       and current["server_entity"] == pet["server_entity"] else None)
+    observed = [pet["health"], *[row["after"] for row in changes]]
+    if terminal_health is not None:
+        observed.append(terminal_health)
+    result["diagnostics"] = {
+        "initial_health": pet["health"], "terminal_health": terminal_health,
+        "minimum_observed_health": min(observed),
+        "summed_health_loss": sum(max(0, row["before"] - row["after"]) for row in changes),
+        "summed_health_restoration": sum(max(0, row["after"] - row["before"]) for row in changes),
+        "semantics": "Original companion native health changes, not a counterfactual protection benefit.",
+    }
+    return result

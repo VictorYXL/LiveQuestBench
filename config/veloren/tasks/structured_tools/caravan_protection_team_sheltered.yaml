@@ -1,0 +1,288 @@
+id: caravan_protection_team_sheltered
+game: veloren
+task_type: structured_tool
+task: 'Bring Alpha''s original sheep and both players alive to the stone shelter at
+  the far end of the route. The sheep must never die and must finish owned by Alpha,
+  grouped with Alpha, and within four metres of Alpha.
+
+  Both players and the original sheep begin in a ground-level covered holding bay.
+  Its open exit is along the southern side, through a short dogleg corridor; there
+  is no locked door or protected NPC. Native stay does not freeze or shield the sheep.
+  A guard may leave through that corridor and draw threats away while the owner waits
+  with the sheep, then guide it along the same ordinary ground route. The bay''s real
+  walls prevent the former exposed-ledge drop, not all possible harm. The route is
+  roughly fifty metres long with a broad fork and cover pockets. Native enemies may
+  approach from either side. The sheep follows ordinary pet behavior, without automatic
+  protection. Clearing threats first or avoiding them is legal.
+
+  Both players must finish stationary on the ground at the shelter. Player death does
+  not restore the sheep, stock or enemies.'
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/veloren_0_18_0_0.bin
+  world_seed: 130626853
+  time_of_day: '12:00'
+  day_length: 30
+  calendar: none
+  platform:
+    origin:
+    - 18700
+    - 10800
+    - 500
+    size:
+    - 68
+    - 24
+    block: Rock
+  blocks:
+  - origin:
+    - 18700
+    - 10800
+    - 501
+    size:
+    - 68
+    - 1
+    - 8
+  - origin:
+    - 18700
+    - 10823
+    - 501
+    size:
+    - 68
+    - 1
+    - 8
+  - origin:
+    - 18700
+    - 10801
+    - 501
+    size:
+    - 1
+    - 22
+    - 8
+  - origin:
+    - 18767
+    - 10801
+    - 501
+    size:
+    - 1
+    - 22
+    - 8
+  - origin:
+    - 18700
+    - 10800
+    - 509
+    size:
+    - 68
+    - 24
+    - 1
+  - origin:
+    - 18720
+    - 10807
+    - 501
+    size:
+    - 12
+    - 3
+    - 4
+  - origin:
+    - 18740
+    - 10813
+    - 501
+    size:
+    - 10
+    - 3
+    - 4
+  - origin:
+    - 18760
+    - 10807
+    - 501
+    size:
+    - 1
+    - 1
+    - 4
+  - origin:
+    - 18760
+    - 10813
+    - 501
+    size:
+    - 1
+    - 1
+    - 4
+  - origin:
+    - 18760
+    - 10807
+    - 505
+    size:
+    - 6
+    - 7
+    - 1
+  - origin:
+    - 18703
+    - 10803
+    - 501
+    size:
+    - 14
+    - 1
+    - 4
+  - origin:
+    - 18703
+    - 10819
+    - 501
+    size:
+    - 14
+    - 1
+    - 4
+  - origin:
+    - 18703
+    - 10804
+    - 501
+    size:
+    - 1
+    - 15
+    - 4
+  - origin:
+    - 18716
+    - 10804
+    - 501
+    size:
+    - 1
+    - 1
+    - 4
+  - origin:
+    - 18716
+    - 10807
+    - 501
+    size:
+    - 1
+    - 12
+    - 4
+  - origin:
+    - 18717
+    - 10804
+    - 501
+    size:
+    - 5
+    - 1
+    - 4
+  - origin:
+    - 18717
+    - 10807
+    - 501
+    size:
+    - 5
+    - 1
+    - 4
+  - origin:
+    - 18703
+    - 10803
+    - 505
+    size:
+    - 19
+    - 17
+    - 1
+  encounters:
+  - role: near_wolf
+    asset: common.entity.benchmark.male_wolf
+    position:
+    - 18734.5
+    - 10805.5
+    - 501
+  - role: far_legoom
+    asset: common.entity.benchmark.male_green_legoom
+    position:
+    - 18753.5
+    - 10819.5
+    - 501
+  companion:
+    species: sheep
+    position:
+    - 18711.5
+    - 10810.5
+    - 501
+  respawn_at_start: true
+  route_evidence: true
+evaluator:
+  name: team
+  parameters:
+    all:
+      min_health: 0
+      position:
+        target:
+        - 18762.5
+        - 10810.5
+        - 501
+        horizontal_tolerance: 3
+        vertical_tolerance: 0.5
+        max_speed: 0.1
+    escort:
+      max_distance: 4
+      min_health: 0
+    no_death: false
+    native_efficiency: true
+tools:
+- MoveTool
+- TurnTool
+- JumpTool
+- PickupTool
+- UseItemTool
+- CraftTool
+- EquipTool
+- LookTool
+- AttackTool
+- WieldTool
+- BlockTool
+- RollTool
+- StopTool
+- StrikeTool
+- PetStayTool
+- BroadcastTool
+- ChatTool
+- RespawnTool
+participants:
+- id: Alpha
+  player_state:
+    position:
+    - 18708.5
+    - 10810.5
+    - 501
+    look:
+    - 0
+    - 1
+    - 0
+    health: 100
+    inventory:
+      common.items.consumable.potion_minor: 3
+      common.items.food.apple: 3
+    equipment:
+      active_mainhand: common.items.weapons.sword.starter
+      chest: common.items.armor.misc.chest.worker_purple_brown
+      feet: common.items.armor.misc.foot.sandals
+      glider: common.items.glider.basic_white
+      lantern: common.items.lantern.black_0
+      legs: common.items.armor.misc.pants.worker_brown
+- id: Beta
+  player_state:
+    position:
+    - 18710.5
+    - 10814.5
+    - 501
+    look:
+    - 0
+    - 1
+    - 0
+    health: 100
+    inventory:
+      common.items.consumable.potion_minor: 3
+      common.items.food.apple: 3
+    equipment:
+      active_mainhand: common.items.weapons.sword.starter
+      chest: common.items.armor.hide.rawhide.chest
+      feet: common.items.armor.misc.foot.sandals
+      glider: common.items.glider.basic_white
+      lantern: common.items.lantern.black_0
+      legs: common.items.armor.misc.pants.worker_brown
+capabilities:
+  primary:
+  - peer_cooperation
+  secondary:
+  - realtime_execution
+  - planning_resources
+  - spatial_interaction
