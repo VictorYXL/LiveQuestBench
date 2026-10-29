@@ -11,6 +11,49 @@ import pytest
 from game.minecraft.runtime import client, install
 
 
+def test_client_selection_rejects_stale_cache_without_rebuilding(tmp_path, monkeypatch):
+    current_source, stale_source = "a" * 64, "b" * 64
+    monkeypatch.setattr(client, "source_digest", lambda: current_source)
+    user_home = tmp_path / "default"
+    monkeypatch.setattr(install.Path, "home", lambda: user_home)
+    roots = [user_home / ".local/share/livequestbench/minecraft", tmp_path / "matching"]
+    receipts = []
+    for home, source in zip(roots, (stale_source, current_source)):
+        root = home / "client-1.20.4"
+        support = root / ".gradle/loom-cache"
+        support.mkdir(parents=True)
+        for name in ("launch.cfg", "remapClasspath.txt", "log4j.xml"):
+            (support / name).write_text("support")
+        (root / "dependency.jar").write_bytes(b"dependency")
+        launch = {"classpath": [str(root / "dependency.jar")]}
+        (root / "launch.json").write_text(json.dumps(launch))
+        receipt = root / "ready.json"
+        receipt.write_text(json.dumps({
+            "source_sha256": source, "root": str(root),
+            "launch_sha256": hashlib.sha256((root / "launch.json").read_bytes()).hexdigest(),
+        }))
+        receipts.append((receipt, receipt.read_bytes()))
+
+    monkeypatch.delenv("LIVEQUEST_MINECRAFT_HOME", raising=False)
+    with pytest.raises(RuntimeError) as failure:
+        client.check_client()
+    message = str(failure.value)
+    assert str(roots[0] / "client-1.20.4") in message
+    assert stale_source in message and current_source in message
+    assert "LIVEQUEST_MINECRAFT_HOME" in message
+
+    monkeypatch.setenv("LIVEQUEST_MINECRAFT_HOME", str(roots[1]))
+    assert client.check_client() == launch
+    for path, contents in receipts:
+        assert path.read_bytes() == contents
+    (roots[1] / "client-1.20.4/launch.json").write_text('{"classpath": []}')
+    with pytest.raises(RuntimeError, match="launch metadata changed"):
+        client.check_client()
+    monkeypatch.setenv("LIVEQUEST_MINECRAFT_HOME", str(tmp_path / "missing"))
+    with pytest.raises(RuntimeError, match="not prepared"):
+        client.check_client()
+
+
 @pytest.mark.parametrize("failures", [1, 3])
 def test_download_connection_timeout_has_bounded_retries(monkeypatch, failures):
     attempts, delays = [], []

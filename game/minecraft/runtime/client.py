@@ -44,8 +44,16 @@ def check_client() -> dict:
         launch = json.loads((root / "launch.json").read_text())
     except FileNotFoundError as exc:
         raise RuntimeError("Native client is not prepared; run game/minecraft/setup.sh --track visual_motor") from exc
-    if receipt["source_sha256"] != source_digest() or receipt["root"] != str(root):
-        raise RuntimeError("Native client setup has changed or moved; rerun game/minecraft/setup.sh")
+    current_source = source_digest()
+    if receipt["source_sha256"] != current_source or receipt["root"] != str(root):
+        raise RuntimeError(
+            f"Native client setup has changed or moved at {root}: "
+            f"prepared source={receipt['source_sha256']}, current source={current_source}, "
+            f"recorded root={receipt['root']}. "
+            "Select an existing matching installation with LIVEQUEST_MINECRAFT_HOME, "
+            "or run game/minecraft/setup.sh with that variable set to a new dedicated directory. "
+            "Do not rebuild an installation used by a running session."
+        )
     if receipt["launch_sha256"] != hashlib.sha256((root / "launch.json").read_bytes()).hexdigest():
         raise RuntimeError("Native client launch metadata changed; rerun game/minecraft/setup.sh")
     for entry in launch["classpath"]:

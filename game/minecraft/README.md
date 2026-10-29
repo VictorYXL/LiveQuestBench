@@ -48,6 +48,39 @@ Use the same settings for installation, tests and experiments. Rerun setup
 after native-client changes; updating Python dependencies alone does not rebuild
 the game integration.
 
+### Selecting an existing runtime without rebuilding
+
+Both offline ST and VM select
+`$LIVEQUEST_MINECRAFT_HOME/client-1.20.4`; when unset, the installation home is
+`~/.local/share/livequestbench/minecraft`. Selection is explicit: the launcher
+does not search other installations or fall back after a failed check.
+The versioned directory name alone does not establish compatibility. Admission
+requires the current native source/build-input digest, the recorded absolute
+client root, unchanged launch metadata and present dependencies/support files.
+
+If admission reports changed source, select an already prepared, matching
+installation rather than overwriting a cache that may serve running sessions:
+
+```bash
+export LIVEQUEST_MINECRAFT_HOME="/absolute/path/to/prepared-minecraft-home"
+# Read-only client admission: no launch, build, download, or model call.
+.venv/bin/python -c 'from game.minecraft.runtime.client import check_client, client_root, source_digest; check_client(); print(client_root(), source_digest())'
+```
+
+Use the **same environment** for a subsequently authorized experiment. Record
+the selected `ready.json` and `launch.json` SHA-256 values with its source digest;
+do not copy or edit receipts to force compatibility, or move an absolute-path
+installation. Client admission does not verify startup, gameplay, every
+dependency's binary hash, Java/display/server readiness, or EULA consent.
+An offline installation-wide check is available via
+`.venv/bin/python -m game.minecraft.runtime.install check --track all`
+(omit `--verify-server` to avoid fetching official metadata).
+
+If no matching installation exists, setup really is required: choose a **new**
+dedicated `LIVEQUEST_MINECRAFT_HOME` and explicitly authorize provisioning
+before running setup. Never rebuild a live installation or relabel historical
+native results as evidence for a newer client.
+
 ## Run an experiment
 
 Choose a configuration from
