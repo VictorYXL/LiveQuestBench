@@ -5,7 +5,7 @@ task: 'Return to the yellow market stand with a shield, an iron pickaxe, at leas
   4 emeralds. Workshop supplies and a table are provided. The three nearby merchants offer: farmer buys 20 wheat
   for 1 emerald and sells 6 bread for 1; toolsmith buys 15 coal for 1 emerald and sells an iron pickaxe for 8 or
   an optional iron axe for 7; butcher sells 5 cooked porkchops for 1 emerald. All prices are per exchange. Further
-  lawful gathering is allowed. Finish alive, grounded and still.'
+  lawful gathering is allowed. Finish with at least 1 HP, grounded and still.'
 time_limit_seconds: 2700
 fixture:
   world_path: ../../fixtures/market_loadout_budget
