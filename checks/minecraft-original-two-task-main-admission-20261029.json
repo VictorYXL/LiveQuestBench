@@ -1,0 +1,459 @@
+{
+  "schema": "livequest-original-minecraft-main-admission/1",
+  "checked_at_utc": "2026-10-29T12:30:40.877174+00:00",
+  "refreshed_main_base": "dc327c27294fd1b2b8c2b7da074db6e0d8c22174",
+  "candidate_commit": "bfdbbd98ff635911af95fe4f952b8d44d98bdd00",
+  "integrated_checker_commit": "399dbf5f7a848150715a53bdd42dbea65927fe8e",
+  "final_tasks_changed": false,
+  "manifest_changed": false,
+  "qualified_task_delta": 2,
+  "tasks": [
+    {
+      "stable_id": "minecraft/abandoned_mine_cargo",
+      "qualified": true,
+      "condition": "frozen_original_cargo",
+      "policy_judgments": {
+        "known_blocking_bug": null,
+        "feasibility": "Exact-condition whole VM success supplements retained ST evidence; no incompatible endpoint stitching.",
+        "construct": "Identity-bound originals, elevation/access and settled return remain unchanged. Authored route use proves motor feasibility, not autonomous exploration.",
+        "difficulty": "Retained independent ST3/VM4 (VM range3-4, high uncertainty); no easier variant, no rating inferred from this authored success."
+      },
+      "independent_original_mechanism": "Three identity-bound originals at elevated/lowered branches plus grounded return preserve consequential3D retrieval. Generic mined/crafted substitutes fail cargo tags. Digging, chest breaking, scaffolding and recovery are legal alternatives, not exploits.",
+      "independent_original_difficulty": {
+        "st": {
+          "rating": 3,
+          "plausible_range": [
+            3,
+            3
+          ],
+          "uncertainty": "moderate",
+          "statistical_calibration": false
+        },
+        "vm": {
+          "rating": 4,
+          "plausible_range": [
+            3,
+            4
+          ],
+          "uncertainty": "high",
+          "statistical_calibration": false
+        }
+      },
+      "independent_policy_review": {
+        "id": "minecraft/abandoned_mine_cargo",
+        "task_id": "abandoned_mine_cargo",
+        "ledger_ref": "output/temp/task_development/checks/task-delivery-status.json#/tasks/24",
+        "ledger_category": "testing",
+        "disposition": "evidence insufficient",
+        "bug_status": "No concrete blocking task defect established; historical default-runtime mismatch is separate from task feasibility.",
+        "feasibility_status": "ST full native/model completion supported. Exact-frozen VM argument remains incomplete: two originals retrieved in formal, elevated branch/return missing; older full pilot differs in12/18 release files including terrain.",
+        "construct_status": "Good3D retrieval design: three identity-bound originals, elevation/access and grounded return; digging/scaffolds/chest breaking are legal.",
+        "difficulty_status": "ST3 supported provisionally; VM4 range3-4 high uncertainty, not established by partial failure.",
+        "experiment_status": "Historical results preserved. Ledger testing is a past start observation, not current activity or completed validation.",
+        "diagnostic_transfer": "Shallow-pit/recovery-stair and differing-terrain successes cannot validate final elevated traversal. Transfer only individually demonstrated unchanged cargo/plumbing behavior.",
+        "recommended_action": "Review exact-fixture VM elevation/access, material/time balance and return composition; do not require a particular controller win or infer impossibility.",
+        "confidence": "high on evidence limitation",
+        "evidence_refs": [
+          "output/temp/task_development/checks/minecraft-independent-quality.json#/original_reference_coverage/0",
+          "checks/minecraft-original-reference-closure.json#/tasks/0",
+          "output/temp/anchor-development-20261026/mc_s/pilot-vm-03/result.json"
+        ]
+      },
+      "closure_of_prior_audit_gap": "Exact released VM composition: all three originals and living grounded return in one episode.",
+      "evidence": {
+        "path": "output/temp/task_development/checks/resume-minecraft-main-replay-20261029.json",
+        "sha256": "4007de1e42fdbe41312af0f26d0a88a11b45bd019f0ea482460f03e2e6229cf6",
+        "task_index": 0
+      },
+      "remaining_admission_gates": [],
+      "limits": [
+        "Nonblocking difficulty calibration and final review.",
+        "No new model measurement or gameplay. Success alone is not construct/difficulty evidence.",
+        "Authored-route motor feasibility is not unhinted exploration or learning benefit.",
+        "Admission is bound to the explicit source-matched runtime; default cache may be stale."
+      ]
+    },
+    {
+      "stable_id": "minecraft/route_schema_transfer",
+      "qualified": true,
+      "condition": "released_mapping5",
+      "policy_judgments": {
+        "known_blocking_bug": null,
+        "feasibility": "Retained whole mapping5 ST/VM trajectories replay with actual zero deaths under the current scorer.",
+        "construct": "Same-episode cue reuse has retained/erased evidence; supplied-route VM is motor feasibility, not acquisition benefit.",
+        "difficulty": "Retained ST3 (range2-3), VM4 (range3-4, high uncertainty). VM340.491m/344m margin remains disclosed."
+      },
+      "independent_original_mechanism": "Within one episode, repeated niche cues bind an instance-specific continuing side across reordered/rotated wings. Bedrock/native geometry and344m application budget penalize wrong-branch travel. Scorer binds ordered continuous native ticks/player/death-free traversal, not a required exploration count or prior failure.",
+      "independent_original_difficulty": {
+        "st": {
+          "rating": 3,
+          "plausible_range": [
+            2,
+            3
+          ],
+          "uncertainty": "moderate",
+          "statistical_calibration": false
+        },
+        "vm": {
+          "rating": 4,
+          "plausible_range": [
+            3,
+            4
+          ],
+          "uncertainty": "high",
+          "statistical_calibration": false
+        }
+      },
+      "independent_policy_review": {
+        "id": "minecraft/route_schema_transfer",
+        "task_id": "route_schema_transfer",
+        "ledger_ref": "output/temp/task_development/checks/task-delivery-status.json#/tasks/28",
+        "ledger_category": "testing",
+        "disposition": "supported",
+        "bug_status": "No known blocking defect in current no-death scorer/observer review; actual zero-death statistics, not synthesized fields, used for old ST trajectory.",
+        "feasibility_status": "Supported mapping5 native ST/VM bridge:71 route-intersecting sections and290816 block cells/properties match; weather timers cover2700s. Whole current-scorer success is recorded without claiming entire-world byte equality.",
+        "construct_status": "Same-episode cue-to-route reuse supported by retained/erased contrasts; supplied-route VM is motor feasibility, not VM acquisition benefit. Fixed public mapping/coordinate shortcuts remain a claim limit.",
+        "difficulty_status": "ST3 range2-3; VM4 range3-4 with high uncertainty.340.491m against344m leaves3.509m; fragile control margin is disclosed, not hidden or inferred impossible.",
+        "experiment_status": "Released-mapping5 first formal pair missing in reviewed closure; earlier mapping2 failures are valid only for mapping2. This is experiment-only, not an intrinsic acceptance gate. Historical testing status is not live-process evidence.",
+        "diagnostic_transfer": "Specific geometry/weather/no-death bridge transfers unchanged mapping5 route behavior only; mapping2 formals do not calibrate mapping5 and supplied mapping does not validate unhinted learning.",
+        "recommended_action": "Remove the first-formal gate from acceptance in a separate authorized ledger reconciliation, preserving experiment gap, difficulty uncertainty and all historical outcomes. No promotion performed here.",
+        "confidence": "high on removable gate; moderate on bounded difficulty",
+        "evidence_refs": [
+          "output/temp/task_development/checks/minecraft-independent-quality.json#/original_reference_coverage/5",
+          "checks/minecraft-original-reference-closure.json#/tasks/4",
+          "output/temp/task_development/checks/minecraft-original-reference-closure-integration.json",
+          "output/temp/task_development/checks/task-delivery-status.json#/pending_policy_reconciliations/0"
+        ]
+      },
+      "closure_of_prior_audit_gap": "Missing released-mapping5 model measurements are experiment-only, not task-admission blockers.",
+      "evidence": {
+        "path": "output/temp/task_development/checks/resume-minecraft-main-replay-20261029.json",
+        "sha256": "4007de1e42fdbe41312af0f26d0a88a11b45bd019f0ea482460f03e2e6229cf6",
+        "task_index": 1
+      },
+      "remaining_admission_gates": [],
+      "limits": [
+        "Nonblocking calibration and final review.",
+        "No new model measurement or gameplay. Success alone is not construct/difficulty evidence.",
+        "Authored-route motor feasibility is not unhinted exploration or learning benefit.",
+        "Admission is bound to the explicit source-matched runtime; default cache may be stale."
+      ]
+    }
+  ],
+  "main_replay": {
+    "path": "output/temp/task_development/checks/resume-minecraft-main-replay-20261029.json",
+    "sha256": "4007de1e42fdbe41312af0f26d0a88a11b45bd019f0ea482460f03e2e6229cf6"
+  },
+  "isolated_handoff": {
+    "path": "output/temp/task_development/checks/resume-minecraft-20261029.json",
+    "sha256": "7382504a57e3265072226c1353bc026efcdf7d33f060e596e72905398ebf1411"
+  },
+  "source_manifest": {
+    "path": "docs/reference_tasks_manifest.json",
+    "sha256": "56c7cc03966075a26335fe8249bb78693a597fa2793038d50344aa9fa5dae766"
+  },
+  "source_freeze": {
+    "path": "output/task-validation/original-minecraft-closure/source-freeze.json",
+    "sha256": "373dd1bfe927e988cbfc70b7ecd25a03010ae8c8b9313c027477f0a0f436dd79"
+  },
+  "exact_task_definitions": {
+    "config/minecraft/tasks/structured_tools/abandoned_mine_cargo.yaml": "9a90804e88089b9981864e8a9ce96e86d4d24f9951280b7067c2d103f480640b",
+    "config/minecraft/tasks/visual_motor/abandoned_mine_cargo.yaml": "8722781a57f6fe801381b4e9bfc6bdce749e635f982d7984a6008d7553db7ec9",
+    "config/minecraft/tasks/structured_tools/expedition_record_reconstruction.yaml": "7c9ce417e66f3c153ecbb9a3538aaedb7f3d8e5e2fddeb8ef48cfcebca7bd851",
+    "config/minecraft/tasks/visual_motor/expedition_record_reconstruction.yaml": "efac4490bc4e7230d22963ab768c5556fe8902e274d2dee6af7b25fec1a8d6ca",
+    "config/minecraft/tasks/structured_tools/mining_workshop_restart.yaml": "780b1cb3e8d1a88af8a9accbf88ab0bd480bc964eb42537b7c7e65aedc486648",
+    "config/minecraft/tasks/visual_motor/mining_workshop_restart.yaml": "b87b9726f1e860171ef0a0206727c3630430cf1abcfe0e691dfbefbfbb89b2ea",
+    "config/minecraft/tasks/structured_tools/prepared_village_defense.yaml": "b440a11e5d4a71bcb09df1717fcab538f97bb0f41be553a476ae20a627eb0b65",
+    "config/minecraft/tasks/visual_motor/prepared_village_defense.yaml": "623c097abd63fbd3135bae53ac8615215f2861cc42e9a968b22adffe67558c59",
+    "config/minecraft/tasks/structured_tools/route_schema_transfer.yaml": "875691ebde2e933c26d42ff2e6749a0bcd472c88d53c28513088a614dbe042fb",
+    "config/minecraft/tasks/visual_motor/route_schema_transfer.yaml": "851d2377ae985384d923b01355ff19dd1e27dd9b143180aac9815f29f404cf7f",
+    "config/minecraft/tasks/structured_tools/shared_crossing_camp.yaml": "83ff1e2def1a66bd0013fc24714a99e735746724514b776a83b466a626bb8cc6",
+    "config/minecraft/tasks/visual_motor/shared_crossing_camp.yaml": "a1aa3b4be4783757ccbd6f76073ddeddbedee2816ccefa2d3ed48d1c9c788fcb"
+  },
+  "runtime": {
+    "home": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/minecraft-runtime/MC-R05-main-vitals-placement-cart-v1",
+    "source_sha256": "39b0c2e0e5549fa3921071d844ad9e2b8f3c1ff9ae4499531ce61683aeb98f6b",
+    "ready": {
+      "path": "output/temp/task_development/minecraft-runtime/MC-R05-main-vitals-placement-cart-v1/client-1.20.4/ready.json",
+      "sha256": "bb58fb86d9b7393fc317b4b8697a99f8d0def3408efff5ff22c37189ea3d5506"
+    },
+    "launch": {
+      "path": "output/temp/task_development/minecraft-runtime/MC-R05-main-vitals-placement-cart-v1/client-1.20.4/launch.json",
+      "sha256": "9c344328f35a03ee3c1e182ea67f02745d02967b2d31f935bb5506c042fdfb41"
+    },
+    "provenance": {
+      "path": "output/temp/task_development/minecraft-runtime/MC-R05-main-vitals-placement-cart-v1/provenance.json",
+      "sha256": "b8a060086346a0b16210beb1a89ed2cb9161d547a82dcda5168efbe4f740a949"
+    },
+    "verified_constituents": {
+      "source_files": 10,
+      "classes": 15,
+      "resources": 2,
+      "dependencies": 66
+    },
+    "classpath_entries": 68,
+    "admission": "passed_read_only",
+    "default_cache": "not selected; remains legitimately stale",
+    "installation": [
+      {
+        "version": "1.20.4",
+        "java": "java",
+        "server_jar": "/home/msra/.local/share/gameagentvisual/downloads/server-1.20.4.jar",
+        "server_sha256": "c03fa6f39daa69ddf413c965a3a83084db746a7a138ce535a693293b5472d363",
+        "verified_with_mojang": false,
+        "track": "structured_tool",
+        "client": "fabric-development",
+        "client_build_sha256": "39b0c2e0e5549fa3921071d844ad9e2b8f3c1ff9ae4499531ce61683aeb98f6b"
+      },
+      {
+        "version": "1.20.4",
+        "java": "java",
+        "server_jar": "/home/msra/.local/share/gameagentvisual/downloads/server-1.20.4.jar",
+        "server_sha256": "c03fa6f39daa69ddf413c965a3a83084db746a7a138ce535a693293b5472d363",
+        "verified_with_mojang": false,
+        "track": "visual_motor",
+        "client": "fabric-development",
+        "client_build_sha256": "39b0c2e0e5549fa3921071d844ad9e2b8f3c1ff9ae4499531ce61683aeb98f6b"
+      }
+    ],
+    "fresh_native_execution": false,
+    "runtime_overwrites": 0
+  },
+  "interpreter": {
+    "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-final-admission-python/bin/python",
+    "versions": {
+      "nbtlib": "2.0.4",
+      "pytest": "9.1.1",
+      "PyYAML": "6.0.3",
+      "Pillow": "12.3.0",
+      "numpy": "2.4.6"
+    }
+  },
+  "minimal_main_tests": {
+    "command": [
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-final-admission-python/bin/python",
+      "-m",
+      "pytest",
+      "-q",
+      "-m",
+      "not game and not live",
+      "tests/test_game/minecraft/test_original_terminal_reconciliation.py",
+      "--basetemp=/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/resume-minecraft-main-test-files/pytest"
+    ],
+    "log": {
+      "path": "output/temp/task_development/checks/resume-minecraft-main-integration-tests-20261029.log",
+      "sha256": "da014ef238d4637c703ce7b1378bcbd0347117b7fc276905d52949763178a435"
+    },
+    "output": ".......                                                                  [100%]\n7 passed in 0.17s"
+  },
+  "independent_quality": {
+    "path": "output/temp/task_development/checks/minecraft-independent-quality.json",
+    "sha256": "beba01f480bfc90875cc00c054fe213b0c3fc13d8962c9906eb688b31157e12c"
+  },
+  "independent_policy_audit": {
+    "path": "output/temp/task_development/checks/minecraft-acceptance-policy-audit-20261029.json",
+    "sha256": "b4b1dda72053e4eb8dcd32e79245837dbfe1c0e5f82defed8aa2f4a6dbf633ee"
+  },
+  "acceptance_policy": {
+    "path": "output/survey/task_difficulty_and_capability_acceptance_20261027.md",
+    "sha256": "78cbd05396de9cf96a06030a40c14c990e7d5ceb9521d639aea5bebb68828a23"
+  },
+  "interrupted_formals": [
+    {
+      "track": "structured_tool",
+      "result": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/task-validation/original-minecraft-closure/route-formal-st/baseline/route_schema_transfer.structured_tool/episode_1/results/result.json",
+        "sha256": "a52e0e8b457a2bbb0614f48fca1658f882f48279b44a593f13f622fe8fb784c9"
+      },
+      "configuration": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/task-validation/original-minecraft-closure/route-formal-st/config.json",
+        "sha256": "1c2ea12b325444eebbb2f6067fba892eb611d405804d8ba37cb907d1bc9e6c57"
+      },
+      "raw_status": "running",
+      "raw_measurement": "unavailable",
+      "raw_task_outcome": "unknown",
+      "terminal_snapshot_present": false,
+      "reconciled_state": "interrupted_unavailable_not_a_model_failure",
+      "lease": {
+        "receipt": {
+          "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/leases/e4f4ad6e665e4d5eb7aee0c4ee5a5fae.json",
+          "sha256": "ab5cec6d4688d5c1f8052b141bdf275e485ca7199e93ec64a08a9bccbc1468ee"
+        },
+        "record": {
+          "task": "original-route-schema-transfer-mapping5-first-st",
+          "track": "st",
+          "kind": "baseline",
+          "cwd": "/home/msra/GameAgent/LiveQuestBench/output/task-validation/original-minecraft-closure/source",
+          "credential_owner": "zhangling",
+          "uses_model": true,
+          "episode_slot": 5,
+          "lease_pid": 1588671,
+          "started_at": 1793273584.0436194,
+          "status": "finished",
+          "command_pid": 1588672,
+          "returncode": -15,
+          "finished_at": 1793274763.2551303
+        },
+        "recorded_pids_present": {
+          "1588671": false,
+          "1588672": false
+        }
+      },
+      "historical_result_unchanged": true
+    },
+    {
+      "track": "visual_motor",
+      "result": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/task-validation/original-minecraft-closure/route-formal-vm/baseline/route_schema_transfer.visual_motor/episode_1/results/result.json",
+        "sha256": "fa64d3b99fa1ad4b6cdc5edc6ed486f04519dd346600ca009540d1082ddb323b"
+      },
+      "configuration": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/task-validation/original-minecraft-closure/route-formal-vm/config.json",
+        "sha256": "8ed4cffe1edbfa764e63e47da2347912524df79fb941526081a5fe832d80be2a"
+      },
+      "raw_status": "running",
+      "raw_measurement": "unavailable",
+      "raw_task_outcome": "unknown",
+      "terminal_snapshot_present": false,
+      "reconciled_state": "interrupted_unavailable_not_a_model_failure",
+      "lease": {
+        "receipt": {
+          "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/leases/e0ae07c16b014d01b64b014e789e72dc.json",
+          "sha256": "848287e4edf3a691fa2783d57b70a5d260f69d34fe3813922732a044cb6127d3"
+        },
+        "record": {
+          "task": "original-route-schema-transfer-mapping5-first-vm",
+          "track": "vm",
+          "kind": "baseline",
+          "cwd": "/home/msra/GameAgent/LiveQuestBench/output/task-validation/original-minecraft-closure/source",
+          "credential_owner": "zhangling",
+          "uses_model": true,
+          "episode_slot": 2,
+          "lease_pid": 1588637,
+          "started_at": 1793273583.7578168,
+          "status": "finished",
+          "command_pid": 1588639,
+          "returncode": -15,
+          "finished_at": 1793274763.3464224
+        },
+        "recorded_pids_present": {
+          "1588637": false,
+          "1588639": false
+        }
+      },
+      "historical_result_unchanged": true
+    }
+  ],
+  "preservation": {
+    "lock": "output/temp/task_development/locks/integration.lock",
+    "clean_index_no_git_operation_checked": true,
+    "before": {
+      "agent_framework/agents/deepseek_harness/setup.py": {
+        "status": " M",
+        "sha256": "fd2500a54808a4d8659536007ecde0c36284823f77a815558813d69060e3bf4c",
+        "unstaged_diff_sha256": "a5d823dff25d0ad1c67092ebeff7096b77b3055631586e520c8fe637ae90133b"
+      },
+      "config/veloren/tasks/structured_tools/native_contract_settlement.yaml": {
+        "status": " M",
+        "sha256": "f2108d92b0e0dc9be41fac1bd662a7366d4053042e64f1cc9fbbf056d28d9372",
+        "unstaged_diff_sha256": "1b4859bf12377630705d24b7dbb05e9535bfd38b1107b1f9b46accfb8209dd2b"
+      },
+      "config/veloren/tasks/visual_motor/native_contract_settlement.yaml": {
+        "status": " M",
+        "sha256": "cfb366cfc456936d9036d7aeaae239c875abbaffa2b05b95cc4a555ad8f93774",
+        "unstaged_diff_sha256": "a7f631adb4445bb851a6f31a090b8e9e4002022485766f9cfdd1c7563791f4d7"
+      },
+      "tests/test_game/veloren/test_initialization.py": {
+        "status": " M",
+        "sha256": "f52108ad4d1981079051e62253fb55261f6b6c28e212f1fc835893dc6749b150",
+        "unstaged_diff_sha256": "923dfb98fb528deb996511d73827e0f37ff6805e947781de7b101efc486233db"
+      },
+      "checks/VE-P03-heavy-sweep-main-admission.json": {
+        "status": "??",
+        "sha256": "a6d4910d86705df4bd1401dbcdee2eb811e52372c0a0416c166e3875afeee466",
+        "unstaged_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "checks/veloren_original_motor.py": {
+        "status": "??",
+        "sha256": "2edba893d7b864acd4afe778912c2081ff775a14b32838a1dd583c30613c6ac0",
+        "unstaged_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "checks/veloren_original_native.py": {
+        "status": "??",
+        "sha256": "73b4e7d7fc9087dc70d01ee55151a3cd1aef012d8ddeba67b4defa6f1de0a1e0",
+        "unstaged_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "checks/veloren_p03_heavy_sweep_admission.py": {
+        "status": "??",
+        "sha256": "ffc739d1a5ab683e9da003404901f527a2859a37ca56f4fdc6488762cede83db",
+        "unstaged_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "tests/test_agent/test_deepseek_setup.py": {
+        "status": "??",
+        "sha256": "64f7d30f2674dba89581807a8f01b379fcb3b74f69a7ef28caf3070237147840",
+        "unstaged_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "tests/test_game/veloren/test_original_native_policy.py": {
+        "status": "??",
+        "sha256": "7a018c0ae185353342b9312bb20848a739499db4474c24137b38351ed7aa2ce4",
+        "unstaged_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "after": {
+      "agent_framework/agents/deepseek_harness/setup.py": {
+        "status": " M",
+        "sha256": "fd2500a54808a4d8659536007ecde0c36284823f77a815558813d69060e3bf4c",
+        "unstaged_diff_sha256": "a5d823dff25d0ad1c67092ebeff7096b77b3055631586e520c8fe637ae90133b"
+      },
+      "config/veloren/tasks/structured_tools/native_contract_settlement.yaml": {
+        "status": " M",
+        "sha256": "f2108d92b0e0dc9be41fac1bd662a7366d4053042e64f1cc9fbbf056d28d9372",
+        "unstaged_diff_sha256": "1b4859bf12377630705d24b7dbb05e9535bfd38b1107b1f9b46accfb8209dd2b"
+      },
+      "config/veloren/tasks/visual_motor/native_contract_settlement.yaml": {
+        "status": " M",
+        "sha256": "cfb366cfc456936d9036d7aeaae239c875abbaffa2b05b95cc4a555ad8f93774",
+        "unstaged_diff_sha256": "a7f631adb4445bb851a6f31a090b8e9e4002022485766f9cfdd1c7563791f4d7"
+      },
+      "tests/test_game/veloren/test_initialization.py": {
+        "status": " M",
+        "sha256": "f52108ad4d1981079051e62253fb55261f6b6c28e212f1fc835893dc6749b150",
+        "unstaged_diff_sha256": "923dfb98fb528deb996511d73827e0f37ff6805e947781de7b101efc486233db"
+      },
+      "checks/VE-P03-heavy-sweep-main-admission.json": {
+        "status": "??",
+        "sha256": "a6d4910d86705df4bd1401dbcdee2eb811e52372c0a0416c166e3875afeee466",
+        "unstaged_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "checks/veloren_original_motor.py": {
+        "status": "??",
+        "sha256": "2edba893d7b864acd4afe778912c2081ff775a14b32838a1dd583c30613c6ac0",
+        "unstaged_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "checks/veloren_original_native.py": {
+        "status": "??",
+        "sha256": "73b4e7d7fc9087dc70d01ee55151a3cd1aef012d8ddeba67b4defa6f1de0a1e0",
+        "unstaged_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "checks/veloren_p03_heavy_sweep_admission.py": {
+        "status": "??",
+        "sha256": "ffc739d1a5ab683e9da003404901f527a2859a37ca56f4fdc6488762cede83db",
+        "unstaged_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "tests/test_agent/test_deepseek_setup.py": {
+        "status": "??",
+        "sha256": "64f7d30f2674dba89581807a8f01b379fcb3b74f69a7ef28caf3070237147840",
+        "unstaged_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "tests/test_game/veloren/test_original_native_policy.py": {
+        "status": "??",
+        "sha256": "7a018c0ae185353342b9312bb20848a739499db4474c24137b38351ed7aa2ce4",
+        "unstaged_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "all_unrelated_bytes_and_diffs_equal": true
+  },
+  "new_native_episodes": 0,
+  "new_model_calls": 0,
+  "ledger": "Separate versioned event-only two-row reconciliation follows this committed receipt."
+}
