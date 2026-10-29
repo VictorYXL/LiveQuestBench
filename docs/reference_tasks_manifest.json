@@ -1973,7 +1973,7 @@
     },
     {
       "path": "config/veloren/tasks/structured_tools/hostile_route_supply_recovery.yaml",
-      "sha256": "3d61a4374fc4016516020f09e376759b1f38bb0b88d6f593782101ba723a0f90",
+      "sha256": "5a3ad9abcacaa7ab27d8bf215813b7a0100aefc915127163e263c53857b632fc",
       "definition": {
         "id": "hostile_route_supply_recovery",
         "game": "veloren",
@@ -1981,6 +1981,7 @@
         "task": "Retrieve one leather, defeat both Green Legooms on the eastern hunting route, and return alive to the starting stone arch carrying the leather.\nThe bundle is along the eastern passage, roughly 50 metres right and 15 metres forward from your starting position and facing. One opponent is near that part of the route; the other is in the yard at the far end. Loose supplies normally disappear after about five minutes in the world.\nFinish standing still on the ground at the arch.\nThe loose bundle is the supplied leather source; collect it before it disappears or find another lawful source. Completion checks leather delivery, not the identity of the picked-up bundle.\nYour initial native respawn waypoint is the starting arch. Death does not restore supplies, enemies, equipment or the time budget.",
         "time_limit_seconds": 2700,
         "fixture": {
+          "runtime_profile": "hostile-route-supply-recovery/1",
           "world_path": "../../fixtures/veloren_0_18_0_0.bin",
           "world_seed": 130626853,
           "time_of_day": "12:00",
@@ -2289,6 +2290,7 @@
         "evaluator": {
           "name": "encounter",
           "parameters": {
+            "min_health": 0,
             "roles": [
               "passage_legoom",
               "east_legoom"
@@ -2726,7 +2728,7 @@
     },
     {
       "path": "config/veloren/tasks/structured_tools/native_contract_settlement.yaml",
-      "sha256": "567a29aeb2e65bb2da61a8e81e6ed0c229a0e82358532fe9601f3493c9c112e1",
+      "sha256": "c59259e0c7fcc08a8f154c0e19ad14dc1b9b3e6ff24fa72f2b957a3d11154c78",
       "definition": {
         "id": "native_contract_settlement",
         "game": "veloren",
@@ -2734,6 +2736,7 @@
         "task": "Accept the guard's native monster-slaying contract, defeat its designated target after acceptance, and return to the giver to receive the actual coin reward.\nThe guard begins near the starting camp; the monster starts in the northern yard beyond the stone arch. Follow the actual offer and any later movement. The benchmark supplies the giver with 3000 coins before play to fund native offers; the monster-slaying reward remains 1000 coins; no contract is accepted for you.\nFinish alive, standing still on the ground beside the giver after receiving payment.\nOffers can vary between conversations; unrelated delivery or escort jobs do not satisfy the monster-slaying objective. The initial native respawn waypoint is your starting camp. Death does not revive NPCs, cancel quests, repair equipment or reset the time budget.",
         "time_limit_seconds": 2700,
         "fixture": {
+          "runtime_profile": "native-contract-settlement/1",
           "world_path": "../../fixtures/veloren_0_18_0_0.bin",
           "world_seed": 130626853,
           "time_of_day": "12:00",
@@ -2905,6 +2908,7 @@
         "evaluator": {
           "name": "contract",
           "parameters": {
+            "min_health": 0,
             "min_reward": 1000,
             "no_death": false,
             "giver_arrival": {
@@ -10109,7 +10113,7 @@
     },
     {
       "path": "config/veloren/tasks/structured_tools/self_funded_expedition.yaml",
-      "sha256": "2f0b9479b878fc5599c17efc7bb64ea3387b0bdb1240dc31217af1902a1ae520",
+      "sha256": "4f8e5122f8d2a4f5ca2f748d0fecd30c7fd97dbc7fccabb197db205a1c01d043",
       "definition": {
         "id": "self_funded_expedition",
         "game": "veloren",
@@ -10117,6 +10121,7 @@
         "task": "Defeat both Green Legooms on the eastern hunting route, then return alive to the stone arch where you started, wearing a rawhide chestpiece and carrying at least one unused minor potion and ten coins.\nOne opponent is along the passage east of camp; the other is in the yard at its far end. The merchant and crafting stations are in the starting camp. Choose your own preparation, purchases and encounter order.\nFinish standing still on the ground at the arch.\nYour initial native respawn waypoint is the starting arch. Death does not restore spent resources, enemies, equipment or the time budget.",
         "time_limit_seconds": 2700,
         "fixture": {
+          "runtime_profile": "self-funded-expedition/1",
           "world_path": "../../fixtures/veloren_0_18_0_0.bin",
           "world_seed": 130626853,
           "time_of_day": "12:00",
@@ -10509,6 +10514,7 @@
         "evaluator": {
           "name": "encounter",
           "parameters": {
+            "min_health": 0,
             "roles": [
               "passage_legoom",
               "east_legoom"
@@ -10942,7 +10948,7 @@
     },
     {
       "path": "config/veloren/tasks/visual_motor/hostile_route_supply_recovery.yaml",
-      "sha256": "d13b133a093d95ec311b4e048b6ba825c843c2834d66f1e02b46498411489f99",
+      "sha256": "8909abda66ef05cbe2125e11e35713964914add9a6e74d5bc450e9d6d03d85dc",
       "definition": {
         "id": "hostile_route_supply_recovery",
         "game": "veloren",
@@ -10950,6 +10956,7 @@
         "task": "Retrieve one leather, defeat both Green Legooms on the eastern hunting route, and return alive to the starting stone arch carrying the leather.\nThe bundle is along the eastern passage, roughly 50 metres right and 15 metres forward from your starting position and facing. One opponent is near that part of the route; the other is in the yard at the far end. Loose supplies normally disappear after about five minutes in the world.\nFinish standing still on the ground at the arch.\nThe loose bundle is the supplied leather source; collect it before it disappears or find another lawful source. Completion checks leather delivery, not the identity of the picked-up bundle.\nYour initial native respawn waypoint is the starting arch. Death does not restore supplies, enemies, equipment or the time budget.",
         "time_limit_seconds": 2700,
         "fixture": {
+          "runtime_profile": "hostile-route-supply-recovery/1",
           "world_path": "../../fixtures/veloren_0_18_0_0.bin",
           "world_seed": 130626853,
           "time_of_day": "12:00",
@@ -11258,6 +11265,7 @@
         "evaluator": {
           "name": "encounter",
           "parameters": {
+            "min_health": 0,
             "roles": [
               "passage_legoom",
               "east_legoom"
@@ -11665,7 +11673,7 @@
     },
     {
       "path": "config/veloren/tasks/visual_motor/native_contract_settlement.yaml",
-      "sha256": "3ad8f6f36d9254ae8a0f654277c8278e0f1723c33d2ddcaa9510e1e4168f9fc7",
+      "sha256": "c07c30e639cbf983dc2c7405c5716f904738e0a346d61a0ae4cce336ad401c8b",
       "definition": {
         "id": "native_contract_settlement",
         "game": "veloren",
@@ -11673,6 +11681,7 @@
         "task": "Accept the guard's native monster-slaying contract, defeat its designated target after acceptance, and return to the giver to receive the actual coin reward.\nThe guard begins near the starting camp; the monster starts in the northern yard beyond the stone arch. Follow the actual offer and any later movement. The benchmark supplies the giver with 3000 coins before play to fund native offers; the monster-slaying reward remains 1000 coins; no contract is accepted for you.\nFinish alive, standing still on the ground beside the giver after receiving payment.\nOffers can vary between conversations; unrelated delivery or escort jobs do not satisfy the monster-slaying objective. The initial native respawn waypoint is your starting camp. Death does not revive NPCs, cancel quests, repair equipment or reset the time budget.",
         "time_limit_seconds": 2700,
         "fixture": {
+          "runtime_profile": "native-contract-settlement/1",
           "world_path": "../../fixtures/veloren_0_18_0_0.bin",
           "world_seed": 130626853,
           "time_of_day": "12:00",
@@ -11844,6 +11853,7 @@
         "evaluator": {
           "name": "contract",
           "parameters": {
+            "min_health": 0,
             "min_reward": 1000,
             "no_death": false,
             "giver_arrival": {
@@ -19020,7 +19030,7 @@
     },
     {
       "path": "config/veloren/tasks/visual_motor/self_funded_expedition.yaml",
-      "sha256": "1a070753f8e0e813b760c2020f60d9dee5e09710e0e7d7a2b4260d3be39384f1",
+      "sha256": "45c318aa853ac6b44545ae71201b21adfe0188c7032c56a73bcc0e4d766fa104",
       "definition": {
         "id": "self_funded_expedition",
         "game": "veloren",
@@ -19028,6 +19038,7 @@
         "task": "Defeat both Green Legooms on the eastern hunting route, then return alive to the stone arch where you started, wearing a rawhide chestpiece and carrying at least one unused minor potion and ten coins.\nOne opponent is along the passage east of camp; the other is in the yard at its far end. The merchant and crafting stations are in the starting camp. Choose your own preparation, purchases and encounter order.\nFinish standing still on the ground at the arch.\nYour initial native respawn waypoint is the starting arch. Death does not restore spent resources, enemies, equipment or the time budget.",
         "time_limit_seconds": 2700,
         "fixture": {
+          "runtime_profile": "self-funded-expedition/1",
           "world_path": "../../fixtures/veloren_0_18_0_0.bin",
           "world_seed": 130626853,
           "time_of_day": "12:00",
@@ -19420,6 +19431,7 @@
         "evaluator": {
           "name": "encounter",
           "parameters": {
+            "min_health": 0,
             "roles": [
               "passage_legoom",
               "east_legoom"

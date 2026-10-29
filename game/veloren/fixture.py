@@ -73,10 +73,18 @@ def validate_fixture(value: object) -> dict:
                 "motion_evidence", "glide_evidence", "platform", "native_site", "merchant",
                 "sword_skill_points", "companion", "contract", "respawn_at_start", "route_evidence",
                 "public_energy", "pickup_evidence", "peer_group", "harvest_sites",
-                "message_contract", "market"}
+                "message_contract", "market", "runtime_profile"}
     if not isinstance(value, dict) or required - value.keys() or value.keys() - required - optional:
         raise ValueError(f"Veloren fixture requires exactly {sorted(required)} plus optional {sorted(optional)}")
     fixture = value
+    if "runtime_profile" in fixture:
+        if fixture["runtime_profile"] not in (
+            "native-contract-settlement/1", "hostile-route-supply-recovery/1", "self-funded-expedition/1",
+        ):
+            raise ValueError("Unsupported original-task runtime profile")
+        if ({"message_contract", "market"} & fixture.keys()
+                or fixture.get("route_evidence") or fixture.get("pickup_evidence")):
+            raise ValueError("Original-task runtime profiles cannot qualify newer native evidence")
     if "message_contract" in fixture and "market" in fixture:
         raise ValueError("Message and market preparation require separate fixtures")
     if {"message_contract", "market"} & fixture.keys() and "harvest_sites" in fixture:
@@ -749,6 +757,8 @@ async def initialize_fixture(admin, actor, fixture: dict, *, shared_world: bool 
     if "contract" in fixture and not shared_world:
         from game.veloren.contracts import initialize_contract
         contract = await initialize_contract(admin, actor, fixture)
+        # Native NPCs keep moving during contract identity readback and can push the player.
+        await setup.goto(admin, actor, fixture["player_state"]["position"])
     result = {"fixture": fixture, "construction": construction, "blocks": blocks,
             "stations": stations, "supplies": supplies, "opening": opening, "harvest": harvest,
             "encounters": [], "source_binding": None, "merchant": merchant,

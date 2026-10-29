@@ -1,12 +1,21 @@
 """Own an isolated Python/native runtime through correlated private JSONL RPC."""
 
 import asyncio
+import hashlib
 import json
 import os
 from pathlib import Path
 import time
 from uuid import uuid4
 from game.veloren.fixture import solid_voxels
+
+
+ORIGINAL_RUNTIME_ENVIRONMENTS = {
+    "native-contract-settlement/1": "LIVEQUEST_VELOREN_NATIVE_CONTRACT_RUNTIME",
+    "hostile-route-supply-recovery/1": "LIVEQUEST_VELOREN_HOSTILE_RECOVERY_RUNTIME",
+    "self-funded-expedition/1": "LIVEQUEST_VELOREN_SELF_FUNDED_RUNTIME",
+}
+ORIGINAL_RUNTIME_SHA256 = "71de989307966e8d984d7be651823844985d0c0c0c39cdd14e6097707637aa79"
 
 
 def runtime_configuration(fixture: dict) -> tuple[Path, dict]:
@@ -17,12 +26,20 @@ def runtime_configuration(fixture: dict) -> tuple[Path, dict]:
     }.get(protocol)
     if "market" in fixture:
         override = "LIVEQUEST_VELOREN_MARKET_RUNTIME"
+    profile = fixture.get("runtime_profile")
+    if profile is not None:
+        if profile not in ORIGINAL_RUNTIME_ENVIRONMENTS or protocol is not None or "market" in fixture:
+            raise ValueError("Unsupported or conflicting original-task runtime profile")
+        override = ORIGINAL_RUNTIME_ENVIRONMENTS[profile]
     selected = (os.environ.get(override) if override else None) or os.environ.get("LIVEQUEST_VELOREN_RUNTIME")
     if not selected:
         setting = override or "LIVEQUEST_VELOREN_RUNTIME"
         raise RuntimeError(f"Set {setting} to the prepared runtime.json; see game/veloren/README.md")
     path = Path(selected).resolve()
-    runtime = json.loads(path.read_text())
+    encoded = path.read_bytes()
+    runtime = json.loads(encoded)
+    if profile is not None and hashlib.sha256(encoded).hexdigest() != ORIGINAL_RUNTIME_SHA256:
+        raise ValueError(f"{profile} requires its exact independently qualified runtime; configure {override}")
     if protocol is not None and runtime.get("initial_message_protocol") != protocol:
         raise ValueError(f"{protocol} requires its matching native runtime; configure {override}")
     return path, runtime

@@ -8,6 +8,7 @@ task: |-
   Your initial native respawn waypoint is the starting arch. Death does not restore spent resources, enemies, equipment or the time budget.
 time_limit_seconds: 2700
 fixture:
+  runtime_profile: self-funded-expedition/1
   world_path: ../../fixtures/veloren_0_18_0_0.bin
   world_seed: 130626853
   time_of_day: '12:00'

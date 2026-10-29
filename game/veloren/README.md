@@ -122,6 +122,32 @@ not delivery. I04's placement repair has focused regression coverage, not a
 new whole-native run. Historical failures and provisional difficulty
 calibration remain separate from constructive task feasibility.
 
+### Qualified original-task runtime profiles
+
+The original `native_contract_settlement`, `hostile_route_supply_recovery` and
+`self_funded_expedition` declare separate `runtime_profile` values. Set respectively
+`LIVEQUEST_VELOREN_NATIVE_CONTRACT_RUNTIME`, `LIVEQUEST_VELOREN_HOSTILE_RECOVERY_RUNTIME`
+and `LIVEQUEST_VELOREN_SELF_FUNDED_RUNTIME` to the independently qualified
+`output/temp/veloren-native-20261022/runtime.json` (SHA256
+`71de989307966e8d984d7be651823844985d0c0c0c39cdd14e6097707637aa79`).
+The generic runtime is a fallback only if it matches this exact manifest.
+This intentionally frozen profile is not a portable claim about arbitrary
+relocated manifests or newer builds; those need a separately documented bridge.
+Other tasks and the information-task overrides above retain their existing selection.
+
+These three conditions do not request route or source-pickup evidence. Their
+qualified runtime supports ordinary native combat, inventory, trade, Slay and
+recovery events, but does not thereby qualify route/2. Existing route-task checks
+remain unchanged and reject unsupported runtimes. Contract initialization restores
+only the declared opening position after native identity readback; strict health,
+inventory and other initial-state checks remain in force.
+
+Acceptance is bounded constructive feasibility with provisional difficulty, not
+a newly observed whole-task victory. Historical failures and the post-endpoint
+guard kill retain their original boundaries. The exact current-source bridge,
+registration and frozen replays are recorded in
+`docs/evidence/VE-I01-P01-R01-main-integration-bridge-20261030.json`.
+
 Combined peer fixtures retain both readiness barriers: Group setup cannot
 finalize supplies, and original supplies are created and pre-aged before deferred
 enemies spawn. Cached journal projections retain original drop and merge events

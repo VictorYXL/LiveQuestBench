@@ -1,0 +1,60 @@
+{
+  "schema": "livequest-original-independent-acceptance-binding/1",
+  "source": "output/temp/task_development/checks/veloren-acceptance-policy-audit-20261029.json",
+  "pointer": "/dated_addenda/39",
+  "stable_entry_sha256": "dc8d08b2d741aa823181a70882963ee69f7a30efc3f815599f9a32bc59b16efc",
+  "hash_encoding": "UTF8 JSON, sorted keys, compact separators, no trailing newline",
+  "reviewer": "811846d9-f6f6-4934-b1d1-1d234e65dbfa",
+  "entry": {
+    "date": "2026-10-30",
+    "kind": "original-P01-native-grounded-constructive-quality-decision",
+    "task_id": "VE-P01",
+    "tracks": [
+      "st",
+      "vm"
+    ],
+    "disposition": "supported",
+    "exact_version": {
+      "commit": "e72dfae11a07782ba21e0d46c7c101b5d400e9c0",
+      "task": "self_funded_expedition",
+      "st_yaml_sha256": "01ede563580f687fce9dc5934b914b1b126d2aa1a93bd8df92763f464821f32a",
+      "vm_yaml_sha256": "e184eb3f69dc1825fc44ca43fd6189548d218d6d9bc72badcd32140075a541f4",
+      "runtime_sha256": "71de989307966e8d984d7be651823844985d0c0c0c39cdd14e6097707637aa79",
+      "fixture_implementation_sha256": "a2a96d315feaf94abf5cee25840cc900e49d19d06753d632d44e0b75fb72bf96",
+      "encounter_evaluator_sha256": "85ff1a3e8f6590492d2cd1a178e5c3a7ce0543a9c3df0508ac99099b42611551"
+    },
+    "evidence_refs": [
+      {
+        "path": "output/review/parallel-ve-originals-20261029/constructive-originals-e72dfae.json",
+        "sha256": "eeda29edbfea08ff24a29298d4142a7c53470043a88d7d45a3dac112f4db0c8d",
+        "scope": "P01 same-episode witness, exact source bindings, original paths and shared recovery only; no C01 verdict inherited."
+      },
+      {
+        "path": "output/review/parallel-ve-originals-20261029/constructive-originals-review.json",
+        "sha256": "d8aa3ed31e2680ca19accf6c63138171c35c21938bf217b4b1e32c05eb1de1fa",
+        "scope": "Explicit constructive proposal, not an observed whole success."
+      }
+    ],
+    "bug_status": "Pass within the scoped exact original-condition version. No remaining blocking preparation/trade/scoring/recovery defect identified. This does not certify any different main runtime.",
+    "feasibility_status": "Pass by constructive composition, not stitched victory. The actual202.098s ST prefix simultaneously has original first25HP kill, worn rawhide,10coins, one remaining potion and28.12109375HP. It really spent two potions. Continue without spending the required last potion: lawful death revives the same character at the starting arch while preserving armor, coins, inventory and completed damage/kills. The identical remaining25HP asset and starter-sword/rawhide state admit the already native-demonstrated basic kill mechanism; a few deaths remain below durability stat decay. Full-health R01 actually demonstrates this mechanism without consuming its healing reserves. A final ordinary return/revival plus release-and-wait joins the still-required reserves, armor, kills and stationary grounded endpoint.",
+    "information_and_timing": "Native public preparation/trade is actual, including one apple sold for10coins; recipes/stations/merchant and route are declared, not hidden waypoint inputs. VM uses corresponding ordinary crafting, equipment, trade and combat GUI controls, not ST-private projections. The same ST/VM fixture and evaluator were compared from exact Git blobs. A212m supported corridor and ample2700s permit the explicit approximately1080s ST construction plus proposed600s VM-interface allowance. These are constructive allocations, not measured joint duration, average-rate guarantees or proof of model latency.",
+    "construct_status": "Pass for finite preparation/material conversion, actual monetization and preserved item/coin reserves. Lawful health recovery weakens potion-scarcity combat claims but does not restore spent materials, generate coins or satisfy the worn-armor/reserve conjunction for free.",
+    "difficulty_status": {
+      "status": "provisional",
+      "st_hypothesis": 3,
+      "vm_hypothesis": 4,
+      "plausible_range": [
+        2,
+        4
+      ],
+      "uncertainty": "high",
+      "boundary": "Retain only a development hypothesis grounded in preparation, GUI and real combat/return decisions. Do not treat controller delays, mandatory potion scarcity or forbidden death as its justification. Final suite calibration deferred."
+    },
+    "independent_checks": "Verified17 source/manifest/recovery/endpoint references shared with R01, exact native source-to-manifest hashes, raw endpoint inventory/equipment facts, same-identity actual100HP recovery with unchanged inventory0.208143m from arch, respawn/death/health/durability implementations, and exact task-track fixture/evaluator equality. Independently checked212m declared paths at1060 quarter-metre positions with0.45m four-corner support and clearance through z503; this strengthens the owner's point-grid test, not a native trajectory claim.",
+    "experiment_status": "Historical whole success remains false. No new P01 native/model experiment was executed or required by this review.",
+    "diagnostic_transfer_boundary": "Shared original-condition I01 recovery transfers only unchanged same-runtime recovery mechanics; it does not transfer a P01 kill, trade or score. R01 supplies unchanged combat/recovery primitives, not another episode's inventory. The continuation preserves the actual P01 prefix and original2700s/resources/predicates.",
+    "remaining_conditions": "Parent must explicitly integrate the exact task/source/runtime binding or document a compatible bridge. No additional whole-controller victory is an acceptance gate.",
+    "completed_changes": "Quality decision appended only; no canonical changes, ledger admission, count mutation or new experiment.",
+    "confidence": "Moderate-high for bounded constructive feasibility and restricted planning fit; high for checked raw/source facts; low-to-moderate for numerical difficulty."
+  }
+}

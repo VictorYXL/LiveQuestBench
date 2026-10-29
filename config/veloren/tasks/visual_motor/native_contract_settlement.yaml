@@ -8,6 +8,7 @@ task: |-
   Offers can vary between conversations; unrelated delivery or escort jobs do not satisfy the monster-slaying objective. The initial native respawn waypoint is your starting camp. Death does not revive NPCs, cancel quests, repair equipment or reset the time budget.
 time_limit_seconds: 2700
 fixture:
+  runtime_profile: native-contract-settlement/1
   world_path: ../../fixtures/veloren_0_18_0_0.bin
   world_seed: 130626853
   time_of_day: '12:00'
