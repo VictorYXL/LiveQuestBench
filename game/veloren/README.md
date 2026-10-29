@@ -155,6 +155,10 @@ verify Group membership before the original encounter is spawned. The setup
 administrator then disconnects before the initial snapshot and gameplay. This
 avoids pre-play attacks during peer attachment without protecting, healing or
 repositioning players after play starts.
+The immutable setup-journal prefix is validated before spawning the encounter;
+initial snapshots validate its new suffix rather than repeatedly parsing the
+entire construction history while an enemy can attack. The native journal and
+scored damage/healing/death events remain intact.
 
 Choose an existing fixture pattern for platforms, terrain obstacles, stations,
 supplies, encounters or a native settlement. Supplies can expire according to

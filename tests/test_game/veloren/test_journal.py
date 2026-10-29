@@ -116,6 +116,58 @@ def test_snapshot_does_not_chase_concurrent_appends(tmp_path, monkeypatch):
     assert snapshot_rows(path, "game")[-1] == appended
 
 
+@pytest.mark.parametrize("after_sequence", [None, 3])
+def test_prevalidated_setup_prefix_preserves_native_snapshot_evidence(tmp_path, after_sequence):
+    rows = journal_rows()
+    path = tmp_path / "journal.ndjson"
+    write_rows(path, rows[:4])
+    prefix = {}
+    snapshot_rows(path, "game", prepare_prefix=prefix)
+    with path.open("ab") as stream:
+        stream.write(b"".join(json.dumps(row).encode() + b"\n" for row in rows[4:]))
+    options = dict(after_sequence=after_sequence, encounters=True, equipment_uid=73)
+    assert snapshot_rows(path, "game", prefix=prefix, **options) == snapshot_rows(path, "game", **options)
+    rows[-1]["sequence"] += 1
+    write_rows(path, rows)
+    with pytest.raises(ValueError, match="sequence mismatch"):
+        snapshot_rows(path, "game", prefix=prefix, **options)
+
+
+def test_prefix_rejects_replaced_truncated_or_incompatible_journal(tmp_path):
+    rows = journal_rows()
+    path = tmp_path / "journal.ndjson"
+    write_rows(path, rows)
+    prefix = {}
+    snapshot_rows(path, "game", prepare_prefix=prefix)
+    for options in ({"contracts": True}, {"after_sequence": 1}):
+        with pytest.raises(ValueError, match="does not cover"):
+            snapshot_rows(path, "game", prefix=prefix, **options)
+    with pytest.raises(ValueError, match="does not cover"):
+        snapshot_rows(path, "another-run", prefix=prefix)
+    write_rows(path, rows[:2])
+    with pytest.raises(ValueError, match="truncated"):
+        snapshot_rows(path, "game", prefix=prefix)
+    replacement = tmp_path / "replacement.ndjson"
+    write_rows(replacement, rows)
+    replacement.replace(path)
+    with pytest.raises(ValueError, match="replaced"):
+        snapshot_rows(path, "game", prefix=prefix)
+
+
+def test_prefix_resumes_at_last_complete_row_not_partial_tail(tmp_path):
+    rows = journal_rows()
+    path = tmp_path / "journal.ndjson"
+    write_rows(path, rows[:4])
+    encoded = json.dumps(rows[4]).encode() + b"\n"
+    with path.open("ab") as stream:
+        stream.write(encoded[:20])
+    prefix = {}
+    snapshot_rows(path, "game", prepare_prefix=prefix)
+    with path.open("ab") as stream:
+        stream.write(encoded[20:])
+    assert snapshot_rows(path, "game", prefix=prefix) == snapshot_rows(path, "game")
+
+
 @pytest.mark.parametrize("contracts", [False, True])
 def test_repeated_world_bindings_keep_equipment_changes_and_exact_latest_state(tmp_path, contracts):
     rows = journal_rows()

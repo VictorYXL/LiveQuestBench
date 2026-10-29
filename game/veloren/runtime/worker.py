@@ -260,6 +260,15 @@ class Session:
                     entity["uid"] == args["uid"] and entity.get("same_native_group") is True
                     for entity in row["nearby_entities"]), "native peer Group membership")
                 self.peer_group_ready = True
+                if self.fixture.get("encounters"):
+                    from game.veloren.runtime.journal import snapshot_rows
+                    # Validate the long construction prefix before the enemy exists.
+                    # Both workers then scan only the append-only suffix at admission.
+                    self.snapshot_prefix = {}
+                    await asyncio.to_thread(
+                        snapshot_rows, self.oracle_output / "private-native-oracle.ndjson",
+                        self.oracle_output.name, prepare_prefix=self.snapshot_prefix,
+                    )
             else:
                 raise ValueError("Unsupported Group setup operation")
             return {"native_group_setup": mode}
@@ -294,6 +303,7 @@ class Session:
                 contracts=self.initialized.get("contract") is not None,
                 equipment_uid=observation["self_identity"]["uid"],
                 pickups=self.fixture.get("pickup_evidence", False),
+                prefix=getattr(self, "snapshot_prefix", None),
             )
             observation["private_death_evidence"] = death_snapshot(
                 rows, observation["self_identity"], registry,
