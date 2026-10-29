@@ -1,0 +1,78 @@
+{
+  "task": "cliff_ledge_ascent",
+  "slot": "VE-S03",
+  "status": "qualified_candidate_ready_for_integration",
+  "integrated": false,
+  "task_definition_commit": "685660d4145c3efe93f02e8867a6fd7a7b16f042",
+  "task_sha256": {
+    "structured_tools": "81dd32e178c971a0dfa21f4ee1a78bad2d188ebc478c813e451dc3e4f3ab95b2",
+    "visual_motor": "0a147bc4259a39b3a1e7e04e8a4c31c287ac2f051f78d6cde05fde5fd85464a2"
+  },
+  "construct": {
+    "primary": "spatial_interaction",
+    "secondary": "planning_resources",
+    "required": "Reach the upper arch at elevation541 from the lower arch at503, then return grounded and still within the lower arch zone, alive with at least one animal hide.",
+    "native_consequences": "Climbing consumes native energy; staggered ledges provide ordinary resting opportunities, and a missed climb or descent can cause falls and health loss. Finite supplied recovery items, legal death/respawn, native AI, physical motion and the2700s budget are unchanged.",
+    "not_claimed": "No hidden-rule or within-episode learning construct; no continuous-survival or item-source attribution claim."
+  },
+  "difficulty": {
+    "st": 3,
+    "vm": 4,
+    "kind": "provisional_engineering_design_judgment_not_statistical_calibration",
+    "anchor": "mountain_workshop_circuit: ST2/VM4, docs/reference_tasks.md",
+    "st_reason": "The spatial anchor's elevated workstations are3-6m above its base and their relative bearings are disclosed. This task instead requires a38m ascent along alternating ledges, coordinating facing, climb/wall-jump input and finite energy, then a controlled descent to a0.5m vertical endpoint tolerance. Structured observations expose energy and local geometry but no whole-route solver. That supports standard spatial3 rather than the anchor's easier spatial2, despite removing its crafting subgoal.",
+    "vm_reason": "The same climb/rest/descent route must be inferred from native images and executed with camera-relative movement and held-input timing. This is at least comparable to the established hard motor-spatial anchor; paired full-route native evidence establishes feasibility without converting baseline failure into a hard rating.",
+    "confidence": "Moderate mechanism/anchor confidence; low statistical confidence. One final per profile cannot estimate success rates. ST stopped after two tools and provides little difficulty discrimination; VM made216 tools without the upper visit. Neither failure independently determines the rating.",
+    "policy": "No difficulty quota, forced rating3, changed geometry or weakened success gates."
+  },
+  "native_witnesses": {
+    "st": {"artifact": "VE-S03-wide-ground-return-reference-st", "success": true, "seconds": 87.71285017952323, "public_actions": 106},
+    "vm": {"artifact": "VE-S03-public-trace-motor-reference-vm", "success": true, "seconds": 88.24904204905033, "public_motor_batches": 12},
+    "boundary": "Guided model-free witnesses are feasibility evidence, not unhinted model success. Their historical task text differs only by removed procedural hints; the offline replay explicitly admits only this guided goal-string difference. Fixture/world bytes, evaluator, tools and budgets match."
+  },
+  "final_baselines": {
+    "st": {
+      "artifact": "VE-S03-authorized-final-st",
+      "launch_id": "eb0e9e39f20244bfa5791934b1952265",
+      "configuration_sha256": "55cf4be2584d421eb994a9d17024e45b1b4bae1571591c88cd5da5d7f9133e94",
+      "credential_owner": "zhangling",
+      "measurement": "valid",
+      "outcome": "failure",
+      "model_requests": 3,
+      "tool_calls": 2,
+      "active_seconds": 10.760863769,
+      "trajectory": "Move forward20ticks, stop, voluntarily return without an upper visit or lower return. Zero deaths,100HP, hide retained."
+    },
+    "vm": {
+      "artifact": "VE-S03-formal-vm",
+      "launch_id": "5ed83ed870424927b7c4062387fc061f",
+      "configuration_sha256": "5ee3e47e88c1975ce673a30999f93f94c84ff0bedbdc989dca6414405f259009",
+      "credential_owner": "zhangling",
+      "measurement": "valid",
+      "outcome": "failure",
+      "model_requests": 217,
+      "tool_calls": 216,
+      "active_seconds": 1239.580001799,
+      "trajectory": "Voluntary return without the upper visit or terminal lower return; zero deaths,100HP, hide retained."
+    },
+    "provider": "github_copilot",
+    "model": "gpt-6-astra",
+    "reasoning_effort": "low",
+    "excluded_attempt": "VE-S03-formal-st is the historical interrupted unauthorized zero-call initialization, not a valid measurement. Raw stale running envelopes are preserved, not reinterpreted as completion.",
+    "no_retries": "Both valid failures are retained. No further model run is needed to seek success."
+  },
+  "offline_verification": {
+    "report": "output/temp/task_development/assessments/VE-S03-itinerary-replay.json",
+    "report_sha256": "c039cabb0b052ac69f74525341e04756fc6fa00a732bda5e5bc0e80cac7b94d5",
+    "rows": 4,
+    "verified": "Both native successes and both valid final failures reproduce their exact archived evaluations. Initial state is false; source-world bytes, fixture, snapshot phase/hash/identity and paired admission checks pass. Both final adapter-source manifests match the task worktree byte-for-byte.",
+    "evidence_limit": "Local surviving snapshot verification, not a claim that user-deleted historical logs can be replayed or that all large journals are portable."
+  },
+  "integration_dependencies": [
+    "Native itinerary region evidence and corresponding evaluator/binding",
+    "Public native energy projection",
+    "Explicit alive-only min_health0 semantics",
+    "e92f08b optional WallJumpTool forwarding, or its integrated equivalent"
+  ],
+  "integration_boundary": "Only this task branch and evidence record are committed. Parent/integration owner must verify shared dependencies and catalog/manifest updates; no main merge or catalog modification was performed here."
+}

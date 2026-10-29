@@ -1,0 +1,175 @@
+id: cliff_ledge_ascent
+game: veloren
+task_type: visual_motor
+task: Visit the upper stone arch above the staggered ledges, then return to the lower arch carrying
+  at least one animal hide. Finish alive, grounded and still. Death and ordinary respawn are legal,
+  but do not replenish supplies.
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/veloren_0_18_0_0.bin
+  world_seed: 130626853
+  time_of_day: '12:00'
+  day_length: 30
+  calendar: none
+  platform:
+    origin:
+    - 18680
+    - 10800
+    - 500
+    size:
+    - 46
+    - 28
+    block: Rock
+  player_state:
+    position: &id001
+    - 18711.5
+    - 10808.5
+    - 503
+    look:
+    - 0
+    - 1
+    - 0
+    health: 100
+    inventory:
+      common.items.crafting_ing.hide.animal_hide: 1
+      common.items.food.apple: 3
+      common.items.consumable.potion_minor: 2
+    equipment:
+      active_mainhand: common.items.weapons.sword.starter
+      chest: common.items.armor.misc.chest.worker_purple_brown
+      feet: common.items.armor.misc.foot.sandals
+      glider: common.items.glider.basic_white
+      lantern: common.items.lantern.black_0
+      legs: common.items.armor.misc.pants.worker_brown
+  blocks:
+  - origin:
+    - 18715
+    - 10803
+    - 501
+    size:
+    - 1
+    - 20
+    - 40
+  - origin:
+    - 18715
+    - 10803
+    - 540
+    size:
+    - 10
+    - 20
+    - 1
+  - origin:
+    - 18708
+    - 10806
+    - 501
+    size:
+    - 6
+    - 8
+    - 2
+  - origin:
+    - 18707
+    - 10806
+    - 501
+    size:
+    - 1
+    - 8
+    - 1
+  - origin:
+    - 18705
+    - 10804
+    - 512
+    size:
+    - 9
+    - 7
+    - 1
+  - origin:
+    - 18705
+    - 10814
+    - 524
+    size:
+    - 9
+    - 7
+    - 1
+  - origin:
+    - 18705
+    - 10804
+    - 536
+    size:
+    - 9
+    - 7
+    - 1
+  - origin:
+    - 18710
+    - 10806
+    - 503
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18710
+    - 10812
+    - 503
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18710
+    - 10806
+    - 506
+    size:
+    - 1
+    - 7
+    - 1
+  - origin:
+    - 18723
+    - 10810
+    - 541
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18723
+    - 10816
+    - 541
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18723
+    - 10810
+    - 544
+    size:
+    - 1
+    - 7
+    - 1
+  route_evidence: true
+  public_energy: true
+  respawn_at_start: true
+evaluator:
+  name: itinerary
+  parameters:
+    min_health: 0
+    visits:
+    - target:
+      - 18723.5
+      - 10813.5
+      - 541
+      horizontal_tolerance: 3
+      vertical_tolerance: 0.5
+    inventory:
+    - item: common.items.crafting_ing.hide.animal_hide
+      min_count: 1
+    position:
+      target: *id001
+      horizontal_tolerance: 3
+      vertical_tolerance: 0.5
+      max_speed: 0.1
+capabilities:
+  primary:
+  - spatial_interaction
+  secondary:
+  - planning_resources
