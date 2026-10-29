@@ -447,6 +447,41 @@ def test_deferred_original_supplies_require_ready_peers_and_spawn_once(monkeypat
     assert session.setup_administrator is None
 
 
+@pytest.mark.parametrize("failure_stage", ["drop", "readback", "binding", "cancelled"])
+def test_failed_original_supply_creation_cannot_be_retried(monkeypatch, failure_stage):
+    worker = load_worker(monkeypatch)
+    session = object.__new__(worker.Session)
+    session.running, session.team_ready = False, True
+    session.fixture = {"supplies": [{"item": "leather", "amount": 4}]}
+    session.initialized = {"supplies": [], "supplies_pending": True}
+    session.setup_administrator = (object(), object(), 99)
+    source = {"uid": 7, "item": "leather", "amount": 4}
+    drop = AsyncMock(return_value=[source])
+    actor = AsyncMock(return_value={"nearby_entities": []})
+    session.actor = SimpleNamespace(request=actor)
+    error = asyncio.CancelledError if failure_stage == "cancelled" else RuntimeError
+    if failure_stage in ("drop", "cancelled"):
+        drop.side_effect = error("injected partial native drop failure")
+    elif failure_stage == "readback":
+        actor.side_effect = error("injected native readback failure")
+    else:
+        def fail_binding(*args):
+            raise RuntimeError("injected native binding failure")
+        monkeypatch.setattr(fixtures, "bind_supplies", fail_binding)
+    monkeypatch.setattr(fixtures, "initialize_supplies", drop)
+
+    async def run():
+        with pytest.raises(error, match="injected"):
+            await session.finish_setup()
+        with pytest.raises(RuntimeError, match="already started"):
+            await session.finish_setup()
+
+    asyncio.run(run())
+    drop.assert_awaited_once()
+    assert session.initialized["supplies_pending"] is True
+    assert session.running is False
+
+
 @pytest.mark.parametrize("alignment", ["Enemy", "Npc"])
 @pytest.mark.parametrize("distance", [0, 80])
 def test_encounter_does_not_bind_late_arriving_admin(monkeypatch, alignment, distance):

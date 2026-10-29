@@ -184,6 +184,10 @@ spending the source's native lifetime on renderer attachment. It does not
 recreate an expired source, pause expiry, alter pre-age settings, extend the
 deadline, or bypass identity and remaining-lifetime checks. Single-player
 supply initialization keeps its existing ordering.
+Once deferred supply initialization starts, failure or cancellation before
+creation and binding complete leaves that session inadmissible: a repeated
+request cannot recreate supplies whose native drop may already have happened.
+The setup-attempt flag is retained in receipts.
 
 For dialogue, trading, skills, gliding or companions, start from a task that
 already admits those features. Do not assume that every task exposes every

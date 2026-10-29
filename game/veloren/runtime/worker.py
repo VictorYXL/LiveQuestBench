@@ -210,6 +210,10 @@ class Session:
         if initialized.get("supplies_pending") and finalize_supplies:
             if self.running or not getattr(self, "team_ready", False):
                 raise RuntimeError("Original team supplies require all peers ready before gameplay")
+            if initialized.get("supplies_initialization_started"):
+                raise RuntimeError("Original team supply initialization already started; cannot retry")
+            # A failed or cancelled drop may already have created native entities.
+            initialized["supplies_initialization_started"] = True
         if (initialized.get("encounters_pending") and finalize_encounters
                 or initialized.get("supplies_pending") and finalize_supplies):
             if getattr(self, "setup_administrator", None) is None:
