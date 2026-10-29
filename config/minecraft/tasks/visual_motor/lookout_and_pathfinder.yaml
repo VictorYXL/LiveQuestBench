@@ -8,7 +8,7 @@ capabilities:
   - information_adaptation
   - spatial_interaction
 task: Together recover the original Canyon Parcel from a chest in one of the three coloured corridors
-  and reunite alive, standing still on the yellow exit pad beyond the canyon. The canyon is roughly 45
+  and reunite with at least 1 health point each, standing still on the yellow exit pad beyond the canyon. The canyon is roughly 45
   blocks long. Alpha starts on the lookout walkway; Beta starts near the three coloured entrances. The
   lookout has two viewing angles and stairs back to ground. You may communicate, exchange roles or search
   independently; no particular messages or division of work are required. Native recovery is allowed.
