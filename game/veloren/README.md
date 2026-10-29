@@ -176,6 +176,12 @@ supplies, encounters or a native settlement. Supplies can expire according to
 native game rules; expose relevant deadlines in the objective rather than
 silently replenishing resources.
 
+Additional Rock authoring is clustered into small horizontal/two-layer groups
+to reduce setup-administrator anchor relocations. Every original voxel and each
+column's bottom-up ordering are preserved. Native loaded-input, placement and
+effect readbacks remain mandatory; this changes neither gameplay geometry nor
+player permissions. Setup timing improvements are not native task success.
+
 For native teams, the owner defers the first creation of declared supplies
 until all peer clients have attached and acknowledged setup readiness. The
 administrator disconnects during peer attachment, then reconnects only for

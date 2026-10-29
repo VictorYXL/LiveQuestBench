@@ -40,6 +40,13 @@ def solid_voxels(fixture: dict) -> set[tuple[int, int, int]]:
     return voxels
 
 
+def native_authoring_order(voxels: set[tuple[int, int, int]]) -> list[list[int]]:
+    """Cluster setup work inside the native anchor bounds; keep each column bottom-up."""
+    return [list(point) for point in sorted(
+        voxels, key=lambda p: (p[2] // 2, p[0] // 5, p[1] // 5, p[2], p[0], p[1]),
+    )]
+
+
 def require_standing_point(point: list, voxels: set[tuple[int, int, int]], label: str) -> None:
     x, y, z = (math.floor(value) for value in point)
     if point[2] != z or (x, y, z - 1) not in voxels or any((x, y, z + dz) in voxels for dz in (0, 1)):
@@ -640,7 +647,7 @@ async def initialize_fixture(admin, actor, fixture: dict, *, shared_world: bool 
         )
     base = solid_voxels({**fixture, "blocks": []})
     additional = set() if shared_world else solid_voxels(fixture) - base
-    blocks = await setup.author_voxels(admin, [list(point) for point in sorted(additional)]) if additional else []
+    blocks = await setup.author_voxels(admin, native_authoring_order(additional)) if additional else []
     stations = []
     for station in (() if shared_world else fixture.get("stations", [])):
         stations.append(await setup.station(admin, station["position"], station["sprite"], "flat"))
