@@ -376,3 +376,32 @@ identity is a measurement error, not a zero score. See the
 
 For a new Agent or game integration, follow the
 [extension guides](../../README.md#adding-tasks-and-games).
+
+## VE-L04: three-choice ballistic-path discovery and reuse
+
+The paired `three_choice_ballistic_path_reuse_v7_alive2.yaml` definitions publish
+the exact reviewed v7 aperture geometry under a narrow name. The new publication
+ID explicitly retains current-main `veloren-original-reference-alive/2`
+positive-health/not-downed validation. Historical v5/v6/v7 definitions and failed
+episodes are not renamed or converted into successes.
+
+Only the runtime pinned in `checks/VE-L04-main-admission-20261029.json` is
+supported; set its explicit `LIVEQUEST_VELOREN_RUNTIME` path. Do not substitute
+the default runtime or rebuild current patch recipes and inherit this admission.
+The receipt binds both tasks, current-main compatibility, all three layouts,
+stock assets and native runtime components. Its offline checker is
+`python checks/veloren_l04_admission.py`.
+
+The learning claim is modest within-episode three-choice discovery/reuse, not
+unrestricted target leading or changed-bearing generalization. Both original
+enemies, no death, original equipment and900s remain required. Inspection,
+camera use, cold probing, waiting, climbing and melee remain legal. Ordinary
+first-person view and the visible mouse-sensitivity slider supply fine VM aiming;
+this source construction is not an observed VM victory. Overall difficulty is
+provisionally2–4 with high uncertainty; final calibration is deferred.
+
+`aperture_geometry_audit` is author-only and must never feed private coordinates
+to an episode policy. The unchanged raw v7 generator remains an authoring/audit
+API; generated variants need explicit publication/runtime binding rather than
+automatically inheriting the new paired-definition admission. No L02/L03/L05
+admission follows from this work.

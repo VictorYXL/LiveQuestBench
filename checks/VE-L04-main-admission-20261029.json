@@ -1,0 +1,732 @@
+{
+  "schema": "livequest-l04-exact-main-admission/1",
+  "task_id": "VE-L04",
+  "passed": true,
+  "published_task_id": "three_choice_ballistic_path_reuse_v7_alive2",
+  "reviewed_source": "132f98f9346426665bd3441925b8b91c20fed2d8",
+  "main_parent": "76720c8918208a7907a0827577f39efc84507f3d",
+  "checked_head": "76720c8918208a7907a0827577f39efc84507f3d",
+  "source_checks": [
+    {
+      "path": "benchmark/__init__.py",
+      "main_sha256": "d5681c0cc4bca9f204eb91717c5b6a9a0494654e2fd0d2a198f43ef8e143488b",
+      "matches_review": true,
+      "bridge": "Exact reviewed bytes"
+    },
+    {
+      "path": "benchmark/config.py",
+      "main_sha256": "5715f2a98606af7171bab142db256fc2a984f239f0bfef0dec5231ab0beba1c4",
+      "matches_review": true,
+      "bridge": "Exact reviewed bytes"
+    },
+    {
+      "path": "benchmark/factory.py",
+      "main_sha256": "d55fc69a5bac9a45717a5fc63ff37e27c6efba3b3c706448222231e9db522763",
+      "matches_review": true,
+      "bridge": "Exact reviewed bytes"
+    },
+    {
+      "path": "benchmark/results.py",
+      "main_sha256": "f773069bf144d457c2e2b52e0a760e8e12c7f395e90f2efb94ea0e9669d0b269",
+      "matches_review": true,
+      "bridge": "Exact reviewed bytes"
+    },
+    {
+      "path": "benchmark/runner.py",
+      "main_sha256": "48f014e5f3129fcb6333af01bb4be59843d676dd9e148c11293519e78ed01dba",
+      "matches_review": true,
+      "bridge": "Exact reviewed bytes"
+    },
+    {
+      "path": "benchmark/team.py",
+      "main_sha256": "aaab49326b826c3e0b39ab7cd4fd4f2803db4fd08d1aeb9d4e7eaa96e1dc9181",
+      "matches_review": true,
+      "bridge": "Exact reviewed bytes"
+    },
+    {
+      "path": "game/backends/x11/__init__.py",
+      "main_sha256": "580cfd4227c9d69caf32f3b3697df3f00daa65e7d6feddcee1200c51077db5fa",
+      "matches_review": true,
+      "bridge": "Exact reviewed bytes"
+    },
+    {
+      "path": "game/backends/x11/actions.py",
+      "main_sha256": "6e5749eb8e242943eb0d402bf7daf51500b7dca1c00be9a27586cbda36f3eb0e",
+      "matches_review": true,
+      "bridge": "Exact reviewed bytes"
+    },
+    {
+      "path": "game/backends/x11/capture.py",
+      "main_sha256": "049e1d173cf1a4e0782e9d533af85de9c9bbe791cbc4014756eda69e61afa82e",
+      "matches_review": true,
+      "bridge": "Exact reviewed bytes"
+    },
+    {
+      "path": "game/backends/x11/display.py",
+      "main_sha256": "2462a9ec7d57bfc126b3df8f1983e97b2f97c05a2217d2c2c5c2bf897989052d",
+      "matches_review": false,
+      "bridge": "Xvfb -noreset preserves the same1024x768 display across client reconnects; no public action/schema change."
+    },
+    {
+      "path": "game/backends/x11/interface.py",
+      "main_sha256": "3ea1390d072b2e8dabb1ebebb0b588150fba807865eecffd4a7b677eb087b3cc",
+      "matches_review": true,
+      "bridge": "Exact reviewed bytes"
+    },
+    {
+      "path": "game/backends/x11/recording.py",
+      "main_sha256": "b270717e7dd6a888ca916bb6ee6c260bc256211b2bd0fa2346d22d8b029bcc81",
+      "matches_review": true,
+      "bridge": "Exact reviewed bytes"
+    },
+    {
+      "path": "game/base_game.py",
+      "main_sha256": "de36826fe48a8976e00cba39b4dfc5f9aaa39f393d989c037c254f42763e4d7b",
+      "matches_review": true,
+      "bridge": "Exact reviewed bytes"
+    },
+    {
+      "path": "game/bindings.py",
+      "main_sha256": "9253058d58765caa3628e8df4122ed123b08622eec505b2e73114e30b1b8a14c",
+      "matches_review": true,
+      "bridge": "Exact reviewed bytes"
+    },
+    {
+      "path": "game/team.py",
+      "main_sha256": "bc80b21d245fce6f2d0f37cc457c5339e6d8f97a26fe4d7f7b4b62c37ed86245",
+      "matches_review": false,
+      "bridge": "Not selected by this single-player task."
+    },
+    {
+      "path": "game/veloren/__init__.py",
+      "main_sha256": "f73d16a97595f5cd746f78ae2f5d3e9ee473a350fbf23dac6bd0f57e8f58dfbb",
+      "matches_review": true,
+      "bridge": "Exact reviewed bytes"
+    },
+    {
+      "path": "game/veloren/binding.py",
+      "main_sha256": "5825a2549bb0268d00e198fdd85615796c73b25674af7fcfe60134df7298b50e",
+      "matches_review": false,
+      "bridge": "Additional evaluator registrations are inactive; L04 still selects encounter with the same roles/no_death/min_health."
+    },
+    {
+      "path": "game/veloren/contracts.py",
+      "main_sha256": "86e8e2d6b795a248038837710c1afbbb6e3059d462175396723a083d3a3ea7ec",
+      "matches_review": true,
+      "bridge": "Exact reviewed bytes"
+    },
+    {
+      "path": "game/veloren/evaluators/active_build.py",
+      "main_sha256": "5fdb906d832c5f80ddb5168351e1caa877d692b0ab877d6e9859b95d72b24774",
+      "matches_review": false,
+      "bridge": "Inactive evaluator/runtime recipe; no selected fixture/evaluator/capability reaches it."
+    },
+    {
+      "path": "game/veloren/evaluators/attack.py",
+      "main_sha256": "22ca6a3509b13c2ff9f11ec73ca2dc8934172a417f1d34532a089eab729ec4a5",
+      "matches_review": false,
+      "bridge": "Inactive evaluator/runtime recipe; no selected fixture/evaluator/capability reaches it."
+    },
+    {
+      "path": "game/veloren/evaluators/contract.py",
+      "main_sha256": "cb4ad9c2c4aa0b690a8eeb250c48926de656b0da25ce7f7b34e377d541e0ebd0",
+      "matches_review": true,
+      "bridge": "Exact reviewed bytes"
+    },
+    {
+      "path": "game/veloren/evaluators/deaths.py",
+      "main_sha256": "144d424a3e9efe8196cc54c78700be2f32d63ecb784586b285032869baa38724",
+      "matches_review": true,
+      "bridge": "Exact reviewed bytes"
+    },
+    {
+      "path": "game/veloren/evaluators/encounter.py",
+      "main_sha256": "85ff1a3e8f6590492d2cd1a178e5c3a7ce0543a9c3df0508ac99099b42611551",
+      "matches_review": false,
+      "bridge": "Optional required-attack/companion/team branches are inactive. New queued-attack events are accepted but not scored as damage. Historical core check parity is replayed."
+    },
+    {
+      "path": "game/veloren/evaluators/encounter_supplies.py",
+      "main_sha256": "8a42df9f895a457252cafb614044fcc0dd5bccc98f64e662bdab42ec53080470",
+      "matches_review": false,
+      "bridge": "Inactive evaluator/runtime recipe; no selected fixture/evaluator/capability reaches it."
+    },
+    {
+      "path": "game/veloren/evaluators/endpoints.py",
+      "main_sha256": "ca445973cf0a7295f8801f8667e413da1d4f92e2d146d710d560ceb5bec1fc9c",
+      "matches_review": false,
+      "bridge": "Preserve current positive-health/not-downed guard. Publication explicitly versions this as alive/2; historical v5/v7 results stay unchanged."
+    },
+    {
+      "path": "game/veloren/evaluators/expedition.py",
+      "main_sha256": "20ac61f207290123db441526e6cc11599e942f3b9854c242a4cbf6c6ebdc6115",
+      "matches_review": true,
+      "bridge": "Exact reviewed bytes"
+    },
+    {
+      "path": "game/veloren/evaluators/glide_route.py",
+      "main_sha256": "6ff34ef400d2c8b1372908e492353e0a9b5fb204c4ddd5428cffafae8c414098",
+      "matches_review": true,
+      "bridge": "Exact reviewed bytes"
+    },
+    {
+      "path": "game/veloren/evaluators/harvest.py",
+      "main_sha256": "323f7373f37a1b3ab218be825109bf4b997e7430b2fcf79790468628807cc286",
+      "matches_review": false,
+      "bridge": "Inactive evaluator/runtime recipe; no selected fixture/evaluator/capability reaches it."
+    },
+    {
+      "path": "game/veloren/evaluators/itinerary.py",
+      "main_sha256": "80211f112c5f10d6a2e969fe7389d108377fa27d1592e1c2eed5f053ad1a80d4",
+      "matches_review": false,
+      "bridge": "Inactive evaluator/runtime recipe; no selected fixture/evaluator/capability reaches it."
+    },
+    {
+      "path": "game/veloren/evaluators/peer_support.py",
+      "main_sha256": "d1f8d14e3d2e22e2fe60fd8629740fed2dacd9c1c6b669f8b4150715bf76e9e5",
+      "matches_review": false,
+      "bridge": "Inactive evaluator/runtime recipe; no selected fixture/evaluator/capability reaches it."
+    },
+    {
+      "path": "game/veloren/evaluators/pickups.py",
+      "main_sha256": "9c8d3a3ae71eaa4e9feb7f708c29e5ba2e0cbef4a9ebe0e8c37335d90fe7d15a",
+      "matches_review": false,
+      "bridge": "Inactive evaluator/runtime recipe; no selected fixture/evaluator/capability reaches it."
+    },
+    {
+      "path": "game/veloren/evaluators/route_transfer.py",
+      "main_sha256": "726f9a663b4f15cf7d7cfc6d3bfb672ec14ab8416d48c238a96d227eca805f46",
+      "matches_review": false,
+      "bridge": "Inactive evaluator/runtime recipe; no selected fixture/evaluator/capability reaches it."
+    },
+    {
+      "path": "game/veloren/evaluators/team_efficiency.py",
+      "main_sha256": "57532661e2f75630e2dc0fb1c3572c1a5571eb273e755693776152a05c6058b4",
+      "matches_review": false,
+      "bridge": "Inactive evaluator/runtime recipe; no selected fixture/evaluator/capability reaches it."
+    },
+    {
+      "path": "game/veloren/fixture.py",
+      "main_sha256": "377b1f09c35ec837f8dd1fdc55870821f0a4e689e690ed339866519f22482443",
+      "matches_review": false,
+      "bridge": "Optional supplies, harvest, injured-enemy, companion and deferred-team setup are absent. Ordinary full-health GreenLegoom initialization uses the same identity checks with an incremental native binding reader."
+    },
+    {
+      "path": "game/veloren/game.py",
+      "main_sha256": "ed7db2975a5d80dcb27fdcf9fdc10925840f992f507c2ee8121932d9abc557dd",
+      "matches_review": false,
+      "bridge": "Peer/energy/terrain additions are inactive. Default public projection and declared combat actions are checked against the reviewed module."
+    },
+    {
+      "path": "game/veloren/harvest.py",
+      "main_sha256": "7e31277276d42695e6b1dd446bd24ec5d43ed8b5d7d24fc3d05c54d684315ce2",
+      "matches_review": false,
+      "bridge": "Inactive evaluator/runtime recipe; no selected fixture/evaluator/capability reaches it."
+    },
+    {
+      "path": "game/veloren/native_bindings.py",
+      "main_sha256": "4afac9e88311893308ab002ef57332ca9013766cdb86930c4acf1b3dc39cc296",
+      "matches_review": false,
+      "bridge": "Incremental combat reader preserves latest validated native UID/entity binding semantics; no public channel added."
+    },
+    {
+      "path": "game/veloren/patches/0001-physical-input.patch",
+      "main_sha256": "bfc5fcc95635724896cdf995b01a8a97b2458aa85b1369d7665b0cfb76afb8e7",
+      "matches_review": true,
+      "bridge": "Exact reviewed bytes"
+    },
+    {
+      "path": "game/veloren/patches/0002-disable-native-protection.patch",
+      "main_sha256": "eb4aa778c6396a34c3ea8ecca664eb6872905233b3b20767e196cd2730479a42",
+      "matches_review": true,
+      "bridge": "Exact reviewed bytes"
+    },
+    {
+      "path": "game/veloren/patches/0003-native-motion-evidence.patch",
+      "main_sha256": "de7dc480c29734dd91175f562fa5e92b4e992cf0747ab6254312d1dff77f321c",
+      "matches_review": true,
+      "bridge": "Exact reviewed bytes"
+    },
+    {
+      "path": "game/veloren/patches/0004-native-glide-evidence.patch",
+      "main_sha256": "8d7cdc264cfc9424699ca90ed1b68c1d4476691be5fef0af08d17f333ada6160",
+      "matches_review": true,
+      "bridge": "Exact reviewed bytes"
+    },
+    {
+      "path": "game/veloren/patches/0005-bounded-auxiliary-input.patch",
+      "main_sha256": "89799409266b44ea2300fcfacc4417e7b7bcce68f650fd60a6a616916d7ccbcf",
+      "matches_review": true,
+      "bridge": "Exact reviewed bytes"
+    },
+    {
+      "path": "game/veloren/patches/0006-native-route-evidence.patch",
+      "main_sha256": "7700fd6cc6b78f4b6c897df7c906049d9fb94bb6697a109f3f2e26e70daf9c4f",
+      "matches_review": true,
+      "bridge": "Exact reviewed bytes"
+    },
+    {
+      "path": "game/veloren/patches/0007-native-pickups.patch",
+      "main_sha256": "758c81aa1d4eb8536ee15fca83f9f00fce4be1af21e8e744b405f3f6a7498e13",
+      "matches_review": false,
+      "bridge": "Inactive evaluator/runtime recipe; no selected fixture/evaluator/capability reaches it."
+    },
+    {
+      "path": "game/veloren/patches/0008-native-physics-route-evidence.patch",
+      "main_sha256": "6208f2ff059bbde5af61eaf64a1bf50043a5f8305d5cad958ac2fba60a3c07e7",
+      "matches_review": false,
+      "bridge": "Inactive evaluator/runtime recipe; no selected fixture/evaluator/capability reaches it."
+    },
+    {
+      "path": "game/veloren/prototypes/__init__.py",
+      "main_sha256": "9586353e2e1de5508d1dfc7d4d66becfea83766607a5a7a14fa85b70845d2ec4",
+      "matches_review": true,
+      "bridge": "Exact reviewed bytes"
+    },
+    {
+      "path": "game/veloren/prototypes/aperture_counterpolicy.py",
+      "main_sha256": "298185fe4958125c73282c0a4991d1807d7f458abe2403bbe2b0a5f4cfb10ada",
+      "matches_review": true,
+      "bridge": "Exact reviewed bytes"
+    },
+    {
+      "path": "game/veloren/prototypes/aperture_geometry_audit.py",
+      "main_sha256": "054868c6bc39f80e50e360ae9598477ea4f433ebe8786f24db8aab05ab0ea267",
+      "matches_review": true,
+      "bridge": "Exact reviewed bytes"
+    },
+    {
+      "path": "game/veloren/prototypes/aperture_probe.py",
+      "main_sha256": "9b15f02b905e1ce77aaa07f92606c00daacd7a0db2e11f38cb225d41dcd2bb21",
+      "matches_review": true,
+      "bridge": "Exact reviewed bytes"
+    },
+    {
+      "path": "game/veloren/prototypes/ballistic_aperture.py",
+      "main_sha256": "807c2a39f08940949e9497fc9fbf5267542fc24106610802a7e4d92907fa5db7",
+      "matches_review": true,
+      "bridge": "Exact reviewed bytes"
+    },
+    {
+      "path": "game/veloren/runtime/composition.py",
+      "main_sha256": "229262805b83d287a60b4959e72ecad1e930a70d27b8e51bc82b057a3e0844a8",
+      "matches_review": false,
+      "bridge": "Inactive evaluator/runtime recipe; no selected fixture/evaluator/capability reaches it."
+    },
+    {
+      "path": "game/veloren/runtime/install.py",
+      "main_sha256": "d35c6bda0c267156abf4f680e2816448a2d7ccc7ec8ea7698500488cb1d0468e",
+      "matches_review": false,
+      "bridge": "Not executed: no rebuild or default/current recipe admission. Only the exact existing renderer/server/helper are supported."
+    },
+    {
+      "path": "game/veloren/runtime/journal.py",
+      "main_sha256": "317402daf3cc33598ea735c1909ca2973c33569d95ceb1eee995de3aa32f0901",
+      "matches_review": false,
+      "bridge": "Stronger prefix/journal guards and optional pickups retained. Single-player L04 has no prefix/pickups; queued attack records are not a new score obligation."
+    },
+    {
+      "path": "game/veloren/runtime/records.py",
+      "main_sha256": "f4aeed2682ccc7334aa3347a8e7087dd3c47e7fdb705eb9f47677bdf896f2bc7",
+      "matches_review": false,
+      "bridge": "Defers large private authoring receipts until cleanup, not authoring or gameplay state."
+    },
+    {
+      "path": "game/veloren/runtime/server.py",
+      "main_sha256": "bbbb74bc200e18d5f50189aead15eb76bec9c315db0119146d08c1026e772d4d",
+      "matches_review": true,
+      "bridge": "Exact reviewed bytes"
+    },
+    {
+      "path": "game/veloren/runtime/server_extension.py",
+      "main_sha256": "eb8961a8c24af1ece20873c1fd964afb2edf0a3590b7009fdc451526752b9830",
+      "matches_review": false,
+      "bridge": "Exact pinned runtime has no extension/composition/pickup capability; selector must return its original upstream server."
+    },
+    {
+      "path": "game/veloren/runtime/session.py",
+      "main_sha256": "d19880666c3d12f8e25c3d2b7809b4cee2aff05957fd1c267e19d6c5e2b760f9",
+      "matches_review": true,
+      "bridge": "Exact reviewed bytes"
+    },
+    {
+      "path": "game/veloren/runtime/startup.py",
+      "main_sha256": "2eded18810e550cfb39e121db292610879a49a47bffbe54722ce6f0e31f65083",
+      "matches_review": false,
+      "bridge": "Bounded setup-only administrator reconnect, not a gameplay reset."
+    },
+    {
+      "path": "game/veloren/runtime/worker.py",
+      "main_sha256": "9fe13c1dc6d843da37fe9dc9ec4c2fb56b311f330179fd35aa58b2750dc7d8dc",
+      "matches_review": false,
+      "bridge": "Preserve current setup/journal/retirement guards. No peer, supplies, companion, route, terrain-query or RPG branch is selected; original public combat dispatch remains."
+    },
+    {
+      "path": "game/veloren/settlement.py",
+      "main_sha256": "8498a6d385640b1ddce4179c996f473b074bc46bde462a64a95e604841793fea",
+      "matches_review": false,
+      "bridge": "Not selected: no merchant, contract or native_site fixture."
+    },
+    {
+      "path": "game/veloren/structured_tools/interface.py",
+      "main_sha256": "cb53fabd08b08167aaa30f06f2413ac88e8accfb8b706ab38efd530bb40111fc",
+      "matches_review": false,
+      "bridge": "New optional tools/peer/energy fields are outside L04's unchanged COMBAT_TOOLS/default projection; exact specs/conversions are checked."
+    },
+    {
+      "path": "game/veloren/visual_motor/interface.py",
+      "main_sha256": "89479670c13073a7b7dfb409b3768d7f502fdad90750585191885598ea6d1052",
+      "matches_review": true,
+      "bridge": "Exact reviewed bytes"
+    }
+  ],
+  "task_pins": {
+    "structured_tools": {
+      "path": "config/veloren/tasks/structured_tools/three_choice_ballistic_path_reuse_v7_alive2.yaml",
+      "sha256": "1523824a9b864b3d8dbaf7ba134a46e7d6aceb6f3aafd413f59c9b49c9123bae",
+      "tools": [
+        "RespawnTool",
+        "MoveTool",
+        "TurnTool",
+        "JumpTool",
+        "PickupTool",
+        "UseItemTool",
+        "CraftTool",
+        "EquipTool",
+        "LookTool",
+        "AttackTool",
+        "WieldTool",
+        "BlockTool",
+        "RollTool",
+        "StopTool"
+      ],
+      "native_started": false,
+      "control_binding_scope": "Offline schema access, not initialized native play."
+    },
+    "visual_motor": {
+      "path": "config/veloren/tasks/visual_motor/three_choice_ballistic_path_reuse_v7_alive2.yaml",
+      "sha256": "7bad71e728271b37f4f48493613d1e75c147e1c0260bdfc87311b9635ce1e89e",
+      "tools": [
+        "action"
+      ],
+      "native_started": false,
+      "control_binding_scope": "Offline schema access, not initialized native play."
+    }
+  },
+  "publication_version": "v7-alive2",
+  "world_sha256": "2560ecb22feccc642aaf75addfaf22e3066defe8668ca052770ef902a2c5e2da",
+  "supported_runtime": {
+    "path": "output/temp/veloren-native-route-20261027/runtime.json",
+    "sha256": "387e3485fb1fa1edcfb810e36ed2f1cef4d07bfeb487f73d8be433fd82e653d7",
+    "constituents": [
+      {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/veloren-native-route-20261027/target/debug/veloren-voxygen",
+        "sha256": "478b0addc202cb37aaa5543cf369fa59e4f4cb3031deb56bb6544d49fc9a4897"
+      },
+      {
+        "path": "/home/msra/GameAgent/LiveQuestBench/game/veloren/patches/0001-physical-input.patch",
+        "sha256": "bfc5fcc95635724896cdf995b01a8a97b2458aa85b1369d7665b0cfb76afb8e7"
+      },
+      {
+        "path": "/home/msra/GameAgent/LiveQuestBench/game/veloren/patches/0002-disable-native-protection.patch",
+        "sha256": "eb4aa778c6396a34c3ea8ecca664eb6872905233b3b20767e196cd2730479a42"
+      },
+      {
+        "path": "/home/msra/GameAgent/LiveQuestBench/game/veloren/patches/0003-native-motion-evidence.patch",
+        "sha256": "de7dc480c29734dd91175f562fa5e92b4e992cf0747ab6254312d1dff77f321c"
+      },
+      {
+        "path": "/home/msra/GameAgent/LiveQuestBench/game/veloren/patches/0004-native-glide-evidence.patch",
+        "sha256": "8d7cdc264cfc9424699ca90ed1b68c1d4476691be5fef0af08d17f333ada6160"
+      },
+      {
+        "path": "/home/msra/GameAgent/LiveQuestBench/game/veloren/patches/0005-bounded-auxiliary-input.patch",
+        "sha256": "89799409266b44ea2300fcfacc4417e7b7bcce68f650fd60a6a616916d7ccbcf"
+      },
+      {
+        "path": "/home/msra/GameAgent/LiveQuestBench/game/veloren/patches/0006-native-route-evidence.patch",
+        "sha256": "7700fd6cc6b78f4b6c897df7c906049d9fb94bb6697a109f3f2e26e70daf9c4f"
+      },
+      {
+        "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/binding-95145618/native/source.json",
+        "sha256": "f303e8aa0d93c19089db8b070ecefe04dc2afea1e84d1ccf3dee522bd4141ba1"
+      },
+      {
+        "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/binding-95145618/native/binaries/veloren-server-cli",
+        "sha256": "f2100bec7ace29a3a44256dce255a435697774551953cd8ee2a834507f7ef6be"
+      },
+      {
+        "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/binding-95145618/native/binaries/examples/agent_bridge",
+        "sha256": "bf98e9653ddd04ee9ae0ba50e0400532f851ec8d2f0a71b1cc880513773f73ba"
+      }
+    ],
+    "upstream_sha256": "a66f4a9af38132d49fb43e021f829a1396cb346d70931a178873ad3e875741c5",
+    "asset_manifest_sha256": "63e3655242273cd255e67125299c37277f031c9e16be2f1deee0d2faa7628582",
+    "selected_assets": [
+      {
+        "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/assets/assets/common/abilities/ability_set_manifest.ron",
+        "sha256": "7d8b9a1188791ac371e22fa993fb6a02bde9b7848da8ae0bf6b41ac546542948"
+      },
+      {
+        "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/assets/assets/common/abilities/bow/arrow_shot.ron",
+        "sha256": "49c183b86015e26687f453fd291eb276c2062f5666846aef885056ebeafaee12"
+      },
+      {
+        "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/assets/assets/common/abilities/custom/green_legoom/doublestrike.ron",
+        "sha256": "29206ba2f23cab9346b974dede39cb172b91e2ef6bbdc16568fd0c50a31e4a11"
+      },
+      {
+        "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/assets/assets/common/entity/benchmark/male_green_legoom.ron",
+        "sha256": "c7be31b1bfab963903bc1ee5c5ed78b31af5b85f1c7b12761b64fea876f80435"
+      },
+      {
+        "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/assets/assets/common/items/armor/misc/chest/worker_purple_brown.ron",
+        "sha256": "915f9803601f3d297a5a14f80b64042a10aa7d8c710a32e0155fbfc2d783b510"
+      },
+      {
+        "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/assets/assets/common/items/armor/misc/foot/sandals.ron",
+        "sha256": "79e0746c897eadbd8e4c6d804cafc773a04a78ef8e6b07c1a22564bdf6237731"
+      },
+      {
+        "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/assets/assets/common/items/armor/misc/pants/worker_brown.ron",
+        "sha256": "e37204e0bf5469c61c174043b222c7715d04d823235e78bc48e33c405a3c0965"
+      },
+      {
+        "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/assets/assets/common/items/crafting_ing/twigs.ron",
+        "sha256": "9ff002dab4a33ebc2bac50776d70be114d5981533e30bb8740bc179e3ed23906"
+      },
+      {
+        "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/assets/assets/common/items/flowers/plant_fiber.ron",
+        "sha256": "3942d16a8ac38d848748af25a092c41f706e56d816eb857a758de711c4e65fc1"
+      },
+      {
+        "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/assets/assets/common/items/flowers/wild_flax.ron",
+        "sha256": "ee0f16528599ba1a5ebac1d280be665f05e38f5a726b8835f46759b6a4bea1a7"
+      },
+      {
+        "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/assets/assets/common/items/food/carrot.ron",
+        "sha256": "eaa79bef3bbc6054e0d47d042b8dc46cf0fb9684695e813fccfeb4fdd093a38e"
+      },
+      {
+        "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/assets/assets/common/items/food/lettuce.ron",
+        "sha256": "c982da3e19f3fd895c88c9e23eda6b9cfad334bdacda3e110b8e5392cf8e64c6"
+      },
+      {
+        "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/assets/assets/common/items/food/tomato.ron",
+        "sha256": "4084f0ae62ec2993c06a870b884623bccbdaf6f16ed72b5dc12b27106130e754"
+      },
+      {
+        "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/assets/assets/common/items/glider/basic_white.ron",
+        "sha256": "1d3debf0a51f08f84da66fc62671e7a57a1c044a2f4da8d91ae6e93d5eb6791b"
+      },
+      {
+        "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/assets/assets/common/items/lantern/black_0.ron",
+        "sha256": "11494f152643a3876884a05166ea300461e120e3ce51d408f4436aaa1fd24fe7"
+      },
+      {
+        "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/assets/assets/common/items/npc_armor/biped_small/green_legoom/chest/green_legoom.ron",
+        "sha256": "f71bf89867029686da5b4ac5cd92a6230e7f50c56a3d2f4b0d7cdd595dfaad5e"
+      },
+      {
+        "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/assets/assets/common/items/npc_armor/biped_small/green_legoom/foot/green_legoom.ron",
+        "sha256": "980799950eb480b7d45e48b2857dce92f4dc87796c1ec775735f8105de75ef59"
+      },
+      {
+        "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/assets/assets/common/items/npc_armor/biped_small/green_legoom/hand/green_legoom.ron",
+        "sha256": "225ef6c2838ec2a688ff42324e5c5c4728a92431521680e6234b2ed7f5493cc2"
+      },
+      {
+        "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/assets/assets/common/items/npc_armor/biped_small/green_legoom/head/green_legoom.ron",
+        "sha256": "2a20863b83b2fd2be1964a27d2fa997c077763cd74df08b4fe4dffb35b15cc99"
+      },
+      {
+        "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/assets/assets/common/items/npc_armor/biped_small/green_legoom/pants/green_legoom.ron",
+        "sha256": "43f263dd07a353ee2c6b3b7703d73030e5b56199855cd5b133af77f6dc92da24"
+      },
+      {
+        "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/assets/assets/common/items/npc_weapons/unique/green_legoom_rake.ron",
+        "sha256": "25bf362994c4a3f515694c07fbc92ac698d252331a6ba5e0cff92f3c75aaf935"
+      },
+      {
+        "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/assets/assets/common/items/quest/legoom_leaf.ron",
+        "sha256": "35a9fabc5546eff0cd9d24f4fbf4e399682587a62e4b488d3f654a96d0af524a"
+      },
+      {
+        "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/assets/assets/common/items/weapons/bow/starter.ron",
+        "sha256": "dff01e6811856bf72e4b4d8e4fe4b982e4cbb01ec554f8a5b2e7af33a9325339"
+      },
+      {
+        "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/assets/assets/common/items/weapons/sword/starter.ron",
+        "sha256": "85d29962845d705eded7fd236a3272cc1dfa6e244d5dcd68b8036e61e1e1210f"
+      },
+      {
+        "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/assets/assets/common/loadout/world/legoom/green_legoom.ron",
+        "sha256": "4e50da084ac95a3514ecf18d18a8ab4d7c4e1af448a07ad7b760d1ef0eddbf93"
+      },
+      {
+        "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/assets/assets/common/loot_tables/creature/biped_small/legoom.ron",
+        "sha256": "60793be796c483a1cf8fb8207e726e2a663d2d1e0f5b20617434f6725e22a172"
+      }
+    ],
+    "reviewed_overlay_blocks_verified": [
+      "Primary",
+      "ToggleWield",
+      "default_body",
+      "aim_dir_offset",
+      "camera_to_native_look"
+    ],
+    "current_main_server_selector": "Original pinned server, no extension or composed runtime.",
+    "explicit_environment": "LIVEQUEST_VELOREN_RUNTIME=/home/msra/GameAgent/LiveQuestBench/output/temp/veloren-native-route-20261027/runtime.json",
+    "no_default_or_rebuilt_runtime_admission": true
+  },
+  "independent_review": {
+    "date": "2026-10-29",
+    "kind": "L04-all-choice-source-native-composition-decision",
+    "task_id": "VE-L04",
+    "source_commit": "132f98f9346426665bd3441925b8b91c20fed2d8",
+    "condition": "Unchanged hidden_ballistic_aperture_prototype_v7; three rear-opening assignments, two translated structures, original two25HP enemies, equipment,900s and no-death requirement. Limited three-choice ballistic-path discovery/reuse, not unrestricted projectile-leading transfer.",
+    "disposition": "supported",
+    "decision": "The new exact finite-clearance/native-physics and public-control construction closes the specifically named all-choice and ST/VM composition gaps from addendum2 at constructive, not whole-run, evidentiary strength. Recommend this exact version for parent acceptance under the limited construct. No particular scanner or VM reference victory is required. This is not a ledger admission or a claim that the historical false results became true.",
+    "evidence_refs": [
+      {
+        "path": "output/temp/task_development/checks/parallel-ve-learning-L04-source-composition-20261029.json",
+        "sha256": "cf89a7c3dd296e3012672ac55f401a34f1e3a3a3ccc94df2ea470488f86223ae"
+      },
+      {
+        "path": "output/temp/task_development/parallel-ve-learning-20261029/l04-finite-clearance.json",
+        "sha256": "88c088e1385ef52617f722b2b313349627791d14fba66d7f28a90b05055f45f4"
+      },
+      {
+        "path": "output/temp/task_development/worktrees/parallel-ve-learning-20261029/game/veloren/prototypes/aperture_geometry_audit.py",
+        "sha256": "054868c6bc39f80e50e360ae9598477ea4f433ebe8786f24db8aab05ab0ea267"
+      },
+      {
+        "path": "output/temp/task_development/worktrees/parallel-ve-learning-20261029/game/veloren/prototypes/ballistic_aperture.py",
+        "sha256": "807c2a39f08940949e9497fc9fbf5267542fc24106610802a7e4d92907fa5db7"
+      },
+      {
+        "path": "output/temp/task_development/learning-L04-v5/native-st-1/result.json",
+        "sha256": "ddbfe083a287d798a22aca06351ae4f9c26ac1f21b53e3bb02e210b2edd528be"
+      },
+      {
+        "path": "output/temp/task_development/learning-L04-v5/native-st-1/after/observation.json",
+        "sha256": "4154be512f0e6feb5df0a485b2fd1b46843a1be692a52cb527808f929ce9606a"
+      },
+      {
+        "path": "output/temp/task_development/parallel-ve-learning-20261029/native-navigation-1/result.json",
+        "sha256": "890c1b485d2321b55df478255eadbd81fdb014a774ad612a6eb38e624a10ae60"
+      },
+      {
+        "path": "output/temp/task_development/parallel-ve-learning-20261029/native-navigation-1/after/observation.json",
+        "sha256": "6749ea9b66b156df6d7eae066483335d6444ea129ce2ad46139742d8db931629"
+      }
+    ],
+    "verification_performed": [
+      "Read the finite-box intersection construction, exact generator and native collision/input/settings code. Independently reproduced the complete pure-geometry numeric report exactly: three assignments and32extreme-pose/stance rays per assignment. This computation launched no native process, model, scorer or test suite.",
+      "Verified four reviewed prototype/test files against committed132f98f bytes and all19 native source hashes listed in the handoff. Retain the report's explicit overlay-block binding limitation: the current session/protocol files are not claimed byte-identical as whole files to the older runtime manifest.",
+      "Rechecked the existing native endpoint and receipt hashes. In particular, the second original's final position/health do not contain a velocity or on-ground field; they must not be described as a measured stationary-target interval."
+    ],
+    "bug_status": "No known blocking defect found within this bounded source, fixture, evaluator and input composition. This is not exhaustive defect absence or a new loaded-process attestation.",
+    "feasibility_status": {
+      "assessment": "Supported constructively for the stated version and ordinary legal controls, with moderate confidence.",
+      "physical_component": "For the audited grounded-pose envelope, noncentral body aims rather than fixed centre-to-centre rays yield minimum XY half-clearance0.047958374m on the outer choices and0.25m on the centre choice. The native-source transverse bound0.038744398m fits the checked0.04m tube; vertical motion remains502.191279..502.866667 within the aperture. Arrows use Point terrain collision. The minimum clear target chord0.332951847m exceeds the native relative-motion sample spacing0.3m.",
+      "scope_of_geometry": "The32rays per assignment cover the explicitly audited extreme poses and stance errors, not every continuously moving/jumping target or every physically attainable cell pose. Firing stance and aim depend on the currently observed target pose; a single fixed stance is not certified. Grounded shooter, residual speed<=0.1, level aim and full charge are explicit assumptions.",
+      "native_anchor": "The existing same-episode v5 combat already kills the first original and deals22.41796875/25damage to the second in128.151s, with100HP and no deaths. This supplies actual native projectile, damage, survival and reuse evidence beyond the conditional static calculation. The separate v7 navigation witness measures0.081055m arrival error and0.066885m/s residual speed, inside the audited0.09m stance envelope.",
+      "joint_execution": "Keep one supported exterior route between the two structures, use public geometry/impact/health feedback to choose and refine a firing path, release movement before firing, and wait/re-aim for ordinary grounded opportunities rather than demand success against every target trajectory. Both required native enemies, player survival and continued ammunition-free stock-bow use are compatible in one900s episode. Existing native combat/navigation timing anchors substantial remaining time; no stitched whole-run duration or guarantee is asserted.",
+      "VM_information_and_action": "Default0 cycles into first-person camera, R wields and left mouse invokes native Primary. First-person look removes the third-person aiming offset. The visible Gameplay slider legally permits pan sensitivity1, giving0.00005rad/count instead of the default0.005rad/count; exact fine control therefore does not require a private coordinate input or settings-file edit. Public visual acquisition and feedback, not author geometry, must drive execution.",
+      "not_proven": "No whole v7 native win, actual VM bow episode, exact pixel-policy witness, universal grounded-target schedule or worst-case900s completion bound is claimed. Those absences alone are not substituted for a demonstrated mechanism/feasibility defect."
+    },
+    "construct_status": "Supported only as the modest three-choice acquisition/reuse mechanism already specified in addendum2. Both native kills are required, so useful first-structure information is acquired while completing an actual required subgoal and can prioritize the translated second encounter. Lawful cold scanning, direct geometry inspection, camera use and melee alternatives remain allowed. No secrecy of all camera views, necessary memory, unrestricted leading or changed-bearing generalization is claimed.",
+    "difficulty_status": {
+      "learning_component": 2,
+      "overall_provisional_band": "2-4, high uncertainty; VM aiming may dominate, while cheap cold scanning/inspection limits learning discrimination.",
+      "basis": "Three physical alternatives with truthful feedback and one reuse opportunity create modest information demand; native obstruction, full-charge release, supported repositioning and fine public aiming create nontrivial motor demand. Finite clearance is not itself a difficulty score, and the historical controller failures are not rating evidence.",
+      "calibration": "Final track-specific rating remains deferred and must not overwrite historical nulls. No demonstrated material triviality or impossible precision requirement in the inspected exact conditions; future real cheap bypass evidence would reopen the limited claim."
+    },
+    "experiment_status": "Unchanged: v5 valid native failure and v7 navigation-only encounterfalse. No new game/model experiment, no observed VM whole victory and no new admission/integration transaction. The handoff's qualifiedfalse/full_task_admittedfalse remain historical author states, not silently edited.",
+    "diagnostic_to_final_transfer": "v5 combat transfers only unchanged inner baffles, target cells, enemies, weapons, damage/scoring and demonstrated native combat behavior. It does not certify v7 perimeter traversal; that has separate v7 navigation and exact supported-route source evidence. Navigation alone proves no kill. Source VM input/precision composition is not relabeled as a native VM experiment. Author-only numeric coordinates were used to audit feasibility, not supplied to an evaluated policy.",
+    "remaining_actions": [
+      "Parent may accept only the exact separately identified limited-reuse version, preserving both original enemy goals and every lawful alternative. Keeping an unrestricted projectile-leading/changed-bearing label would remain a substantive mismatch.",
+      "Bind any integrated task and runtime to the reviewed generator, conditions and native mechanics, preserving explicit overlay/source differences and historical failures. This reviewer does not perform that integration.",
+      "Defer nonblocking track-specific calibration; do not require a scanner victory or alter geometry/resources merely to improve a reference outcome."
+    ],
+    "completed_changes": "Appended this independent bounded decision to the audit only. No canonical task/scorer, ledger, count, runtime or experiment changed.",
+    "confidence": "High for independently reproduced finite source geometry and legal fine-control resolution; moderate for whole-task constructive composition and the provisional difficulty band; no claim of measured whole-task VM reliability."
+  },
+  "verified_review_refs": [
+    {
+      "path": "checks/VE-L04-reviewed-source-composition-20261029.json",
+      "sha256": "cf89a7c3dd296e3012672ac55f401a34f1e3a3a3ccc94df2ea470488f86223ae"
+    },
+    {
+      "path": "output/temp/task_development/parallel-ve-learning-20261029/l04-finite-clearance.json",
+      "sha256": "88c088e1385ef52617f722b2b313349627791d14fba66d7f28a90b05055f45f4"
+    },
+    {
+      "path": "output/temp/task_development/worktrees/parallel-ve-learning-20261029/game/veloren/prototypes/aperture_geometry_audit.py",
+      "sha256": "054868c6bc39f80e50e360ae9598477ea4f433ebe8786f24db8aab05ab0ea267"
+    },
+    {
+      "path": "output/temp/task_development/worktrees/parallel-ve-learning-20261029/game/veloren/prototypes/ballistic_aperture.py",
+      "sha256": "807c2a39f08940949e9497fc9fbf5267542fc24106610802a7e4d92907fa5db7"
+    },
+    {
+      "path": "output/temp/task_development/learning-L04-v5/native-st-1/result.json",
+      "sha256": "ddbfe083a287d798a22aca06351ae4f9c26ac1f21b53e3bb02e210b2edd528be"
+    },
+    {
+      "path": "output/temp/task_development/learning-L04-v5/native-st-1/after/observation.json",
+      "sha256": "4154be512f0e6feb5df0a485b2fd1b46843a1be692a52cb527808f929ce9606a"
+    },
+    {
+      "path": "output/temp/task_development/parallel-ve-learning-20261029/native-navigation-1/result.json",
+      "sha256": "890c1b485d2321b55df478255eadbd81fdb014a774ad612a6eb38e624a10ae60"
+    },
+    {
+      "path": "output/temp/task_development/parallel-ve-learning-20261029/native-navigation-1/after/observation.json",
+      "sha256": "6749ea9b66b156df6d7eae066483335d6444ea129ce2ad46139742d8db931629"
+    }
+  ],
+  "all_three_layouts_recomputed": true,
+  "historical_scorer_replays": [
+    {
+      "path": "output/temp/task_development/learning-L04-v5/native-st-1",
+      "result_sha256": "ddbfe083a287d798a22aca06351ae4f9c26ac1f21b53e3bb02e210b2edd528be",
+      "success": false,
+      "core_checks_equal": true,
+      "scope": "Historical scorer compatibility only; not a new or stitched v7 experiment."
+    },
+    {
+      "path": "output/temp/task_development/parallel-ve-learning-20261029/native-navigation-1",
+      "result_sha256": "890c1b485d2321b55df478255eadbd81fdb014a774ad612a6eb38e624a10ae60",
+      "success": false,
+      "core_checks_equal": true,
+      "scope": "Historical scorer compatibility only; not a new or stitched v7 experiment."
+    }
+  ],
+  "public_control_conversion_checks": 25,
+  "public_projection_bridge": "Exact default projection on four archived native boundaries.",
+  "opening_bridge": "Current verify_player accepts both archived openings; no new native readiness claimed.",
+  "stronger_current_guards": "Current alive/2 not-downed rejection retained and checked; no old guard rolled back.",
+  "VM_composition": {
+    "primitive_mapping": "Default R toggles wield; default left mouse press/release calls native InputKind::Primary. The same charged-bow state, equipment, physics, collision and encounter evaluator apply. Shared X11 admits these ordinary keys/buttons, movement and mouse motion.",
+    "camera_path": "Ordinary CycleCamera key0 or zoom enters first person. In first person the native look direction is camera direction with zero third-person aim offset; no private coordinate access is required.",
+    "precision_issue_and_legal_resolution": "Default pan sensitivity100 with CURSOR_PAN_SCALE0.005 gives0.005rad per mouse count, too coarse to silently assume under the conservative wind bound. The ordinary visible Gameplay settings slider admits sensitivity1..200. Choosing1 through the public GUI gives0.00005rad/count, about0.00087m/count at the longest checked path. No settings file, runtime or hidden controller was modified or preconfigured.",
+    "composition": "Public movement to a supported front, ordinary first-person fine aiming, holding/releasing the charged bow, truthful health/impact feedback, and the same supported inter-structure walk form a lawful constructive VM sequence. No VM-only missing action was found.",
+    "limits": "Public visual acquisition and execution remain harder than ST coordinates. No native VM bow episode, exact pixel-policy witness or calibrated final VM difficulty is claimed. Their absence alone is not a mandatory reference-win gate."
+  },
+  "quality_document": {
+    "path": "docs/evidence/three-choice-ballistic-path-reuse-v7-alive2.json",
+    "sha256": "946e212765316008bcaf42de1063c4a8af8902dac53dea7ee48e0729f2a9468b"
+  },
+  "checker_sha256": "8d71f2524c569e2480cd43570daceb2d2c7b029bf5cd0ecdeff4300fcf275654",
+  "light_tests": {
+    "passed": 30,
+    "log": "output/temp/task_development/parallel-ve-learning-20261029/main-admission-tests.log",
+    "sha256": "b132fc76ede438487324e835c2836a536fc4797b7e812984e862d3b59b3df7b7",
+    "scope": "21 aperture tests,8 current native-binding cursor tests,1 retained alive-guard test."
+  },
+  "preserved_limits": "v5 native valid partial failure; v6 navigation fall; v7 navigation-only encounterfalse. No whole native or VM victory.",
+  "new_native_or_model_executions": 0,
+  "L02_admission": false
+}

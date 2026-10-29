@@ -1,0 +1,224 @@
+{
+  "task_key": "VE-L04",
+  "task_id": "projectile_lead_transfer",
+  "current_candidate_name": "Three-choice ballistic-path discovery and reuse (v7)",
+  "current_candidate_task_id": "hidden_ballistic_aperture_prototype_v7",
+  "proposal_version": 2,
+  "status": "v7_limited_three_choice_reuse_component_support_not_release_qualification",
+  "current_component_audit": {
+    "source": "game/veloren/prototypes/aperture_geometry_audit.py",
+    "construct": "Limited within-episode three-choice ballistic-path discovery/reuse, independently reviewed as defensible with provisional learning-component difficulty2 and high uncertainty. Not unrestricted leading or changed-bearing generalization.",
+    "geometry": "All three unchanged v7 layouts, both structures, extreme grounded target poses and +/-0.09m stance errors. Exact segment/expanded-voxel intersections; standing-body supported inter-structure route. This tolerance includes the separately measured0.0811m native navigation error; it is not a new controller guarantee. Noncentral legal aim points avoid the inner walls that can block centre-only aiming.",
+    "native_bounds": "Conditional source calculation: fully charged stock arrow115m/s, residual horizontal speed<=0.1m/s, level MaleHuman muzzle, point terrain collision, bounded native wind/drag/gravity and0.1s force-step cap. A conservative partial-final-step correction is included. Clear target contact exceeds native0.3m entity-sampling spacing.",
+    "limits": "Author-only private geometry, never controller input. Extreme-pose checks and source bounds are not native replay, whole completion, moving-target coverage, VM pixel aiming calibration or qualification.",
+    "vm_composition": "Default R toggles wield and left mouse routes press/release to the same native InputKind::Primary charged-bow state; public X11 supports those ordinary keys/buttons. Ordinary first-person view avoids third-person aim offset. Default pan100 is0.005rad/count; the visible Gameplay slider legally permits pan1,0.00005rad/count. No setting is secretly preconfigured. The private audit adds no VM coordinates/tools; this source construction is not a full VM witness.",
+    "admission_policy": "Current modest claim supersedes historical stronger leading/contrast gates below. Legal cold inspection, three-choice search, waiting and melee are retained. No compulsory failure, model/statistical study or winning reference controller is required. Source integration readiness is separate from task admission.",
+    "qualification": false
+  },
+  "independent_component_decision_20261029": {
+    "disposition": "Ready for parent exact-version acceptance of the limited three-choice reuse construct under the original900s/two-original-enemies objective; no winning scanner or VM whole episode required.",
+    "evidence": "Acceptance-policy audit dated_addenda[13] independently recomputed all3x32 audit rays, checked4 source files against commit and19 pinned native hashes, and combined v5 combat/v7 motor/source/ordinary-VM-control components.",
+    "condition": "Stances depend on current public target pose. Grounded/stationary poses are conditional source constructions, not measured stationary intervals; terminal entity records expose neither velocity nor grounding. No all-continuous-NPC-state guarantee.",
+    "difficulty": "Learning component2; overall provisionally2-4 with high uncertainty. Final calibration is nonblocking, not proof of unrestricted leading.",
+    "boundary": "Historical native failures, author qualificationfalse and the ledger remain unchanged. Adoption must use the narrow current candidate name/version, not unrestricted target-leading or changed-bearing claims."
+  },
+  "controller_revision_6": {
+    "geometry": "Unchanged versioned v7; no new native physics, health, rules or permissions.",
+    "repair": "Transfer the first public health-feedback aim offset together with its slot, rather than silently reverting to the fixed offset order at the second structure.",
+    "regression": "Exercise all three possible successful public offsets in cold, retained, and intermittent-miss public simulations.",
+    "diagnostic": "--navigation-only is an explicitly separate first-front public motor check, not an original-goal or learning witness.",
+    "qualification": false
+  },
+  "v7_engineering": {
+    "task_id": "hidden_ballistic_aperture_prototype_v7",
+    "change": "Begin each navigation leg with one native update and calibrate later pulses from actual settled public displacement. Require the published floor altitude and native on_ground before accepting arrival. Add real two-metre climbable perimeter walls.",
+    "reason": "V6's six-update move travelled13.208284m, not the fixed metres-per-tick estimate. The player fell and XY-only navigation later accepted arrival atz381 rather than501.",
+    "preserved": "Same three hidden aperture choices, target-independent placement, native AI/stats, ordinary controls and encounter goals. Perimeter exit remains legal; the controller floor check is not an evaluator restriction.",
+    "scope": "Native update cadence is a motor-interface issue, not an invented game physics parameter or learning-task mechanism. Added walls alter physical fall risk; do not claim unchanged difficulty.",
+    "qualification": false
+  },
+  "v6_controller": {
+    "geometry": "Unchanged v5 physical task, native controls, permissions and public goal.",
+    "demonstrated_reason": "V5 completed the first original target and landed four actual Projectile hits on the second, leaving2.58203125HP. It then abandoned the successful aim pair after one nondamaging observation; public records show the original target jumping.",
+    "change": "Retain the same episode's first positive slot/aim pair across intermittent nondamaging feedback, with ordinary waiting inside the existing ten-attempt bound. Unproven candidates still receive the finite sweep.",
+    "regression": "A fake public environment introduces one miss after a successful hit; the old policy abandons the valid pitch and fails, while the repaired policy finishes using its own feedback.",
+    "instance_scope": "A separate changed-controller engineering episode may reuse the exact v5 authored fixture, but starts with empty policy history. No prior mapping is supplied, no episodes are stitched and no cross-episode learning comparison is claimed.",
+    "qualification": false,
+    "native_result": {
+      "source_commit": "990c056b4d3e93155899169ad198e00dcfc46d9d",
+      "path": "output/temp/task_development/learning-L04-v6/native-st-1",
+      "measurement": "valid",
+      "success": false,
+      "seconds": 44.354914830997586,
+      "public_requests": 86,
+      "attack_requests": 0,
+      "health": 65.02734375,
+      "deaths": 0,
+      "native_damage_cause": "Falling",
+      "wrong_height_accepted_arrival": [18708.02734375, 10806, 381],
+      "interpretation": "The trajectory-recovery branch was never exercised. The old accepted-arrival error was XY-only, not a valid three-dimensional grounded arrival."
+    }
+  },
+  "v5_engineering": {
+    "task_id": "hidden_ballistic_aperture_prototype_v5",
+    "realized_mapping_count": 3,
+    "geometry_change": "Three rear-window choices admit distinct front approaches to the same target placement. All initial target positions and all inner-cell geometry are identical across assignments; no target-x encoding remains.",
+    "native_dependency": "Real Rock baffles determine whether native arrows reach the original enemies. The low, broad inner entrance narrows behind its front to accommodate converging trajectories without changing AI or weapon stats.",
+    "controller_change": "Stop, wait, re-observe public velocity/position, and correct until genuinely settled within0.15m. Recheck alignment after wielding and between attacks. No native position override or source-private ray/target inputs.",
+    "public_inputs": "Only published front-slot coordinates/front faces/exterior lanes and current public own/target observations; private fixture, assignment and snapshots are never controller inputs.",
+    "within_episode_policy": "An optional retained-feedback sweep tries the first target's public health-feedback slot first at the second. Both remain ordinary peer goals: no compulsory practice order, failure or probe count. Application-stage probes and direct inspection remain legal.",
+    "remaining_gates": [
+      "Actual native whole ballistic path and both identity-bound goals, not merely a point-ray test.",
+      "Post-hit native cell behavior and coverage of the three realized choices.",
+      "Direct inspection and cheap cold enumeration may eliminate a useful acquired-rule dependency. A retained-policy whole success is not a causal learning benefit.",
+      "ST/VM feasibility and difficulty remain separate; no model, formal or main integration."
+    ],
+    "qualification": false,
+    "native_result": {
+      "source_commit": "12edc6297a0b1240da03a4be5eb0a76318af2b07",
+      "path": "output/temp/task_development/learning-L04-v5/native-st-1",
+      "measurement": "valid",
+      "success": false,
+      "seconds": 128.1513318857178,
+      "public_requests": 442,
+      "attack_requests": 24,
+      "native_projectile_events": 9,
+      "first_original_goal_passed": true,
+      "second_original_remaining_health": 2.58203125,
+      "health": 100,
+      "deaths": 0,
+      "maximum_accepted_position_error": 0.14044596840895476,
+      "maximum_accepted_horizontal_speed": 0.07138901948928833,
+      "interpretation": "Native ballistic interception is established for both structures on this realized assignment. First-target feedback was actually reused at the second, but useful causal learning benefit and whole success are not established."
+    }
+  },
+  "v4_engineering": {
+    "task_id": "hidden_ballistic_aperture_prototype_v4",
+    "change": "Add ordinary inner Rock target cells with1m shooting apertures to physically bound post-hit motion. No AI, health, projectile or permission changes.",
+    "demonstrated_reason": "V3 public trace: first target moved from[18718.5,10818.5,502] to about[18715.72,10815.45,502] after the first actual hit, behind a closed part of the rear baffle. The finite controller did not complete it.",
+    "controller_repair": "Skip computed firing candidates outside the disclosed exterior lanes. Independent review identified a legal pose yielding x18699.5; do not mutate the completed v3 evidence.",
+    "interpretation": "Constrained native target motion weakens pure lead-transfer claims. Later public pose correlation and cheap cold inspection remain legal construct risks, not scoring prohibitions.",
+    "qualification": false,
+    "native_result": {
+      "source_commit": "5d79a1284e7859ca58d79d6fed64d58d875fbc27",
+      "path": "output/temp/task_development/learning-L04-v4/native-st-1/result.json",
+      "measurement": "valid",
+      "success": false,
+      "seconds": 40.31732636038214,
+      "public_requests": 98,
+      "attack_requests": 9,
+      "player_damage_events": 0,
+      "health": 100,
+      "deaths": 0,
+      "termination": "Finite first-structure sweep exhausted before the300-second engineering bound; not a full900-second difficulty trial.",
+      "public_evidence": "Nine distinct embedded Arrow entities at front/rear baffles; no complete emission ledger. Both targets retain one observed public position, so no post-hit containment witness.",
+      "controller_gap": "Near-destination arrival was accepted before native inertia settled. Intended first firing xy[18707.375,10806] became[18706.79296875,10805.9609375]; the first arrow struck x18707.98828125 just left of the x18708 opening. Future alignment needs settled public-pose verification, not a native-impossibility inference.",
+      "comparison_scope": "V4 uses slot0/+1 whereas v3 used slot2/+1. These are different instances, not a matched causal comparison of the cells.",
+      "worker_returncode": 0,
+      "server_stopped": true,
+      "learning_benefit": "not_estimated",
+      "findings": "output/temp/task_development/checks/VE-L04-v4-public-findings.json"
+    }
+  },
+  "v3_engineering": {
+    "task_id": "hidden_ballistic_aperture_prototype_v3",
+    "change": "Widen chamber, place the original target on the clear path continuation, and start more than32m away. All nine geometries now have a tested point ray through both baffles to the initial target.",
+    "motivation": "V2's point-ray proof stopped at the rear aperture and did not establish target interception. Its bounded native check completed with zero damage; that policy failure does not establish impossibility.",
+    "native_policy": "Finite public-position/health slot and aim sweep, with no first-structure mapping retained for the second. Public target positions and fixed exterior lanes are lawful inputs.",
+    "known_risk": "Later truthful body-position observations may directly reveal alignment. A cold sweep success would expose an attribution gap, not qualify learning.",
+    "native_gate": "Native muzzle offsets, gravity, interception and whole completion remain separate from the point-ray test.",
+    "model_runs": 0,
+    "native_result": {
+      "source_commit": "8a4449c864e9d7f492df29c3147de51e8ba4d0b0",
+      "path": "output/temp/task_development/learning-L04-v3/native-st-1/result.json",
+      "measurement": "valid",
+      "success": false,
+      "seconds": 46.600627393461764,
+      "public_requests": 117,
+      "attack_requests": 10,
+      "opening_public_legooms": [],
+      "player_damage_events": 1,
+      "damage": 5.9140625,
+      "health": 100,
+      "deaths": 0,
+      "learning_benefit": "not_estimated",
+      "emitted_shots": "not_measured"
+    }
+  },
+  "v2_engineering": {
+    "source_commit": "e2f131b1952ff18275e4fedb2807154fefdec932",
+    "task_id": "hidden_ballistic_aperture_prototype_v2",
+    "realized_mapping_count": 9,
+    "geometry": "Closed roof and shell; three one-cell slots, second baffle four metres back, one selected rear slot with -1/0/+1 metre lateral offset.",
+    "preserved": "Original public combat goals, native stock assets, ordinary sword, inspection and all legal combat actions. No secret ranged-only scoring.",
+    "tests": "27 passed, six opt-in native tests skipped; point-ray test is not a native ballistic proof.",
+    "independent_review": "454628fc exact-version review: prior standing/roof bypass materially closed; actual human roll height still needs actor-specific/native verification. Cold inspection and nine-combination firing remain legal threats.",
+    "native_check": "Completed valid failure:243.221 seconds including terminal scoring,15 public requests,100HP,zero deaths,zero player damage. Native front-wall collision and public embedded-arrow observation occurred. No whole native projectile success.240-second engineering limit versus900-second task cannot calibrate difficulty.",
+    "runtime": "Pinned 387e3485fb1fa1edcfb810e36ed2f1cef4d07bfeb487f73d8be433fd82e653d7; route observer disabled.",
+    "evidence": "output/temp/task_development/learning-L04-v2/native-st-1",
+    "learning_benefit": "not_estimated"
+  },
+  "isolated_prototype": {
+    "historical_version": 1,
+    "source": "game/veloren/prototypes/ballistic_aperture.py",
+    "task_id": "hidden_ballistic_aperture_prototype",
+    "decision": "Autonomous routine-design authorization selects a separately versioned physical-aperture objective, not a silent replacement of pure target-lead transfer.",
+    "native_mechanism": "Repeated real Rock baffles share a fresh private open-side assignment. Native projectile collision, walking and autonomous original Green Legooms remain unchanged.",
+    "stock_asset_audit": "Installed pinned assets/common/items/weapons/bow/starter.ron is the ordinary Uneven Bow: Bow/Two, range1.0, speed0.75, power0.55. No item stats or abilities are modified; the displaced ordinary starter sword is retained and public.",
+    "public_contract": "Both original enemies must receive actual player damage and die; player never dies and finishes with at least one health. Existing encounter evaluator only. No secret side, shot budget, trial count, practice order or ranged-only scoring obligation.",
+    "privacy": "Public instructions/evaluator and initial enemy assignments are identical across the two physical mappings. Private fixture/seed manifest is never policy input. Native initial-frame and autonomous-motion leakage audits remain required.",
+    "evidence_limits": "Offline geometry and task-binding validation only. No native arrow-path/whole-task witness, ST equivalence, complete emission ledger or causal learning benefit. Direct inspection, walking through a passage, close combat and enemy escape/motion are lawful counterpolicies/confounds, not reasons to mutate AI or impose hidden penalties.",
+    "comparisons": "Before any model comparison, run bounded native discovery/application and matched own-history/no-history/mismatched-history/robust controls on fresh realized maps. Two assignments are two mapping classes, not unlimited seed diversity."
+  },
+  "trial_scope": "within_episode",
+  "qualification": false,
+  "learning_benefit": "not_estimated",
+  "independent_review": {
+    "historical_version": 1,
+    "disposition": "Retain as an unqualified offline engineering prototype, not an impossible task.",
+    "concrete_shortcut": "The two-metre-wide, three-metre-high clear passages permit ordinary walking and generic melee with the retained starter sword. Existing encounter scoring does not require projectile attacks.",
+    "consequence": "A lawful whole success would establish only feasibility under that policy, not projectile learning. Do not prohibit melee secretly or count the two realized mappings as seed diversity.",
+    "delivery": "No supported native track, scientific qualification or current-runtime-final readiness. ST and VM difficulty remain independently unassessed."
+  },
+  "difficulty_policy": "Allow evidence-based ST/VM difficulty 2 or 4 instead of forcing 3. No quota, inflated rating, relaxed hidden-mechanism requirement or weakened native success gate; this proposal remains unassessed.",
+  "supersedes": "Version 1's repeated shooting with disclosed fixed rules and only a changed bearing is insufficient.",
+  "public_contract": "Publish native target identities/goal obligations, admitted firing areas if any, whole-task completion conditions, resource/time limits and controls. A shot budget, if ever admitted, must be explicit and backed by native emissions, not attack requests.",
+  "same_episode_contract": "Explore and use the acquired feedback on subsequent goals in the same continuous world. No target restoration, replenishment, restart or cross-episode memory; time and real shot/resource consequences continue. One informative successful shot is legitimate discovery.",
+  "options": [
+    {
+      "id": "native_weapon_profile_assignment",
+      "native_mechanism": "Unmodified native ranged abilities scale projectile speed by actual weapon range stats, and charged shots use native charge-dependent speed. A private instance assignment could associate marked equipment sources with genuinely different existing native bow profiles.",
+      "implementation": "First select a vetted pair of stock native bows with distinct relevant range/speed behavior. Keep the source-to-profile assignment initially out of view, acquire/equip through ordinary controls, and reuse each discovered profile for a later target/bearing.",
+      "exploration": "Own projectile trajectories and hit/miss observations may reveal flight/lead behavior. Native names and tooltips remain truthful and usable.",
+      "initial_secrecy": "Audit whether equipment IDs, names, tooltips or ordinary ST fields already reveal the full mechanism. If acquisition/inspection directly identifies everything and prior rules suffice, do not claim empirical trial dependency or redact legitimate fields to rescue the design.",
+      "availability": "Native range and charge effects are source-confirmed. Audited Simple starter/Sagitta/Velorite bows all have range1.0; names do not establish distinct fully charged ballistic profiles. Native modular Longbow/Shortbow limbs have range1.2/0.8 modifiers, but finished assembly/material stats and current Simple-only fixture admission are unvalidated. No ready pair, initial source concealment, public-information audit or native cross-bearing witness is established.",
+      "decision": "No approval wait for routine audit, but a distinct native-profile pair and leakage-safe setup remain unestablished. Never secretly change item stats or control mappings."
+    },
+    {
+      "id": "physical_ballistic_aperture_mapping",
+      "native_mechanism": "A private motif-to-aperture mapping selects actual occluded rock baffles/clearances. Real native projectiles collide with solid terrain; a successful path physically reaches the original target rather than satisfying an oracle-only pitch rule.",
+      "implementation": "Construct repeated marked firing apparatuses using existing rock blocks, with practice and application copies transformed in heading/location. Targets keep ordinary native movement; no forced patrol or speed.",
+      "exploration": "Ordinary shots, visible solid impacts, careful viewing and recovery actions reveal the aperture's viable trajectory. No required miss or fixed calibration count.",
+      "application_dependency": "Own observed motif-to-clearance behavior can guide subsequent firing. Direct inspection, waiting for favorable target motion and robust trajectory policies remain lawful alternatives.",
+      "availability": "Rock authoring and native projectile/terrain collision exist. Current shared source also contains a projectile_solid_contact hook, but this proposal has no validated complete emission ledger or authored-apparatus witness.",
+      "decision": "Selected as the distinct hidden_ballistic_aperture_prototype under routine autonomous authorization. This emphasizes native ballistic paths, not pure target lead; no benchmark replacement or qualification follows from authoring it."
+    }
+  ],
+  "shot_ledger_gate": "A shot budget still requires a complete native owner-bound emission ledger including misses and a predeclared multi-projectile unit. A solid-contact hook and hit/death receipts alone are insufficient. Do not claim that no shared instrumentation exists; completeness and native validation for this candidate remain unestablished.",
+  "counterpolicy_specification": {
+    "retained": "Use only this episode's own source/profile or motif/aperture feedback.",
+    "no_history": "Ignore the practice ledger during application while native state continues.",
+    "mismatched_history": "Permute associations in the same episode's own ledger; do not forge observations or import another run's transcript.",
+    "robust_control": "Prior knowledge, inspection, cautious waiting and generic aiming remain legal.",
+    "interpretation": "A one-shot hit can arise from discovery, luck, prior knowledge or robustness. It is neither learning proof nor overfit proof.",
+    "execution": "No model comparison or cross-episode memory/reset/restart protocol implemented."
+  },
+  "held_out_instances": "Keep fresh realized source/profile or motif/aperture permutations separate from development mappings; vary bearing/distance independently. Private seeds and latent maps must not appear in task text, schemas, initial observations or evaluator feedback. Identical realized maps under different seed labels are not new hidden rules.",
+  "evidence_gate": "Require accepted objective, real native causal variation, initial-secrecy/shortcut audit and useful same-episode history contrast on fresh mappings. Preserve legitimate cold successes; do not restrict AI or increase hidden penalties to force separation.",
+  "source_audit": [
+    "output/temp/veloren-native-route-20261027/source/common/src/comp/ability.rs: charged-ranged initial/scaled projectile speed multiplied by stats.range",
+    "output/temp/veloren-native-route-20261027/source/common/src/states/charged_ranged.rs: native charge-fraction projectile speed",
+    "output/temp/veloren-native-route-20261027/source/common/systems/src/projectile.rs: terrain collision and current projectile_solid_contact source hook",
+    "game/veloren/fixture.py: supported authored rock geometry"
+  ]
+}
