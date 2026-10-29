@@ -1,0 +1,632 @@
+{
+  "schema": "livequest-c02-main-source-admission/1",
+  "task_id": "VE-C02",
+  "passed": true,
+  "reviewed_source": "5e1738f432d36789fcf2dfd2922b9b3ea56ded6e",
+  "main_parent": "ceb10abf45f046a9568f6945d06e6d95b120a1db",
+  "source_checks": [
+    {
+      "path": "benchmark/__init__.py",
+      "review_sha256": "d5681c0cc4bca9f204eb91717c5b6a9a0494654e2fd0d2a198f43ef8e143488b",
+      "main_sha256": "d5681c0cc4bca9f204eb91717c5b6a9a0494654e2fd0d2a198f43ef8e143488b",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "benchmark/config.py",
+      "review_sha256": "5715f2a98606af7171bab142db256fc2a984f239f0bfef0dec5231ab0beba1c4",
+      "main_sha256": "5715f2a98606af7171bab142db256fc2a984f239f0bfef0dec5231ab0beba1c4",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "benchmark/factory.py",
+      "review_sha256": "d55fc69a5bac9a45717a5fc63ff37e27c6efba3b3c706448222231e9db522763",
+      "main_sha256": "d55fc69a5bac9a45717a5fc63ff37e27c6efba3b3c706448222231e9db522763",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "benchmark/results.py",
+      "review_sha256": "f773069bf144d457c2e2b52e0a760e8e12c7f395e90f2efb94ea0e9669d0b269",
+      "main_sha256": "f773069bf144d457c2e2b52e0a760e8e12c7f395e90f2efb94ea0e9669d0b269",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "benchmark/runner.py",
+      "review_sha256": "48f014e5f3129fcb6333af01bb4be59843d676dd9e148c11293519e78ed01dba",
+      "main_sha256": "48f014e5f3129fcb6333af01bb4be59843d676dd9e148c11293519e78ed01dba",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "benchmark/team.py",
+      "review_sha256": "aaab49326b826c3e0b39ab7cd4fd4f2803db4fd08d1aeb9d4e7eaa96e1dc9181",
+      "main_sha256": "aaab49326b826c3e0b39ab7cd4fd4f2803db4fd08d1aeb9d4e7eaa96e1dc9181",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/backends/x11/__init__.py",
+      "review_sha256": "580cfd4227c9d69caf32f3b3697df3f00daa65e7d6feddcee1200c51077db5fa",
+      "main_sha256": "580cfd4227c9d69caf32f3b3697df3f00daa65e7d6feddcee1200c51077db5fa",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/backends/x11/actions.py",
+      "review_sha256": "6e5749eb8e242943eb0d402bf7daf51500b7dca1c00be9a27586cbda36f3eb0e",
+      "main_sha256": "6e5749eb8e242943eb0d402bf7daf51500b7dca1c00be9a27586cbda36f3eb0e",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/backends/x11/capture.py",
+      "review_sha256": "049e1d173cf1a4e0782e9d533af85de9c9bbe791cbc4014756eda69e61afa82e",
+      "main_sha256": "049e1d173cf1a4e0782e9d533af85de9c9bbe791cbc4014756eda69e61afa82e",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/backends/x11/display.py",
+      "review_sha256": "2462a9ec7d57bfc126b3df8f1983e97b2f97c05a2217d2c2c5c2bf897989052d",
+      "main_sha256": "2462a9ec7d57bfc126b3df8f1983e97b2f97c05a2217d2c2c5c2bf897989052d",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/backends/x11/interface.py",
+      "review_sha256": "3ea1390d072b2e8dabb1ebebb0b588150fba807865eecffd4a7b677eb087b3cc",
+      "main_sha256": "3ea1390d072b2e8dabb1ebebb0b588150fba807865eecffd4a7b677eb087b3cc",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/backends/x11/recording.py",
+      "review_sha256": "b270717e7dd6a888ca916bb6ee6c260bc256211b2bd0fa2346d22d8b029bcc81",
+      "main_sha256": "b270717e7dd6a888ca916bb6ee6c260bc256211b2bd0fa2346d22d8b029bcc81",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/base_game.py",
+      "review_sha256": "de36826fe48a8976e00cba39b4dfc5f9aaa39f393d989c037c254f42763e4d7b",
+      "main_sha256": "de36826fe48a8976e00cba39b4dfc5f9aaa39f393d989c037c254f42763e4d7b",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/bindings.py",
+      "review_sha256": "9253058d58765caa3628e8df4122ed123b08622eec505b2e73114e30b1b8a14c",
+      "main_sha256": "9253058d58765caa3628e8df4122ed123b08622eec505b2e73114e30b1b8a14c",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/team.py",
+      "review_sha256": "30dd3508134950dfb1029ad7b2a02a7dd85a5a98118eced4584da951346d87fd",
+      "main_sha256": "bc80b21d245fce6f2d0f37cc457c5339e6d8f97a26fe4d7f7b4b62c37ed86245",
+      "worktree_matches_head": true,
+      "matches_review": false,
+      "bridge": "Reviewed C05-only escort branches are absent; C02 has neither escort nor companion. Its team controls, member fixture, support, endpoint and metric paths are retained."
+    },
+    {
+      "path": "game/veloren/__init__.py",
+      "review_sha256": "f73d16a97595f5cd746f78ae2f5d3e9ee473a350fbf23dac6bd0f57e8f58dfbb",
+      "main_sha256": "f73d16a97595f5cd746f78ae2f5d3e9ee473a350fbf23dac6bd0f57e8f58dfbb",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/veloren/binding.py",
+      "review_sha256": "c5ba9baa4f96609dace86b99e99091faeddb642ffacb1c64b0dc6025c9be4450",
+      "main_sha256": "5825a2549bb0268d00e198fdd85615796c73b25674af7fcfe60134df7298b50e",
+      "worktree_matches_head": true,
+      "matches_review": false,
+      "bridge": "Additional active_build/encounter_supplies registrations are not selected: C02 participant bindings use state with the unchanged minimum-health predicate."
+    },
+    {
+      "path": "game/veloren/contracts.py",
+      "review_sha256": "86e8e2d6b795a248038837710c1afbbb6e3059d462175396723a083d3a3ea7ec",
+      "main_sha256": "86e8e2d6b795a248038837710c1afbbb6e3059d462175396723a083d3a3ea7ec",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/veloren/evaluators/active_build.py",
+      "review_sha256": null,
+      "main_sha256": "5fdb906d832c5f80ddb5168351e1caa877d692b0ab877d6e9859b95d72b24774",
+      "worktree_matches_head": true,
+      "matches_review": false,
+      "bridge": "New inactive evaluator; neither C02 team nor participant binding selects it."
+    },
+    {
+      "path": "game/veloren/evaluators/attack.py",
+      "review_sha256": "22ca6a3509b13c2ff9f11ec73ca2dc8934172a417f1d34532a089eab729ec4a5",
+      "main_sha256": "22ca6a3509b13c2ff9f11ec73ca2dc8934172a417f1d34532a089eab729ec4a5",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/veloren/evaluators/contract.py",
+      "review_sha256": "cb4ad9c2c4aa0b690a8eeb250c48926de656b0da25ce7f7b34e377d541e0ebd0",
+      "main_sha256": "cb4ad9c2c4aa0b690a8eeb250c48926de656b0da25ce7f7b34e377d541e0ebd0",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/veloren/evaluators/deaths.py",
+      "review_sha256": "144d424a3e9efe8196cc54c78700be2f32d63ecb784586b285032869baa38724",
+      "main_sha256": "144d424a3e9efe8196cc54c78700be2f32d63ecb784586b285032869baa38724",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/veloren/evaluators/encounter.py",
+      "review_sha256": "4e7dfb4132ddfb5a0331f30f77971b8e9126d33033dae9ad4fe3fe690be4a923",
+      "main_sha256": "85ff1a3e8f6590492d2cd1a178e5c3a7ce0543a9c3df0508ac99099b42611551",
+      "worktree_matches_head": true,
+      "matches_review": false,
+      "bridge": "C05-only zero-floor companion/escort additions are absent. C02 has no companion; source-bound original-target death and support helpers are unchanged."
+    },
+    {
+      "path": "game/veloren/evaluators/encounter_supplies.py",
+      "review_sha256": null,
+      "main_sha256": "8a42df9f895a457252cafb614044fcc0dd5bccc98f64e662bdab42ec53080470",
+      "worktree_matches_head": true,
+      "matches_review": false,
+      "bridge": "New inactive evaluator; C02 has no supplies/pickup fixture or evaluator."
+    },
+    {
+      "path": "game/veloren/evaluators/endpoints.py",
+      "review_sha256": "ca445973cf0a7295f8801f8667e413da1d4f92e2d146d710d560ceb5bec1fc9c",
+      "main_sha256": "ca445973cf0a7295f8801f8667e413da1d4f92e2d146d710d560ceb5bec1fc9c",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/veloren/evaluators/expedition.py",
+      "review_sha256": "20ac61f207290123db441526e6cc11599e942f3b9854c242a4cbf6c6ebdc6115",
+      "main_sha256": "20ac61f207290123db441526e6cc11599e942f3b9854c242a4cbf6c6ebdc6115",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/veloren/evaluators/glide_route.py",
+      "review_sha256": "6ff34ef400d2c8b1372908e492353e0a9b5fb204c4ddd5428cffafae8c414098",
+      "main_sha256": "6ff34ef400d2c8b1372908e492353e0a9b5fb204c4ddd5428cffafae8c414098",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/veloren/evaluators/harvest.py",
+      "review_sha256": "323f7373f37a1b3ab218be825109bf4b997e7430b2fcf79790468628807cc286",
+      "main_sha256": "323f7373f37a1b3ab218be825109bf4b997e7430b2fcf79790468628807cc286",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/veloren/evaluators/itinerary.py",
+      "review_sha256": "80211f112c5f10d6a2e969fe7389d108377fa27d1592e1c2eed5f053ad1a80d4",
+      "main_sha256": "80211f112c5f10d6a2e969fe7389d108377fa27d1592e1c2eed5f053ad1a80d4",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/veloren/evaluators/peer_support.py",
+      "review_sha256": "d1f8d14e3d2e22e2fe60fd8629740fed2dacd9c1c6b669f8b4150715bf76e9e5",
+      "main_sha256": "d1f8d14e3d2e22e2fe60fd8629740fed2dacd9c1c6b669f8b4150715bf76e9e5",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/veloren/evaluators/pickups.py",
+      "review_sha256": "9c8d3a3ae71eaa4e9feb7f708c29e5ba2e0cbef4a9ebe0e8c37335d90fe7d15a",
+      "main_sha256": "9c8d3a3ae71eaa4e9feb7f708c29e5ba2e0cbef4a9ebe0e8c37335d90fe7d15a",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/veloren/evaluators/route_transfer.py",
+      "review_sha256": "726f9a663b4f15cf7d7cfc6d3bfb672ec14ab8416d48c238a96d227eca805f46",
+      "main_sha256": "726f9a663b4f15cf7d7cfc6d3bfb672ec14ab8416d48c238a96d227eca805f46",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/veloren/evaluators/team_efficiency.py",
+      "review_sha256": "57532661e2f75630e2dc0fb1c3572c1a5571eb273e755693776152a05c6058b4",
+      "main_sha256": "57532661e2f75630e2dc0fb1c3572c1a5571eb273e755693776152a05c6058b4",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/veloren/fixture.py",
+      "review_sha256": "8679dc8b2dbee74e7c3cc60060ed3bd903e6de3c7cfe76e0b8bb98a3c912354f",
+      "main_sha256": "377b1f09c35ec837f8dd1fdc55870821f0a4e689e690ed339866519f22482443",
+      "worktree_matches_head": true,
+      "matches_review": false,
+      "bridge": "Immediate fallback bindings use a cursor and warm it once. C02 defers encounters until both grouped peers are ready and injects its existing validated reader. No companion, immediate fallback, supply ageing or live setup branch is selected."
+    },
+    {
+      "path": "game/veloren/game.py",
+      "review_sha256": "ed7db2975a5d80dcb27fdcf9fdc10925840f992f507c2ee8121932d9abc557dd",
+      "main_sha256": "ed7db2975a5d80dcb27fdcf9fdc10925840f992f507c2ee8121932d9abc557dd",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/veloren/harvest.py",
+      "review_sha256": "7e31277276d42695e6b1dd446bd24ec5d43ed8b5d7d24fc3d05c54d684315ce2",
+      "main_sha256": "7e31277276d42695e6b1dd446bd24ec5d43ed8b5d7d24fc3d05c54d684315ce2",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/veloren/native_bindings.py",
+      "review_sha256": "8d77711889b5c020cedb79af2be8c607232b225cb58a4e1d7b28f5cc26e81947",
+      "main_sha256": "4afac9e88311893308ab002ef57332ca9013766cdb86930c4acf1b3dc39cc296",
+      "worktree_matches_head": true,
+      "matches_review": false,
+      "bridge": "New combat cursor is not used by C02's injected deferred group reader. Existing loaded-actor cursor defaults remain unchanged."
+    },
+    {
+      "path": "game/veloren/patches/0001-physical-input.patch",
+      "review_sha256": "bfc5fcc95635724896cdf995b01a8a97b2458aa85b1369d7665b0cfb76afb8e7",
+      "main_sha256": "bfc5fcc95635724896cdf995b01a8a97b2458aa85b1369d7665b0cfb76afb8e7",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/veloren/patches/0002-disable-native-protection.patch",
+      "review_sha256": "eb4aa778c6396a34c3ea8ecca664eb6872905233b3b20767e196cd2730479a42",
+      "main_sha256": "eb4aa778c6396a34c3ea8ecca664eb6872905233b3b20767e196cd2730479a42",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/veloren/patches/0003-native-motion-evidence.patch",
+      "review_sha256": "de7dc480c29734dd91175f562fa5e92b4e992cf0747ab6254312d1dff77f321c",
+      "main_sha256": "de7dc480c29734dd91175f562fa5e92b4e992cf0747ab6254312d1dff77f321c",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/veloren/patches/0004-native-glide-evidence.patch",
+      "review_sha256": "8d7cdc264cfc9424699ca90ed1b68c1d4476691be5fef0af08d17f333ada6160",
+      "main_sha256": "8d7cdc264cfc9424699ca90ed1b68c1d4476691be5fef0af08d17f333ada6160",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/veloren/patches/0005-bounded-auxiliary-input.patch",
+      "review_sha256": "89799409266b44ea2300fcfacc4417e7b7bcce68f650fd60a6a616916d7ccbcf",
+      "main_sha256": "89799409266b44ea2300fcfacc4417e7b7bcce68f650fd60a6a616916d7ccbcf",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/veloren/patches/0006-native-route-evidence.patch",
+      "review_sha256": "7700fd6cc6b78f4b6c897df7c906049d9fb94bb6697a109f3f2e26e70daf9c4f",
+      "main_sha256": "7700fd6cc6b78f4b6c897df7c906049d9fb94bb6697a109f3f2e26e70daf9c4f",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/veloren/patches/0007-native-pickups.patch",
+      "review_sha256": "758c81aa1d4eb8536ee15fca83f9f00fce4be1af21e8e744b405f3f6a7498e13",
+      "main_sha256": "758c81aa1d4eb8536ee15fca83f9f00fce4be1af21e8e744b405f3f6a7498e13",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/veloren/patches/0008-native-physics-route-evidence.patch",
+      "review_sha256": "e2fc491d5bb5d91fdc2b6435ef485e3c756674e31df30661a8dd0c3a1e683b8a",
+      "main_sha256": "6208f2ff059bbde5af61eaf64a1bf50043a5f8305d5cad958ac2fba60a3c07e7",
+      "worktree_matches_head": true,
+      "matches_review": false,
+      "bridge": "Current stronger route observer recipe is preserved, not rolled back. Admission uses the exact existing f90ca9 artifact and all1160 compiled-source pins; neither rebuilding current recipes nor another/default runtime is admitted."
+    },
+    {
+      "path": "game/veloren/prototypes/__init__.py",
+      "review_sha256": "9586353e2e1de5508d1dfc7d4d66becfea83766607a5a7a14fa85b70845d2ec4",
+      "main_sha256": null,
+      "bridge": "Absent C05-only prototype or optional private provenance logger; not a C02 gameplay dependency or retrospective loaded-process claim."
+    },
+    {
+      "path": "game/veloren/prototypes/sheltered_caravan.py",
+      "review_sha256": "7b5bd8895e0509d800b927ddc020f05ead4a03c72e4a7b59f389238c0a9091e9",
+      "main_sha256": null,
+      "bridge": "Absent C05-only prototype or optional private provenance logger; not a C02 gameplay dependency or retrospective loaded-process claim."
+    },
+    {
+      "path": "game/veloren/runtime/composition.py",
+      "review_sha256": null,
+      "main_sha256": "229262805b83d287a60b4959e72ecad1e930a70d27b8e51bc82b057a3e0844a8",
+      "worktree_matches_head": true,
+      "matches_review": false,
+      "bridge": "New inactive runtime selector; supported C02 manifest is not composed."
+    },
+    {
+      "path": "game/veloren/runtime/install.py",
+      "review_sha256": "d35c6bda0c267156abf4f680e2816448a2d7ccc7ec8ea7698500488cb1d0468e",
+      "main_sha256": "d35c6bda0c267156abf4f680e2816448a2d7ccc7ec8ea7698500488cb1d0468e",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/veloren/runtime/journal.py",
+      "review_sha256": "317402daf3cc33598ea735c1909ca2973c33569d95ceb1eee995de3aa32f0901",
+      "main_sha256": "317402daf3cc33598ea735c1909ca2973c33569d95ceb1eee995de3aa32f0901",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/veloren/runtime/provenance.py",
+      "review_sha256": "f08c4094f5b67810c68fbaf772d3d9f0d8d489b1322b3d27970c590c0d398445",
+      "main_sha256": null,
+      "bridge": "Absent C05-only prototype or optional private provenance logger; not a C02 gameplay dependency or retrospective loaded-process claim."
+    },
+    {
+      "path": "game/veloren/runtime/records.py",
+      "review_sha256": "f4aeed2682ccc7334aa3347a8e7087dd3c47e7fdb705eb9f47677bdf896f2bc7",
+      "main_sha256": "f4aeed2682ccc7334aa3347a8e7087dd3c47e7fdb705eb9f47677bdf896f2bc7",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/veloren/runtime/server.py",
+      "review_sha256": "bbbb74bc200e18d5f50189aead15eb76bec9c315db0119146d08c1026e772d4d",
+      "main_sha256": "bbbb74bc200e18d5f50189aead15eb76bec9c315db0119146d08c1026e772d4d",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/veloren/runtime/server_extension.py",
+      "review_sha256": "3832c822580b41399300fba19a24cd10c6159de1b6b6d557a0edb2a52cdee5b4",
+      "main_sha256": "eb8961a8c24af1ece20873c1fd964afb2edf0a3590b7009fdc451526752b9830",
+      "worktree_matches_head": true,
+      "matches_review": false,
+      "bridge": "New composition branch is unreachable: the exact supported C02 manifest has no runtime_composition, server_extension or pickup_evidence."
+    },
+    {
+      "path": "game/veloren/runtime/session.py",
+      "review_sha256": "d19880666c3d12f8e25c3d2b7809b4cee2aff05957fd1c267e19d6c5e2b760f9",
+      "main_sha256": "d19880666c3d12f8e25c3d2b7809b4cee2aff05957fd1c267e19d6c5e2b760f9",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/veloren/runtime/startup.py",
+      "review_sha256": "2eded18810e550cfb39e121db292610879a49a47bffbe54722ce6f0e31f65083",
+      "main_sha256": "2eded18810e550cfb39e121db292610879a49a47bffbe54722ce6f0e31f65083",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/veloren/runtime/worker.py",
+      "review_sha256": "aebd35a69717877c195bad3ef02f3a3ae46b18d487efd0afdd1b617ff4dc357c",
+      "main_sha256": "9fe13c1dc6d843da37fe9dc9ec4c2fb56b311f330179fd35aa58b2750dc7d8dc",
+      "worktree_matches_head": true,
+      "matches_review": false,
+      "bridge": "Reviewed optional provenance writes are absent; no claim of prospective loaded inventories is made for main. Additional swap_weapons is outside C02's ST allowlist. Group setup, strict opening validation and native action implementation are preserved."
+    },
+    {
+      "path": "game/veloren/settlement.py",
+      "review_sha256": "8498a6d385640b1ddce4179c996f473b074bc46bde462a64a95e604841793fea",
+      "main_sha256": "8498a6d385640b1ddce4179c996f473b074bc46bde462a64a95e604841793fea",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    },
+    {
+      "path": "game/veloren/structured_tools/interface.py",
+      "review_sha256": "c0993aea0136f920f0458da69a975a925a135ae6b38beb3b5324675bb194ea37",
+      "main_sha256": "cb53fabd08b08167aaa30f06f2413ac88e8accfb8b706ab38efd530bb40111fc",
+      "worktree_matches_head": true,
+      "matches_review": false,
+      "bridge": "Only SwapWeaponsTool registration added outside this exact C02 allowlist. All declared specs, 112 actual conversions and boundary projections are checked."
+    },
+    {
+      "path": "game/veloren/visual_motor/interface.py",
+      "review_sha256": "89479670c13073a7b7dfb409b3768d7f502fdad90750585191885598ea6d1052",
+      "main_sha256": "89479670c13073a7b7dfb409b3768d7f502fdad90750585191885598ea6d1052",
+      "worktree_matches_head": true,
+      "matches_review": true,
+      "bridge": "Exact bytes"
+    }
+  ],
+  "task_pins": {
+    "structured_tools": {
+      "path": "config/veloren/tasks/structured_tools/sceptre_and_sword_team.yaml",
+      "sha256": "8224aa32af836390c35636ce9a43f846999e4164c33c19d45569ebf368bf9a5a"
+    },
+    "visual_motor": {
+      "path": "config/veloren/tasks/visual_motor/sceptre_and_sword_team.yaml",
+      "sha256": "a414acae508d13f2769db26ef4e14be4ac9f608fc0f19fda4ecbd281b8695144"
+    }
+  },
+  "frozen_manifest_untouched": {
+    "path": "docs/reference_tasks_manifest.json",
+    "sha256": "56c7cc03966075a26335fe8249bb78693a597fa2793038d50344aa9fa5dae766"
+  },
+  "supported_runtime": {
+    "manifest_path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/veloren-route-v2-contact-fix/candidate-runtime.json",
+    "sha256": "f90ca9a97e20a106e6d749368319cdd45243a2f902605e7797c6f8e3613c3793",
+    "route_schema": "native-client-route/2",
+    "renderer_sha256": "5141b9ac796d5e71f5ba999f910777d364480cfb2b0344731425e1a65d1c5878",
+    "manifest_dependency_count": 21,
+    "compiled_source_files_verified": 1160,
+    "upstream_manifest_sha256": "a66f4a9af38132d49fb43e021f829a1396cb346d70931a178873ad3e875741c5",
+    "policy": "Only this exact manifest/renderer/source set is supported by this handoff. No route/1 alias, schema rewriting, or automatic acceptance of a different current-main runtime."
+  },
+  "historical_ST_public_compatibility": {
+    "declared_historical_source": "c477f32774fcdf6f774e33c5794b0ceac9f99e2a",
+    "historical_interface_sha256": "5e662d1bd939dbca8f84afa2df4ba3c64d6ab9b8a37aff24c8f862765c364b19",
+    "all_declared_nonchat_tool_specs_equal": [
+      "AttackTool",
+      "BlockTool",
+      "CraftTool",
+      "EquipTool",
+      "JumpTool",
+      "LookTool",
+      "MoveTool",
+      "PickupTool",
+      "RespawnTool",
+      "RollTool",
+      "StopTool",
+      "StrikeTool",
+      "TurnTool",
+      "UseItemTool",
+      "WieldTool"
+    ],
+    "actual_archived_action_conversions_equal": 112,
+    "both_boundary_public_projections_equal": true,
+    "team_chat_controls_ast_equal": true,
+    "limit": "Source/API compatibility of declared historical sources; no retroactive loaded-process attestation."
+  },
+  "current_main_both_track_archived_route2_replay": {
+    "structured_tools": {
+      "task_sha256": "8224aa32af836390c35636ce9a43f846999e4164c33c19d45569ebf368bf9a5a",
+      "full_endpoints_equal": true,
+      "full_route2_metrics_equal": true,
+      "evidence_track": "visual_motor",
+      "boundary": "ST binding compatibility on native same-contract route/2 snapshots; not a new executed ST episode."
+    },
+    "visual_motor": {
+      "task_sha256": "a414acae508d13f2769db26ef4e14be4ac9f608fc0f19fda4ecbd281b8695144",
+      "full_endpoints_equal": true,
+      "full_route2_metrics_equal": true,
+      "evidence_track": "visual_motor",
+      "boundary": "ST binding compatibility on native same-contract route/2 snapshots; not a new executed ST episode."
+    }
+  },
+  "current_main_initial_validation_bridge": {
+    "structured_tools": "Current strict initial validators accept unchanged archived route/2 opening; not a new ready session.",
+    "visual_motor": "Current strict initial validators accept unchanged archived route/2 opening; not a new ready session."
+  },
+  "reviewed_checker_sha256": "76a4a839c807f04eae7d06657493db2f153eb448f9922f2560aeb4f18aa4c858",
+  "review": {
+    "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/checks/veloren-acceptance-policy-audit-20261029.json",
+    "selector": "dated_addenda[4]",
+    "file_sha256_at_check": "5064b3bf8139626d6de5eb4d49131fd08f0fac200b616f09fff4d45b3e6d06dc",
+    "addendum_sha256": "08043dcbe316ed40babe819a5715a9ad75c7b5a7cdeea00b22b0789e7cb2b826",
+    "addendum": {
+      "date": "2026-10-29",
+      "kind": "C02-supported-version-admission-decision",
+      "task_id": "VE-C02",
+      "disposition": "supported",
+      "decision": "The explicit supported-version evidence now suffices for bounded task-quality acceptance. Missing historical actual-loaded adapter inventories remain missing; they are not a mandatory retrospective execution-attestation gate for this constructive decision.",
+      "evidence_refs": [
+        {
+          "path": "output/temp/task_development/checks/resume-cooperation-20261029-implementation.json",
+          "sha256": "8a1781855bb0ee14c7013893d20b4855edc09ea7d1fc9e242ccb0ba08004ec8c"
+        },
+        {
+          "path": "output/temp/task_development/checks/cooperation-supported-runtime-admission-20261029.json",
+          "sha256": "d9c73a86f1bfa6ced28587d16248d602093bcc2d5ed2f55794503a034bc44443",
+          "selectors": [
+            "C02_historical_ST_interface",
+            "C02_current_bindings",
+            "exact_scoped_source_pins",
+            "supported_runtime"
+          ]
+        },
+        {
+          "path": "output/temp/task_development/worktrees/resume-cooperation-20261029/checks/cooperation_supported_admission.py",
+          "source_commit": "5e1738f432d36789fcf2dfd2922b9b3ea56ded6e",
+          "scope": "Read implementation of historical action/spec/projection comparisons, current binding assertions and explicit route/1 rejection; did not execute its writer."
+        }
+      ],
+      "exact_scope": {
+        "source_commits": [
+          "4bc0900b9378845d8400104d0b6efafebdf567d8",
+          "5e1738f432d36789fcf2dfd2922b9b3ea56ded6e"
+        ],
+        "runtime_sha256": "f90ca9a97e20a106e6d749368319cdd45243a2f902605e7797c6f8e3613c3793",
+        "st_task_sha256": "8224aa32af836390c35636ce9a43f846999e4164c33c19d45569ebf368bf9a5a",
+        "vm_task_sha256": "a414acae508d13f2769db26ef4e14be4ac9f608fc0f19fda4ecbd281b8695144",
+        "review_checks": "All11 scoped handoff source/task hashes match the delivered worktree; independently checked all1160 compiled source files against the frozen manifest. Owner's existing checker also validates21 runtime dependencies. No new binary rebuild, game or scorer run."
+      },
+      "bug_status": "No known blocking defect under the explicit source/runtime. Current both-track endpoint/metric equality on real route/2 evidence and declared-old-source public compatibility close the previously ungrounded admission-source transfer; neither alone is treated as whole execution proof.",
+      "feasibility_status": {
+        "supported": true,
+        "same_episode_basis": "Preserve the previously reviewed VM prefix: actual original-wolf death, sourced peer regeneration after that wolf's damage within30 native seconds while it is alive, both actors above60HP, and Beta at the common endpoint. Alpha has an inspected53.239m flat-aisle continuation with2279.282s remaining after the420.718s controller cap, no remaining hostile and no scarce resource/timing conjunction.",
+        "ST_transfer": "The historical route/1 ST whole success retains its own version.112 actual public action conversions, all declared nonchat tool specifications, both roles' boundary projections and team-chat controls agree with the supported adapter sources. Current ST and VM bindings accept the original-contract route/2 VM endpoint/metric evidence identically. This is a versioned semantic/constructive bridge, not a new ST execution.",
+        "removed_barrier": "A mandatory winning VM reference and mandatory recovery of a historical loaded-module inventory are not necessary for this supported-version construction.",
+        "retained_boundary": "No historical loaded-process/source attestation was recovered. Do not label old ST route/1 as route/2, accept route/1 in the current native_efficiency consumer, or claim a measured current ST success."
+      },
+      "construct_status": "Meaningful causal peer cooperation: a distinct teammate must restore actual health after damage from the original live wolf within30s; healing Alpha's initial75HP injury alone is rejected. Separate controls, native Group/combo/range and both-player60HP grounded/stationary return matter. Not a claim that constant communication or balanced labor is necessary.",
+      "difficulty_status": {
+        "st": 3,
+        "vm": 3,
+        "range": [
+          2,
+          4
+        ],
+        "uncertainty": "high",
+        "calibration": "Deferred, nonblocking; no rating derived solely from controller success/failure."
+      },
+      "experiment_status": "Historical ST success and VM valid failure unchanged. No new formal/model/native measurement.",
+      "diagnostic_transfer_boundary": "No simplified combat variant or substituted resource/timing condition is used. Current bindings processing old native snapshots do not create a new live execution.",
+      "remaining_blocker": null,
+      "recommended_actions": "Parent may accept the exact C02 supported version and verify the resulting integrated source/runtime. Do not blindly merge the combined C05 patch; C05 startup timeout is infrastructure and outside this admission decision.",
+      "completed_changes": "Audit addendum only; no promotion, count, ledger, main or environment changes.",
+      "confidence": "High for exact compatibility/version limitations and previously verified terminal continuation; moderate-to-high overall bounded acceptance."
+    }
+  },
+  "preserved_limits": {
+    "historical_actual_loaded_adapter": "Missing; not retroactively reconstructed.",
+    "historical_ST": "Existing route/1 success retained on its own historical version; current route/2 metrics explicitly reject route/1.",
+    "historical_VM": "Existing route/2 valid failure retained; no whole-VM victory claim.",
+    "current_execution": "Offline source/API/fixture/evaluator/native-artifact bridge only. No fresh current-runtime episode or blanket runtime admission.",
+    "stronger_semantics": "Current alive/downed, source identity, 30s causal heal window, route identity and schema checks are retained unchanged.",
+    "C05": "Excluded, including isolated d1448a7 startup optimization and escort support."
+  },
+  "new_native_or_model_executions": 0,
+  "ledger_mutation_by_checker": false
+}
