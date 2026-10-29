@@ -1,0 +1,191 @@
+id: shared_workshop_exchange
+game: veloren
+task_type: visual_motor
+task: 'Make and equip leather chest armor on Alpha and leather boots on Beta, retain
+  a worker shirt in Alpha''s inventory and sandals in Beta''s inventory, and reunite
+  alive at the central stone arch.
+
+  Alpha starts with thirteen tough hides, Beta with two animal hides. Both know the
+  relevant leather recipes. The tanning rack and crafting bench are near opposite
+  stores in the walled workshop court, about thirty metres apart.
+
+  Exchange materials or finished goods using native trade. Either player may do the
+  crafting; plan shared materials before spending them. Finish stationary on the ground
+  together at the arch. Death does not replenish materials or time.
+
+  Native controls: I opens inventory; select an item and click it again to use or
+  equip it. E interacts with an observed station and opens its station-bound crafting
+  window; C opens general crafting. T invites a nearby actor to trade, Y accepts an
+  incoming invitation, and N declines. Comma toggles cursor capture; L toggles Free
+  Look.'
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/veloren_0_18_0_0.bin
+  world_seed: 130626853
+  time_of_day: '12:00'
+  day_length: 30
+  calendar: none
+  platform:
+    origin:
+    - 18700
+    - 10800
+    - 500
+    size:
+    - 44
+    - 18
+    block: Rock
+  recipes:
+    simple_leather: true
+    thick_leather: true
+    leather_strips: true
+    leather_chest: true
+    leather_feet: true
+  stations:
+  - position:
+    - 18708.5
+    - 10809.5
+    - 501
+    sprite: TanningRack
+  - position:
+    - 18735.5
+    - 10809.5
+    - 501
+    sprite: CraftingBench
+  recipe_groups:
+  - common.items.recipes.armor.leather
+  respawn_at_start: true
+  route_evidence: true
+  blocks:
+  - origin:
+    - 18700
+    - 10800
+    - 501
+    size:
+    - 44
+    - 1
+    - 5
+  - origin:
+    - 18700
+    - 10817
+    - 501
+    size:
+    - 44
+    - 1
+    - 5
+  - origin:
+    - 18700
+    - 10801
+    - 501
+    size:
+    - 1
+    - 16
+    - 5
+  - origin:
+    - 18743
+    - 10801
+    - 501
+    size:
+    - 1
+    - 16
+    - 5
+  - origin:
+    - 18721
+    - 10807
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18721
+    - 10811
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18721
+    - 10807
+    - 504
+    size:
+    - 1
+    - 5
+    - 1
+evaluator:
+  name: team
+  parameters:
+    all:
+      min_health: 0
+      position:
+        target:
+        - 18722.5
+        - 10809.5
+        - 501
+        horizontal_tolerance: 3
+        vertical_tolerance: 0.5
+        max_speed: 0.1
+    roles:
+      Alpha:
+        min_health: 0
+        equipment:
+          chest: common.items.armor.hide.leather.chest
+        inventory:
+        - item: common.items.armor.misc.chest.worker_purple_brown
+          min_count: 1
+      Beta:
+        min_health: 0
+        equipment:
+          feet: common.items.armor.hide.leather.foot
+        inventory:
+        - item: common.items.armor.misc.foot.sandals
+          min_count: 1
+    no_death: false
+    native_efficiency: true
+participants:
+- id: Alpha
+  player_state:
+    position:
+    - 18705.5
+    - 10809.5
+    - 501
+    look:
+    - 0
+    - 1
+    - 0
+    health: 100
+    inventory:
+      common.items.crafting_ing.hide.tough_hide: 13
+    equipment:
+      active_mainhand: common.items.weapons.sword.starter
+      chest: common.items.armor.misc.chest.worker_purple_brown
+      feet: common.items.armor.misc.foot.sandals
+      glider: common.items.glider.basic_white
+      lantern: common.items.lantern.black_0
+      legs: common.items.armor.misc.pants.worker_brown
+- id: Beta
+  player_state:
+    position:
+    - 18733.5
+    - 10809.5
+    - 501
+    look:
+    - 0
+    - 1
+    - 0
+    health: 100
+    inventory:
+      common.items.crafting_ing.hide.animal_hide: 2
+    equipment:
+      active_mainhand: common.items.weapons.sword.starter
+      chest: common.items.armor.misc.chest.worker_purple_brown
+      feet: common.items.armor.misc.foot.sandals
+      glider: common.items.glider.basic_white
+      lantern: common.items.lantern.black_0
+      legs: common.items.armor.misc.pants.worker_brown
+capabilities:
+  primary:
+  - peer_cooperation
+  secondary:
+  - planning_resources
+  - spatial_interaction

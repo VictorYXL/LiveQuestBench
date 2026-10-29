@@ -9,6 +9,27 @@ Tasks cover movement, gathering, crafting, equipment, recovery, combat and NPC
 interaction. The server continues to evolve while the Agent reasons and acts.
 See the [project guide](../../README.md) for experiments, Agents and models.
 
+### Shared workshop exchange
+
+`shared_workshop_exchange` is one paired ST/VM basic reciprocal-cooperation task:
+finite split materials, ordinary station crafting, native trade, role-specific
+equipment and an alive rendezvous. Either player may craft; balanced contribution
+or a cooperation speedup is not enforced. Provisional difficulty is ST2 (2–3),
+VM3 (2–4), with high uncertainty, not a calibrated rating.
+
+The [admission receipt](../../checks/VE-C03-main-admission.json) pins the unchanged
+task, independent review, public-only reference and supported route/2 runtime
+(`f90ca9a9…`, renderer `5141b9ac…`). Select that immutable manifest explicitly with
+`LIVEQUEST_VELOREN_RUNTIME`; the default runtime is not an implicit substitute.
+The model-free whole-VM witness uses an Alpha-only public-image operator and an
+independent own-image Beta policy, not autonomous-model peers. Its cursor/combat
+repair uses ordinary comma and press/release inputs, not private state.
+The archived final-walled ST success also supplies native ST feasibility as the
+same episode. Historical formal ST success and VM valid failure remain route/1
+measurements, not new route/2 model results. Earlier open-court references are
+historical only. Read-only endpoint replays preserve those outcomes; route/1
+efficiency uses its original consumer, never relabeled route/2 evidence.
+
 ## Installation
 
 First prepare a [VelorenBench](https://github.com/wyaaaattwho/VelorenBench)

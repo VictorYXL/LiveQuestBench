@@ -1,0 +1,2132 @@
+{
+  "schema": "livequest-c03-main-admission/1",
+  "task_key": "VE-C03",
+  "task_id": "shared_workshop_exchange",
+  "checked_at_utc": "2026-10-29T11:17:55.604039+00:00",
+  "candidate_base": "7d9d7b295eed9e31bafb066616bf5b5a4b129cd6",
+  "execution_source": "5a3d6c36c479fc9589bfc0897ebab4c54eb7ab08",
+  "frozen_task_source": "0eb2f1f",
+  "native_receipt_commit": "3c713c4941236aafd4daa4a31c4b5f2f5df151f3",
+  "new_game_or_model_episodes": 0,
+  "task_count": 1,
+  "track_count": 2,
+  "admission_decision": "Admit exactly one paired task when this passing receipt and its exact standalone files are committed together.",
+  "independent_review_source": {
+    "path": "output/temp/task_development/checks/veloren-independent-quality.json",
+    "sha256": "3ff5855d0e94285048bdf79ca322840e2531d3917f49a8736d407efe1c434069"
+  },
+  "independent_review": {
+    "task_key": "VE-C03",
+    "task_id": "shared_workshop_exchange",
+    "owner": "55c902a2-a9e4-4104-bf49-ffb7b20d033b",
+    "source_commit": "5a3d6c36c479fc9589bfc0897ebab4c54eb7ab08",
+    "status": "reviewed_pass",
+    "status_scope": "Bounded quality pass for basic reciprocal material cooperation and legal whole-VM feasibility on the unchanged walled task. Not autonomous multi-agent success, measured cooperation advantage, calibrated difficulty or automatic main admission.",
+    "review_basis": "Inspected actual closed result, both actors' opening/terminal native snapshots, exact frozen driver/task/team scoring/endpoints, own-view public PNGs of trade, stations and crafted equipment, recorded cleanup and saved runtime equality. No scorer replay, tests, game/model jobs or source edits.",
+    "evidence_root": "output/temp/task_development/veloren-interaction/VE-C03-settled-input-v2-vm",
+    "hashes": {
+      "result.json": "cba0fb8ae0aca130f58db44b6bfbbac90535a5e216c77285289e89c23e8d402c",
+      "driver.py": "258e0b1a5c0ed07645b552ffd998ebd687ffaafc12deb46897476388fa740072",
+      "runtime.json": "f90ca9a97e20a106e6d749368319cdd45243a2f902605e7797c6f8e3613c3793",
+      "before/Alpha/observation.json": "5114ca129327e8f81e511180b3f212baade78387d2a51d509ef0b34028507c25",
+      "before/Beta/observation.json": "d87814dc25c22e4615e212af5f20f052e4f4c774eba0c146d0dc19ddea7c6f78",
+      "after/Alpha/observation.json": "a21e02f81c63f2540d5136aef66456eb8161e9ef6293f3af97c4bd0ece0e74f7",
+      "after/Beta/observation.json": "418a1f91243c6ea5e3302df72e5e5b30378b7fc148290e674943c48add366d53",
+      "Beta/0045.png": "b17eae3fcaf3b5fb35c1a378e2b61d317fac8a2d984de89e633e0e70d73cfdb3",
+      "Alpha/public/0005.png": "e6edbc7542c2e7e7e9bf1b947545b2ac68d5a2255d8870625c0556ddfce4879e",
+      "Alpha/public/0007.png": "6a70b19ade5ae1ba7feb4120dd96555403e8b22156d42220c69f45f559b0d305",
+      "Alpha/public/0009.png": "36c19d3326c7d1978324eed300b231f3f68cdc03f2c56dc989a121c80da21614",
+      "Alpha/public/0010.png": "9a6aba1cb99b0191f7c2b2e67b0bb818236beb3a9cda30600defbd47da120445"
+    },
+    "source_hashes": {
+      "config/veloren/tasks/visual_motor/shared_workshop_exchange.yaml": "f6ea9ee18119927bffbce0cb8b5254e1f2c779c38df9d5b63b5f7b5222d900fa",
+      "tests/fixtures/veloren/independent_motor_reference.py": "258e0b1a5c0ed07645b552ffd998ebd687ffaafc12deb46897476388fa740072",
+      "game/team.py": "bc80b21d245fce6f2d0f37cc457c5339e6d8f97a26fe4d7f7b4b62c37ed86245",
+      "game/veloren/evaluators/endpoints.py": "ca445973cf0a7295f8801f8667e413da1d4f92e2d146d710d560ceb5bec1fc9c",
+      "game/veloren/evaluators/team_efficiency.py": "57532661e2f75630e2dc0fb1c3572c1a5571eb273e755693776152a05c6058b4",
+      "game/veloren/binding.py": "c5ba9baa4f96609dace86b99e99091faeddb642ffacb1c64b0dc6025c9be4450"
+    },
+    "provenance_boundary": "Archived task.json embeds task source byte-identical to frozen5a3d6c36 YAML and the original reviewed walled VM task hash. Archived driver is byte-identical to the frozen source. Other source hashes identify inspected files at the result-reported commit, not a separately archived complete executed Python-source manifest.",
+    "outcome": {
+      "kind": "assistantguidedreference",
+      "formal": false,
+      "uses_model": false,
+      "measurement": "valid",
+      "success": true,
+      "active_seconds": 188.791728345,
+      "reference_limit_seconds": 900,
+      "task_limit_seconds": 2700,
+      "both_terminal_health": 100,
+      "both_alive_not_downed_grounded": true,
+      "native_deaths": 0,
+      "alpha_rally_error_m": 0.9471226535147289,
+      "beta_rally_error_m": 0.716398289427214,
+      "alpha_speed_m_s": 0.0038235120562927095,
+      "beta_speed_m_s": 0.005652841695274059,
+      "alpha_equipment_and_retention": "Leather chest equipped; original-type worker shirt carried.",
+      "beta_equipment_and_retention": "Leather feet equipped; original-type sandals carried.",
+      "both_worker_returncodes": 0,
+      "shared_server_stopped_in_owner_cleanup": true
+    },
+    "native_mechanism_evidence": [
+      "Opening inventories actually contain Alpha13 tough hides and Beta2 animal hides, not completed armor. Final equipment/inventories contain the two required outputs and retained ordinary clothes, with the supplied hides absent.",
+      "Beta0045 publicly displays the two-hide trade offer. Alpha0005 shows the tanning rack and first native successful-trade message; Alpha0007 shows the actual Crafting Bench UI, leather boots in inventory and equipped leather chest. Alpha0009 shows two distinct successful-trade messages. Both terminal native last_trade_result records are committed Completed between actual actor UIDs91/226, with the latest one-item offer.",
+      "The terminal last_trade_result is only the latest transaction, not a two-event immutable ledger. Empty private_recipe_evidence and net possession deltas are not standalone crafting/source-identity receipts; the public station/GUI sequence and native endpoints provide the combined feasibility evidence.",
+      "Both saved environments equal the archived f90ca9 runtime dictionary. Both actors' private route evidence explicitly declares native-client-route/2. This is a genuine route/2-enabled whole-task witness, unlike route-disabled references or historical route/1 measurements."
+    ],
+    "control_and_independence": {
+      "verified_driver_boundary": "Alpha PublicOperator receives only Alpha controls/instructions; frozen Beta receives only Beta PNGs and motor controls. Private terminal scoring occurs after both policies finish. Beta's local state machine reacts to its own trade/review images; ordinary native chat/trade is the communication channel.",
+      "reference_limit": "Beta uses authored travel and historical public screenshot templates at960x540. Alpha is assistant-guided. Independent observation streams do not turn either into an autonomous-model baseline or demonstrate spontaneous negotiation.",
+      "repair": "Exact source adds comma capture toggling on entering native trade and ordinary press/release plus settling outside menus before equipment interaction. This whole success establishes a legal path after that specific repair; it does not prove a generally robust GUI policy under every cursor state."
+    },
+    "construct_findings": [
+      {
+        "finding": "Basic reciprocal material dependency is meaningful and now has complete VM feasibility evidence.",
+        "basis": "The finite split resources must be brought together for the required production and role-specific outcomes. Independent Beta transfers hides and later accepts/equips boots while Alpha handles conversion, both crafts and travel. This is not two unrelated solo endpoint tasks."
+      },
+      {
+        "finding": "One crafter plus a trading peer is an explicitly lawful low-coordination solution, not a disqualifying shortcut.",
+        "basis": "Public objective says either player may craft. The completed witness realizes that alternative: Beta can largely wait at the arch. Do not inflate this into balanced labor, parallel production, difficult negotiation or a demonstrated speedup over centralized planning."
+      },
+      {
+        "finding": "The safe, small deterministic production chain supports a basic cooperation task, not consequential combat/timing pressure.",
+        "basis": "Neither actor takes damage or dies; resource planning, station travel and native reciprocal transactions are the relevant demands. Other dimensions need not be imposed merely to justify cooperation."
+      },
+      {
+        "finding": "Endpoint scorer aligns with equipment, retention and rendezvous goals but does not independently enforce transaction provenance or contribution balance.",
+        "basis": "Frozen team scorer combines per-role state checks and all-role grounded/still/alive checks. The stronger alive predicate rejects downed states even with min_health0. It has no successful-trade-count, minimum peer labor or recipe-event predicate. The inspected witness actually uses native trades; do not describe the scorer alone as proving how those endpoints were reached."
+      }
+    ],
+    "difficulty": {
+      "structured_tools_point_hypothesis": 2,
+      "visual_motor_point_hypothesis": 3,
+      "structured_tools_plausible_range": [
+        2,
+        3
+      ],
+      "visual_motor_plausible_range": [
+        2,
+        4
+      ],
+      "calibrated_rating": null,
+      "uncertainty": "High. Retain ST2 for the small reciprocal exchange/production chain. VM3 is now a defensible provisional mechanics hypothesis for native trade, station crafting, cursor handling and final equipment, not a deduction from188.79s guided success or historical formal failure. Authored routes/templates and assistant guidance reduce reference-solving burden."
+    },
+    "engineering_blockers": [],
+    "closed_gate": "The original snapshot's missing legal whole-native VM completion on the final walled condition is closed by this exact task/runtime witness.",
+    "admission": {
+      "recommendation": "Accept basic-cooperation quality and this whole-VM feasibility receipt into the exact-source admission handoff.",
+      "boundary": "Main registration/dependency bridge remains separate. Preserve historical formal ST success and VM valid failure under their original source/runtime; this native-only proof neither replaces them nor retroactively upgrades historical failures.",
+      "owner": "55c902a2-a9e4-4104-bf49-ffb7b20d033b",
+      "action": "Retain exact task/controller/runtime hashes and bounded construct/difficulty caveats in the integration handoff. No new formal or native run is requested."
+    }
+  },
+  "independent_review_canonical_sha256": "d43c8d9ea1bea163315f2865d1231bd6a94a43fe04e2640d3d6bd3ecfbd57532",
+  "frozen_owner_handoff": {
+    "path": "output/temp/task_development/checks/VE-C03-admission-handoff.json",
+    "sha256": "0a918d233dbb558093fe6a739a8086e78c3b32d3c8b256c3847d3fb72d66ef91"
+  },
+  "difficulty": {
+    "structured_tools_point_hypothesis": 2,
+    "visual_motor_point_hypothesis": 3,
+    "structured_tools_plausible_range": [
+      2,
+      3
+    ],
+    "visual_motor_plausible_range": [
+      2,
+      4
+    ],
+    "calibrated_rating": null,
+    "uncertainty": "High. Retain ST2 for the small reciprocal exchange/production chain. VM3 is now a defensible provisional mechanics hypothesis for native trade, station crafting, cursor handling and final equipment, not a deduction from188.79s guided success or historical formal failure. Authored routes/templates and assistant guidance reduce reference-solving burden."
+  },
+  "lease": {
+    "path": "output/temp/task_development/leases/2395ad92b70f401399f7b24cd2b367d7.json",
+    "sha256": "42a5c19f2f6e1d62f221b06e20d576518402047e48f36c14a1162285f65e8d0f"
+  },
+  "native_public_inputs": {
+    "alpha_image_fenced_receipts": 11,
+    "beta_own_image_batches": 149,
+    "all_commands_current_native_motor_schema": true,
+    "reference_limits": "at most60 commands and10000ms summed waits per batch",
+    "pins": [
+      {
+        "path": "output/temp/task_development/veloren-interaction/VE-C03-settled-input-v2-vm/Beta/public.jsonl",
+        "sha256": "52e7aae03867cdf467e783dcc1f705b75c9f2cc3fc8cb3d345589eddddbe69ad"
+      },
+      {
+        "path": "output/temp/task_development/veloren-interaction/VE-C03-settled-input-v2-vm/Alpha/public/0001-action.json",
+        "sha256": "f0119336de22d91915e5d074939dccec0293366dc7be4078a84d937f3d740ede"
+      },
+      {
+        "path": "output/temp/task_development/veloren-interaction/VE-C03-settled-input-v2-vm/Alpha/public/0002-action.json",
+        "sha256": "bfba0c0c801b16e1f7858c4f421277ff0ff881e8b67285da286f141f26feb569"
+      },
+      {
+        "path": "output/temp/task_development/veloren-interaction/VE-C03-settled-input-v2-vm/Alpha/public/0003-action.json",
+        "sha256": "c7bd9316bb3fe5319c4017a17be822d42a04313a67081ca049d255843ef89c31"
+      },
+      {
+        "path": "output/temp/task_development/veloren-interaction/VE-C03-settled-input-v2-vm/Alpha/public/0004-action.json",
+        "sha256": "cf9f8f0293906293aefcab9a27c80b169e3551264484e3539651c37ce9c57bf7"
+      },
+      {
+        "path": "output/temp/task_development/veloren-interaction/VE-C03-settled-input-v2-vm/Alpha/public/0005-action.json",
+        "sha256": "4de68e16a45f444429205aac82984bbcf800539a9bdeb70c05e9b236704cdffe"
+      },
+      {
+        "path": "output/temp/task_development/veloren-interaction/VE-C03-settled-input-v2-vm/Alpha/public/0006-action.json",
+        "sha256": "e6ba4d4c916f9e9601501d907fb9ad7a3e6401244509ad32dc6387b9c0dde664"
+      },
+      {
+        "path": "output/temp/task_development/veloren-interaction/VE-C03-settled-input-v2-vm/Alpha/public/0007-action.json",
+        "sha256": "b32c5036fcfd62c528364084d4c50da18862dbacd5b9d1e4fd11a07e044e4d58"
+      },
+      {
+        "path": "output/temp/task_development/veloren-interaction/VE-C03-settled-input-v2-vm/Alpha/public/0008-action.json",
+        "sha256": "4c3bc6e8c6b75b50237d0b912f6ecac80c8490d5e0cd6247e815375921d99e4d"
+      },
+      {
+        "path": "output/temp/task_development/veloren-interaction/VE-C03-settled-input-v2-vm/Alpha/public/0009-action.json",
+        "sha256": "d26d8deb6788411237a22a1ef2ad37507b07b137eaec7e267c083cd38ecd8b4b"
+      },
+      {
+        "path": "output/temp/task_development/veloren-interaction/VE-C03-settled-input-v2-vm/Alpha/public/0010-action.json",
+        "sha256": "27f8bd6483500bbf9d25fbdce22f1b5a8cbb7774e4d6f76a2703d7269e4ff0ad"
+      },
+      {
+        "path": "output/temp/task_development/veloren-interaction/VE-C03-settled-input-v2-vm/Alpha/public/0011-action.json",
+        "sha256": "ef1761b1efc2c3710dd2801ca0c2e9ec6462aef75cae715d6d5272ea2950caca"
+      }
+    ]
+  },
+  "runtimes": {
+    "current_native_vm": {
+      "path": "output/temp/task_development/veloren-interaction/VE-C03-settled-input-v2-vm/runtime.json",
+      "sha256": "f90ca9a97e20a106e6d749368319cdd45243a2f902605e7797c6f8e3613c3793",
+      "constituents": [
+        {
+          "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/binding-95145618/native/source.json",
+          "sha256": "f303e8aa0d93c19089db8b070ecefe04dc2afea1e84d1ccf3dee522bd4141ba1"
+        },
+        {
+          "path": "output/temp/task_development/veloren-route-v2-contact-fix/bin/veloren-voxygen",
+          "sha256": "5141b9ac796d5e71f5ba999f910777d364480cfb2b0344731425e1a65d1c5878"
+        },
+        {
+          "path": "output/temp/task_development/veloren-route-v2-contact-fix/patches/0001-physical-input.patch",
+          "sha256": "bfc5fcc95635724896cdf995b01a8a97b2458aa85b1369d7665b0cfb76afb8e7"
+        },
+        {
+          "path": "output/temp/task_development/veloren-route-v2-contact-fix/patches/0002-disable-native-protection.patch",
+          "sha256": "eb4aa778c6396a34c3ea8ecca664eb6872905233b3b20767e196cd2730479a42"
+        },
+        {
+          "path": "output/temp/task_development/veloren-route-v2-contact-fix/patches/0003-native-motion-evidence.patch",
+          "sha256": "de7dc480c29734dd91175f562fa5e92b4e992cf0747ab6254312d1dff77f321c"
+        },
+        {
+          "path": "output/temp/task_development/veloren-route-v2-contact-fix/patches/0004-native-glide-evidence.patch",
+          "sha256": "8d7cdc264cfc9424699ca90ed1b68c1d4476691be5fef0af08d17f333ada6160"
+        },
+        {
+          "path": "output/temp/task_development/veloren-route-v2-contact-fix/patches/0005-bounded-auxiliary-input.patch",
+          "sha256": "89799409266b44ea2300fcfacc4417e7b7bcce68f650fd60a6a616916d7ccbcf"
+        },
+        {
+          "path": "output/temp/task_development/veloren-route-v2-contact-fix/patches/0006-native-route-evidence.patch",
+          "sha256": "7700fd6cc6b78f4b6c897df7c906049d9fb94bb6697a109f3f2e26e70daf9c4f"
+        },
+        {
+          "path": "output/temp/task_development/veloren-route-v2-contact-fix/patches/0008-native-physics-route-evidence.patch",
+          "sha256": "e2fc491d5bb5d91fdc2b6435ef485e3c756674e31df30661a8dd0c3a1e683b8a"
+        },
+        {
+          "path": "output/temp/task_development/veloren-route-v2-contact-fix/patches/observer-diagnostics.patch",
+          "sha256": "21b6022588dab0867ed1c0972bbf303baf0e74d153108bc563787000286c6033"
+        },
+        {
+          "path": "output/temp/task_development/veloren-route-v2-contact-fix/patches/observer-contact-fix.patch",
+          "sha256": "da3058fd43c0754aa6cd0ee636a6acb227bd7c6ebef015be54a0098c4db4894b"
+        },
+        {
+          "path": "output/temp/task_development/veloren-route-v2-contact-fix/source-manifest.json",
+          "sha256": "2b93892d262d632081f626dd683847359e41e45780d01c69f63088d2d7df2a7c"
+        },
+        {
+          "path": "output/temp/task_development/veloren-route-v2-contact-fix/build-receipt.json",
+          "sha256": "86eb93b4b3cf2a47002ad61a124c553289c0cf9437e4a1a928c768677cc0065e"
+        },
+        {
+          "path": "output/temp/task_development/veloren-route-v2-contact-fix/base-runtime.json",
+          "sha256": "387e3485fb1fa1edcfb810e36ed2f1cef4d07bfeb487f73d8be433fd82e653d7"
+        },
+        {
+          "path": "output/temp/task_development/veloren-route-v2-contact-fix/input-receipt.json",
+          "sha256": "e10b3fa54babc616e938122c8a5efb7fa185408627bbaf6f3541376c5d922780"
+        },
+        {
+          "path": "output/temp/task_development/veloren-route-v2-contact-fix/patch-verification.json",
+          "sha256": "85a351dfc03150e42ee191753e3f063a3209d952d3ab69f285bc05893b7c8611"
+        },
+        {
+          "path": "output/temp/task_development/veloren-route-v2-contact-fix/build.log",
+          "sha256": "7f4acd516214d079ce7362753b24ecb61f65bf1a7d8fd3189b220b0af609b8a7"
+        },
+        {
+          "path": "output/temp/task_development/veloren-route-v2-contact-fix/physics-tests.log",
+          "sha256": "bdab180aaa3aa79973afa5e349560cde05f633687fac828f1098b6e9e5b69c67"
+        },
+        {
+          "path": "output/temp/task_development/veloren-route-v2-contact-fix/renderer-tests.log",
+          "sha256": "57dd313371198f144e5f359eb6fb9acbadd78651f136c0c8cd675edc3db55a99"
+        },
+        {
+          "path": "output/temp/task_development/veloren-route-v2-contact-fix/0008-native-physics-route-evidence.patch",
+          "sha256": "6208f2ff059bbde5af61eaf64a1bf50043a5f8305d5cad958ac2fba60a3c07e7"
+        },
+        {
+          "path": "output/temp/task_development/veloren-route-v2-contact-fix/folded-patch-equivalence.json",
+          "sha256": "f0bb239dec6bbcfd34872583b701cd3068692cb900e0b917dbed6b2b7a9ff203"
+        }
+      ],
+      "upstream": {
+        "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/binding-95145618/runtime.json",
+        "sha256": "a66f4a9af38132d49fb43e021f829a1396cb346d70931a178873ad3e875741c5"
+      },
+      "selected_server": {
+        "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/binding-95145618/native/binaries/veloren-server-cli",
+        "sha256": "f2100bec7ace29a3a44256dce255a435697774551953cd8ee2a834507f7ef6be"
+      },
+      "renderer": {
+        "path": "output/temp/task_development/veloren-route-v2-contact-fix/bin/veloren-voxygen",
+        "sha256": "5141b9ac796d5e71f5ba999f910777d364480cfb2b0344731425e1a65d1c5878"
+      },
+      "route_capability": "native-client-route/2",
+      "read_only_loader_and_server_selection": "pass",
+      "supported_for_current_task_launch": true,
+      "fresh_gameplay": false
+    },
+    "historical_formals": {
+      "path": "output/temp/veloren-native-route-20261027/runtime.json",
+      "sha256": "387e3485fb1fa1edcfb810e36ed2f1cef4d07bfeb487f73d8be433fd82e653d7",
+      "constituents": [
+        {
+          "path": "output/temp/veloren-native-route-20261027/target/debug/veloren-voxygen",
+          "sha256": "478b0addc202cb37aaa5543cf369fa59e4f4cb3031deb56bb6544d49fc9a4897"
+        },
+        {
+          "path": "game/veloren/patches/0001-physical-input.patch",
+          "sha256": "bfc5fcc95635724896cdf995b01a8a97b2458aa85b1369d7665b0cfb76afb8e7"
+        },
+        {
+          "path": "game/veloren/patches/0002-disable-native-protection.patch",
+          "sha256": "eb4aa778c6396a34c3ea8ecca664eb6872905233b3b20767e196cd2730479a42"
+        },
+        {
+          "path": "game/veloren/patches/0003-native-motion-evidence.patch",
+          "sha256": "de7dc480c29734dd91175f562fa5e92b4e992cf0747ab6254312d1dff77f321c"
+        },
+        {
+          "path": "game/veloren/patches/0004-native-glide-evidence.patch",
+          "sha256": "8d7cdc264cfc9424699ca90ed1b68c1d4476691be5fef0af08d17f333ada6160"
+        },
+        {
+          "path": "game/veloren/patches/0005-bounded-auxiliary-input.patch",
+          "sha256": "89799409266b44ea2300fcfacc4417e7b7bcce68f650fd60a6a616916d7ccbcf"
+        },
+        {
+          "path": "game/veloren/patches/0006-native-route-evidence.patch",
+          "sha256": "7700fd6cc6b78f4b6c897df7c906049d9fb94bb6697a109f3f2e26e70daf9c4f"
+        },
+        {
+          "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/binding-95145618/native/source.json",
+          "sha256": "f303e8aa0d93c19089db8b070ecefe04dc2afea1e84d1ccf3dee522bd4141ba1"
+        }
+      ],
+      "upstream": {
+        "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/binding-95145618/runtime.json",
+        "sha256": "a66f4a9af38132d49fb43e021f829a1396cb346d70931a178873ad3e875741c5"
+      },
+      "selected_server": {
+        "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/binding-95145618/native/binaries/veloren-server-cli",
+        "sha256": "f2100bec7ace29a3a44256dce255a435697774551953cd8ee2a834507f7ef6be"
+      },
+      "renderer": {
+        "path": "output/temp/veloren-native-route-20261027/target/debug/veloren-voxygen",
+        "sha256": "478b0addc202cb37aaa5543cf369fa59e4f4cb3031deb56bb6544d49fc9a4897"
+      },
+      "route_capability": "native-client-route/1",
+      "read_only_loader_and_server_selection": "pass",
+      "supported_for_current_task_launch": false,
+      "fresh_gameplay": false
+    }
+  },
+  "runtime_policy": "Use the checksum-pinned route/2 candidate-runtime.json; archived route/1 measurements are replayable historical outcomes, not fresh current-runtime ST/model episodes.",
+  "admitted": {
+    "st": {
+      "task": {
+        "path": "config/veloren/tasks/structured_tools/shared_workshop_exchange.yaml",
+        "sha256": "d01ff87f2c5a4dc4b8101e8d1e3c780f061dfa05b68df24ce3f808210cb853b2"
+      },
+      "source_byte_identical": true,
+      "public_controls": {
+        "Alpha": [
+          "BroadcastTool",
+          "ChatTool",
+          "CraftTool",
+          "EquipTool",
+          "InviteTradeTool",
+          "JumpTool",
+          "LookTool",
+          "MoveTool",
+          "PickupTool",
+          "RespawnTool",
+          "RespondTradeInviteTool",
+          "StopTool",
+          "TradeFinishTool",
+          "TradeOfferTool",
+          "TurnTool",
+          "UseItemTool"
+        ],
+        "Beta": [
+          "BroadcastTool",
+          "ChatTool",
+          "CraftTool",
+          "EquipTool",
+          "InviteTradeTool",
+          "JumpTool",
+          "LookTool",
+          "MoveTool",
+          "PickupTool",
+          "RespawnTool",
+          "RespondTradeInviteTool",
+          "StopTool",
+          "TradeFinishTool",
+          "TradeOfferTool",
+          "TurnTool",
+          "UseItemTool"
+        ]
+      },
+      "game_started": false
+    },
+    "vm": {
+      "task": {
+        "path": "config/veloren/tasks/visual_motor/shared_workshop_exchange.yaml",
+        "sha256": "f6ea9ee18119927bffbce0cb8b5254e1f2c779c38df9d5b63b5f7b5222d900fa"
+      },
+      "source_byte_identical": true,
+      "public_controls": {
+        "Alpha": [
+          "action"
+        ],
+        "Beta": [
+          "action"
+        ]
+      },
+      "game_started": false
+    }
+  },
+  "replays": [
+    {
+      "track": "st",
+      "kind": "formal",
+      "qualifies_current_condition": true,
+      "whole_native_outcome": true,
+      "measurement": "valid",
+      "complete_evaluation_equal": true,
+      "metrics_boundary": "Current route/2 consumer correctly rejects route/1. Original exact-source route consumer reproduces all archived efficiency metrics; current death metrics reproduce exactly. No route relabeling or relaxed consumer.",
+      "result": {
+        "path": "output/temp/task_development/veloren-interaction/VE-C03-final-walled-st/baseline/shared_workshop_exchange.structured_tool/episode_1/results/result.json",
+        "sha256": "76c0d2e2720d51e8d3824bd0061bc4b98918a213134592aea277ad592a9ef3dd"
+      },
+      "evaluation": {
+        "schema": "team-endpoints",
+        "success": true,
+        "checks": [
+          {
+            "scope": "all",
+            "roles": {
+              "Alpha": {
+                "success": true,
+                "checks": [
+                  {
+                    "kind": "health",
+                    "actual": 100.0,
+                    "minimum": 0,
+                    "passed": true
+                  },
+                  {
+                    "kind": "position",
+                    "actual": [
+                      18721.859375,
+                      10810.322265625,
+                      501.0
+                    ],
+                    "horizontal_error": 1.0423632517897208,
+                    "vertical_error": 0.0,
+                    "speed": 1.981735293180747e-45,
+                    "on_ground": true,
+                    "passed": true
+                  }
+                ],
+                "semantics": "simultaneous terminal state; no action attribution or continuous-survival claim"
+              },
+              "Beta": {
+                "success": true,
+                "checks": [
+                  {
+                    "kind": "health",
+                    "actual": 100.0,
+                    "minimum": 0,
+                    "passed": true
+                  },
+                  {
+                    "kind": "position",
+                    "actual": [
+                      18721.787109375,
+                      10809.5,
+                      501.0
+                    ],
+                    "horizontal_error": 0.712890625,
+                    "vertical_error": 0.0,
+                    "speed": 1.981735293180747e-45,
+                    "on_ground": true,
+                    "passed": true
+                  }
+                ],
+                "semantics": "simultaneous terminal state; no action attribution or continuous-survival claim"
+              }
+            },
+            "passed": true
+          },
+          {
+            "scope": "role",
+            "role": "Alpha",
+            "result": {
+              "success": true,
+              "checks": [
+                {
+                  "kind": "health",
+                  "actual": 100.0,
+                  "minimum": 0,
+                  "passed": true
+                },
+                {
+                  "kind": "inventory",
+                  "item": "common.items.armor.misc.chest.worker_purple_brown",
+                  "min_count": 1,
+                  "before": 0,
+                  "after": 1,
+                  "delta": 1,
+                  "passed": true
+                },
+                {
+                  "kind": "equipment",
+                  "slot": "chest",
+                  "expected": "common.items.armor.hide.leather.chest",
+                  "actual": "common.items.armor.hide.leather.chest",
+                  "passed": true
+                }
+              ],
+              "semantics": "simultaneous terminal state; no action attribution or continuous-survival claim"
+            },
+            "passed": true
+          },
+          {
+            "scope": "role",
+            "role": "Beta",
+            "result": {
+              "success": true,
+              "checks": [
+                {
+                  "kind": "health",
+                  "actual": 100.0,
+                  "minimum": 0,
+                  "passed": true
+                },
+                {
+                  "kind": "inventory",
+                  "item": "common.items.armor.misc.foot.sandals",
+                  "min_count": 1,
+                  "before": 0,
+                  "after": 1,
+                  "delta": 1,
+                  "passed": true
+                },
+                {
+                  "kind": "equipment",
+                  "slot": "feet",
+                  "expected": "common.items.armor.hide.leather.foot",
+                  "actual": "common.items.armor.hide.leather.foot",
+                  "passed": true
+                }
+              ],
+              "semantics": "simultaneous terminal state; no action attribution or continuous-survival claim"
+            },
+            "passed": true
+          }
+        ]
+      },
+      "actors": {
+        "Alpha": {
+          "health_before": {
+            "can_have_death_protection": true,
+            "current": 100.0,
+            "dead": false,
+            "death_protection": true,
+            "downed": false,
+            "fraction": 1.0,
+            "maximum": 100.0
+          },
+          "health_after": {
+            "can_have_death_protection": true,
+            "current": 100.0,
+            "dead": false,
+            "death_protection": true,
+            "downed": false,
+            "fraction": 1.0,
+            "maximum": 100.0
+          },
+          "original_identity": {
+            "alias": "Alpha",
+            "entity_id": 0,
+            "native_character_id": 16,
+            "uid": 121
+          },
+          "native_route_schema": "native-client-route/1",
+          "initial_role_goal_false": true,
+          "native_fixture_world_and_runtime_equal": true,
+          "snapshot_integrity_identity_phase_order": "pass",
+          "pins": [
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-final-walled-st/baseline/shared_workshop_exchange.structured_tool/episode_1/before/Alpha/observation.json",
+              "sha256": "5396b7ffacd48e24616db738966761a8b70ade8ff48af77a8149ed4cb9480bc6"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-final-walled-st/baseline/shared_workshop_exchange.structured_tool/episode_1/before/Alpha/_livequest_snapshot.json",
+              "sha256": "310c90fdef173f3b167400972537f1fb8a32cf538a75a706af43a361591758d2"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-final-walled-st/baseline/shared_workshop_exchange.structured_tool/episode_1/after/Alpha/observation.json",
+              "sha256": "1bf312fcf82f5ac5624080d7785ce43ff55bf89c55b3253caa8e030606d6f24a"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-final-walled-st/baseline/shared_workshop_exchange.structured_tool/episode_1/after/Alpha/_livequest_snapshot.json",
+              "sha256": "f41791410ba9c84d557240daf49a492e7a446469d7f9cb4d8b18593c46ad7a43"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-final-walled-st/baseline/shared_workshop_exchange.structured_tool/episode_1/game/Alpha/fixture.json",
+              "sha256": "ee1f023e50475cfcf16250c6e63a8fe71ee8d2611cbccfa372bb5234e9da183e"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-final-walled-st/baseline/shared_workshop_exchange.structured_tool/episode_1/game/Alpha/environment.json",
+              "sha256": "ab2a4357588e64d2ebdd330f0e9cdd78ef63647fcbcbbb179f80a069280ac68e"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-final-walled-st/baseline/shared_workshop_exchange.structured_tool/episode_1/game/Alpha/boundaries.json",
+              "sha256": "f6cbd83868d7c313fbbaf103a9485f9746b22e7fda602de717592f45d6b2988f"
+            }
+          ]
+        },
+        "Beta": {
+          "health_before": {
+            "can_have_death_protection": true,
+            "current": 100.0,
+            "dead": false,
+            "death_protection": true,
+            "downed": false,
+            "fraction": 1.0,
+            "maximum": 100.0
+          },
+          "health_after": {
+            "can_have_death_protection": true,
+            "current": 100.0,
+            "dead": false,
+            "death_protection": true,
+            "downed": false,
+            "fraction": 1.0,
+            "maximum": 100.0
+          },
+          "original_identity": {
+            "alias": "Beta",
+            "entity_id": 0,
+            "native_character_id": 32,
+            "uid": 317
+          },
+          "native_route_schema": "native-client-route/1",
+          "initial_role_goal_false": true,
+          "native_fixture_world_and_runtime_equal": true,
+          "snapshot_integrity_identity_phase_order": "pass",
+          "pins": [
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-final-walled-st/baseline/shared_workshop_exchange.structured_tool/episode_1/before/Beta/observation.json",
+              "sha256": "9b2622be1eeb58388c5243e3a2cf2daa0bfb1d97be8e635384875e5113fd7345"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-final-walled-st/baseline/shared_workshop_exchange.structured_tool/episode_1/before/Beta/_livequest_snapshot.json",
+              "sha256": "6c9398d1b727361168ba8c58a9c5bea52a7847d990c44aa1c63d624befdd68fc"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-final-walled-st/baseline/shared_workshop_exchange.structured_tool/episode_1/after/Beta/observation.json",
+              "sha256": "341adb195e7617b72d325afc7b1bd229811da03a9863de30308640b3f0b6ca13"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-final-walled-st/baseline/shared_workshop_exchange.structured_tool/episode_1/after/Beta/_livequest_snapshot.json",
+              "sha256": "412968d3b8008e86f7d69ff14b93c56ab208bc97c45fe303db6506686cff78d5"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-final-walled-st/baseline/shared_workshop_exchange.structured_tool/episode_1/game/Beta/fixture.json",
+              "sha256": "eccf2969e6184eacc194dcbc3a4c2d8e9b3917f0ce5d9cc22257a1be4658852a"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-final-walled-st/baseline/shared_workshop_exchange.structured_tool/episode_1/game/Beta/environment.json",
+              "sha256": "ca770f7956f505298de58cc144191d78a8ce554beb957c36542288cab5d7fa6c"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-final-walled-st/baseline/shared_workshop_exchange.structured_tool/episode_1/game/Beta/boundaries.json",
+              "sha256": "8f070e0e3e863dcb41b2c15cae2d31c243b563d58446881f4e9f3aa1bce1aaec"
+            }
+          ]
+        }
+      },
+      "runtime": null,
+      "formal_profile": {
+        "id": "baseline",
+        "name": "tool_calling",
+        "model": {
+          "provider": "github_copilot",
+          "name": "gpt-6-astra",
+          "reasoning_effort": "low",
+          "max_output_tokens": 4096,
+          "max_attempts": 3,
+          "timeout_seconds": 120.0
+        }
+      },
+      "active_seconds": 114.088549408,
+      "configuration": {
+        "path": "output/temp/task_development/veloren-interaction/VE-C03-final-walled-st/config.json",
+        "sha256": "5b7b0509671fb127e980f89e9dec0648bf046c55a45e157046f87424300a048f"
+      },
+      "provenance": {
+        "path": "output/temp/task_development/veloren-interaction/VE-C03-final-walled-st/provenance.json",
+        "sha256": "38d61bccbb0bf012a9cc725679a6d277050c5c87b401dabda93e209fa01ee34f"
+      },
+      "archived_revision": "3ffda7dca13f136114be8b93ef708e630505e27a"
+    },
+    {
+      "track": "st",
+      "kind": "historical_open_court_guided_reference",
+      "qualifies_current_condition": false,
+      "whole_native_outcome": true,
+      "measurement": "valid",
+      "complete_evaluation_equal": true,
+      "metrics_boundary": "Current route/2 consumer correctly rejects route/1. Original exact-source route consumer reproduces all archived efficiency metrics; current death metrics reproduce exactly. No route relabeling or relaxed consumer.",
+      "result": {
+        "path": "output/temp/task_development/veloren-interaction/VE-C03-guided-st/guided_reference/shared_workshop_exchange.structured_tool/episode_1/results/result.json",
+        "sha256": "35ff237aa5034a4cf60347f46cb3ca450647bb90ca0286bdad0b74e49a067c24"
+      },
+      "evaluation": {
+        "schema": "team-endpoints",
+        "success": true,
+        "checks": [
+          {
+            "scope": "all",
+            "roles": {
+              "Alpha": {
+                "success": true,
+                "checks": [
+                  {
+                    "kind": "health",
+                    "actual": 100.0,
+                    "minimum": 1,
+                    "passed": true
+                  },
+                  {
+                    "kind": "position",
+                    "actual": [
+                      18721.234375,
+                      10810.5498046875,
+                      501.0
+                    ],
+                    "horizontal_error": 1.6443529190906594,
+                    "vertical_error": 0.0,
+                    "speed": 0.009465856199036914,
+                    "on_ground": true,
+                    "passed": true
+                  }
+                ],
+                "semantics": "simultaneous terminal state; no action attribution or continuous-survival claim"
+              },
+              "Beta": {
+                "success": true,
+                "checks": [
+                  {
+                    "kind": "health",
+                    "actual": 100.0,
+                    "minimum": 1,
+                    "passed": true
+                  },
+                  {
+                    "kind": "position",
+                    "actual": [
+                      18721.26953125,
+                      10809.2001953125,
+                      501.0
+                    ],
+                    "horizontal_error": 1.266466026142642,
+                    "vertical_error": 0.0,
+                    "speed": 0.009505048088495319,
+                    "on_ground": true,
+                    "passed": true
+                  }
+                ],
+                "semantics": "simultaneous terminal state; no action attribution or continuous-survival claim"
+              }
+            },
+            "passed": true
+          },
+          {
+            "scope": "role",
+            "role": "Alpha",
+            "result": {
+              "success": true,
+              "checks": [
+                {
+                  "kind": "health",
+                  "actual": 100.0,
+                  "minimum": 1,
+                  "passed": true
+                },
+                {
+                  "kind": "inventory",
+                  "item": "common.items.armor.misc.chest.worker_purple_brown",
+                  "min_count": 1,
+                  "before": 0,
+                  "after": 1,
+                  "delta": 1,
+                  "passed": true
+                },
+                {
+                  "kind": "equipment",
+                  "slot": "chest",
+                  "expected": "common.items.armor.hide.leather.chest",
+                  "actual": "common.items.armor.hide.leather.chest",
+                  "passed": true
+                }
+              ],
+              "semantics": "simultaneous terminal state; no action attribution or continuous-survival claim"
+            },
+            "passed": true
+          },
+          {
+            "scope": "role",
+            "role": "Beta",
+            "result": {
+              "success": true,
+              "checks": [
+                {
+                  "kind": "health",
+                  "actual": 100.0,
+                  "minimum": 1,
+                  "passed": true
+                },
+                {
+                  "kind": "inventory",
+                  "item": "common.items.armor.misc.foot.sandals",
+                  "min_count": 1,
+                  "before": 0,
+                  "after": 1,
+                  "delta": 1,
+                  "passed": true
+                },
+                {
+                  "kind": "equipment",
+                  "slot": "feet",
+                  "expected": "common.items.armor.hide.leather.foot",
+                  "actual": "common.items.armor.hide.leather.foot",
+                  "passed": true
+                }
+              ],
+              "semantics": "simultaneous terminal state; no action attribution or continuous-survival claim"
+            },
+            "passed": true
+          }
+        ]
+      },
+      "actors": {
+        "Alpha": {
+          "health_before": {
+            "can_have_death_protection": true,
+            "current": 100.0,
+            "dead": false,
+            "death_protection": true,
+            "downed": false,
+            "fraction": 1.0,
+            "maximum": 100.0
+          },
+          "health_after": {
+            "can_have_death_protection": true,
+            "current": 100.0,
+            "dead": false,
+            "death_protection": true,
+            "downed": false,
+            "fraction": 1.0,
+            "maximum": 100.0
+          },
+          "original_identity": {
+            "alias": "Alpha",
+            "entity_id": 0,
+            "native_character_id": 16,
+            "uid": 115
+          },
+          "native_route_schema": "native-client-route/1",
+          "initial_role_goal_false": true,
+          "native_fixture_world_and_runtime_equal": true,
+          "snapshot_integrity_identity_phase_order": "pass",
+          "pins": [
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-guided-st/guided_reference/shared_workshop_exchange.structured_tool/episode_1/before/Alpha/observation.json",
+              "sha256": "b2281373fab6aef7e1c210617bcc958ace22279de295c89f5eb6a488d5c05b74"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-guided-st/guided_reference/shared_workshop_exchange.structured_tool/episode_1/before/Alpha/_livequest_snapshot.json",
+              "sha256": "f21a1c92d11696c31eacb63a3eb8aa8865307fda482a224e14356a2098dbe194"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-guided-st/guided_reference/shared_workshop_exchange.structured_tool/episode_1/after/Alpha/observation.json",
+              "sha256": "b723c2934e23f1573e2e17342ee56a06f95272f8a3df123ba5fd1653199555c6"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-guided-st/guided_reference/shared_workshop_exchange.structured_tool/episode_1/after/Alpha/_livequest_snapshot.json",
+              "sha256": "72e3cb4380075e0f2821c3a78cedf09fba5eea1bd9e6f25c2aba11b3a8f9edc8"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-guided-st/guided_reference/shared_workshop_exchange.structured_tool/episode_1/game/Alpha/fixture.json",
+              "sha256": "8521833e299d393bd286082aac159203a270e0c7e8298c0cb4440f42efeb32e7"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-guided-st/guided_reference/shared_workshop_exchange.structured_tool/episode_1/game/Alpha/environment.json",
+              "sha256": "655ccc2824dc2c2c7ec341621faebc7cd841f9e840273a070347ea5294d141c7"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-guided-st/guided_reference/shared_workshop_exchange.structured_tool/episode_1/game/Alpha/boundaries.json",
+              "sha256": "1002d09181f7cf5e1975e40554e5bab91eca82798f69aa3c07e13acddda75fb5"
+            }
+          ]
+        },
+        "Beta": {
+          "health_before": {
+            "can_have_death_protection": true,
+            "current": 100.0,
+            "dead": false,
+            "death_protection": true,
+            "downed": false,
+            "fraction": 1.0,
+            "maximum": 100.0
+          },
+          "health_after": {
+            "can_have_death_protection": true,
+            "current": 100.0,
+            "dead": false,
+            "death_protection": true,
+            "downed": false,
+            "fraction": 1.0,
+            "maximum": 100.0
+          },
+          "original_identity": {
+            "alias": "Beta",
+            "entity_id": 0,
+            "native_character_id": 32,
+            "uid": 195
+          },
+          "native_route_schema": "native-client-route/1",
+          "initial_role_goal_false": true,
+          "native_fixture_world_and_runtime_equal": true,
+          "snapshot_integrity_identity_phase_order": "pass",
+          "pins": [
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-guided-st/guided_reference/shared_workshop_exchange.structured_tool/episode_1/before/Beta/observation.json",
+              "sha256": "4586610406aac0c92a2c014a527e9a7b9d36b4cbcc724c04f4f5896e9409750f"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-guided-st/guided_reference/shared_workshop_exchange.structured_tool/episode_1/before/Beta/_livequest_snapshot.json",
+              "sha256": "8cfce74317979425b5c4f6af1fccd991b27c464c5095b10632d0d50ca7bdebf7"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-guided-st/guided_reference/shared_workshop_exchange.structured_tool/episode_1/after/Beta/observation.json",
+              "sha256": "3b10e7bd6dc9addf910a001e50d21e51907f034e125dbe75623cf19b8640c296"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-guided-st/guided_reference/shared_workshop_exchange.structured_tool/episode_1/after/Beta/_livequest_snapshot.json",
+              "sha256": "df8b3e28aa11bd936d60bbbbff9ca44d85a40dd7e5310a257cd7ae6203c6649e"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-guided-st/guided_reference/shared_workshop_exchange.structured_tool/episode_1/game/Beta/fixture.json",
+              "sha256": "9641235e9e06e33dcc24c38efaa23f64d22dfe22a45423735e879572c021a03d"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-guided-st/guided_reference/shared_workshop_exchange.structured_tool/episode_1/game/Beta/environment.json",
+              "sha256": "97a395d5f43eed9c70b6875d9e46fd4feffd4445b25d0e9dbe49338f52be838e"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-guided-st/guided_reference/shared_workshop_exchange.structured_tool/episode_1/game/Beta/boundaries.json",
+              "sha256": "6b5ef28732a21547489da1b4938354faca322ad3b3867966ed175254fbd89f77"
+            }
+          ]
+        }
+      },
+      "runtime": null,
+      "formal_profile": {
+        "id": "guided_reference",
+        "name": "tool_calling",
+        "model": {
+          "provider": "github_copilot",
+          "name": "gpt-6-astra",
+          "reasoning_effort": "low",
+          "max_output_tokens": 4096,
+          "max_attempts": 3,
+          "timeout_seconds": 120.0
+        }
+      },
+      "active_seconds": 163.968133946,
+      "configuration": {
+        "path": "output/temp/task_development/veloren-interaction/VE-C03-guided-st/config.json",
+        "sha256": "d8143690775b97ede94d72e2735502ba71f066f5528211e95daf381ace9fd56c"
+      },
+      "provenance": {
+        "path": "output/temp/task_development/veloren-interaction/VE-C03-guided-st/provenance.json",
+        "sha256": "543a171b57999f4c4b47fdf30652ffe1170fd05059d114d321b3b09a8626eaf0"
+      },
+      "archived_revision": "509a17d2ea714081fcf4b024a03b76f5713eb80b"
+    },
+    {
+      "track": "vm",
+      "kind": "formal",
+      "qualifies_current_condition": true,
+      "whole_native_outcome": false,
+      "measurement": "valid",
+      "complete_evaluation_equal": true,
+      "metrics_boundary": "Current route/2 consumer correctly rejects route/1. Original exact-source route consumer reproduces all archived efficiency metrics; current death metrics reproduce exactly. No route relabeling or relaxed consumer.",
+      "result": {
+        "path": "output/temp/task_development/veloren-interaction/VE-C03-final-walled-vm/baseline/shared_workshop_exchange.visual_motor/episode_1/results/result.json",
+        "sha256": "1b1bd6d94daccdc9f8ac880394df50434df881cad7b38d1e20c736acfac4ad84"
+      },
+      "evaluation": {
+        "schema": "team-endpoints",
+        "success": false,
+        "checks": [
+          {
+            "scope": "all",
+            "roles": {
+              "Alpha": {
+                "success": false,
+                "checks": [
+                  {
+                    "kind": "health",
+                    "actual": 96.23828125,
+                    "minimum": 0,
+                    "passed": true
+                  },
+                  {
+                    "kind": "position",
+                    "actual": [
+                      18740.15625,
+                      10801.4501953125,
+                      501.0
+                    ],
+                    "horizontal_error": 19.404703542424887,
+                    "vertical_error": 0.0,
+                    "speed": 5.871845911616799e-34,
+                    "on_ground": true,
+                    "passed": false
+                  }
+                ],
+                "semantics": "simultaneous terminal state; no action attribution or continuous-survival claim"
+              },
+              "Beta": {
+                "success": false,
+                "checks": [
+                  {
+                    "kind": "health",
+                    "actual": 61.3359375,
+                    "minimum": 0,
+                    "passed": true
+                  },
+                  {
+                    "kind": "position",
+                    "actual": [
+                      18736.232421875,
+                      10808.5498046875,
+                      501.0
+                    ],
+                    "horizontal_error": 13.765256324706616,
+                    "vertical_error": 0.0,
+                    "speed": 1.401298464324817e-45,
+                    "on_ground": true,
+                    "passed": false
+                  }
+                ],
+                "semantics": "simultaneous terminal state; no action attribution or continuous-survival claim"
+              }
+            },
+            "passed": false
+          },
+          {
+            "scope": "role",
+            "role": "Alpha",
+            "result": {
+              "success": false,
+              "checks": [
+                {
+                  "kind": "health",
+                  "actual": 96.23828125,
+                  "minimum": 0,
+                  "passed": true
+                },
+                {
+                  "kind": "inventory",
+                  "item": "common.items.armor.misc.chest.worker_purple_brown",
+                  "min_count": 1,
+                  "before": 0,
+                  "after": 1,
+                  "delta": 1,
+                  "passed": true
+                },
+                {
+                  "kind": "equipment",
+                  "slot": "chest",
+                  "expected": "common.items.armor.hide.leather.chest",
+                  "actual": null,
+                  "passed": false
+                }
+              ],
+              "semantics": "simultaneous terminal state; no action attribution or continuous-survival claim"
+            },
+            "passed": false
+          },
+          {
+            "scope": "role",
+            "role": "Beta",
+            "result": {
+              "success": false,
+              "checks": [
+                {
+                  "kind": "health",
+                  "actual": 61.3359375,
+                  "minimum": 0,
+                  "passed": true
+                },
+                {
+                  "kind": "inventory",
+                  "item": "common.items.armor.misc.foot.sandals",
+                  "min_count": 1,
+                  "before": 0,
+                  "after": 0,
+                  "delta": 0,
+                  "passed": false
+                },
+                {
+                  "kind": "equipment",
+                  "slot": "feet",
+                  "expected": "common.items.armor.hide.leather.foot",
+                  "actual": "common.items.armor.misc.foot.sandals",
+                  "passed": false
+                }
+              ],
+              "semantics": "simultaneous terminal state; no action attribution or continuous-survival claim"
+            },
+            "passed": false
+          }
+        ]
+      },
+      "actors": {
+        "Alpha": {
+          "health_before": {
+            "can_have_death_protection": true,
+            "current": 100.0,
+            "dead": false,
+            "death_protection": true,
+            "downed": false,
+            "fraction": 1.0,
+            "maximum": 100.0
+          },
+          "health_after": {
+            "can_have_death_protection": true,
+            "current": 96.23828125,
+            "dead": false,
+            "death_protection": true,
+            "downed": false,
+            "fraction": 0.9623827934265137,
+            "maximum": 100.0
+          },
+          "original_identity": {
+            "alias": "Alpha",
+            "entity_id": 0,
+            "native_character_id": 16,
+            "uid": 113
+          },
+          "native_route_schema": "native-client-route/1",
+          "initial_role_goal_false": true,
+          "native_fixture_world_and_runtime_equal": true,
+          "snapshot_integrity_identity_phase_order": "pass",
+          "pins": [
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-final-walled-vm/baseline/shared_workshop_exchange.visual_motor/episode_1/before/Alpha/observation.json",
+              "sha256": "2936ab542e35633267bb07c325c4f79cfa081b775385f8976bc251433e144816"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-final-walled-vm/baseline/shared_workshop_exchange.visual_motor/episode_1/before/Alpha/_livequest_snapshot.json",
+              "sha256": "4c46d355b5e3121fcc44ebd8f9c59a4e809d23b334376cd00db2dd549786028e"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-final-walled-vm/baseline/shared_workshop_exchange.visual_motor/episode_1/after/Alpha/observation.json",
+              "sha256": "ff0c027b111ce8d2602ebe03efc2e574b2e32216bcbf2eb49cc8169c0e07f9e5"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-final-walled-vm/baseline/shared_workshop_exchange.visual_motor/episode_1/after/Alpha/_livequest_snapshot.json",
+              "sha256": "f01916c974e8e19c63590a67f7c1f56e0fc8220e2246b877bac5799223096495"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-final-walled-vm/baseline/shared_workshop_exchange.visual_motor/episode_1/game/Alpha/fixture.json",
+              "sha256": "b0d4854c2e80ff683aa282b25c8cd0322145212d1685e9114c2afdc5062fc2ab"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-final-walled-vm/baseline/shared_workshop_exchange.visual_motor/episode_1/game/Alpha/environment.json",
+              "sha256": "bc24a4f44bc40b9483f2f703efe693fb5fb1c7a04f0be049953c9947c05a49d6"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-final-walled-vm/baseline/shared_workshop_exchange.visual_motor/episode_1/game/Alpha/boundaries.json",
+              "sha256": "0dd0896b2f1372c595b89bb5c8487a63cdbc50a19e933a100533a45d1f6574de"
+            }
+          ]
+        },
+        "Beta": {
+          "health_before": {
+            "can_have_death_protection": true,
+            "current": 100.0,
+            "dead": false,
+            "death_protection": true,
+            "downed": false,
+            "fraction": 1.0,
+            "maximum": 100.0
+          },
+          "health_after": {
+            "can_have_death_protection": true,
+            "current": 61.3359375,
+            "dead": false,
+            "death_protection": true,
+            "downed": false,
+            "fraction": 0.6133593916893005,
+            "maximum": 100.0
+          },
+          "original_identity": {
+            "alias": "Beta",
+            "entity_id": 0,
+            "native_character_id": 32,
+            "uid": 276
+          },
+          "native_route_schema": "native-client-route/1",
+          "initial_role_goal_false": true,
+          "native_fixture_world_and_runtime_equal": true,
+          "snapshot_integrity_identity_phase_order": "pass",
+          "pins": [
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-final-walled-vm/baseline/shared_workshop_exchange.visual_motor/episode_1/before/Beta/observation.json",
+              "sha256": "33b9ff95c68692c5ed78187496a6d7c41ad0581c44fbed0efe714dec61d7e03c"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-final-walled-vm/baseline/shared_workshop_exchange.visual_motor/episode_1/before/Beta/_livequest_snapshot.json",
+              "sha256": "1e74d4e8ea02fe42ffd9e8a83051dfa39bf0c9cc4d9cb3eaf20530986b04c9be"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-final-walled-vm/baseline/shared_workshop_exchange.visual_motor/episode_1/after/Beta/observation.json",
+              "sha256": "c182d88c765ab9926954b956847f49923c9c6ee9e441e4f104ed5e830f4e0a83"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-final-walled-vm/baseline/shared_workshop_exchange.visual_motor/episode_1/after/Beta/_livequest_snapshot.json",
+              "sha256": "a09b4d2e2a59463a8e40edb8a98ce74d228f79f5c3e2eaf7a133948512352a0d"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-final-walled-vm/baseline/shared_workshop_exchange.visual_motor/episode_1/game/Beta/fixture.json",
+              "sha256": "72178fe2661135f4ec75d730285b5ee09a41119ef40d759632dcb7afa61873ff"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-final-walled-vm/baseline/shared_workshop_exchange.visual_motor/episode_1/game/Beta/environment.json",
+              "sha256": "018493ed4a67631fc739ad4c4ba41f80fc742ba87445f82c41d5c99abc51f29a"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-final-walled-vm/baseline/shared_workshop_exchange.visual_motor/episode_1/game/Beta/boundaries.json",
+              "sha256": "88cc99f6a66cc4b5eca75f8db2adae810a3269df5f936a9119aa3f98032b7588"
+            }
+          ]
+        }
+      },
+      "runtime": null,
+      "formal_profile": {
+        "id": "baseline",
+        "name": "tool_calling",
+        "model": {
+          "provider": "github_copilot",
+          "name": "gpt-6-astra",
+          "reasoning_effort": "low",
+          "max_output_tokens": 4096,
+          "max_attempts": 3,
+          "timeout_seconds": 120.0
+        }
+      },
+      "active_seconds": 2700.121438312,
+      "configuration": {
+        "path": "output/temp/task_development/veloren-interaction/VE-C03-final-walled-vm/config.json",
+        "sha256": "de81019d21f1ddaa800322295f45312ef625467dcb2bfcdf1ee6380b2e61f6d9"
+      },
+      "provenance": {
+        "path": "output/temp/task_development/veloren-interaction/VE-C03-final-walled-vm/provenance.json",
+        "sha256": "913d4881215e78aa3a10a7164c58f48ee33868c2141cdb679763bf1d995cfaa9"
+      },
+      "archived_revision": "7f9664fc8638ea35fbfab3a2579e3feb598c4218"
+    },
+    {
+      "track": "vm",
+      "kind": "assistantguidedreference",
+      "qualifies_current_condition": true,
+      "whole_native_outcome": true,
+      "measurement": "valid",
+      "complete_evaluation_equal": true,
+      "metrics_boundary": "Exact current binding metrics equal the route/2 native result.",
+      "result": {
+        "path": "output/temp/task_development/veloren-interaction/VE-C03-settled-input-v2-vm/result.json",
+        "sha256": "cba0fb8ae0aca130f58db44b6bfbbac90535a5e216c77285289e89c23e8d402c"
+      },
+      "evaluation": {
+        "schema": "team-endpoints",
+        "success": true,
+        "checks": [
+          {
+            "scope": "all",
+            "roles": {
+              "Alpha": {
+                "success": true,
+                "checks": [
+                  {
+                    "kind": "health",
+                    "actual": 100.0,
+                    "minimum": 0,
+                    "passed": true
+                  },
+                  {
+                    "kind": "position",
+                    "actual": [
+                      18723.095703125,
+                      10808.763671875,
+                      501.0
+                    ],
+                    "horizontal_error": 0.9471226535147289,
+                    "vertical_error": 0.0,
+                    "speed": 0.0038235120562927095,
+                    "on_ground": true,
+                    "passed": true
+                  }
+                ],
+                "semantics": "simultaneous terminal state; no action attribution or continuous-survival claim"
+              },
+              "Beta": {
+                "success": true,
+                "checks": [
+                  {
+                    "kind": "health",
+                    "actual": 100.0,
+                    "minimum": 0,
+                    "passed": true
+                  },
+                  {
+                    "kind": "position",
+                    "actual": [
+                      18722.896484375,
+                      10810.0966796875,
+                      501.0
+                    ],
+                    "horizontal_error": 0.716398289427214,
+                    "vertical_error": 0.0,
+                    "speed": 0.005652841695274059,
+                    "on_ground": true,
+                    "passed": true
+                  }
+                ],
+                "semantics": "simultaneous terminal state; no action attribution or continuous-survival claim"
+              }
+            },
+            "passed": true
+          },
+          {
+            "scope": "role",
+            "role": "Alpha",
+            "result": {
+              "success": true,
+              "checks": [
+                {
+                  "kind": "health",
+                  "actual": 100.0,
+                  "minimum": 0,
+                  "passed": true
+                },
+                {
+                  "kind": "inventory",
+                  "item": "common.items.armor.misc.chest.worker_purple_brown",
+                  "min_count": 1,
+                  "before": 0,
+                  "after": 1,
+                  "delta": 1,
+                  "passed": true
+                },
+                {
+                  "kind": "equipment",
+                  "slot": "chest",
+                  "expected": "common.items.armor.hide.leather.chest",
+                  "actual": "common.items.armor.hide.leather.chest",
+                  "passed": true
+                }
+              ],
+              "semantics": "simultaneous terminal state; no action attribution or continuous-survival claim"
+            },
+            "passed": true
+          },
+          {
+            "scope": "role",
+            "role": "Beta",
+            "result": {
+              "success": true,
+              "checks": [
+                {
+                  "kind": "health",
+                  "actual": 100.0,
+                  "minimum": 0,
+                  "passed": true
+                },
+                {
+                  "kind": "inventory",
+                  "item": "common.items.armor.misc.foot.sandals",
+                  "min_count": 1,
+                  "before": 0,
+                  "after": 1,
+                  "delta": 1,
+                  "passed": true
+                },
+                {
+                  "kind": "equipment",
+                  "slot": "feet",
+                  "expected": "common.items.armor.hide.leather.foot",
+                  "actual": "common.items.armor.hide.leather.foot",
+                  "passed": true
+                }
+              ],
+              "semantics": "simultaneous terminal state; no action attribution or continuous-survival claim"
+            },
+            "passed": true
+          }
+        ]
+      },
+      "actors": {
+        "Alpha": {
+          "health_before": {
+            "can_have_death_protection": true,
+            "current": 100.0,
+            "dead": false,
+            "death_protection": true,
+            "downed": false,
+            "fraction": 1.0,
+            "maximum": 100.0
+          },
+          "health_after": {
+            "can_have_death_protection": true,
+            "current": 100.0,
+            "dead": false,
+            "death_protection": true,
+            "downed": false,
+            "fraction": 1.0,
+            "maximum": 100.0
+          },
+          "original_identity": {
+            "alias": "Alpha",
+            "entity_id": 0,
+            "native_character_id": 16,
+            "uid": 91
+          },
+          "native_route_schema": "native-client-route/2",
+          "initial_role_goal_false": true,
+          "native_fixture_world_and_runtime_equal": true,
+          "snapshot_integrity_identity_phase_order": "pass",
+          "pins": [
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-settled-input-v2-vm/before/Alpha/observation.json",
+              "sha256": "5114ca129327e8f81e511180b3f212baade78387d2a51d509ef0b34028507c25"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-settled-input-v2-vm/before/Alpha/_livequest_snapshot.json",
+              "sha256": "539874ebf2fa73d648767490ca9710cacd7aa345179e37b4cc975de8bc2a0416"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-settled-input-v2-vm/after/Alpha/observation.json",
+              "sha256": "a21e02f81c63f2540d5136aef66456eb8161e9ef6293f3af97c4bd0ece0e74f7"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-settled-input-v2-vm/after/Alpha/_livequest_snapshot.json",
+              "sha256": "0f1f9a41208ddbb7615e034785e6ee296b64bb72a6c4d0dcbbf2d9e505091c0a"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-settled-input-v2-vm/game/Alpha/fixture.json",
+              "sha256": "da95ac7f03069bebf9909c0d77fd1b796c8eb62aaa478fa61d13e01e643f992e"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-settled-input-v2-vm/game/Alpha/environment.json",
+              "sha256": "91801a3bbb84ad956d04454719d4a5abd38ba83e384e4ca542ce1a939bc30316"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-settled-input-v2-vm/game/Alpha/boundaries.json",
+              "sha256": "bde0cdae9dcf380abd6989b8e007cafb174ca79ea59dc3d302adca7d1a7ead32"
+            }
+          ]
+        },
+        "Beta": {
+          "health_before": {
+            "can_have_death_protection": true,
+            "current": 100.0,
+            "dead": false,
+            "death_protection": true,
+            "downed": false,
+            "fraction": 1.0,
+            "maximum": 100.0
+          },
+          "health_after": {
+            "can_have_death_protection": true,
+            "current": 100.0,
+            "dead": false,
+            "death_protection": true,
+            "downed": false,
+            "fraction": 1.0,
+            "maximum": 100.0
+          },
+          "original_identity": {
+            "alias": "Beta",
+            "entity_id": 0,
+            "native_character_id": 32,
+            "uid": 226
+          },
+          "native_route_schema": "native-client-route/2",
+          "initial_role_goal_false": true,
+          "native_fixture_world_and_runtime_equal": true,
+          "snapshot_integrity_identity_phase_order": "pass",
+          "pins": [
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-settled-input-v2-vm/before/Beta/observation.json",
+              "sha256": "d87814dc25c22e4615e212af5f20f052e4f4c774eba0c146d0dc19ddea7c6f78"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-settled-input-v2-vm/before/Beta/_livequest_snapshot.json",
+              "sha256": "523a3e55ec6f3be5e66d1721e7f4953e0a9a48e0beb3ef33d851c40a21273084"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-settled-input-v2-vm/after/Beta/observation.json",
+              "sha256": "418a1f91243c6ea5e3302df72e5e5b30378b7fc148290e674943c48add366d53"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-settled-input-v2-vm/after/Beta/_livequest_snapshot.json",
+              "sha256": "8de7a79935caf2419ace74f4bc93df31b3578a09eb22cabb066c757bfe702c71"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-settled-input-v2-vm/game/Beta/fixture.json",
+              "sha256": "07ffdf033523c23340948f31a7c4f5b00532dac472215bd11bba0377067595d2"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-settled-input-v2-vm/game/Beta/environment.json",
+              "sha256": "bcc5611e38a25f523da3a61feaa3c61cc388e7c8d8c45dec3c95d7bb1e237f3d"
+            },
+            {
+              "path": "output/temp/task_development/veloren-interaction/VE-C03-settled-input-v2-vm/game/Beta/boundaries.json",
+              "sha256": "2e7a65a3c04f3b5a8e9316c7f99048db048bfcd52d257dbe047469c83f239458"
+            }
+          ]
+        }
+      },
+      "runtime": {
+        "path": "output/temp/task_development/veloren-interaction/VE-C03-settled-input-v2-vm/runtime.json",
+        "sha256": "f90ca9a97e20a106e6d749368319cdd45243a2f902605e7797c6f8e3613c3793"
+      },
+      "active_seconds": 188.791728345,
+      "policy_boundary": "Alpha-only image operator; frozen independent Beta uses only its own public images and controls. Native evaluator is read only after end.",
+      "driver": {
+        "path": "output/temp/task_development/veloren-interaction/VE-C03-settled-input-v2-vm/driver.py",
+        "sha256": "258e0b1a5c0ed07645b552ffd998ebd687ffaafc12deb46897476388fa740072"
+      }
+    }
+  ],
+  "source_deltas": {
+    "st_formal": {
+      "benchmark/config.py": {
+        "executed_or_frozen_sha256": "5715f2a98606af7171bab142db256fc2a984f239f0bfef0dec5231ab0beba1c4",
+        "candidate_sha256": "5715f2a98606af7171bab142db256fc2a984f239f0bfef0dec5231ab0beba1c4",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "benchmark/factory.py": {
+        "executed_or_frozen_sha256": "d55fc69a5bac9a45717a5fc63ff37e27c6efba3b3c706448222231e9db522763",
+        "candidate_sha256": "d55fc69a5bac9a45717a5fc63ff37e27c6efba3b3c706448222231e9db522763",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "benchmark/runner.py": {
+        "executed_or_frozen_sha256": "48f014e5f3129fcb6333af01bb4be59843d676dd9e148c11293519e78ed01dba",
+        "candidate_sha256": "48f014e5f3129fcb6333af01bb4be59843d676dd9e148c11293519e78ed01dba",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/team.py": {
+        "executed_or_frozen_sha256": "ae4361b0f02892304fc14ac97949c56091c8598809bdddbeec5c9263c779b5b6",
+        "candidate_sha256": "bc80b21d245fce6f2d0f37cc457c5339e6d8f97a26fe4d7f7b4b62c37ed86245",
+        "byte_identical": false,
+        "changed_top_level_symbols": [
+          "TeamGame",
+          "create_team_binding"
+        ]
+      },
+      "game/bindings.py": {
+        "executed_or_frozen_sha256": "9253058d58765caa3628e8df4122ed123b08622eec505b2e73114e30b1b8a14c",
+        "candidate_sha256": "9253058d58765caa3628e8df4122ed123b08622eec505b2e73114e30b1b8a14c",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/backends/x11/display.py": {
+        "executed_or_frozen_sha256": "b9b60a652e3444ba3a1aadfd2d8560493beda9ecca9d2d1718fed8fde5e09d2e",
+        "candidate_sha256": "2462a9ec7d57bfc126b3df8f1983e97b2f97c05a2217d2c2c5c2bf897989052d",
+        "byte_identical": false,
+        "changed_top_level_symbols": [
+          "VirtualDisplay"
+        ]
+      },
+      "game/backends/x11/interface.py": {
+        "executed_or_frozen_sha256": "3ea1390d072b2e8dabb1ebebb0b588150fba807865eecffd4a7b677eb087b3cc",
+        "candidate_sha256": "3ea1390d072b2e8dabb1ebebb0b588150fba807865eecffd4a7b677eb087b3cc",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/veloren/binding.py": {
+        "executed_or_frozen_sha256": "c32de0c19f9ec55ab2684faeb1e8ea9cbe133004fc1725a0df7ce4931892312f",
+        "candidate_sha256": "25fdb14cd368ef00a008ea95605a8ec6c5aeac94fab620ae7acde05dc692547e",
+        "byte_identical": false,
+        "changed_top_level_symbols": [
+          "create_binding"
+        ]
+      },
+      "game/veloren/fixture.py": {
+        "executed_or_frozen_sha256": "a1334518d60efb4e795dc52e7daceca19d031a888e3d13fef2e21ea9e584fddf",
+        "candidate_sha256": "8679dc8b2dbee74e7c3cc60060ed3bd903e6de3c7cfe76e0b8bb98a3c912354f",
+        "byte_identical": false,
+        "changed_top_level_symbols": [
+          "bind_supplies",
+          "initialize_companion",
+          "initialize_encounter",
+          "initialize_encounters",
+          "initialize_fixture",
+          "initialize_supplies",
+          "native_authoring_order",
+          "validate_fixture",
+          "verify_aged_supplies"
+        ]
+      },
+      "game/veloren/game.py": {
+        "executed_or_frozen_sha256": "ddec754de0e6da3ed1ddcbeb25ec365de0f9745952ce3155c19caa44bc5f2550",
+        "candidate_sha256": "ed7db2975a5d80dcb27fdcf9fdc10925840f992f507c2ee8121932d9abc557dd",
+        "byte_identical": false,
+        "changed_top_level_symbols": [
+          "VelorenGame"
+        ]
+      },
+      "game/veloren/native_bindings.py": {
+        "change": "new module since original execution",
+        "executed_or_frozen_sha256": null,
+        "candidate_sha256": "8d77711889b5c020cedb79af2be8c607232b225cb58a4e1d7b28f5cc26e81947"
+      },
+      "game/veloren/settlement.py": {
+        "executed_or_frozen_sha256": "ac0b28aa2a2f8e634ebb50392d800e7ec540ce8c684a2e835f2325f34578662d",
+        "candidate_sha256": "8498a6d385640b1ddce4179c996f473b074bc46bde462a64a95e604841793fea",
+        "byte_identical": false,
+        "changed_top_level_symbols": [
+          "final_quote_trade",
+          "initialize_merchant",
+          "purchase_funded"
+        ]
+      },
+      "game/veloren/structured_tools/interface.py": {
+        "executed_or_frozen_sha256": "8cbf0236e39d35bf902aff25b1c9b7401b3aae98d0e04ce9b0b32197dbf8a5a0",
+        "candidate_sha256": "c0993aea0136f920f0458da69a975a925a135ae6b38beb3b5324675bb194ea37",
+        "byte_identical": false,
+        "changed_top_level_symbols": [
+          "project",
+          "validate_tool"
+        ]
+      },
+      "game/veloren/visual_motor/interface.py": {
+        "executed_or_frozen_sha256": "89479670c13073a7b7dfb409b3768d7f502fdad90750585191885598ea6d1052",
+        "candidate_sha256": "89479670c13073a7b7dfb409b3768d7f502fdad90750585191885598ea6d1052",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/veloren/runtime/session.py": {
+        "executed_or_frozen_sha256": "d19880666c3d12f8e25c3d2b7809b4cee2aff05957fd1c267e19d6c5e2b760f9",
+        "candidate_sha256": "d19880666c3d12f8e25c3d2b7809b4cee2aff05957fd1c267e19d6c5e2b760f9",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/veloren/runtime/worker.py": {
+        "executed_or_frozen_sha256": "860b405fb5c8c7775b6d5dd62ca4c7ed4b0af45eae3c8ae0055cf328fbaf7c76",
+        "candidate_sha256": "ac442d93848dafa84dde06049b2b9e250ecda732d447751bde4df637daa79c55",
+        "byte_identical": false,
+        "changed_top_level_symbols": [
+          "Session"
+        ]
+      },
+      "game/veloren/runtime/records.py": {
+        "executed_or_frozen_sha256": "f4aeed2682ccc7334aa3347a8e7087dd3c47e7fdb705eb9f47677bdf896f2bc7",
+        "candidate_sha256": "f4aeed2682ccc7334aa3347a8e7087dd3c47e7fdb705eb9f47677bdf896f2bc7",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/veloren/runtime/journal.py": {
+        "executed_or_frozen_sha256": "493e16a24d113a95054dfed34d56636a3763c4abc62137d87729a5b3e4009b4d",
+        "candidate_sha256": "317402daf3cc33598ea735c1909ca2973c33569d95ceb1eee995de3aa32f0901",
+        "byte_identical": false,
+        "changed_top_level_symbols": [
+          "snapshot_binding",
+          "snapshot_rows"
+        ]
+      },
+      "game/veloren/runtime/startup.py": {
+        "executed_or_frozen_sha256": "2eded18810e550cfb39e121db292610879a49a47bffbe54722ce6f0e31f65083",
+        "candidate_sha256": "2eded18810e550cfb39e121db292610879a49a47bffbe54722ce6f0e31f65083",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/veloren/runtime/server.py": {
+        "executed_or_frozen_sha256": "bbbb74bc200e18d5f50189aead15eb76bec9c315db0119146d08c1026e772d4d",
+        "candidate_sha256": "bbbb74bc200e18d5f50189aead15eb76bec9c315db0119146d08c1026e772d4d",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/veloren/evaluators/endpoints.py": {
+        "executed_or_frozen_sha256": "67433487082e51dd6f87074af57be1450ae19a848dc7ae1c82520caa3b50892e",
+        "candidate_sha256": "ca445973cf0a7295f8801f8667e413da1d4f92e2d146d710d560ceb5bec1fc9c",
+        "byte_identical": false,
+        "changed_top_level_symbols": [
+          "state_checks"
+        ]
+      },
+      "game/veloren/evaluators/deaths.py": {
+        "executed_or_frozen_sha256": "144d424a3e9efe8196cc54c78700be2f32d63ecb784586b285032869baa38724",
+        "candidate_sha256": "144d424a3e9efe8196cc54c78700be2f32d63ecb784586b285032869baa38724",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/veloren/evaluators/team_efficiency.py": {
+        "executed_or_frozen_sha256": "57532661e2f75630e2dc0fb1c3572c1a5571eb273e755693776152a05c6058b4",
+        "candidate_sha256": "57532661e2f75630e2dc0fb1c3572c1a5571eb273e755693776152a05c6058b4",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/veloren/evaluators/itinerary.py": {
+        "executed_or_frozen_sha256": "f4443af49319c1457e257bfc210e1cc3a40a7e87916c7f1eab0d275eed1a4b45",
+        "candidate_sha256": "80211f112c5f10d6a2e969fe7389d108377fa27d1592e1c2eed5f053ad1a80d4",
+        "byte_identical": false,
+        "changed_top_level_symbols": [
+          "route_samples"
+        ]
+      },
+      "game/veloren/runtime/server_extension.py": {
+        "change": "new module since original execution",
+        "executed_or_frozen_sha256": null,
+        "candidate_sha256": "3832c822580b41399300fba19a24cd10c6159de1b6b6d557a0edb2a52cdee5b4"
+      }
+    },
+    "vm_formal": {
+      "benchmark/config.py": {
+        "executed_or_frozen_sha256": "5715f2a98606af7171bab142db256fc2a984f239f0bfef0dec5231ab0beba1c4",
+        "candidate_sha256": "5715f2a98606af7171bab142db256fc2a984f239f0bfef0dec5231ab0beba1c4",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "benchmark/factory.py": {
+        "executed_or_frozen_sha256": "d55fc69a5bac9a45717a5fc63ff37e27c6efba3b3c706448222231e9db522763",
+        "candidate_sha256": "d55fc69a5bac9a45717a5fc63ff37e27c6efba3b3c706448222231e9db522763",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "benchmark/runner.py": {
+        "executed_or_frozen_sha256": "48f014e5f3129fcb6333af01bb4be59843d676dd9e148c11293519e78ed01dba",
+        "candidate_sha256": "48f014e5f3129fcb6333af01bb4be59843d676dd9e148c11293519e78ed01dba",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/team.py": {
+        "executed_or_frozen_sha256": "ae4361b0f02892304fc14ac97949c56091c8598809bdddbeec5c9263c779b5b6",
+        "candidate_sha256": "bc80b21d245fce6f2d0f37cc457c5339e6d8f97a26fe4d7f7b4b62c37ed86245",
+        "byte_identical": false,
+        "changed_top_level_symbols": [
+          "TeamGame",
+          "create_team_binding"
+        ]
+      },
+      "game/bindings.py": {
+        "executed_or_frozen_sha256": "9253058d58765caa3628e8df4122ed123b08622eec505b2e73114e30b1b8a14c",
+        "candidate_sha256": "9253058d58765caa3628e8df4122ed123b08622eec505b2e73114e30b1b8a14c",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/backends/x11/display.py": {
+        "executed_or_frozen_sha256": "b9b60a652e3444ba3a1aadfd2d8560493beda9ecca9d2d1718fed8fde5e09d2e",
+        "candidate_sha256": "2462a9ec7d57bfc126b3df8f1983e97b2f97c05a2217d2c2c5c2bf897989052d",
+        "byte_identical": false,
+        "changed_top_level_symbols": [
+          "VirtualDisplay"
+        ]
+      },
+      "game/backends/x11/interface.py": {
+        "executed_or_frozen_sha256": "3ea1390d072b2e8dabb1ebebb0b588150fba807865eecffd4a7b677eb087b3cc",
+        "candidate_sha256": "3ea1390d072b2e8dabb1ebebb0b588150fba807865eecffd4a7b677eb087b3cc",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/veloren/binding.py": {
+        "executed_or_frozen_sha256": "c32de0c19f9ec55ab2684faeb1e8ea9cbe133004fc1725a0df7ce4931892312f",
+        "candidate_sha256": "25fdb14cd368ef00a008ea95605a8ec6c5aeac94fab620ae7acde05dc692547e",
+        "byte_identical": false,
+        "changed_top_level_symbols": [
+          "create_binding"
+        ]
+      },
+      "game/veloren/fixture.py": {
+        "executed_or_frozen_sha256": "a1334518d60efb4e795dc52e7daceca19d031a888e3d13fef2e21ea9e584fddf",
+        "candidate_sha256": "8679dc8b2dbee74e7c3cc60060ed3bd903e6de3c7cfe76e0b8bb98a3c912354f",
+        "byte_identical": false,
+        "changed_top_level_symbols": [
+          "bind_supplies",
+          "initialize_companion",
+          "initialize_encounter",
+          "initialize_encounters",
+          "initialize_fixture",
+          "initialize_supplies",
+          "native_authoring_order",
+          "validate_fixture",
+          "verify_aged_supplies"
+        ]
+      },
+      "game/veloren/game.py": {
+        "executed_or_frozen_sha256": "ddec754de0e6da3ed1ddcbeb25ec365de0f9745952ce3155c19caa44bc5f2550",
+        "candidate_sha256": "ed7db2975a5d80dcb27fdcf9fdc10925840f992f507c2ee8121932d9abc557dd",
+        "byte_identical": false,
+        "changed_top_level_symbols": [
+          "VelorenGame"
+        ]
+      },
+      "game/veloren/native_bindings.py": {
+        "change": "new module since original execution",
+        "executed_or_frozen_sha256": null,
+        "candidate_sha256": "8d77711889b5c020cedb79af2be8c607232b225cb58a4e1d7b28f5cc26e81947"
+      },
+      "game/veloren/settlement.py": {
+        "executed_or_frozen_sha256": "ac0b28aa2a2f8e634ebb50392d800e7ec540ce8c684a2e835f2325f34578662d",
+        "candidate_sha256": "8498a6d385640b1ddce4179c996f473b074bc46bde462a64a95e604841793fea",
+        "byte_identical": false,
+        "changed_top_level_symbols": [
+          "final_quote_trade",
+          "initialize_merchant",
+          "purchase_funded"
+        ]
+      },
+      "game/veloren/structured_tools/interface.py": {
+        "executed_or_frozen_sha256": "8cbf0236e39d35bf902aff25b1c9b7401b3aae98d0e04ce9b0b32197dbf8a5a0",
+        "candidate_sha256": "c0993aea0136f920f0458da69a975a925a135ae6b38beb3b5324675bb194ea37",
+        "byte_identical": false,
+        "changed_top_level_symbols": [
+          "project",
+          "validate_tool"
+        ]
+      },
+      "game/veloren/visual_motor/interface.py": {
+        "executed_or_frozen_sha256": "89479670c13073a7b7dfb409b3768d7f502fdad90750585191885598ea6d1052",
+        "candidate_sha256": "89479670c13073a7b7dfb409b3768d7f502fdad90750585191885598ea6d1052",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/veloren/runtime/session.py": {
+        "executed_or_frozen_sha256": "d19880666c3d12f8e25c3d2b7809b4cee2aff05957fd1c267e19d6c5e2b760f9",
+        "candidate_sha256": "d19880666c3d12f8e25c3d2b7809b4cee2aff05957fd1c267e19d6c5e2b760f9",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/veloren/runtime/worker.py": {
+        "executed_or_frozen_sha256": "860b405fb5c8c7775b6d5dd62ca4c7ed4b0af45eae3c8ae0055cf328fbaf7c76",
+        "candidate_sha256": "ac442d93848dafa84dde06049b2b9e250ecda732d447751bde4df637daa79c55",
+        "byte_identical": false,
+        "changed_top_level_symbols": [
+          "Session"
+        ]
+      },
+      "game/veloren/runtime/records.py": {
+        "executed_or_frozen_sha256": "f4aeed2682ccc7334aa3347a8e7087dd3c47e7fdb705eb9f47677bdf896f2bc7",
+        "candidate_sha256": "f4aeed2682ccc7334aa3347a8e7087dd3c47e7fdb705eb9f47677bdf896f2bc7",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/veloren/runtime/journal.py": {
+        "executed_or_frozen_sha256": "493e16a24d113a95054dfed34d56636a3763c4abc62137d87729a5b3e4009b4d",
+        "candidate_sha256": "317402daf3cc33598ea735c1909ca2973c33569d95ceb1eee995de3aa32f0901",
+        "byte_identical": false,
+        "changed_top_level_symbols": [
+          "snapshot_binding",
+          "snapshot_rows"
+        ]
+      },
+      "game/veloren/runtime/startup.py": {
+        "executed_or_frozen_sha256": "2eded18810e550cfb39e121db292610879a49a47bffbe54722ce6f0e31f65083",
+        "candidate_sha256": "2eded18810e550cfb39e121db292610879a49a47bffbe54722ce6f0e31f65083",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/veloren/runtime/server.py": {
+        "executed_or_frozen_sha256": "bbbb74bc200e18d5f50189aead15eb76bec9c315db0119146d08c1026e772d4d",
+        "candidate_sha256": "bbbb74bc200e18d5f50189aead15eb76bec9c315db0119146d08c1026e772d4d",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/veloren/evaluators/endpoints.py": {
+        "executed_or_frozen_sha256": "67433487082e51dd6f87074af57be1450ae19a848dc7ae1c82520caa3b50892e",
+        "candidate_sha256": "ca445973cf0a7295f8801f8667e413da1d4f92e2d146d710d560ceb5bec1fc9c",
+        "byte_identical": false,
+        "changed_top_level_symbols": [
+          "state_checks"
+        ]
+      },
+      "game/veloren/evaluators/deaths.py": {
+        "executed_or_frozen_sha256": "144d424a3e9efe8196cc54c78700be2f32d63ecb784586b285032869baa38724",
+        "candidate_sha256": "144d424a3e9efe8196cc54c78700be2f32d63ecb784586b285032869baa38724",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/veloren/evaluators/team_efficiency.py": {
+        "executed_or_frozen_sha256": "57532661e2f75630e2dc0fb1c3572c1a5571eb273e755693776152a05c6058b4",
+        "candidate_sha256": "57532661e2f75630e2dc0fb1c3572c1a5571eb273e755693776152a05c6058b4",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/veloren/evaluators/itinerary.py": {
+        "executed_or_frozen_sha256": "f4443af49319c1457e257bfc210e1cc3a40a7e87916c7f1eab0d275eed1a4b45",
+        "candidate_sha256": "80211f112c5f10d6a2e969fe7389d108377fa27d1592e1c2eed5f053ad1a80d4",
+        "byte_identical": false,
+        "changed_top_level_symbols": [
+          "route_samples"
+        ]
+      },
+      "game/veloren/runtime/server_extension.py": {
+        "change": "new module since original execution",
+        "executed_or_frozen_sha256": null,
+        "candidate_sha256": "3832c822580b41399300fba19a24cd10c6159de1b6b6d557a0edb2a52cdee5b4"
+      }
+    },
+    "current_native_vm": {
+      "benchmark/config.py": {
+        "executed_or_frozen_sha256": "5715f2a98606af7171bab142db256fc2a984f239f0bfef0dec5231ab0beba1c4",
+        "candidate_sha256": "5715f2a98606af7171bab142db256fc2a984f239f0bfef0dec5231ab0beba1c4",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "benchmark/factory.py": {
+        "executed_or_frozen_sha256": "d55fc69a5bac9a45717a5fc63ff37e27c6efba3b3c706448222231e9db522763",
+        "candidate_sha256": "d55fc69a5bac9a45717a5fc63ff37e27c6efba3b3c706448222231e9db522763",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "benchmark/runner.py": {
+        "executed_or_frozen_sha256": "48f014e5f3129fcb6333af01bb4be59843d676dd9e148c11293519e78ed01dba",
+        "candidate_sha256": "48f014e5f3129fcb6333af01bb4be59843d676dd9e148c11293519e78ed01dba",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/team.py": {
+        "executed_or_frozen_sha256": "bc80b21d245fce6f2d0f37cc457c5339e6d8f97a26fe4d7f7b4b62c37ed86245",
+        "candidate_sha256": "bc80b21d245fce6f2d0f37cc457c5339e6d8f97a26fe4d7f7b4b62c37ed86245",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/bindings.py": {
+        "executed_or_frozen_sha256": "9253058d58765caa3628e8df4122ed123b08622eec505b2e73114e30b1b8a14c",
+        "candidate_sha256": "9253058d58765caa3628e8df4122ed123b08622eec505b2e73114e30b1b8a14c",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/backends/x11/display.py": {
+        "executed_or_frozen_sha256": "2462a9ec7d57bfc126b3df8f1983e97b2f97c05a2217d2c2c5c2bf897989052d",
+        "candidate_sha256": "2462a9ec7d57bfc126b3df8f1983e97b2f97c05a2217d2c2c5c2bf897989052d",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/backends/x11/interface.py": {
+        "executed_or_frozen_sha256": "3ea1390d072b2e8dabb1ebebb0b588150fba807865eecffd4a7b677eb087b3cc",
+        "candidate_sha256": "3ea1390d072b2e8dabb1ebebb0b588150fba807865eecffd4a7b677eb087b3cc",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/veloren/binding.py": {
+        "executed_or_frozen_sha256": "c5ba9baa4f96609dace86b99e99091faeddb642ffacb1c64b0dc6025c9be4450",
+        "candidate_sha256": "25fdb14cd368ef00a008ea95605a8ec6c5aeac94fab620ae7acde05dc692547e",
+        "byte_identical": false,
+        "changed_top_level_symbols": [
+          "create_binding"
+        ]
+      },
+      "game/veloren/fixture.py": {
+        "executed_or_frozen_sha256": "8679dc8b2dbee74e7c3cc60060ed3bd903e6de3c7cfe76e0b8bb98a3c912354f",
+        "candidate_sha256": "8679dc8b2dbee74e7c3cc60060ed3bd903e6de3c7cfe76e0b8bb98a3c912354f",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/veloren/game.py": {
+        "executed_or_frozen_sha256": "ed7db2975a5d80dcb27fdcf9fdc10925840f992f507c2ee8121932d9abc557dd",
+        "candidate_sha256": "ed7db2975a5d80dcb27fdcf9fdc10925840f992f507c2ee8121932d9abc557dd",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/veloren/native_bindings.py": {
+        "executed_or_frozen_sha256": "8d77711889b5c020cedb79af2be8c607232b225cb58a4e1d7b28f5cc26e81947",
+        "candidate_sha256": "8d77711889b5c020cedb79af2be8c607232b225cb58a4e1d7b28f5cc26e81947",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/veloren/settlement.py": {
+        "executed_or_frozen_sha256": "8498a6d385640b1ddce4179c996f473b074bc46bde462a64a95e604841793fea",
+        "candidate_sha256": "8498a6d385640b1ddce4179c996f473b074bc46bde462a64a95e604841793fea",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/veloren/structured_tools/interface.py": {
+        "executed_or_frozen_sha256": "c0993aea0136f920f0458da69a975a925a135ae6b38beb3b5324675bb194ea37",
+        "candidate_sha256": "c0993aea0136f920f0458da69a975a925a135ae6b38beb3b5324675bb194ea37",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/veloren/visual_motor/interface.py": {
+        "executed_or_frozen_sha256": "89479670c13073a7b7dfb409b3768d7f502fdad90750585191885598ea6d1052",
+        "candidate_sha256": "89479670c13073a7b7dfb409b3768d7f502fdad90750585191885598ea6d1052",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/veloren/runtime/session.py": {
+        "executed_or_frozen_sha256": "d19880666c3d12f8e25c3d2b7809b4cee2aff05957fd1c267e19d6c5e2b760f9",
+        "candidate_sha256": "d19880666c3d12f8e25c3d2b7809b4cee2aff05957fd1c267e19d6c5e2b760f9",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/veloren/runtime/worker.py": {
+        "executed_or_frozen_sha256": "ac442d93848dafa84dde06049b2b9e250ecda732d447751bde4df637daa79c55",
+        "candidate_sha256": "ac442d93848dafa84dde06049b2b9e250ecda732d447751bde4df637daa79c55",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/veloren/runtime/records.py": {
+        "executed_or_frozen_sha256": "f4aeed2682ccc7334aa3347a8e7087dd3c47e7fdb705eb9f47677bdf896f2bc7",
+        "candidate_sha256": "f4aeed2682ccc7334aa3347a8e7087dd3c47e7fdb705eb9f47677bdf896f2bc7",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/veloren/runtime/journal.py": {
+        "executed_or_frozen_sha256": "317402daf3cc33598ea735c1909ca2973c33569d95ceb1eee995de3aa32f0901",
+        "candidate_sha256": "317402daf3cc33598ea735c1909ca2973c33569d95ceb1eee995de3aa32f0901",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/veloren/runtime/startup.py": {
+        "executed_or_frozen_sha256": "2eded18810e550cfb39e121db292610879a49a47bffbe54722ce6f0e31f65083",
+        "candidate_sha256": "2eded18810e550cfb39e121db292610879a49a47bffbe54722ce6f0e31f65083",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/veloren/runtime/server.py": {
+        "executed_or_frozen_sha256": "bbbb74bc200e18d5f50189aead15eb76bec9c315db0119146d08c1026e772d4d",
+        "candidate_sha256": "bbbb74bc200e18d5f50189aead15eb76bec9c315db0119146d08c1026e772d4d",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/veloren/evaluators/endpoints.py": {
+        "executed_or_frozen_sha256": "ca445973cf0a7295f8801f8667e413da1d4f92e2d146d710d560ceb5bec1fc9c",
+        "candidate_sha256": "ca445973cf0a7295f8801f8667e413da1d4f92e2d146d710d560ceb5bec1fc9c",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/veloren/evaluators/deaths.py": {
+        "executed_or_frozen_sha256": "144d424a3e9efe8196cc54c78700be2f32d63ecb784586b285032869baa38724",
+        "candidate_sha256": "144d424a3e9efe8196cc54c78700be2f32d63ecb784586b285032869baa38724",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/veloren/evaluators/team_efficiency.py": {
+        "executed_or_frozen_sha256": "57532661e2f75630e2dc0fb1c3572c1a5571eb273e755693776152a05c6058b4",
+        "candidate_sha256": "57532661e2f75630e2dc0fb1c3572c1a5571eb273e755693776152a05c6058b4",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/veloren/evaluators/itinerary.py": {
+        "executed_or_frozen_sha256": "80211f112c5f10d6a2e969fe7389d108377fa27d1592e1c2eed5f053ad1a80d4",
+        "candidate_sha256": "80211f112c5f10d6a2e969fe7389d108377fa27d1592e1c2eed5f053ad1a80d4",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      },
+      "game/veloren/runtime/server_extension.py": {
+        "executed_or_frozen_sha256": "3832c822580b41399300fba19a24cd10c6159de1b6b6d557a0edb2a52cdee5b4",
+        "candidate_sha256": "3832c822580b41399300fba19a24cd10c6159de1b6b6d557a0edb2a52cdee5b4",
+        "byte_identical": true,
+        "changed_top_level_symbols": []
+      }
+    }
+  },
+  "boundaries": [
+    "One task, two tracks; no repeated formal, reference or model episode.",
+    "Final-walled ST formal success is also the native ST whole-task witness, not a second episode. Earlier open-court guided ST remains historical only.",
+    "Archived formal ST success and VM valid failure remain unchanged, with original source/runtime and difficulty uncertainty. Offline replays do not claim new gameplay.",
+    "Both native health dead/downed flags are present and checked; no metadata bridge, fabricated flags or weaker alive guard.",
+    "Basic reciprocal material cooperation: either player may craft. No balanced contribution, negotiation difficulty, autonomous-model success or speedup claim.",
+    "ST2/VM3 are provisional point hypotheses, ranges2-3/2-4, high uncertainty; no calibrated rating.",
+    "Main retains all stronger alive/cause guards, current route/2 observer, and active_build support. No old shared source file is overwritten.",
+    "Exact shared reference helper contains C02 branches but C02 task definitions and active owner worktree are not imported or changed."
+  ],
+  "compatibility_review": [
+    "The reported exact VM execution commit5a3d6c3 game adapter/binding dependency set matches current main except the additive active_build evaluator registration. Team state scoring, route consumer, inputs and fixture code are unchanged. The result archives task and driver, not a complete executed Python-source manifest.",
+    "Main's folded observer patch equals the hash in the actual immutable runtime manifest. The runtime's older base observer plus diagnostic/contact patches produce that pinned source; never rebuild or rewrite the witness.",
+    "Historical ST/VM endpoint scorer differs only by the stronger downed predicate; actual recorded dead/downed booleans are available in every opening and terminal actor snapshot.",
+    "Historical route/1 metrics intentionally fail current route/2 admission. Exact original route_samples and hash-verified team_efficiency reproduce their saved values; no metadata upgrade is fabricated.",
+    "Historical team changes add peer_group and deferred supply/encounter barriers; this task has none of those fixture keys. Existing shared owner, role-local controls and team endpoint composition remain unchanged.",
+    "Fixture authoring order batches the same ordinary voxel set before play. The exact final-court runtime2 native witness covers current setup. Optional enemy, companion, pickup, merchant and harvest paths are not enabled.",
+    "Historical public tools are unchanged for this task's allowlist and role-local public projections match. Added terrain/wall-jump tools and optional energy are not exposed by this contract.",
+    "Journal validated-prefix optimization is only enabled for peer Group encounters, absent here. Native death snapshots preserve their exact metrics; Xvfb -noreset retains native clients between captures, not game inputs.",
+    "Old guided ST ran a dirty source revision: its efficiency module is recovered from6d7f8d4 only after equality to the actual archived source_sha256. That open-court run is never used as final-court qualification."
+  ],
+  "gates": {
+    "engineering": "pass",
+    "mechanism_review": "pass",
+    "provisional_paired_difficulty": "pass",
+    "retained_measurements": "pass",
+    "unchanged_task": "pass",
+    "current_source_readonly_admission": "pass"
+  },
+  "validation": {
+    "focused_tests": "55 passed, 1 deselected",
+    "test_log": {
+      "path": "checks/veloren-c03-tests.log",
+      "sha256": "d5285a096e8e108a9c0d93e0f4eb07e94d6cd4ce694b366efe88295bd401d617"
+    },
+    "deselection": "Unrelated Minecraft-only inventory composition test requires absent optional nbtlib; not a C03 path.",
+    "script": {
+      "path": "checks/veloren_c03_admission.py",
+      "sha256": "25e885a8543329ce88ed201ebc0a78a70768f0ec569398d36afd6d0f154d6f25"
+    },
+    "replay_method": "Execute via project Python runpy after initializing its environment.",
+    "replay_command": ".venv/bin/python -c \"import runpy; runpy.run_path('checks/veloren_c03_admission.py', run_name='__main__')\"",
+    "test_command": ".venv/bin/python -m pytest -q -m 'not game and not live' tests/test_agent/test_public_operator.py tests/test_game/veloren/test_independent_motor_reference.py tests/test_game/veloren/test_team_efficiency.py tests/test_game/veloren/test_evaluators.py tests/test_benchmark/test_team.py -k 'not test_team_goal_composition_uses_each_native_players_inventory' --basetemp=output/test/c03-public-input-admission"
+  }
+}
