@@ -7,7 +7,7 @@ capabilities:
   secondary:
   - spatial_interaction
 task: Recover the original Cache Part from the chest near the far end of this roughly 30-block ruined
-  corridor, block at least one actual skeleton arrow with your shield, and return alive and standing still
+  corridor, block at least one actual skeleton arrow with your shield, and return with at least 1 health point and standing still
   on the yellow entrance pad with the part. All three conditions are required. Broad stone cover islands
   are available; fighting, avoiding enemies and native death recovery are legal. Raising the shield without
   blocking an arrow does not count. Native respawn returns to the entrance without replacing lost items.
