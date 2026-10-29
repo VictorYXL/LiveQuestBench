@@ -1,0 +1,147 @@
+id: native_companion_triage
+game: veloren
+task_type: visual_motor
+task: 'Restore your original sheep''s health with your own regeneration while the
+  original wolf is still alive. Defeat that wolf after personally damaging it, and
+  finish alive with the sheep alive at at least sixty percent health within four metres
+  of you, still owned by you and in your native Group.
+
+  Your native sheep starts injured at sixty percent health. It follows ordinary pet
+  behavior and is not protected. The wolf starts at half health beyond the stone divider
+  in an enclosed courtyard; side pockets offer room to reposition. Your sceptre uses
+  ordinary combat and healing rules; no combo is supplied.
+
+  The original sheep must never die. Your own native death recovery does not restore
+  the sheep, enemy, stock or time.
+
+  Native controls: V toggles a nearby owned pet between staying and following. Sceptre
+  primary is the lifesteal beam; secondary is Group Regeneration, subject to native
+  energy and combo requirements.'
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/veloren_0_18_0_0.bin
+  world_seed: 130626853
+  time_of_day: '12:00'
+  day_length: 30
+  calendar: none
+  platform:
+    origin:
+    - 18700
+    - 10800
+    - 500
+    size:
+    - 36
+    - 32
+    block: Rock
+  blocks:
+  - origin:
+    - 18700
+    - 10815
+    - 501
+    size:
+    - 18
+    - 1
+    - 3
+  - origin:
+    - 18714
+    - 10818
+    - 501
+    size:
+    - 1
+    - 10
+    - 3
+  - origin:
+    - 18700
+    - 10800
+    - 501
+    size:
+    - 36
+    - 1
+    - 8
+  - origin:
+    - 18700
+    - 10831
+    - 501
+    size:
+    - 36
+    - 1
+    - 8
+  - origin:
+    - 18700
+    - 10801
+    - 501
+    size:
+    - 1
+    - 30
+    - 8
+  - origin:
+    - 18735
+    - 10801
+    - 501
+    size:
+    - 1
+    - 30
+    - 8
+  - origin:
+    - 18700
+    - 10800
+    - 509
+    size:
+    - 36
+    - 32
+    - 1
+  player_state:
+    position:
+    - 18708.5
+    - 10806.5
+    - 501
+    look:
+    - 0
+    - 1
+    - 0
+    health: 100
+    inventory:
+      common.items.consumable.potion_minor: 2
+      common.items.food.apple: 3
+    equipment:
+      active_mainhand: common.items.weapons.sceptre.starter_sceptre
+      chest: common.items.armor.misc.chest.worker_purple_brown
+      feet: common.items.armor.misc.foot.sandals
+      glider: common.items.glider.basic_white
+      lantern: common.items.lantern.black_0
+      legs: common.items.armor.misc.pants.worker_brown
+  encounters:
+  - role: approaching_wolf
+    asset: common.entity.benchmark.male_wolf
+    position:
+    - 18722.5
+    - 10824.5
+    - 501
+    initial_health: 55
+  companion:
+    species: sheep
+    position:
+    - 18711.5
+    - 10806.5
+    - 501
+    initial_health_fraction: 0.6
+  respawn_at_start: true
+evaluator:
+  name: encounter
+  parameters:
+    roles:
+    - approaching_wolf
+    no_death: false
+    min_health: 0
+    companion:
+      max_distance: 4
+      min_health: 1
+      min_health_fraction: 0.6
+      healing_required: true
+      heal_while_target_alive: true
+capabilities:
+  primary:
+  - realtime_execution
+  secondary:
+  - planning_resources
+  - spatial_interaction

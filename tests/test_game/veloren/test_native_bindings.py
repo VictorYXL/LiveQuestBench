@@ -1,8 +1,10 @@
+import asyncio
 import json
+from types import SimpleNamespace
 
 import pytest
 
-from game.veloren.native_bindings import NativeBindingCursor
+from game.veloren.native_bindings import NativeBindingCursor, combat_binding
 
 
 def event(sequence, kind, data):
@@ -58,3 +60,29 @@ def test_incremental_bindings_reject_truncation_after_consumed_records(tmp_path)
     path.write_bytes(b"")
     with pytest.raises(ValueError, match="truncated"):
         cursor.poll()
+
+
+def test_combat_binding_reuses_cursor_and_reads_new_injury_without_stale_uid(tmp_path):
+    path = tmp_path / "private-native-oracle.ndjson"
+    path.write_bytes(event(0, "opened", {"run_id": tmp_path.name}) + event(
+        1, "combat_entity_bindings", {"bindings": [{"uid": 7, "health": 30}]}) + event(
+        2, "loaded_actor_bindings", {"bindings": [{"uid": 7, "health": 999}]}))
+    actor = SimpleNamespace(out=tmp_path)
+    assert asyncio.run(combat_binding(actor, 7))["health"] == 30
+    cursor = actor._native_combat_binding_cursor
+    with path.open("ab") as stream:
+        stream.write(event(3, "combat_entity_bindings", {"bindings": [{"uid": 7, "health": 18}]}))
+    assert asyncio.run(combat_binding(actor, 7))["health"] == 18
+    assert actor._native_combat_binding_cursor is cursor
+    with path.open("ab") as stream:
+        stream.write(event(4, "combat_entity_bindings", {"bindings": []}))
+    with pytest.raises(RuntimeError, match="binding unavailable"):
+        asyncio.run(combat_binding(actor, 7, timeout=.01))
+
+
+def test_combat_binding_rejects_ambiguous_latest_snapshot(tmp_path):
+    path = tmp_path / "private-native-oracle.ndjson"
+    path.write_bytes(event(0, "opened", {"run_id": tmp_path.name}) + event(
+        1, "combat_entity_bindings", {"bindings": [{"uid": 7}, {"uid": 7}]}))
+    with pytest.raises(ValueError, match="ambiguous"):
+        asyncio.run(combat_binding(SimpleNamespace(out=tmp_path), 7))

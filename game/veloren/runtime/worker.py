@@ -485,7 +485,7 @@ class Session:
                 "look_at", "attack_primary", "attack_secondary", "toggle_wield", "block", "roll", "stop",
                 "aimed_attack", "glide", "context_interact", "social_action", "dialogue_action", "trade_action",
                 "unlock_skill", "configure_auxiliary_ability", "attack_auxiliary",
-                "companion_action", "respawn",
+                "companion_action", "respawn", "swap_weapons",
             ):
                 raise PermissionError("Native action is not in the fixed public skill set")
             rpg_actions = {

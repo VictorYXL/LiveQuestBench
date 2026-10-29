@@ -29,6 +29,9 @@ def digest(path: Path) -> str:
 
 
 def select_server(config: dict, upstream: Path) -> Path:
+    if "runtime_composition" in config:
+        from .composition import select_composed_server
+        return select_composed_server(config, upstream)
     extension = config.get("server_extension")
     if extension is None:
         if config.get("pickup_evidence"):

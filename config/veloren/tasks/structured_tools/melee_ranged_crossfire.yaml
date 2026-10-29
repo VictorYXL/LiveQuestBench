@@ -1,0 +1,202 @@
+id: melee_ranged_crossfire
+game: veloren
+task_type: structured_tool
+task: 'Defeat the original Green Legoom and Haniwa Archer, personally damaging each,
+  and return alive to the entrance arch.
+
+  The archer starts injured at 25 health but retains its native weapons and skills.
+  You start on a sheltered entrance balcony above the return arch. An ordinary short
+  drop leads down into the courtyard. You carry a sword and a starter staff. Two rock
+  covers separate the entrance from the enclosed courtyard; either flank is passable.
+  Choose your equipment, target order and recovery.
+
+  Finish stationary on the ground at the arch. Death permits native recovery but does
+  not restore targets, supplies or time.'
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/veloren_0_18_0_0.bin
+  world_seed: 130626853
+  time_of_day: '12:00'
+  day_length: 30
+  calendar: none
+  respawn_at_start: true
+  platform:
+    origin:
+    - 18700
+    - 10800
+    - 500
+    size:
+    - 32
+    - 28
+    block: Rock
+  blocks:
+  - origin:
+    - 18700
+    - 10800
+    - 501
+    size:
+    - 32
+    - 1
+    - 8
+  - origin:
+    - 18700
+    - 10827
+    - 501
+    size:
+    - 32
+    - 1
+    - 8
+  - origin:
+    - 18700
+    - 10801
+    - 501
+    size:
+    - 1
+    - 26
+    - 8
+  - origin:
+    - 18731
+    - 10801
+    - 501
+    size:
+    - 1
+    - 26
+    - 8
+  - origin:
+    - 18700
+    - 10800
+    - 509
+    size:
+    - 32
+    - 28
+    - 1
+  - origin:
+    - 18707
+    - 10812
+    - 501
+    size:
+    - 7
+    - 2
+    - 4
+  - origin:
+    - 18721
+    - 10812
+    - 501
+    size:
+    - 5
+    - 2
+    - 4
+  - origin:
+    - 18707
+    - 10803
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18707
+    - 10807
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18707
+    - 10803
+    - 504
+    size:
+    - 1
+    - 5
+    - 1
+  - origin:
+    - 18704
+    - 10802
+    - 504
+    size:
+    - 11
+    - 8
+    - 1
+  - origin:
+    - 18704
+    - 10809
+    - 505
+    size:
+    - 11
+    - 1
+    - 4
+  player_state:
+    position:
+    - 18709.5
+    - 10805.5
+    - 505
+    look:
+    - 0
+    - 1
+    - 0
+    health: 100
+    inventory:
+      common.items.consumable.potion_minor: 4
+      common.items.food.apple: 3
+      common.items.weapons.staff.starter_staff: 1
+    equipment:
+      active_mainhand: common.items.weapons.sword.starter
+      chest: common.items.armor.hide.rawhide.chest
+      feet: common.items.armor.misc.foot.sandals
+      glider: common.items.glider.basic_white
+      lantern: common.items.lantern.black_0
+      legs: common.items.armor.misc.pants.worker_brown
+  encounters:
+  - role: ground_legoom
+    asset: common.entity.benchmark.male_green_legoom
+    position:
+    - 18717.5
+    - 10819.5
+    - 501
+  - role: rear_archer
+    asset: common.entity.dungeon.haniwa.archer
+    position:
+    - 18725.5
+    - 10824.5
+    - 501
+    initial_health: 25
+evaluator:
+  name: encounter
+  parameters:
+    roles:
+    - ground_legoom
+    - rear_archer
+    no_death: false
+    min_health: 0
+    position:
+      target:
+      - 18709.5
+      - 10805.5
+      - 501
+      horizontal_tolerance: 3
+      vertical_tolerance: 0.5
+      max_speed: 0.1
+tools:
+- MoveTool
+- TurnTool
+- JumpTool
+- PickupTool
+- UseItemTool
+- CraftTool
+- EquipTool
+- LookTool
+- AttackTool
+- WieldTool
+- SwapWeaponsTool
+- BlockTool
+- RollTool
+- StopTool
+- StrikeTool
+- RespawnTool
+capabilities:
+  primary:
+  - realtime_execution
+  secondary:
+  - spatial_interaction
+  - planning_resources

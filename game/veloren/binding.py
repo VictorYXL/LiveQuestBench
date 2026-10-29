@@ -49,6 +49,15 @@ def create_binding(
         declared = [{"item": row["item"], "amount": row["amount"]} for row in fixture.get("supplies", [])]
         if not fixture.get("pickup_evidence") or parameters.get("supplies") != declared:
             raise ValueError("Original supply scoring requires matching native fixture sources and evidence")
+    elif evaluator == "encounter_supplies":
+        from game.veloren.evaluators.encounter_supplies import (
+            evaluate_encounter_supplies, validate_encounter_supplies,
+        )
+        evaluators[evaluator] = evaluate_encounter_supplies
+        validators[evaluator] = validate_encounter_supplies
+        declared = [{"item": row["item"], "amount": row["amount"]} for row in fixture.get("supplies", [])]
+        if not fixture.get("pickup_evidence") or parameters.get("supplies") != declared:
+            raise ValueError("Encounter supplies require matching native fixture sources and evidence")
     elif evaluator in ("encounter", "damage"):
         from game.veloren.evaluators.encounter import evaluate_damage, evaluate_encounter, validate_encounter
         evaluators.update(encounter=evaluate_encounter, damage=evaluate_damage)
@@ -98,7 +107,7 @@ def create_binding(
     score = evaluators[evaluator]
     inspect.signature(score).bind(Path(), Path(), **parameters)
     validators[evaluator](**parameters)
-    if evaluator in ("encounter", "expedition", "damage", "active_build") and set(parameters["roles"]) != {
+    if evaluator in ("encounter", "encounter_supplies", "expedition", "damage", "active_build") and set(parameters["roles"]) != {
         row["role"] for row in game.fixture.get("encounters", [])
     }:
         raise ValueError("Scored encounter roles must match the fixture's designated targets")

@@ -65,6 +65,11 @@ SPECS["StrikeTool"] = (
     },
 )
 EXPEDITION_TOOLS = tuple(SPECS)
+SPECS["SwapWeaponsTool"] = (
+    "Swap the native active and inactive weapon loadouts. This does not obtain, "
+    "select or equip an inventory item. Inspect your equipment after the request.",
+    "swap_weapons", {},
+)
 SPECS["GlideTool"] = (
     "Draw or stow the equipped native glider. Drawing on the ground is not flight. "
     "No automatic takeoff, steering, landing or navigation; ordinary physics continue.",

@@ -381,7 +381,7 @@ async def wait_player(actor, fixture: dict, observation: dict, *, timeout: float
 async def initialize_encounter(admin, actor, spec: dict, position: list, *, binding_reader=None) -> dict:
     from scripts.rpg_benchmark import setup
     if binding_reader is None:
-        from scripts.rpg_benchmark.combat_support import native_binding as binding_reader
+        from game.veloren.native_bindings import combat_binding as binding_reader
 
     expected = (
         {"BipedSmall": {"species": "GreenLegoom", "body_type": "Male"}}
@@ -505,7 +505,7 @@ def verify_aged_supplies(initialized: dict, observation: dict) -> None:
 
 async def initialize_companion(admin, actor, fixture: dict) -> dict:
     from scripts.rpg_benchmark import setup
-    from scripts.rpg_benchmark.combat_support import native_binding
+    from game.veloren.native_bindings import combat_binding as native_binding
 
     before = await actor.request("observe")
     existing = {row["uid"] for row in before["nearby_entities"]}
@@ -571,7 +571,10 @@ async def initialize_equipment(admin, actor, equipment: dict[str, str]) -> None:
 
 async def initialize_encounters(admin, actor, fixture: dict, contract=None, *, binding_reader=None) -> dict:
     if binding_reader is None:
-        from scripts.rpg_benchmark.combat_support import native_binding as binding_reader
+        from game.veloren.native_bindings import combat_binding as binding_reader
+        # The injected team reader already has a validated prefix; warm only the fallback.
+        before = await actor.request("observe", origin="private-validation")
+        await binding_reader(actor, before["self_identity"]["uid"])
 
     encounters = []
     if contract is not None:

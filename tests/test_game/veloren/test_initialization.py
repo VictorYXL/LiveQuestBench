@@ -101,6 +101,7 @@ def upstream(monkeypatch, setup, combat=None):
     monkeypatch.setitem(sys.modules, "scripts.rpg_benchmark", package)
     if combat is not None:
         monkeypatch.setitem(sys.modules, "scripts.rpg_benchmark.combat_support", combat)
+        monkeypatch.setattr("game.veloren.native_bindings.combat_binding", combat.native_binding)
 
 
 def test_injured_companion_waits_for_post_injury_native_binding(monkeypatch):
