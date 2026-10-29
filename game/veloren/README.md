@@ -9,6 +9,22 @@ Tasks cover movement, gathering, crafting, equipment, recovery, combat and NPC
 interaction. The server continues to evolve while the Agent reasons and acts.
 See the [project guide](../../README.md) for experiments, Agents and models.
 
+### Original-reference readiness
+
+The [original-six closure receipt](../../checks/veloren-original-reference-closure.json)
+qualifies `mountain_workshop_circuit` on its explicitly pinned historical native
+runtime with current alive-only/dead/downed scoring. Both whole ST/VM witnesses
+and both valid 2700-second formal conditions were reconciled offline; formal
+failures remain failures. Development difficulty is ST2 (2–3), VM3 (3–4), with
+high uncertainty, not statistical calibration or fresh gameplay.
+
+The receipt provides exact committed config exports and bounded missing checks
+for the other five originals. Existing cooperative ST completion and funded
+contract VM formal evidence are retained. The dirty local contract-divider
+experiment is excluded. `route_schema_transfer` still needs its own route/2
+whole-task proof; shared observer/S03 success does not replace it.
+Neither default-runtime substitution nor a blanket zero-bug guarantee is implied.
+
 ### Shared workshop exchange
 
 `shared_workshop_exchange` is one paired ST/VM basic reciprocal-cooperation task:

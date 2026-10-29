@@ -85,7 +85,7 @@ def runtime_check(path):
     return {**pin(path), "constituents_verified": checked,
             "upstream": pin(cfg["upstream_runtime"]), "selected_server": pin(selected),
             "renderer": pin(cfg["renderer"]), "upstream_loader_and_server_selection": "pass",
-            "route_capability": cfg["route_evidence"], "glide_capability": cfg["glide_evidence"],
+            "route_capability": cfg.get("route_evidence"), "glide_capability": cfg.get("glide_evidence"),
             "native_protection": cfg["native_protection"],
             "fresh_native_execution": False}, cfg
 
