@@ -1,0 +1,38 @@
+{
+  "schema": "veloren-reviewed-item-use-admission/1",
+  "scope": "Guarded integration of the independently reviewed opt-in item-input producer fix only. No VE-L03 task/family admission, runtime activation or ledger promotion.",
+  "integration_base_head": "af9a997766609ee87e260e4e3d35a46ae48aee40",
+  "integration_checks": {
+    "command": ".venv/bin/python -m pytest -q tests/test_game/veloren/test_item_use_admission.py tests/test_game/veloren/test_initialization.py --tb=short --basetemp=output/temp/task_development/checks/ve-l03-item-integration-pytest",
+    "result": "39passed,6skipped in0.73seconds; git diff --check passed.",
+    "worker_delta": "Only the reviewed two-line runtime-version admission and four-line action dispatch gate. Existing route/2,pickup,server-extension,peer Trade and terrain guards preserved.",
+    "index": "Empty at locked preflight; only the four exact bug-fix/provenance paths staged. Unrelated dirty files remain unstaged."
+  },
+  "reviewed_source_commit": "a86051e6b1f27a0c3662074679f3ec706b128d83",
+  "reviewed_evidence_commit": "dd7d9f3873b90ee454af324da365d614e340b82a",
+  "reviewer": "811846d9-f6f6-4934-b1d1-1d234e65dbfa",
+  "reviewer_reported_audit": {
+    "path": "output/temp/task_development/checks/veloren-acceptance-policy-audit-20261029.json",
+    "dated_addenda": [24, 25],
+    "sha256_at_review": "c611e61dc7add655e486bd37a40f2c4afd8554a9d5d96ce68c166b3d2919be89"
+  },
+  "enablement": "Only experimental_item_use_admission=combo-consumable-preflight-v1 in a separately versioned runtime selects this path. No existing runtime file is changed; absent key retains ordinary behavior.",
+  "producer_cause": "The pinned native client sends one InventoryAction::Use; ComboMelee2 inherits a no-op manipulate_loadout handler. Its unchanged consumable waiter then reaches the existing600-client-update action_timeout or explicit cancellation. The previous diagnostic cancelled at598updates; it was not an infinite native wait.",
+  "native_source_sha256": {
+    "client/src/lib.rs": "afae290041a8e1bb6c79e8e9ffd66428e637dde65b8dc78894b116eff67e1da1",
+    "client/src/agent_protocol/mod.rs": "6c987a59830fc5a7bcd48f616e252733bef6af6cd9319d32f409162880d31bfc",
+    "common/src/states/behavior.rs": "aaf1b5c835ad326317a86e9530c7dc9f30a65b938203ee4de2ecee4f649e1c7c",
+    "common/src/states/combo_melee2.rs": "c7859e45c0c3b35ec3af8efeea7b475c580f568cccbe85955c3a1fd2c62a0425"
+  },
+  "semantics": "Observed ComboMelee2 plus a consumable slot yields an explicit adapter_precondition refusal,sent=false,without synthetic native ticks or effects. All dispatched cases reuse the same observed basis/fence and original native receipt,including partial outcomes,cancellation and the existing deadline. No pause, automatic retry or shorter food-use deadline.",
+  "limits": "Not an atomic server-state guard. A snapshot can conservatively expire and post-observation races retain the existing bounded native outcome. Other states are not claimed fixed. Own character_state was already public in survival; no enemy response information is exposed.",
+  "independently_checked_component": {
+    "evidence": "output/temp/task_development/worktrees/dedicated-ve-l03-20261029/output/checks/item-component-outcome.json",
+    "source_commit": "a86051e6b1f27a0c3662074679f3ec706b128d83",
+    "runtime_sha256": "810ec64199aa5edc2904372ec2d9d118b7e6e3cf0f93e9d524e1b2ffcae1aa80",
+    "task_sha256": "11b00d4500162271632b9ba65ad246e2b2bf4d119b9cd4bd30219fa63c72fc0f",
+    "setup": "Explicit8x8,no-enemy,50health component simplification; not a full combat or learning test.",
+    "actual_outcome": "Busy refusal unsent with3potions/50health unchanged. After ordinary recovery,exactly one native use request/receipt,ticks506to550,entered_use=true,definition_delta=-1;actual inventory2potions+1empty vial and actual health100. Native clock advanced;worker0,server_stopped=true.",
+    "new_native_run_for_integration": false
+  }
+}

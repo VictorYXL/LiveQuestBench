@@ -99,6 +99,8 @@ class Session:
             raise RuntimeError("Session is single-use")
         self.started = True
         cfg = self.config
+        if cfg.get("experimental_item_use_admission") not in (None, "combo-consumable-preflight-v1"):
+            raise ValueError("Unknown experimental item-use admission version")
         if cfg.get("native_protection") != "disabled by explicit renderer launch environment":
             raise ValueError("Prepared runtime lacks the native-protection opt-out patch; rerun Veloren setup")
         if self.fixture.get("motion_evidence") and cfg.get("motion_evidence") != "native-client-motion/1":
@@ -500,6 +502,10 @@ class Session:
                     and (not self.team_role or args.get("invite_kind") != "Trade")):
                 raise PermissionError("Public invitation responses require a peer Trade invitation")
             try:
+                if (args["action_type"] == "use_item"
+                        and self.config.get("experimental_item_use_admission") == "combo-consumable-preflight-v1"):
+                    from game.veloren.runtime.item_use import use_item
+                    return await use_item(self.actor, setup.action, args)
                 if args["action_type"] == "inspect_terrain":
                     return await self.actor.request(
                         "inspect_terrain", {"position": args["position"]}, origin="agent",
