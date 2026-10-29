@@ -199,6 +199,9 @@ def raid_continuation(root, proof):
     assert str(saved_raid["Status"]) == "ongoing"
     assert int(saved_raid["GroupsSpawned"]) == int(saved_raid["NumGroups"]) == 3
     assert int(saved_raid["BadOmenLevel"]) == 1
+    active_ticks = int(saved_raid["TicksActive"])
+    assert 0 <= active_ticks < 48000
+    native_remaining_seconds = (48000 - active_ticks) / 20
     hero_uuid = tuple(map(int, nbtlib.load(
         world / "playerdata" / f"{proof['snapshots'][0]['player_uuid']}.dat")["UUID"]))
     assert any(tuple(map(int, value)) == hero_uuid for value in saved_raid["HeroesOfTheVillage"])
@@ -209,7 +212,7 @@ def raid_continuation(root, proof):
         "return_and_settling_seconds": 120,
         "native_final_wave_victory_delay_seconds": 60,
     }
-    assert sum(reserve.values()) < budget - elapsed
+    assert sum(reserve.values()) < min(budget - elapsed, native_remaining_seconds)
     return {
         "kind": "post_terminal_constructive_same_episode_continuation_not_executed_success",
         "world": pin(world / "_livequest_snapshot.json"),
@@ -223,12 +226,19 @@ def raid_continuation(root, proof):
         "static_attack_line_clear": True,
         "cardinal_ground_steps": len(approach) + len(return_path) - 2,
         "remaining_original_seconds": budget - elapsed,
-        "conservative_authored_control_allocation": reserve,
+        "native_raid_deadline": {
+            "timeout_active_ticks": 48000, "terminal_active_ticks": active_ticks,
+            "remaining_active_ticks": 48000 - active_ticks, "nominal_tps": 20,
+            "nominal_remaining_seconds": native_remaining_seconds,
+            "nominal_margin_after_plan_seconds": native_remaining_seconds - sum(reserve.values()),
+            "basis": "Independent pinned1.20.4 Raid.tick review; active-tick conversion is not a measured wall-clock upper bound.",
+        },
+        "authored_control_allocation_not_measured_upper_bound": reserve,
         "allocation_total_seconds": sum(reserve.values()),
-        "argument": "The original2700-second cap was not exhausted: the shorter diagnostic voluntarily ended. The SAME saved episode has one ordinary third-wave pillager, living residents, initialized-player native hero candidacy, reachable level ground, sword/bow and surplus food/ammunition. Chase/aim/attack this remaining ordinary target, stay in the village for native settlement, then follow the verified short return path. Earlier public VM frames and this run demonstrate bow hits, killing the stronger ravager, recovery and legal controls. No result or native advancement is fabricated.",
+        "argument": "Both the original2700-second task deadline and the native48000-active-tick raid timeout constrain continuation; nominal native time remaining is tighter. The SAME saved episode has one ordinary third-wave pillager, living residents, initialized-player native hero candidacy, reachable level ground, sword/bow and surplus food/ammunition. Reacquire and track the moving target, manage exposure and food recovery, finish it, remain alive through40-tick native settlement, then return. Earlier public VM frames and this run demonstrate bow hits, killing the stronger ravager, recovery and legal controls. No result or native advancement is fabricated.",
         "limits": [
-            "The path verifies frozen ground geometry, not an adversarial guarantee that a moving pillager remains on one cell.",
-            "The720-second continuation allocation is a constructive control budget with large slack, not a measured continuation or a model-latency guarantee.",
+            "The path and ray verify frozen geometry, not future target position, dynamic hit timing, survival or elapsed time.",
+            "The720-second allocation is an unexecuted plan, not a measured dynamic upper bound or model-latency guarantee. At20TPS the native remainder is1613.9seconds and nominal margin893.9seconds; task-only1855.55seconds is not unrestricted raid lifetime.",
             "Current terminal remains failure: raid_win0, Hero false, return false. A particular controller victory is not required by acceptance policy.",
         ],
     }
