@@ -1,0 +1,54 @@
+id: switch_network_transfer
+game: minecraft
+task_type: structured_tool
+capabilities:
+  primary:
+  - within_episode_learning
+  secondary:
+  - information_adaptation
+task: Use the first console to discover how its red, blue and green input levers correspond
+  to the white, orange and purple output lamps. Obtain practice feedback, then pass
+  the first yellow start strip. At the next console light only its orange output;
+  at the last console light only its white output. Complete these applications in
+  order, using at most four application lever toggles in total. Leave both requested
+  outputs on and all other application outputs off. Finish with at least 1 health point and still at the
+  far yellow pad. Input/output colours keep their meaning but console layouts change.
+  Practice toggles do not count against the application limit. You are in native Adventure
+  mode; the bedrock service enclosure protects ordinary fixed redstone wiring. No
+  block breaking or placement is permitted by this native mode.
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/switch_network_transfer
+  instance: 1.20.4
+  difficulty: peaceful
+  player_state:
+    position:
+    - 1.5
+    - 172
+    - 0.5
+    dimension: minecraft:overworld
+    yaw: -90
+    pitch: 0
+    gamemode: adventure
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory: []
+evaluator:
+  name: switch_transfer
+  parameters:
+    position:
+      target:
+      - 1.5
+      - 172
+      - 109.5
+      horizontal_tolerance: 2
+      vertical_tolerance: 0.5
+      max_speed: 0.1
+tools:
+- MoveTool
+- LookAtPositionTool
+- StopTool
+- UseHeldItemTool
+- RespawnTool

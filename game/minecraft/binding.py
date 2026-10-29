@@ -105,6 +105,10 @@ def create_binding(
         from game.minecraft.evaluators.extraction import evaluate_extraction, validate_extraction
         validate_extraction(**parameters)
         score = evaluate_extraction
+    elif evaluator == "switch_transfer":
+        from game.minecraft.evaluators.switch_transfer import evaluate_switch, verify_initial_switch
+        validate_state(**parameters)
+        score = evaluate_switch
     elif evaluator == "route_transfer":
         from game.minecraft.evaluators.route_transfer import evaluate_route, validate_route, verify_layout
         validate_route(**parameters)
@@ -141,6 +145,8 @@ def create_binding(
             verify_expedition(before, game.player_uuid)
         if evaluator == "cargo":
             verify_initial_cargo(before, game.player_uuid, **parameters)
+        if evaluator == "switch_transfer":
+            verify_initial_switch(before, game.player_uuid, **parameters)
         if evaluator == "route_transfer":
             verify_layout(before, **parameters)
         if evaluator == "workshop" and order_events(before):

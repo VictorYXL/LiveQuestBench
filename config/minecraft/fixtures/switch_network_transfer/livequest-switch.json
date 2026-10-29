@@ -1,0 +1,35 @@
+{
+  "schema": "minecraft-switch-transfer/1",
+  "pack_sha256": {
+    "pack.mcmeta": "79f12019b98072a58aa75b29a555d757ff3b8afd655f0c0eee0da4bdf4181f60",
+    "data/minecraft/tags/functions/tick.json": "f1f8c7d011b5ca33f7535d3270186ea0e3facd85eb6cdd68ea16d25bda574642",
+    "data/livequest_switch/functions/c0i0_1.mcfunction": "f8f53ace99586cc3db86e2fd87bc3c3aec5471386534bac62b45b3bdb71427ed",
+    "data/livequest_switch/functions/c0i0_0.mcfunction": "e178f067fb4fe7c0fcc20c09f2d625a184102491d642eaa47c3c45079488f1f4",
+    "data/livequest_switch/functions/c0i1_1.mcfunction": "cb783fcddbf9acc377d02cfe0ebeb8ba0f18ed164e729c6e4999add0e499ec02",
+    "data/livequest_switch/functions/c0i1_0.mcfunction": "88945539ab3fd2def6d774bc6203ca0e6156ceccba1ccef373611fbe8ee2f1c3",
+    "data/livequest_switch/functions/c0i2_1.mcfunction": "7b528c1070de30f2ba53620ec860b3dc58a58e2ba416231a75389d9ca564fe22",
+    "data/livequest_switch/functions/c0i2_0.mcfunction": "7cdda1bf229e397c6fe2f27c94b0f8484c5a9e43aedb60f89cfe70c67bef4720",
+    "data/livequest_switch/functions/c1i0_1.mcfunction": "7250489ca98ce1d20a6c29ae5e113599816a0b6d0949a04781d3624e96d372ef",
+    "data/livequest_switch/functions/c1i0_0.mcfunction": "8d7ec2d1a783bf2113eb57d4c5ddb7fb88a860838738bbd9a13a661e6e30853d",
+    "data/livequest_switch/functions/c1i1_1.mcfunction": "8abed46071fc8cba2175cd031d193303e70af60202bb2903527f74e97e93f98a",
+    "data/livequest_switch/functions/c1i1_0.mcfunction": "7d7b1faedae185bb3aaceea2051d61db5167def23600d9ce65aeb449e3798afe",
+    "data/livequest_switch/functions/c1i2_1.mcfunction": "b400aec8957beac3be41e2db7fc93763a710844ac73c280604563a2f867ba95f",
+    "data/livequest_switch/functions/c1i2_0.mcfunction": "93dfc3943868210b5c2efdc686788014a2c0dcd835af0be230f201815dbd1612",
+    "data/livequest_switch/functions/c2i0_1.mcfunction": "5bce9a599da8fe9ca926102b20c141ec4c1e0d50fc883357b50cfd5bb3085f51",
+    "data/livequest_switch/functions/c2i0_0.mcfunction": "4aacd7640e75a05db0d6da00465678198f27e45d07f7ec69a9d51993ee411d0c",
+    "data/livequest_switch/functions/c2i1_1.mcfunction": "c8d96f250800fe69435dcf302c7b468f5db99f33491e6c12b1261b8383a6b320",
+    "data/livequest_switch/functions/c2i1_0.mcfunction": "a62455831ed8520115028a975880067422397dc6ec3078e9d9a826de487d2f4a",
+    "data/livequest_switch/functions/c2i2_1.mcfunction": "701f726dda3d462cbd0a64a704d40550fe643017a02c215682d3bf8ed7ce2723",
+    "data/livequest_switch/functions/c2i2_0.mcfunction": "78098426c032fdc417fb6e1a247feff5987741b753e19614f8e1645f64e301bb",
+    "data/livequest_switch/functions/goal_1.mcfunction": "0053160b0826278b7a9856473385a2b7625b6865018c1ac1e3ee55cbd5dbdc88",
+    "data/livequest_switch/functions/goal_2.mcfunction": "c476b54aecd2119e443c28e7abc318f192c6f68fcbbcef500416f39d76f5775f",
+    "data/livequest_switch/functions/tick.mcfunction": "ad7f38ac176ea049bba79738be898720135f46078001cd6d2ca95154f2886cd8"
+  },
+  "permutation": [
+    2,
+    0,
+    1
+  ],
+  "remote_routing_minimum_x": 21,
+  "maximum_legal_player_x": 3.7
+}
