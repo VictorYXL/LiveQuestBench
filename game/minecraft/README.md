@@ -154,6 +154,7 @@ seconds or evidence that a teammate causally prevented damage.
 | `structure` | A declared block blueprint in a bounded region | Does not establish functional mechanisms or visual quality |
 | `state` | Position, health, food, equipment and supported native effects | Endpoint state does not prove a route or full action history |
 | `shielded_cargo` | Original chest cargo, living settled return and an actual skeleton-arrow shield block | Requires the passive native advancement observer; raising a shield alone is insufficient |
+| `firebreak` | Native fire-free dwell, original roof/support retention and settled safe-pad arrival | Observed original-type losses remain lost after rebuilding; passive evidence has native-tick resolution |
 | `expedition` | Designated encounters, preparation, cargo and return | Requires compatible fixture evidence and explicit conditions |
 
 Initial `player_state.inventory` entries may declare integer `damage` for a

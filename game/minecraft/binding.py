@@ -79,6 +79,11 @@ def create_binding(
         inspect.signature(evaluate_structure).bind(Path(), Path(), **parameters)
         validate_config(parameters["config"])
         score = evaluate_structure
+    elif evaluator == "firebreak":
+        from game.minecraft.evaluators.firebreak import evaluate_firebreak, verify_initial_firebreak
+        inspect.signature(evaluate_firebreak).bind(Path(), Path(), None, **parameters)
+        validate_state(**parameters)
+        score = evaluate_firebreak
     elif evaluator == "expedition":
         inspect.signature(evaluate_expedition).bind(Path(), Path(), None, **parameters)
         score = evaluate_expedition
@@ -141,6 +146,8 @@ def create_binding(
             verify_initial_raid(before, game.player_uuid)
         if evaluator == "state" and parameters.get("action_sequence") is not None and action_events(before):
             raise RuntimeError("Native action evidence was not empty before measured play")
+        if evaluator == "firebreak":
+            verify_initial_firebreak(before, game.player_uuid, **parameters)
 
     def controls() -> tuple[Controls, list[Tool[Controls]]]:
         public = game.get_agent_interface()

@@ -1,0 +1,694 @@
+{
+  "schema": "minecraft-native-firebreak/1",
+  "pack_sha256": {
+    "pack.mcmeta": "fc21203d889ccdcd0a5421a98d204d7e9571f2a13e54d80af54bfad00ffd4653",
+    "data/minecraft/tags/functions/tick.json": "08e0e9a44bcdadbc50980265e4f5de538b64fea48349ff25b41ede6dd7aa61e4",
+    "data/livequest_firebreak/functions/lost_0.mcfunction": "208ca33fc5f30c6547eb486e38cfd9eb87d4464f9c124f62376572a02779bfa1",
+    "data/livequest_firebreak/functions/lost_1.mcfunction": "01aa727f7ae154b0a024b111f86dd3083096a3c201fce1b3fbb2257e1c75296f",
+    "data/livequest_firebreak/functions/lost_2.mcfunction": "6a8d639d4694ad8535902b96d440667e7f4d51290fc0537b4f393b2962cd9c9e",
+    "data/livequest_firebreak/functions/lost_3.mcfunction": "9ebbca33248587912002a91b819c95ec9a30125ac9df33d2b2b0a6739110c654",
+    "data/livequest_firebreak/functions/lost_4.mcfunction": "4d56e737964b698fc9c8c79c460d69a1b98b79fd4e1fdac9476035e6145c6644",
+    "data/livequest_firebreak/functions/lost_5.mcfunction": "f22ae9ed8a66f526f635912145519977d47a6f23c2b153afc6cf9f7f51138b2e",
+    "data/livequest_firebreak/functions/lost_6.mcfunction": "bb1e5182e8dcb4008d4d141615f7e0c7f995a481dbe2803597c2e4c91d1251ba",
+    "data/livequest_firebreak/functions/lost_7.mcfunction": "e0a222870a12848b375d532ac692d6d0d11739e26ea5281f5cd85d901beb24a0",
+    "data/livequest_firebreak/functions/lost_8.mcfunction": "2db38149e73cfae4d5fa97638faf4f4757d0bf8ee8941d40aaebb074d9649ba8",
+    "data/livequest_firebreak/functions/lost_9.mcfunction": "374a7c4a453a3c6585464c7fa9c6693605f8c79ae71b03a65e62770b4485b39e",
+    "data/livequest_firebreak/functions/lost_10.mcfunction": "a3690f38bc3dd2aac674290ad2ce7473aec73b137d75c4cae6db92f468ec2a1f",
+    "data/livequest_firebreak/functions/lost_11.mcfunction": "230aaf747db2bf17363140c1392eb064f2b1bb4043bc949b21f0b91e72a01025",
+    "data/livequest_firebreak/functions/lost_12.mcfunction": "b980a1fa0f058058dde22aeffccc197683a92d4a146c069f858905948638ddfb",
+    "data/livequest_firebreak/functions/lost_13.mcfunction": "01bb880a2ae63af2e31be44f0ff3b5e98fdfa3a90cb768dd2eeb87e5aea67067",
+    "data/livequest_firebreak/functions/lost_14.mcfunction": "683637f35153f5b4ccc75edd4b4a6c9e13dceebd4a537decebf7f8a84292763c",
+    "data/livequest_firebreak/functions/lost_15.mcfunction": "a1103799b8ba15c28ce04401a2f54a3e03b272d4f23581d4195d6ac61c084b38",
+    "data/livequest_firebreak/functions/lost_16.mcfunction": "dbe53ffb2bf693ee097fe20f6ef487204041796bfca26957ebbde01d231d5fc9",
+    "data/livequest_firebreak/functions/lost_17.mcfunction": "3b6ba845324946ad8668a03db22b585b7806012b254fcaa8fd026d346883c4a3",
+    "data/livequest_firebreak/functions/lost_18.mcfunction": "1ec8eadf654dfdc050d3debd1dd068a5fc9c30b56a0b72adc97a468c56744ff9",
+    "data/livequest_firebreak/functions/lost_19.mcfunction": "c1b62836a0e8fd1c98be46f310c819f301ebbc24dee1362552c25c48f61495d4",
+    "data/livequest_firebreak/functions/lost_20.mcfunction": "79038050fc28fbbf77764277ba12b2790facbdb000ecff5bdea6c56dab8cde68",
+    "data/livequest_firebreak/functions/lost_21.mcfunction": "c44bb735e3c3eb3505d789146216493a308e86a77198c05ce592e7345d90aa72",
+    "data/livequest_firebreak/functions/lost_22.mcfunction": "d981aaad4bd9bae1828a3eccdf7480e74ac6b07db1eb9d643ea5a6c89cafd8e8",
+    "data/livequest_firebreak/functions/lost_23.mcfunction": "95905c4a622c4cf0383f8dc803b373c68c39067ea0a613eb6a05f6c9871b8cb2",
+    "data/livequest_firebreak/functions/lost_24.mcfunction": "206a6e0d4789cffc8bb089eda21ad58853378265fd64fdc0493ee24105d601d4",
+    "data/livequest_firebreak/functions/lost_25.mcfunction": "fe2034310aa33e725d2ae2d7adc0fe1c340d5f9a6ec9b4f407810009bbbcd675",
+    "data/livequest_firebreak/functions/lost_26.mcfunction": "8b4dd40c23fc2d51e705a89fc79d9dcd8167fd761e2c43079944d7725d931c1d",
+    "data/livequest_firebreak/functions/lost_27.mcfunction": "90c1254b484218ec53126b1abe1c79a3a1708c44bd7107f28f6fbfa7fbad3468",
+    "data/livequest_firebreak/functions/lost_28.mcfunction": "90fa11fb0c06ea2003496d827ed943d7879e270793e23140d58f985bdfe06ccb",
+    "data/livequest_firebreak/functions/lost_29.mcfunction": "80210a71cf4835629bd7746292dd23eb7cd2b4370573919254db1565522c4107",
+    "data/livequest_firebreak/functions/lost_30.mcfunction": "1fd1d36d2861c8d805bfc80731eb7a919115948334b0cd17312a97370a08fb77",
+    "data/livequest_firebreak/functions/lost_31.mcfunction": "f0773d23eca106cb08e218c8567ba65eee54031223d752ac7c35b6eedf6937a8",
+    "data/livequest_firebreak/functions/lost_32.mcfunction": "bd3fb03e021b03506acb9ac83611908c34014b0aa0524ce8d442b4baf36f692a",
+    "data/livequest_firebreak/functions/lost_33.mcfunction": "bc0cf2e6ab659934c5b88cafbbbd95d44e42ba5612d5adfdaa85dc601bc1cc08",
+    "data/livequest_firebreak/functions/lost_34.mcfunction": "005865055fd44915f8bde019f969efc39593b1e05366337331caef33ff9a77b8",
+    "data/livequest_firebreak/functions/lost_35.mcfunction": "74b58540d99c5400d8d826e0b8617e8b759918d30b411f1a4c094499db3219eb",
+    "data/livequest_firebreak/functions/lost_36.mcfunction": "2f645530a15fd6eb03bc5a4abe9c6acf87de7425a3952dfd51ad2390a9414128",
+    "data/livequest_firebreak/functions/lost_37.mcfunction": "7bf6a1571c640d2cc82e46d218d9c4d7c026733dc89160623a91328466aa617b",
+    "data/livequest_firebreak/functions/lost_38.mcfunction": "4e117b8abbe0a2cde6c2a1e1608beed827620f5d48597605ddae2d7ec3419c61",
+    "data/livequest_firebreak/functions/lost_39.mcfunction": "99fdb0737a5b4b1f10e65944fc707aca6ffdec5111058170fb58ef9eba929eda",
+    "data/livequest_firebreak/functions/lost_40.mcfunction": "7ef88beed0bcf95a8eeff31dd8c1e00f8a29840c8d2c3faeaa274ee74bf17714",
+    "data/livequest_firebreak/functions/lost_41.mcfunction": "e4489f4c75ee90371c4ba46886692124bace2ba77ce152826f425ef3df191d19",
+    "data/livequest_firebreak/functions/lost_42.mcfunction": "83aa48a3fa5a24c3e714a7351272f331716ef027425e8f9463d02601f18c3152",
+    "data/livequest_firebreak/functions/lost_43.mcfunction": "f9965408e90f41924307f1b58c1d1c525f929b1ad2f52c786caa6f8b15c83a8f",
+    "data/livequest_firebreak/functions/lost_44.mcfunction": "bbef01e80ff914e7bb90218b01dc0fcb05db636c54f165681b628ab9cd25a341",
+    "data/livequest_firebreak/functions/lost_45.mcfunction": "2ea42a5c5592ea9c82f244a1c9ce5ec312f42e266710879de5e37dcb215ac359",
+    "data/livequest_firebreak/functions/lost_46.mcfunction": "d9df6b540b04505fdb340be103894758bdc981882f95b8b6f08e022ae69b7383",
+    "data/livequest_firebreak/functions/lost_47.mcfunction": "328609217141901ebfb818e618345ecd486f3a961415cb22f9e31aac3c1749be",
+    "data/livequest_firebreak/functions/lost_48.mcfunction": "51a1d7a7372508e17f7a3cfbe5c1233fb302b1d02b2ecb495e4e8b719e3460d0",
+    "data/livequest_firebreak/functions/lost_49.mcfunction": "b037b65910881ecaba084ccbb9ffb79f0856c080e73a2e5e3e121e6f7b022d5a",
+    "data/livequest_firebreak/functions/lost_50.mcfunction": "180740c891826d2fb988c00bce37e47f3ba8bce947624cdbfdb5ed9926f4576e",
+    "data/livequest_firebreak/functions/lost_51.mcfunction": "265afde20e26c602a25103688615d559fd6ddcdf9e80c1b0cc12a2a1b238ddf7",
+    "data/livequest_firebreak/functions/lost_52.mcfunction": "1ddbb012238693676739733005f5f470f6cfafd519dc99fceaa2801576a1461c",
+    "data/livequest_firebreak/functions/lost_53.mcfunction": "04d6a6a72a42c57031d629afba2c697021d777f13a91c21154f438e8452614f6",
+    "data/livequest_firebreak/functions/lost_54.mcfunction": "c802526feb974fba5ca0ea1dd54cc89d23413479bf57cac7101e96c45f534c81",
+    "data/livequest_firebreak/functions/lost_55.mcfunction": "d0808567327d0cf891ce8ef53d2911ab45c50363b8c9491c8db63bbb39848e0d",
+    "data/livequest_firebreak/functions/lost_56.mcfunction": "2736766dcc1d71f3cbd5000029746d7905debf7ec2e772038565976850450051",
+    "data/livequest_firebreak/functions/lost_57.mcfunction": "625cf299afbc5f44e54a112979c7a81c9d3269376d3d691185605973ff66cd38",
+    "data/livequest_firebreak/functions/lost_58.mcfunction": "9fe2cd961f63711bd4d8c01de63292cfb20ce63107fce3f58c296a2e2ba097aa",
+    "data/livequest_firebreak/functions/lost_59.mcfunction": "1f5516cde0ae07b36ff698b7b67e28510ad03cf7266a4fec9351d5939b1ffb24",
+    "data/livequest_firebreak/functions/lost_60.mcfunction": "960132eb983d97fe5773497daeb3abfbd680d7e008a2943424cfe988c33e53ec",
+    "data/livequest_firebreak/functions/lost_61.mcfunction": "c22980e4f8663981d77957d55ededba398aa212257b21ffea2ba54ae36a195d4",
+    "data/livequest_firebreak/functions/lost_62.mcfunction": "646d0a9b86f905059afb406e238c613dbb2dd76e28682834fe208515dedcf3a2",
+    "data/livequest_firebreak/functions/lost_63.mcfunction": "d9006caeabbffd6bce4026bc8601be77d2747916075d4b4945b1ed88f6e29dd9",
+    "data/livequest_firebreak/functions/lost_64.mcfunction": "2a26be9af1920260a1bdbc93c9222547d28490d7c8de356be47e2b28a3a16fe9",
+    "data/livequest_firebreak/functions/lost_65.mcfunction": "f2cee68c9e094f512885071cdc68c12eac2220d5592f51b387dddef14acb7fbc",
+    "data/livequest_firebreak/functions/lost_66.mcfunction": "54af43a5b474c0dd8ffa467cff16de3a86c98771f2cd9958f4a0a4e50ed21fa2",
+    "data/livequest_firebreak/functions/lost_67.mcfunction": "e9a31f6208a2e9b61208a954d2cc021a33e81c3e20578cd148ec9c6510b74f23",
+    "data/livequest_firebreak/functions/lost_68.mcfunction": "16812d0dc57c5e602454adb5f4f7516a2b0721b68fdf5a5b6e4220c0856a559f",
+    "data/livequest_firebreak/functions/lost_69.mcfunction": "9662c1d8411d7a74f0f3c9e9951c0ef7d97f8fda37a45c95a353b8fca9df44c6",
+    "data/livequest_firebreak/functions/lost_70.mcfunction": "3fdc6be9e9430f1b54d0cf4d159ce8b6dea62932aa7aa188ee8d5a9dbf499bb8",
+    "data/livequest_firebreak/functions/lost_71.mcfunction": "b9ebc0076285fdd327b755ce9dc3a96c3092d62ee9817a230764e0dfe131e10e",
+    "data/livequest_firebreak/functions/lost_72.mcfunction": "ba6f544d093b4968e29de421bf3dd145bca3d52a30b06c001ab029af43e553fe",
+    "data/livequest_firebreak/functions/lost_73.mcfunction": "e1306acd3c35d76c2639a32ab3973de88f9a3670130706f3a5048705fe9ae425",
+    "data/livequest_firebreak/functions/sample.mcfunction": "64bf7aab6859a533ec41db25edd89efca998bb652b6cad3f36fdde7ccae6581a",
+    "data/livequest_firebreak/functions/tick.mcfunction": "0957cbcbca85f76ad598e2038e072d06a4a6757f8922e2b142533e36fdd53843"
+  },
+  "protected": [
+    {
+      "position": [
+        10,
+        75,
+        10
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        10,
+        75,
+        11
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        10,
+        75,
+        12
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        10,
+        75,
+        13
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        10,
+        75,
+        14
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        11,
+        75,
+        10
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        11,
+        75,
+        11
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        11,
+        75,
+        12
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        11,
+        75,
+        13
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        11,
+        75,
+        14
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        12,
+        75,
+        10
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        12,
+        75,
+        11
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        12,
+        75,
+        12
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        12,
+        75,
+        13
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        12,
+        75,
+        14
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        13,
+        75,
+        10
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        13,
+        75,
+        11
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        13,
+        75,
+        12
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        13,
+        75,
+        13
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        13,
+        75,
+        14
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        14,
+        75,
+        10
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        14,
+        75,
+        11
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        14,
+        75,
+        12
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        14,
+        75,
+        13
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        14,
+        75,
+        14
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        10,
+        72,
+        10
+      ],
+      "block": "minecraft:oak_log"
+    },
+    {
+      "position": [
+        10,
+        73,
+        10
+      ],
+      "block": "minecraft:oak_log"
+    },
+    {
+      "position": [
+        10,
+        74,
+        10
+      ],
+      "block": "minecraft:oak_log"
+    },
+    {
+      "position": [
+        10,
+        72,
+        14
+      ],
+      "block": "minecraft:oak_log"
+    },
+    {
+      "position": [
+        10,
+        73,
+        14
+      ],
+      "block": "minecraft:oak_log"
+    },
+    {
+      "position": [
+        10,
+        74,
+        14
+      ],
+      "block": "minecraft:oak_log"
+    },
+    {
+      "position": [
+        14,
+        72,
+        10
+      ],
+      "block": "minecraft:oak_log"
+    },
+    {
+      "position": [
+        14,
+        73,
+        10
+      ],
+      "block": "minecraft:oak_log"
+    },
+    {
+      "position": [
+        14,
+        74,
+        10
+      ],
+      "block": "minecraft:oak_log"
+    },
+    {
+      "position": [
+        14,
+        72,
+        14
+      ],
+      "block": "minecraft:oak_log"
+    },
+    {
+      "position": [
+        14,
+        73,
+        14
+      ],
+      "block": "minecraft:oak_log"
+    },
+    {
+      "position": [
+        14,
+        74,
+        14
+      ],
+      "block": "minecraft:oak_log"
+    },
+    {
+      "position": [
+        18,
+        75,
+        10
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        18,
+        75,
+        11
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        18,
+        75,
+        12
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        18,
+        75,
+        13
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        18,
+        75,
+        14
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        19,
+        75,
+        10
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        19,
+        75,
+        11
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        19,
+        75,
+        12
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        19,
+        75,
+        13
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        19,
+        75,
+        14
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        20,
+        75,
+        10
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        20,
+        75,
+        11
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        20,
+        75,
+        12
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        20,
+        75,
+        13
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        20,
+        75,
+        14
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        21,
+        75,
+        10
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        21,
+        75,
+        11
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        21,
+        75,
+        12
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        21,
+        75,
+        13
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        21,
+        75,
+        14
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        22,
+        75,
+        10
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        22,
+        75,
+        11
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        22,
+        75,
+        12
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        22,
+        75,
+        13
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        22,
+        75,
+        14
+      ],
+      "block": "minecraft:oak_planks"
+    },
+    {
+      "position": [
+        18,
+        72,
+        10
+      ],
+      "block": "minecraft:oak_log"
+    },
+    {
+      "position": [
+        18,
+        73,
+        10
+      ],
+      "block": "minecraft:oak_log"
+    },
+    {
+      "position": [
+        18,
+        74,
+        10
+      ],
+      "block": "minecraft:oak_log"
+    },
+    {
+      "position": [
+        18,
+        72,
+        14
+      ],
+      "block": "minecraft:oak_log"
+    },
+    {
+      "position": [
+        18,
+        73,
+        14
+      ],
+      "block": "minecraft:oak_log"
+    },
+    {
+      "position": [
+        18,
+        74,
+        14
+      ],
+      "block": "minecraft:oak_log"
+    },
+    {
+      "position": [
+        22,
+        72,
+        10
+      ],
+      "block": "minecraft:oak_log"
+    },
+    {
+      "position": [
+        22,
+        73,
+        10
+      ],
+      "block": "minecraft:oak_log"
+    },
+    {
+      "position": [
+        22,
+        74,
+        10
+      ],
+      "block": "minecraft:oak_log"
+    },
+    {
+      "position": [
+        22,
+        72,
+        14
+      ],
+      "block": "minecraft:oak_log"
+    },
+    {
+      "position": [
+        22,
+        73,
+        14
+      ],
+      "block": "minecraft:oak_log"
+    },
+    {
+      "position": [
+        22,
+        74,
+        14
+      ],
+      "block": "minecraft:oak_log"
+    }
+  ],
+  "ignition": [
+    5,
+    72,
+    12
+  ],
+  "fire_volume": {
+    "min": [
+      0,
+      72,
+      0
+    ],
+    "max": [
+      23,
+      79,
+      23
+    ]
+  }
+}

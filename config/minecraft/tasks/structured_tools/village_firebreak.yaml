@@ -1,0 +1,71 @@
+id: village_firebreak
+game: minecraft
+task_type: structured_tool
+capabilities:
+  primary:
+  - realtime_execution
+  secondary:
+  - planning_resources
+task: Extinguish every active fire inside the four marked yard corners, from the ground
+  through the orange height markers, and keep that volume fire-free for at least 20
+  seconds, preserve at least 80% of the original wooden roofs and corner supports
+  of the two sheds, and finish alive and standing still at the yellow safe pad. Changing
+  a protected cell's original block type counts as loss, even if later restored. A burning netherrack ignition
+  beside the log pile threatens a debris connection to the nearer shed, roughly ten
+  blocks from the pad. A small water source is nearby; weather stays clear. Choose
+  your own legal firebreak, water use and approach; native recovery is allowed.
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/village_firebreak
+  instance: 1.20.4
+  difficulty: normal
+  player_state:
+    position:
+    - 2.5
+    - 72
+    - 2.5
+    dimension: minecraft:overworld
+    yaw: 0
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+    - slot: 0
+      item: water_bucket
+      count: 1
+    - slot: 1
+      item: water_bucket
+      count: 1
+    - slot: 2
+      item: iron_axe
+      count: 1
+    - slot: 3
+      item: cobblestone
+      count: 12
+    - slot: 4
+      item: bread
+      count: 8
+evaluator:
+  name: firebreak
+  parameters:
+    position:
+      target:
+      - 2.5
+      - 72
+      - 2.5
+      horizontal_tolerance: 3
+      vertical_tolerance: 0.5
+      max_speed: 0.1
+tools:
+- MoveTool
+- LookAtPositionTool
+- SelectTool
+- StopTool
+- JumpTool
+- DigTool
+- PlaceTool
+- UseHeldItemTool
+- RespawnTool
