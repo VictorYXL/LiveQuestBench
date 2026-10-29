@@ -105,7 +105,8 @@ fails this particular task. Private trajectory evidence is not Agent input.
 | Minecraft supplied-route VM | 340.491 | Pass; only 3.509m below the allowance |
 | Veloren mapping 5, public-feedback retained experience | 325.015 | Pass, all wings, zero deaths |
 
-The two Minecraft model probes are valid failures, not infrastructure errors.
+The two Minecraft model probes used **mapping 2** and are valid failures, not
+infrastructure errors or an exact-released-mapping-5 formal pair.
 ST completed all wings in 882.505s but used 470.027 application metres.
 VM completed its episode in 2695.034s without task success. These single
 diagnostic episodes do not estimate a population difficulty distribution.
@@ -125,7 +126,7 @@ Agent on a learning axis. Per-episode `learning_benefit` remains `not_estimated`
 
 ### Instance policy
 
-The bundled Minecraft example uses mapping 2; Veloren uses mapping 5.
+The bundled Minecraft example uses mapping 5; Veloren uses mapping 5.
 They are **public development examples**, not secret evaluation instances.
 The reusable author generates any of eight mappings:
 
@@ -151,6 +152,49 @@ No hidden-instance/random-origin evaluation policy was confirmed during this
 release. Formal learning comparisons must predeclare a fresh instance
 distribution and matched experience conditions instead of using these examples
 as a secret test set.
+
+### Original Minecraft development-readiness bridge (October 29)
+
+The [source-pinned closure receipt](../checks/minecraft-original-reference-closure.json)
+and [read-only reproducer](../checks/minecraft_original_reference_closure.py)
+add a current development-readiness bridge without changing the frozen manifest,
+fixtures, scoring goals or historical verdicts.
+
+`mining_workshop_restart` now has reconciled whole-legal ST and VM feasibility:
+the retained `reference-st-02` and `reference-vm-02` both complete **every**
+predicate, including the diamond, on all 18 matching release fixture files.
+Both references and the valid historical ST-success/VM-failure model pair replay
+identically through the current binding on integrity-checked native snapshots.
+The original VM model failure still lacks the diamond. Recorded controls remain
+admitted, and the opening native state matches the current task.
+
+This bridge explicitly records prompt wrapping and removal of the redundant
+control-release/text-finish sentence; it is not an exact-prompt performance
+replication. The independent difficulty judgments remain ST 3 / VM 3 with
+moderate/high uncertainty. No new game or model episode was run.
+
+Read-only installation admission selects the existing runtime with
+`LIVEQUEST_MINECRAFT_HOME=$PWD/output/temp/task_development/minecraft-runtime/MC-R05-main-vitals-placement-cart-v1`
+(source `39b0c2e0…`). Its sources, compiled classes, resources and dependencies
+are pinned and verified. This is compatibility with archived evidence, **not**
+a claim of fresh gameplay on that runtime. The stale default cache remains
+rejected and is not overwritten.
+
+Four objectives still need one complete frozen-fixture VM witness each:
+`abandoned_mine_cargo`, `expedition_record_reconstruction`,
+`prepared_village_defense` and the two-peer `shared_crossing_camp`.
+The closure receipt gives exact source/runtime identities, public controls,
+2700-second budgets and required artifacts; execution requires separate approval.
+For `route_schema_transfer`, the primary native ST/VM successes really use
+mapping 5. Despite differing fixture bytes, their current-score replay now
+passes with actual zero-death statistics.
+The source-pinned bridge verifies all 71 route-intersecting native sections
+(290,816 cells, including block-state properties), identical gameplay level
+settings and clear-weather timers exceeding the episode cap. This establishes
+bounded route-mechanics equivalence, not byte-identical worlds or an exhaustive
+shortcut audit. Mapping 2 diagnostics cannot close the released mapping 5
+formal pair, which remains the next validation gate.
+Neither partial progress nor a controller termination counts as completion.
 
 ### Recovery and goal/score alignment
 
