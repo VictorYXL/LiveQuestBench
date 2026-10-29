@@ -94,3 +94,25 @@ def test_rejected_nonpublic_key_is_not_mistaken_for_executed_action(tmp_path):
     (tmp_path / "response-000.json").write_text(json.dumps(response))
     with pytest.raises(AssertionError):
         public_trace(tmp_path, result, boundaries)
+
+
+def test_constructive_ground_path_uses_clear_detour_not_solid_wall():
+    from checks.minecraft_original_remaining_closure import ground_path
+
+    blocks = {(x, y, z): "minecraft:grass_block" if y == 71 else "minecraft:air"
+              for x in range(3) for y in range(71, 74) for z in range(2)}
+    blocks[1, 72, 0] = "minecraft:cobblestone"
+    path = ground_path(blocks, (0, 0), {(2, 0)})
+    assert [1, 72, 0] not in path
+    assert path[0] == [0, 72, 0] and path[-1] == [2, 72, 0]
+    assert len(path) == 5
+
+
+def test_constructive_path_does_not_infer_missing_headroom():
+    from checks.minecraft_original_remaining_closure import ground_path
+
+    blocks = {(x, y, 0): "minecraft:grass_block" if y == 71 else "minecraft:air"
+              for x in range(3) for y in range(71, 74)}
+    del blocks[1, 73, 0]
+    with pytest.raises(AssertionError, match="No conservative"):
+        ground_path(blocks, (0, 0), {(2, 0)})
