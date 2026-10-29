@@ -167,6 +167,31 @@ when comparing layouts. Encounters can start 10-96 metres away; distant targets
 are identified privately during setup, without extending ST's 32-metre public
 projection or exposing hidden state to VM.
 
+### Finite active build: Heavy Sweep
+
+`finite_active_build` requires a paid native Sword prerequisite and Heavy Sweep,
+configuration in auxiliary slot 1, causally attributed Heavy Sweep damage to the
+original Legoom, its native death, and an alive, grounded, still arch return.
+One Heavy Sweep hit followed by ordinary finishing is legal. Respawning at the
+start is legal and weakens return pressure; points and supplies are not restored.
+This is basic finite-build planning, not counter timing or deep optimization.
+
+The whole guided native ST/VM witnesses both pass. The first new-condition
+formal ST succeeds (403.549 s, four deaths); VM is a valid deadline failure
+(2700.220 s, thirteen deaths, no target damage), having purchased Cross Cut
+instead of the required prerequisite/build. A deliberate allocation error
+cannot be distinguished from a GUI misclick. ST2/VM3 remain high-uncertainty
+mechanics estimates, not calibrated ratings. Original Riposte results do not
+transfer to this condition.
+
+The [source/runtime admission](../../docs/evidence/active_build_heavy_sweep_admission.json)
+is limited to the explicit checksum-pinned historical route/1 runtime with
+route evidence disabled, selected using `LIVEQUEST_VELOREN_RUNTIME`.
+It does not qualify the default runtime, a fresh route/2 build, or new gameplay.
+Current stronger downed and native-death-cause guards remain intact. All four
+archived pass-gate vectors replay unchanged; the unused lethal-hit diagnostic
+changes from 1/0 to null because this task does not require a lethal active hit.
+
 ### Add a task
 
 1. Copy a task with the desired mode and scoring pattern.

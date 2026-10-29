@@ -1,0 +1,151 @@
+id: finite_active_build
+game: veloren
+task_type: visual_motor
+task: Learn Heavy Sweep with your native Sword points and configure it in the first auxiliary slot.
+  Deal actual damage with that ability to the marked Green Legoom, defeat it, and return alive to the
+  starting stone arch. Merely unlocking the skill and killing with another attack does not count. In the
+  native window, P opens the diary of prerequisites and eligible abilities. Consider your purchases before
+  entering the arena beyond the cover pillar. Finish standing still on the ground at the arch. Death does
+  not restore spent supplies or skill points.
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/veloren_0_18_0_0.bin
+  world_seed: 130626853
+  time_of_day: '12:00'
+  day_length: 30
+  calendar: none
+  platform:
+    origin:
+    - 18700
+    - 10800
+    - 500
+    size:
+    - 28
+    - 28
+    block: Rock
+  blocks:
+  - origin:
+    - 18700
+    - 10800
+    - 501
+    size:
+    - 28
+    - 1
+    - 4
+  - origin:
+    - 18700
+    - 10827
+    - 501
+    size:
+    - 28
+    - 1
+    - 4
+  - origin:
+    - 18700
+    - 10801
+    - 501
+    size:
+    - 1
+    - 26
+    - 4
+  - origin:
+    - 18727
+    - 10801
+    - 501
+    size:
+    - 1
+    - 26
+    - 4
+  - origin:
+    - 18713
+    - 10812
+    - 501
+    size:
+    - 3
+    - 3
+    - 4
+  - origin:
+    - 18703
+    - 10802
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18703
+    - 10806
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18703
+    - 10802
+    - 504
+    size:
+    - 1
+    - 5
+    - 1
+  player_state:
+    position: &id001
+    - 18704.5
+    - 10804.5
+    - 501
+    look:
+    - 0
+    - 1
+    - 0
+    health: 100
+    inventory:
+      common.items.consumable.potion_minor: 3
+      common.items.food.apple: 3
+    equipment:
+      active_mainhand: common.items.weapons.sword.starter
+      chest: common.items.armor.hide.rawhide.chest
+      feet: common.items.armor.misc.foot.sandals
+      glider: common.items.glider.basic_white
+      lantern: common.items.lantern.black_0
+      legs: common.items.armor.misc.pants.worker_brown
+  encounters:
+  - role: arena_legoom
+    asset: common.entity.benchmark.male_green_legoom
+    position:
+    - 18721.5
+    - 10820.5
+    - 501
+  sword_skill_points: 2
+  respawn_at_start: true
+evaluator:
+  name: active_build
+  parameters:
+    min_health: 0
+    roles:
+    - arena_legoom
+    sword_skills:
+    - HeavySweep
+    auxiliary_ability:
+      slot: 0
+      mainhand_index: 6
+    position:
+      target: *id001
+      horizontal_tolerance: 3
+      vertical_tolerance: 1
+      max_speed: 0.1
+    no_death: false
+    paid_skill: HeavySweep
+    required_attack:
+      source: Melee
+      tool: Sword
+      lethal: false
+      ability:
+        ability:
+          MainWeaponAux: 6
+        context_index: null
+capabilities:
+  primary:
+  - planning_resources
+  secondary:
+  - spatial_interaction
+  - realtime_execution

@@ -81,6 +81,10 @@ def create_binding(
         validators[evaluator] = validate_itinerary
         if not fixture.get("route_evidence"):
             raise ValueError("Itinerary scoring requires native route evidence")
+    elif evaluator == "active_build":
+        from game.veloren.evaluators.active_build import evaluate_active_build, validate_active_build
+        evaluators[evaluator] = evaluate_active_build
+        validators[evaluator] = validate_active_build
     elif evaluator == "harvest":
         from game.veloren.evaluators.harvest import evaluate_harvest, validate_harvest
         evaluators[evaluator] = evaluate_harvest
@@ -94,7 +98,7 @@ def create_binding(
     score = evaluators[evaluator]
     inspect.signature(score).bind(Path(), Path(), **parameters)
     validators[evaluator](**parameters)
-    if evaluator in ("encounter", "expedition", "damage") and set(parameters["roles"]) != {
+    if evaluator in ("encounter", "expedition", "damage", "active_build") and set(parameters["roles"]) != {
         row["role"] for row in game.fixture.get("encounters", [])
     }:
         raise ValueError("Scored encounter roles must match the fixture's designated targets")
