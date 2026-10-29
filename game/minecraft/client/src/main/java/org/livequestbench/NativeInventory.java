@@ -77,7 +77,9 @@ final class NativeInventory {
     }
 
     static NativeBridge.Job inspectContainer() {
-        if (!openStation("chest")) return () -> NativeBridge.fail("Aim at a reachable chest first");
+        var current = NativeBridge.client().player.currentScreenHandler;
+        if (!(current instanceof GenericContainerScreenHandler) && !openStation("chest"))
+            return () -> NativeBridge.fail("Aim at a reachable chest or open a native chest-cart screen first");
         long started = System.nanoTime();
         return () -> {
             var handler = NativeBridge.client().player.currentScreenHandler;

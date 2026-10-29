@@ -1,0 +1,379 @@
+{
+  "schema": "livequest-main-task-admission/1",
+  "task": "MC-R05",
+  "task_id": "rail_junction_interception",
+  "version": 1,
+  "source_commit": "6591a15f52e2e285b68f9f45bb41b3b9da93811e",
+  "integration_base": "5619e1663f4775dca258786480fb12dffa2b4f92",
+  "accepted_condition": "Exact frozen task, scorer, native observer and fixture; historical whole-native ST/VM successes and valid first formal failures; independent construct review; additive current-source read-only runtime admission.",
+  "status": "qualified_pinned_historical_evidence_current_runtime_read_only_compatible",
+  "qualification_delta": 1,
+  "task_dependency_files": {
+    "config/minecraft/tasks/structured_tools/rail_junction_interception.yaml": "f0a3d055b48f9b81a6a217d44db7115e104c7d0424cb466c08c2f7bb305db17b",
+    "config/minecraft/tasks/visual_motor/rail_junction_interception.yaml": "bb3038df6f5c174881d1be42a6902e10184593d73da42b0fefe74d1aa4c16a20",
+    "game/minecraft/evaluators/timed_routing.py": "2bfd71f1cec14e78317ad53e97abd38859fedef0eb5b2fba3930c20c724a6af6",
+    "game/minecraft/fixtures/timed_routing.py": "806b0129ad3c870fbee2b6c983a1ebba229cf0a6017e607507c23c68c5076681",
+    "scripts/prove_timed_routing.py": "0a2ed321afdbd4a0fab78e5b45f5220804281effb23994d6e374a800501f5376",
+    "scripts/author_timed_routing.py": "c9c6d15ec19620f9ad9c3bb8a8973db20b780c7574dd6a9dd78180f7ac2b32c3",
+    "scripts/prove_two_cart.py": "102191f580c3d6b4d3979cd6d04fafeb16e3f5919bf165a5f1fa25529a197da2",
+    "config/minecraft/fixtures/rail_junction_interception/DIM-1/data/raids.dat": "d43a9f35223d1abd3d7d2afcd99629002edecf1a8bfb2d637efa7324bbf41065",
+    "config/minecraft/fixtures/rail_junction_interception/DIM1/data/raids_end.dat": "d43a9f35223d1abd3d7d2afcd99629002edecf1a8bfb2d637efa7324bbf41065",
+    "config/minecraft/fixtures/rail_junction_interception/data/chunks.dat": "5d4e44ae9aaf027f0d2528814cad7883355d7fe0e5614c577415968719b1fe2f",
+    "config/minecraft/fixtures/rail_junction_interception/data/command_storage_gameagent.dat": "246eca188764110f9a3d78f575c04e2ad84bbfbd3b036b24d77eef65765b3d7b",
+    "config/minecraft/fixtures/rail_junction_interception/data/command_storage_livequest.dat": "e9db87badd91feeff1da080ffcb793db7a692c517edccda54cb699e4c623d92f",
+    "config/minecraft/fixtures/rail_junction_interception/data/raids.dat": "b6d3d17003fdae9ea3a67b9683414b284a312cb638c193de453b8d9e34f587f3",
+    "config/minecraft/fixtures/rail_junction_interception/data/scoreboard.dat": "6c4c39356f18296ae0068717d7ff3198b12095a66a202b40b5ad8ebc237abf0b",
+    "config/minecraft/fixtures/rail_junction_interception/datapacks/livequest_routing/data/livequest_routing/functions/load.mcfunction": "fb2bfad57b9082b0c52aa82077090568ba5baab98854b2511814eda80db069e7",
+    "config/minecraft/fixtures/rail_junction_interception/datapacks/livequest_routing/data/livequest_routing/functions/sample.mcfunction": "a498b187ee2dec504c8291ae383cb4b090295b271d6234cdc75ef076885987a6",
+    "config/minecraft/fixtures/rail_junction_interception/datapacks/livequest_routing/data/livequest_routing/functions/tick.mcfunction": "2dcc480c94a3e7ced71f89b5cdbd9c78675b2820ee8e4c445fe1f994ca8cd897",
+    "config/minecraft/fixtures/rail_junction_interception/datapacks/livequest_routing/data/minecraft/tags/functions/load.json": "07d05ef16c7ba046c77d13723eef14549f274e2e631fff459c971f92c8da324b",
+    "config/minecraft/fixtures/rail_junction_interception/datapacks/livequest_routing/data/minecraft/tags/functions/tick.json": "f02aa8b69cafc99d6d36f05c791d59763cf173dc24090c03b5730f0cb434bc3f",
+    "config/minecraft/fixtures/rail_junction_interception/datapacks/livequest_routing/pack.mcmeta": "d4bb2d25fa29166ca8af923e7cfb1fca43e904063d00c7d556e9f4674cd080b4",
+    "config/minecraft/fixtures/rail_junction_interception/entities/r.-1.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "config/minecraft/fixtures/rail_junction_interception/entities/r.-1.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "config/minecraft/fixtures/rail_junction_interception/entities/r.0.-1.mca": "a9b08d9102c7f5bd883df69450d96845fc462791bfc8f323f0fc3142da6f7866",
+    "config/minecraft/fixtures/rail_junction_interception/entities/r.0.0.mca": "e2a059b6b420b760d8988fe92099d602035bf5004d944749730b8ecac031d406",
+    "config/minecraft/fixtures/rail_junction_interception/level.dat": "0b57df67093d9a77ba48b46aae9c51dc701c35a899dda9919396ccd09c43bf6e",
+    "config/minecraft/fixtures/rail_junction_interception/livequest-routing-public.json": "2c25404e6495c2cb719d6af7ec37f2d83f26b73c0bf8fb225b713fed4a6b2eab",
+    "config/minecraft/fixtures/rail_junction_interception/livequest-two-cart.json": "7224d3c013f8ad391e51371786b456f2dde09f206333782bb50a0d50de80342c",
+    "config/minecraft/fixtures/rail_junction_interception/poi/r.-1.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "config/minecraft/fixtures/rail_junction_interception/poi/r.-1.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "config/minecraft/fixtures/rail_junction_interception/poi/r.0.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "config/minecraft/fixtures/rail_junction_interception/poi/r.0.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "config/minecraft/fixtures/rail_junction_interception/region/r.-1.-1.mca": "bbee2c1456699941b141769e86691d33790ddd173da4987d813b944d1b36e2ec",
+    "config/minecraft/fixtures/rail_junction_interception/region/r.-1.0.mca": "082c8d82dc48a223e8fa1bde07beb83b133496ecbc267e4c0977d9dc898fbafd",
+    "config/minecraft/fixtures/rail_junction_interception/region/r.0.-1.mca": "9c381e6999ea60979c1438702df12a7dcff2b15b6d5b954f6b9389ffc82ab35a",
+    "config/minecraft/fixtures/rail_junction_interception/region/r.0.0.mca": "50c45675e8692593ce81e26571eb00e9b6cfff3ea9b432c359e18818283b5356"
+  },
+  "source_manifest": "config/minecraft/fixtures/rail_junction_interception.source.json",
+  "current_runtime": {
+    "home": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/minecraft-runtime/MC-R05-main-vitals-placement-cart-v1",
+    "source_sha256": "39b0c2e0e5549fa3921071d844ad9e2b8f3c1ff9ae4499531ce61683aeb98f6b",
+    "provenance": {
+      "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/minecraft-runtime/MC-R05-main-vitals-placement-cart-v1/provenance.json",
+      "sha256": "b8a060086346a0b16210beb1a89ed2cb9161d547a82dcda5168efbe4f740a949"
+    },
+    "compiled_java_sources": 8,
+    "published_definitions_read_only_passed": 52,
+    "previous_main_and_default_and_frozen_r05_correctly_rejected": true,
+    "historical_caches_unchanged": true,
+    "fresh_native_episode": false,
+    "preserved_main_features": [
+      "native placement confirmation",
+      "vitals RPC"
+    ],
+    "minimal_native_delta": "Preserve an already-open generic container screen during container_inspect; permit its native slots to be inspected.",
+    "historical_r05_delta": "Only existing main vitals RPC and placement confirmation differ from frozen R05 NativeBridge; other Java inputs equal."
+  },
+  "historical_runtime": {
+    "home": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-R05-runtime",
+    "client_source_sha256": "e0b4022014d1f6fe2b383a9a7f71ae4b22c6c4bf9484fd12fe057062d4d02d8f"
+  },
+  "retained_evidence": [
+    {
+      "kind": "native",
+      "track": "st",
+      "result": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-R05-full-public-st-v1/result.json",
+        "sha256": "cf469cb3e5c48da0e2a5fc5b30fcaa91f22ad42558c61c18d662b295989d87ce"
+      },
+      "environment": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-R05-full-public-st-v1/game/environment.json",
+        "sha256": "94103ce7b2b3b1cc4c91a83de9ff2d4fb5f207c64eb1e4aaba53ec33deedf341"
+      },
+      "evaluation": {
+        "success": true,
+        "checks": {
+          "carts": {
+            "east": {
+              "original_alive": true,
+              "position": [
+                12.35940179479109,
+                72.0625,
+                0.5
+              ],
+              "speed": 0.0,
+              "correct_dock": true
+            },
+            "west": {
+              "original_alive": true,
+              "position": [
+                -12.198621519886249,
+                72.0625,
+                0.5
+              ],
+              "speed": 0.0,
+              "correct_dock": true
+            }
+          },
+          "cargo": [
+            "east_consignment",
+            "west_consignment"
+          ],
+          "living_return": true,
+          "native_objective_success": true
+        }
+      },
+      "measurement": null,
+      "task_outcome": null,
+      "immutable_snapshots_and_results": true,
+      "exact_retained_replay": true
+    },
+    {
+      "kind": "native",
+      "track": "vm",
+      "result": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-R05-full-public-vm-v1/result.json",
+        "sha256": "f938efb6bcd6cbf656aa7e1b532d6f9729e1b4c5cafa61ba405f31eec36eac4a"
+      },
+      "environment": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-R05-full-public-vm-v1/game/environment.json",
+        "sha256": "68b45db7a80d692eb80f44890811b4797bf838741cd58feac504d0daddc6e580"
+      },
+      "evaluation": {
+        "success": true,
+        "checks": {
+          "carts": {
+            "east": {
+              "original_alive": true,
+              "position": [
+                12.35940179479109,
+                72.0625,
+                0.5
+              ],
+              "speed": 0.0,
+              "correct_dock": true
+            },
+            "west": {
+              "original_alive": true,
+              "position": [
+                -12.198621519886249,
+                72.0625,
+                0.5
+              ],
+              "speed": 0.0,
+              "correct_dock": true
+            }
+          },
+          "cargo": [
+            "east_consignment",
+            "west_consignment"
+          ],
+          "living_return": true,
+          "native_objective_success": true
+        }
+      },
+      "measurement": "valid",
+      "task_outcome": null,
+      "immutable_snapshots_and_results": true,
+      "exact_retained_replay": true
+    },
+    {
+      "kind": "formal",
+      "track": "st",
+      "result": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-R05-formal-st-reviewed-6591a15/results/baseline/rail_junction_interception.structured_tool/episode_1/results/result.json",
+        "sha256": "c0efaaf2462f99397748667b551de81b9b5a9707312e7dc33fa348cfe3b7b09a"
+      },
+      "environment": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-R05-formal-st-reviewed-6591a15/results/baseline/rail_junction_interception.structured_tool/episode_1/game/environment.json",
+        "sha256": "22477b51e26ed938f815e99527eb4e613d752994fa5db32de32123ed8c3fd01e"
+      },
+      "evaluation": {
+        "success": false,
+        "checks": {
+          "carts": {
+            "east": {
+              "original_alive": true,
+              "position": [
+                -11.35940179479109,
+                72.0625,
+                0.5
+              ],
+              "speed": 0.0,
+              "correct_dock": false
+            },
+            "west": {
+              "original_alive": true,
+              "position": [
+                -12.600383760081804,
+                72.0625,
+                0.5
+              ],
+              "speed": 0.0,
+              "correct_dock": true
+            }
+          },
+          "cargo": [
+            "east_consignment",
+            "west_consignment"
+          ],
+          "living_return": true,
+          "native_objective_success": false
+        }
+      },
+      "measurement": "valid",
+      "task_outcome": "failure",
+      "immutable_snapshots_and_results": true,
+      "exact_retained_replay": true
+    },
+    {
+      "kind": "formal",
+      "track": "vm",
+      "result": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-R05-formal-vm-reviewed-6591a15/results/baseline/rail_junction_interception.visual_motor/episode_1/results/result.json",
+        "sha256": "df027bae1550647763118f08883a3beada09d24629fc2e7f42e72c7cbe81ff82"
+      },
+      "environment": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-R05-formal-vm-reviewed-6591a15/results/baseline/rail_junction_interception.visual_motor/episode_1/game/environment.json",
+        "sha256": "64d9414a0ae4838909d8f69427548b5c60662043ec2cf727bdaf68ffb3f5d31f"
+      },
+      "evaluation": {
+        "success": false,
+        "checks": {
+          "carts": {
+            "east": {
+              "original_alive": true,
+              "position": [
+                12.35940179479109,
+                72.0625,
+                0.5
+              ],
+              "speed": 0.0,
+              "correct_dock": true
+            },
+            "west": {
+              "original_alive": true,
+              "position": [
+                -12.198621519886249,
+                72.0625,
+                0.5
+              ],
+              "speed": 0.0,
+              "correct_dock": true
+            }
+          },
+          "cargo": [
+            "west_consignment"
+          ],
+          "living_return": false,
+          "native_objective_success": false
+        }
+      },
+      "measurement": "valid",
+      "task_outcome": "failure",
+      "immutable_snapshots_and_results": true,
+      "exact_retained_replay": true
+    },
+    {
+      "kind": "negative",
+      "track": "st",
+      "result": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-R05-native-timed-preset-proof-v3/result.json",
+        "sha256": "b2cf86f8fe9300fbc1a3660fc99f0148c97be2782b0254c3ca297c6d83adbab3"
+      },
+      "environment": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-R05-native-timed-preset-proof-v3/game/environment.json",
+        "sha256": "873b7601c966fd52dd181b86ac05d6df6b01c2c57145e8fa242bf113f7cf987c"
+      },
+      "evaluation": {
+        "success": false,
+        "checks": {
+          "carts": {
+            "east": {
+              "original_alive": true,
+              "position": [
+                12.35940179479109,
+                72.0625,
+                0.5
+              ],
+              "speed": 0.0,
+              "correct_dock": true
+            },
+            "west": {
+              "original_alive": true,
+              "position": [
+                13.600383760081806,
+                72.0625,
+                0.5
+              ],
+              "speed": 0.0,
+              "correct_dock": false
+            }
+          },
+          "cargo": [
+            "east_consignment",
+            "west_consignment"
+          ],
+          "living_return": true,
+          "native_objective_success": false
+        }
+      },
+      "measurement": null,
+      "task_outcome": null,
+      "immutable_snapshots_and_results": true,
+      "exact_retained_replay": true
+    }
+  ],
+  "scientific": {
+    "review": {
+      "path": "output/temp/task_development/checks/MC-R05-independent-verdict.json",
+      "sha256": "d25eefa95a0a386af8f7165b24da52c13ba47452aae2adaad52d9ef651372df7"
+    },
+    "source_commit": "6591a15f52e2e285b68f9f45bb41b3b9da93811e",
+    "status": "reviewed_pass",
+    "construct": "Genuine continuously running native cart scheduling/delivery, modest primary realtime demand.",
+    "difficulty": {
+      "st": {
+        "reviewer_rating": 2,
+        "uncertainty": "moderate",
+        "plausible_range": [
+          2,
+          3
+        ]
+      },
+      "vm": {
+        "reviewer_rating": 2,
+        "uncertainty": "moderate_to_high",
+        "plausible_range": [
+          2,
+          3
+        ]
+      },
+      "basis": "Wide disclosed timing windows and one switch, followed by two pickups/return. Native clock consequence is real, but this is not sustained defense or a difficult online scheduling chain. VM345.298s includes retrieval/navigation, not evidence for difficulty3-4.",
+      "calibrated": false
+    },
+    "limits": [
+      "Admit final measurement as a modest2 realtime condition; preserve legal fixed timing and cargo-only negative.",
+      "Do not claim feedback necessity, robust recovery or difficulty3 from the successful warning reference."
+    ]
+  },
+  "tests": {
+    "focused": "18 passed, 5 skipped; skips are opt-in native games, not newly executed proof.",
+    "catalog_and_placement": "3 passed, 2 deselected; nine-case Fabric producer regression exits before client/world creation.",
+    "candidate_read_only_admission": {
+      "path": "output/temp/task_development/checks/MC-R05-candidate-read-only-admission.json",
+      "sha256": "d67be1232a8fc2e1bfb3989aa6d051789d80ef5f1312afe4ff7fd441dc7ece30"
+    },
+    "candidate_focused_log": {
+      "path": "output/temp/task_development/checks/MC-R05-candidate-tests.log",
+      "sha256": "2c1def403b4eeffb4cdf1716d39002c79372000c56cce00b377f406233c93440"
+    },
+    "candidate_catalog_placement_log": {
+      "path": "output/temp/task_development/checks/MC-R05-candidate-catalog-placement-tests.log",
+      "sha256": "1a32e2809a0ade64e5435f4f4ee215d0efef1c42b2d7be7c7627d53e71065b08"
+    }
+  },
+  "other_tasks": {
+    "MC-L04": "Not admitted by this change; newly completed valid pair is retained, separate source/runtime admission remains.",
+    "MC-L05": "Not admitted; new-family first formal pair and separate observer/source/runtime admission remain required."
+  },
+  "limits": [
+    "Both formal R05 failures remain valid failures; no outcome rerun or model-success claim.",
+    "Native feasibility and replay do not assert fresh gameplay on the new combined runtime.",
+    "One disclosed-time switch can suffice; fixed policies, mining and physical recovery remain legal.",
+    "No causal feedback necessity, broad phase/recovery robustness, population success rate or calibrated difficulty.",
+    "Original reference catalog and first-final receipts are unchanged."
+  ],
+  "new_native_or_model_jobs": 0
+}

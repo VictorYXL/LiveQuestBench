@@ -1,0 +1,57 @@
+id: rail_junction_interception
+game: minecraft
+task_type: visual_motor
+task: 'Route both original chest carts into their designated opposite capture docks,
+
+  collect both original consignments, and return alive within three blocks of
+
+  the yellow marker at (0.5,72,-10.5). Collecting cargo alone is not success;
+
+  destroying and replacing a cart does not preserve its original identity.
+
+  The original east cart belongs in x=12..22 and the original west cart in
+
+  x=-22..-12, stationary in their lower docks near z=0.5.
+
+
+  The lever at (0,72,-8) selects east when off and west when on; it starts off.
+
+  Native hopper clocks release east around32seconds and west around64seconds.
+
+  Public lamps/mechanical flags at (-5,72,-8) and (7,72,-8) warn around16 and
+
+  48seconds respectively. These are native20TPS timings with circuit propagation,
+
+  not pauses between your actions. Protected approaches drop into lower capture
+
+  docks. Ordinary mining, pushing, crafting and other public controls remain legal.
+
+  Cargo reaches ordinary chests at (24,71,0) and (-24,71,0) via native hoppers.
+
+  Start with20health and survive the return; there is no hidden health increase
+
+  requirement. This is one continuously running episode.
+
+  '
+time_limit_seconds: 600
+fixture:
+  world_path: ../../fixtures/rail_junction_interception
+  instance: 1.20.4
+  difficulty: normal
+  player_state:
+    position:
+    - 2.5
+    - 72
+    - -10.5
+    yaw: 33.6900675
+    pitch: 22.857
+    health: 20
+    inventory: []
+evaluator:
+  name: timed_routing
+  parameters: {}
+capabilities:
+  primary:
+  - realtime_execution
+  secondary:
+  - planning_resources

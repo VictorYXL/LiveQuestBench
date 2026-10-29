@@ -1,0 +1,33 @@
+{
+  "kind": "approved_two_cart_native_counterpolicy_prototype",
+  "destinations": {
+    "east": {
+      "x": [
+        20,
+        24
+      ],
+      "z": [
+        -1,
+        1
+      ]
+    },
+    "west": {
+      "x": [
+        -1,
+        1
+      ],
+      "z": [
+        8,
+        13
+      ]
+    }
+  },
+  "hand_in": [
+    2.5,
+    72,
+    -2.5
+  ],
+  "public_controls": "Junction lever selects loop or east dock; dock levers energize native release rails. Ordinary pushing is legal if a flat stopped cart needs a starting nudge.",
+  "counterpolicy": "West's ordinary unpowered dock stops its original cart; preset east route before arrival.",
+  "limits": "No realtime difficulty or learning claim. This native safety dock may refute the intended timing construct."
+}

@@ -303,6 +303,7 @@ public class NativeBridge implements ClientModInitializer {
             };
         }
         if (!name.equals("craft") && !name.equals("smelt") && !name.equals("container_take")
+                && !name.equals("container_inspect")
                 && !name.equals("merchant_inspect") && !name.equals("merchant_trade")
                 && !name.equals("furnace_inspect") && !name.equals("furnace_click")
                 && mc.currentScreen != null) mc.player.closeHandledScreen();

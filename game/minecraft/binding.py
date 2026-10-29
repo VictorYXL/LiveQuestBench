@@ -60,7 +60,13 @@ def create_binding(
             tools = (*tools, "RespawnTool")
     elif tools is not None:
         raise ValueError("Tool allowlists are only supported for structured_tool tasks")
-    if evaluator == "inventory":
+    if evaluator == "timed_routing":
+        from game.minecraft.evaluators.timed_routing import evaluate_routing, verify_initial as verify_routing
+        if parameters:
+            raise ValueError("Timed routing has no public hidden-state parameters")
+        verify_routing(world_path)
+        score = evaluate_routing
+    elif evaluator == "inventory":
         inspect.signature(evaluate_inventory).bind(Path(), Path(), None, **parameters)
         validate_requirements(parameters["requirements"])
         score: Callable[..., dict] = evaluate_inventory
@@ -173,6 +179,8 @@ def create_binding(
             expected[name] = expected.get(name, 0) + item["count"]
         if inventory(before, game.player_uuid) != expected:
             raise RuntimeError("Initial native inventory differs from task initialization")
+        if evaluator == "timed_routing":
+            verify_routing(before)
         if evaluator == "shielded_cargo":
             verify_initial_shielded_cargo(before, game.player_uuid, **parameters)
         if evaluator == "expedition":

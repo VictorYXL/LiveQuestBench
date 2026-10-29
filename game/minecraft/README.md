@@ -81,7 +81,7 @@ dedicated `LIVEQUEST_MINECRAFT_HOME` and explicitly authorize provisioning
 before running setup. Never rebuild a live installation or relabel historical
 native results as evidence for a newer client.
 
-### Placement producer runtime (2026-10-29, version 1)
+### Historical placement producer runtime (2026-10-29, version 1)
 
 The placement confirmation repair retains native reach/occlusion checks and
 confirms a changed, replaceable target by held block-item identity (including
@@ -92,15 +92,9 @@ The historical I03 `a1bf410…` runtime lacks the vitals RPC; neither it nor the
 older vitals-only installation matches this source. Keep those installations
 and their measured evidence unchanged.
 
-On the development host, select the newly compiled, isolated installation
-explicitly from the repository root:
-
-```bash
-LIVEQUEST_MINECRAFT_HOME="$PWD/output/temp/task_development/minecraft-runtime/MC-I03-main-vitals-placement-v1" \
-  .venv/bin/python -m game.minecraft.runtime.install check --track all
-```
-
-This is a read-only offline check, not an experiment. Its absolute-path build
+That isolated installation was `MC-I03-main-vitals-placement-v1`; its
+source fingerprint is historical, not compatible with the newer cart
+inspection source below. Its absolute-path build
 provenance is retained in
 [`minecraft-placement-runtime-v1.json`](../../docs/evidence/minecraft-placement-runtime-v1.json).
 Other hosts must provision a new dedicated installation from these exact
@@ -108,13 +102,42 @@ sources using the installation instructions above; the local directory name
 is not a compatibility guarantee. No automatic fallback or fingerprint gate
 was relaxed.
 
-All 50 currently published ST/VM definitions passed read-only binding and
+All 50 then-published ST/VM definitions passed read-only binding and
 installation admission against this selection. The nine-case Fabric producer
 regression exits before client/world creation. These checks do **not** establish
 fresh gameplay reliability. I03 v3 remains an isolated engineering candidate:
 its historical corrected-runtime ST/VM witnesses and independent bounded
 construct review do not transfer the old task's formal measurements or add a
 qualified task.
+
+### Cart inspection runtime and rail junction admission (version 1)
+
+The current native client preserves placement confirmation and the vitals RPC,
+and allows `InspectContainerTool` to read an already-open native chest/cart
+screen. It does not navigate, expose remote cargo, or transfer items itself.
+All eight Java sources were compiled into a separate installation:
+
+```bash
+LIVEQUEST_MINECRAFT_HOME="$PWD/output/temp/task_development/minecraft-runtime/MC-R05-main-vitals-placement-cart-v1" \
+  .venv/bin/python -m game.minecraft.runtime.install check --track all
+```
+
+Its source digest is
+`39b0c2e0e5549fa3921071d844ad9e2b8f3c1ff9ae4499531ce61683aeb98f6b`.
+All 52 published Minecraft definitions pass read-only admission. Historical
+and default mismatched caches remain rejected and unchanged. Other hosts
+must provision from the exact current sources, not copy admission receipts.
+
+The paired `rail_junction_interception` task retains exact reviewed source
+`6591a15f52e2e285b68f9f45bb41b3b9da93811e`. Whole-task native ST/VM successes,
+both first formal **valid failures**, and the constant-east/collect-both
+negative were replayed against unchanged saved endpoints. These are historical
+native results, not fresh episodes on this combined runtime.
+See the [versioned admission receipt](../../docs/evidence/minecraft-rail-junction-admission-v1.json).
+The bounded claim is native continuous-time routing/delivery, provisionally
+ST2/VM2: one well-timed switch can suffice, and disclosed-time fixed policies
+remain legal. Feedback necessity, broad recovery robustness, and population
+difficulty are not established. L04 and L05 are not admitted by this change.
 
 ## Run an experiment
 

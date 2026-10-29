@@ -60,7 +60,7 @@ SCHEMAS = [
 ]
 BASE_TOOLS = tuple(schema["name"] for schema in SCHEMAS if schema["name"] != "GetObservationTool")
 SCHEMAS.extend([
-    tool("InspectContainerTool", "Open the reachable chest under your aim and read its native slots. "
+    tool("InspectContainerTool", "Open the reachable chest under your aim, or read the already-open native chest/cart screen. "
          "No navigation, remote contents, automatic pickup or task-item selection.", {}, []),
     tool("TakeContainerItemTool", "Shift-click one observed chest slot into your inventory. "
          "Requires the chest screen opened by InspectContainerTool; may transfer only part if inventory is full.",
