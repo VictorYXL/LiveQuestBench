@@ -1,0 +1,130 @@
+id: cover_and_cargo_team
+game: minecraft
+task_type: structured_tool
+capabilities:
+  primary:
+  - peer_cooperation
+  secondary:
+  - realtime_execution
+  - planning_resources
+task: Together retrieve all three original Supply Bundles from the side-route chests along this roughly
+  40-block lane and return both players with at least 1 health point each, carrying the bundles, to the yellow camp pad. Finish standing
+  still. Two native skeletons threaten the lane; broad cover bays and building supplies are available.
+  Divide protection, fighting and retrieval as you choose. Roles are not locked, and clearing the lane
+  before retrieval is legal. Native respawn returns to camp without replacing lost items. Release controls
+  before finishing.
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/cover_and_cargo_team
+  instance: 1.20.4
+  difficulty: normal
+participants:
+- id: Alpha
+  player_state:
+    position:
+    - 0.5
+    - 72
+    - -0.5
+    dimension: minecraft:overworld
+    respawn_position: [0, 72, 0]
+    yaw: -90
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+    - slot: 0
+      item: iron_sword
+      count: 1
+    - slot: 1
+      item: cobblestone
+      count: 16
+    - slot: 2
+      item: bread
+      count: 8
+    - slot: 102
+      item: iron_chestplate
+      count: 1
+    - slot: -106
+      item: shield
+      count: 1
+- id: Beta
+  player_state:
+    position:
+    - 0.5
+    - 72
+    - 1.5
+    dimension: minecraft:overworld
+    respawn_position: [0, 72, 0]
+    yaw: -90
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+    - slot: 0
+      item: iron_pickaxe
+      count: 1
+    - slot: 1
+      item: oak_planks
+      count: 8
+    - slot: 2
+      item: bread
+      count: 8
+    - slot: 102
+      item: leather_chestplate
+      count: 1
+evaluator:
+  name: team
+  parameters:
+    all:
+      position: &id001
+        target:
+        - 0.5
+        - 72
+        - 0.5
+        horizontal_tolerance: 3
+        vertical_tolerance: 0.5
+        max_speed: 0.1
+    cargo:
+      cargo:
+      - id: supply_bundle_1
+        item: minecraft:paper
+        chest:
+        - 16
+        - 72
+        - 4
+      - id: supply_bundle_2
+        item: minecraft:paper
+        chest:
+        - 27
+        - 72
+        - 4
+      - id: supply_bundle_3
+        item: minecraft:paper
+        chest:
+        - 37
+        - 72
+        - 4
+      position: *id001
+    native_efficiency: true
+tools:
+- MoveTool
+- LookAtPositionTool
+- SelectTool
+- StopTool
+- JumpTool
+- DigTool
+- PlaceTool
+- UseHeldItemTool
+- InspectContainerTool
+- TakeContainerItemTool
+- StrikeTool
+- AttackTool
+- RespawnTool
+- BroadcastTool
+- ChatTool

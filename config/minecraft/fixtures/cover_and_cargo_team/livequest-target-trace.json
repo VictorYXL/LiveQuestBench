@@ -1,0 +1,11 @@
+{
+  "schema": "minecraft-native-target-trace/1",
+  "sample_interval_ticks": 20,
+  "pack_sha256": {
+    "pack.mcmeta": "02007525c74fca08ddcc1c647b567673e65322ba0fcebcbbcc47d387e36ab9d9",
+    "data/minecraft/tags/functions/tick.json": "742afc3c01322fd15be00b69a62ca0f8320ba3da22ece3ee212d062894d11207",
+    "data/livequest_targets/functions/tick.mcfunction": "be860e54c1d6d80aeba3b44efe3e3aeb1557617a6554294c013ee508c38a306e",
+    "data/livequest_targets/functions/sample.mcfunction": "a95e25f2b049cbd000906cc1c8551efa4e1b3f82a4cc1506e2e92cf6cfa43e59",
+    "data/livequest_targets/functions/enemy.mcfunction": "d4c5a9268717ae5680de142b15e1de9df3e41d0bf7e117d82dde3035111b2548"
+  }
+}
