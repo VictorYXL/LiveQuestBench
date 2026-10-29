@@ -55,7 +55,17 @@
     "new_native_or_model_runs": 0
   },
   "qualification_boundary": {
-    "scientific_status": "Not asserted by this engineering admission. The independent reviewer and exact canonical task assessments govern construct, shortcuts and difficulty.",
+    "scientific_status": "Independent reviewed_pass for both exact standalone versions, followed by separate current-main source/runtime compatibility acceptance.",
+    "independent_review": {
+      "reviewer": "c971474d-7b80-465c-b8b2-899a05cc2ea3",
+      "report": "output/temp/task_development/checks/minecraft-independent-quality.json#/p03_s03_independent_scientific_followup",
+      "reviewed_at_utc": "2026-10-29T09:50:40.298372+00:00",
+      "MC-P03": "Planning/resources ST2/VM2; plausible range2-3. Genuine wheat allocation, original-parent breeding and maintained field; legal regrowth, partial harvesting and outside feeding remain allowed.",
+      "MC-S03": "Spatial interaction ST3/VM3; plausible range2-3. Genuine ascent, retained supported body-clear route, passage and original cargo. Efficient ladder/scaffold/bridge solutions remain legal; narrow return margins do not establish robustness."
+    },
+    "accepted_condition": "Exact integrated source with source-pinned historical ST/VM native feasibility and unchanged formal pair, independently reviewed construct/difficulty, and current selected-runtime read-only compatibility.",
+    "qualification_delta": 2,
+    "fresh_runtime_native_success_claim": false,
     "authority": "output/temp/task_development/assessments/MC-P03.json and MC-S03.json",
     "limits": [
       "Historical native feasibility and formal outcomes retain their original source/runtime provenance; current read-only compatibility is not a new successful episode.",
