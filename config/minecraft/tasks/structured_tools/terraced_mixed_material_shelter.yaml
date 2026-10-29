@@ -1,0 +1,151 @@
+id: terraced_mixed_material_shelter
+game: minecraft
+task_type: structured_tool
+task: 'Finish the partly built 4-by-4 shelter on the terraced pad ahead, then return to the yellow marker. Use a
+  level cobblestone floor, cobblestone lower perimeter walls, oak-plank upper walls and a full oak-plank roof. Leave a one-block-wide, two-block-high
+  doorway at the blue front edge and a clear 2-by-2 interior. Continue the existing front half across the marked pad.
+  The floor belongs one block
+  above the pad''s gold marker. Keep the doorway accessible from outside. Nearby stone and timber may be gathered.
+  Finish with at least 1 HP, grounded and still.'
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/terraced_mixed_material_shelter
+  instance: 1.20.4
+  difficulty: easy
+  player_state:
+    position:
+    - 0.5
+    - 72
+    - 0.5
+    dimension: minecraft:overworld
+    yaw: 0
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+    - slot: 0
+      item: stone_pickaxe
+      count: 1
+    - slot: 1
+      item: stone_axe
+      count: 1
+    - slot: 2
+      item: cobblestone
+      count: 12
+    - slot: 3
+      item: oak_planks
+      count: 10
+    - slot: 4
+      item: bread
+      count: 8
+evaluator:
+  name: shelter
+  parameters:
+    position:
+      target:
+      - 0.5
+      - 72
+      - 0.5
+      horizontal_tolerance: 3
+      vertical_tolerance: 1
+      max_speed: 0.1
+    structure:
+      target:
+        structure:
+        - - - cobblestone
+            - cobblestone
+            - cobblestone
+            - cobblestone
+          - - cobblestone
+            - cobblestone
+            - cobblestone
+            - cobblestone
+          - - cobblestone
+            - cobblestone
+            - cobblestone
+            - cobblestone
+          - - cobblestone
+            - cobblestone
+            - cobblestone
+            - cobblestone
+        - - - cobblestone
+            - air
+            - cobblestone
+            - cobblestone
+          - - cobblestone
+            - air
+            - air
+            - cobblestone
+          - - cobblestone
+            - air
+            - air
+            - cobblestone
+          - - cobblestone
+            - cobblestone
+            - cobblestone
+            - cobblestone
+        - - - oak_planks
+            - air
+            - oak_planks
+            - oak_planks
+          - - oak_planks
+            - air
+            - air
+            - oak_planks
+          - - oak_planks
+            - air
+            - air
+            - oak_planks
+          - - oak_planks
+            - oak_planks
+            - oak_planks
+            - oak_planks
+        - - - oak_planks
+            - oak_planks
+            - oak_planks
+            - oak_planks
+          - - oak_planks
+            - oak_planks
+            - oak_planks
+            - oak_planks
+          - - oak_planks
+            - oak_planks
+            - oak_planks
+            - oak_planks
+          - - oak_planks
+            - oak_planks
+            - oak_planks
+            - oak_planks
+      region:
+        min:
+        - -1
+        - 72
+        - 4
+        max:
+        - 2
+        - 75
+        - 7
+      match:
+        rotation_invariant: false
+        require_empty: true
+        require_new_blocks: false
+capabilities:
+  primary:
+  - spatial_interaction
+  secondary:
+  - planning_resources
+tools:
+- MoveTool
+- LookAtPositionTool
+- SelectTool
+- StopTool
+- JumpTool
+- DigTool
+- PlaceTool
+- UseHeldItemTool
+- RespawnTool
+- QueryCraftRecipeTool
+- CraftItemTool

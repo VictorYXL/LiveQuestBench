@@ -79,6 +79,11 @@ def create_binding(
         )
         validate_cargo(**parameters)
         score = evaluate_shielded_cargo
+    elif evaluator == "shelter":
+        from game.minecraft.evaluators.shelter import evaluate_shelter
+        inspect.signature(evaluate_shelter).bind(Path(), Path(), None, **parameters)
+        validate_state(**parameters)
+        score = evaluate_shelter
     elif evaluator == "structure":
         from game.minecraft.evaluators.structure import evaluate_structure, validate_config
         inspect.signature(evaluate_structure).bind(Path(), Path(), **parameters)
