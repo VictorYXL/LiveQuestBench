@@ -154,6 +154,24 @@ def test_prefix_rejects_replaced_truncated_or_incompatible_journal(tmp_path):
         snapshot_rows(path, "game", prefix=prefix)
 
 
+@pytest.mark.parametrize("prepare_pickups", [False, True])
+def test_prefix_preserves_original_pickup_lineage_across_readiness(tmp_path, prepare_pickups):
+    rows = journal_rows()
+    events = ("item_drop_created", "item_drop_merged_on_creation", "item_drop_merged",
+              "item_pickup_applied", "item_drop_expired")
+    for row, event in zip(rows[2:], events):
+        row.update(event=event, data={"source": "original"})
+    path = tmp_path / "journal.ndjson"
+    write_rows(path, rows[:4])
+    prefix = {}
+    snapshot_rows(path, "game", pickups=prepare_pickups, prepare_prefix=prefix)
+    with path.open("ab") as stream:
+        stream.write(b"".join(json.dumps(row).encode() + b"\n" for row in rows[4:]))
+    projected = snapshot_rows(path, "game", prefix=prefix, pickups=True, after_sequence=3)
+    assert projected == snapshot_rows(path, "game", pickups=True, after_sequence=3)
+    assert [row["event"] for row in projected if row["event"] in events] == list(events)
+
+
 def test_prefix_resumes_at_last_complete_row_not_partial_tail(tmp_path):
     rows = journal_rows()
     path = tmp_path / "journal.ndjson"

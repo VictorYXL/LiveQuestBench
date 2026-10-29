@@ -272,7 +272,8 @@ class Session:
         if operation == "setup_peer_group":
             if self.running or not self.team_role or not self.fixture.get("peer_group"):
                 raise PermissionError("Native Group setup is only available before declared peer play")
-            await self.finish_setup(finalize_encounters=False, finalize_supplies=False)
+            if not self.initialized.get("encounters_pending"):
+                await self.finish_setup(finalize_encounters=False, finalize_supplies=False)
             mode = args["mode"]
             if mode == "identity":
                 row = await self.actor.request("observe", origin="setup")

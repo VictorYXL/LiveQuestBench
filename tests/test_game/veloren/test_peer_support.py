@@ -14,7 +14,8 @@ from tests.test_game.veloren.test_encounter import evidence
 from tests.test_game.veloren.test_initialization import load_worker, player_scene
 
 
-def test_group_setup_does_not_spawn_encounter_before_both_peers_are_ready(monkeypatch):
+@pytest.mark.parametrize("encounters_pending", [False, True])
+def test_group_setup_does_not_spawn_encounter_before_both_peers_are_ready(monkeypatch, encounters_pending):
     observed = {"self_identity": {"uid": 1},
                 "nearby_entities": [{"uid": 2, "same_native_group": True}]}
 
@@ -27,14 +28,18 @@ def test_group_setup_does_not_spawn_encounter_before_both_peers_are_ready(monkey
     session.running = False
     session.team_role = "Alpha"
     session.fixture = {"peer_group": True}
-    session.initialized = {"encounters_pending": True}
+    session.initialized = {"encounters_pending": encounters_pending, "supplies_pending": True}
     session.actor = SimpleNamespace(name="Alpha", request=AsyncMock(return_value=observed))
     session.finish_setup = AsyncMock()
 
     async def run():
         assert await session.dispatch("setup_peer_group", {"mode": "identity"}) == {"uid": 1, "alias": "Alpha"}
         await session.dispatch("setup_peer_group", {"mode": "verify", "uid": 2})
-        session.finish_setup.assert_not_awaited()
+        if encounters_pending:
+            session.finish_setup.assert_not_awaited()
+        else:
+            assert session.finish_setup.await_count == 2
+            session.finish_setup.assert_awaited_with(finalize_encounters=False, finalize_supplies=False)
         assert session.peer_group_ready
         session.running = True
         with pytest.raises(PermissionError):
@@ -59,7 +64,8 @@ def test_deferred_encounter_rejects_unverified_group_or_live_game(monkeypatch, r
     spawn.assert_not_awaited()
 
 
-def test_deferred_encounter_spawns_once_then_retires_admin_before_play(monkeypatch, tmp_path):
+@pytest.mark.parametrize("supplies_pending", [False, True])
+def test_deferred_encounter_spawns_once_then_retires_admin_before_play(monkeypatch, tmp_path, supplies_pending):
     from game.veloren import fixture
     from game.veloren.runtime import records
 
@@ -80,6 +86,10 @@ def test_deferred_encounter_spawns_once_then_retires_admin_before_play(monkeypat
     async def close():
         events.append("admin_retired")
 
+    async def supplies(admin, specifications):
+        events.append("supplies")
+        return []
+
     worker = load_worker(monkeypatch, SimpleNamespace(wait_observation=wait))
     session = object.__new__(worker.Session)
     administrator = (
@@ -87,11 +97,13 @@ def test_deferred_encounter_spawns_once_then_retires_admin_before_play(monkeypat
         SimpleNamespace(aclose=close), 1,
     )
     session.setup_administrator = administrator
-    session.initialized = {"encounters_pending": True, "supplies": []}
+    session.initialized = {"encounters_pending": True, "supplies_pending": supplies_pending, "supplies": []}
     session.peer_group_ready, session.running = False, False
-    session.fixture, session.actor = declared, object()
+    session.fixture, session.actor = declared, SimpleNamespace(request=AsyncMock(return_value=opening))
+    declared["supplies"] = []
     session.record, session.output = {"world_fixture": {}}, tmp_path
     monkeypatch.setattr(fixture, "initialize_encounters", spawn)
+    monkeypatch.setattr(fixture, "initialize_supplies", supplies)
     monkeypatch.setattr(fixture, "observe_remote_supplies", AsyncMock())
     monkeypatch.setattr(worker, "recipe_observation", AsyncMock(return_value=opening))
     monkeypatch.setattr(records, "write_fixture_record", lambda *args: None)
@@ -103,15 +115,21 @@ def test_deferred_encounter_spawns_once_then_retires_admin_before_play(monkeypat
     session.reconnect_setup_administrator = reconnect
 
     async def run():
-        await session.finish_setup(finalize_encounters=False)
+        await session.finish_setup(finalize_encounters=False, finalize_supplies=False)
         assert session.setup_administrator is None
         assert session.initialized["encounters_pending"]
         session.peer_group_ready = True
+        if supplies_pending:
+            with pytest.raises(RuntimeError, match="all peers ready"):
+                await session.finish_setup()
+            assert "admin_reconnected" not in events
+        session.team_ready = True
         await session.finish_setup()
         await session.finish_setup()
 
     asyncio.run(run())
     assert events == ["admin_retired", "absence_verified", "admin_reconnected",
+                      *(["supplies"] if supplies_pending else []),
                       "spawn", "admin_retired", "absence_verified"]
     assert session.setup_administrator is None
     assert session.initialized["encounters_pending"] is False

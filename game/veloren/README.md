@@ -54,6 +54,12 @@ not interpolated points between rendered frames. Route tasks require a rebuilt
 runtime; the original distance-gap validity check remains unchanged. This
 observer does not alter physics, controls, or the game clock.
 
+Combined peer fixtures retain both readiness barriers: Group setup cannot
+finalize supplies, and original supplies are created and pre-aged before deferred
+enemies spawn. Cached journal projections retain original drop and merge events
+across that boundary. These source integrations require native requalification;
+offline unit regressions do not validate previously qualified runs on new source.
+
 Veloren native source and bundled map retain their applicable GPLv3 terms.
 The [native license notice](patches/LICENSE) is retained. Other components and
 assets have their own licenses; do not assume blanket redistribution rights.
