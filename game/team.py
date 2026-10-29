@@ -223,8 +223,17 @@ def create_team_binding(task: TaskConfig, output: Path, *, headless: bool,
         fallback = {"min_health": 1}
     parameters = task.evaluator_parameters
     if not parameters or set(parameters) - {"all", "any", "roles", "inventory_total", "no_death",
-                                           "crossing", "encounters", "cargo", "native_efficiency", "peer_support"}:
+                                           "crossing", "encounters", "cargo", "native_efficiency", "peer_support", "source_supplies"}:
         raise ValueError("Unsupported team goal predicate")
+    if "source_supplies" in parameters:
+        if task.game != "veloren" or not task.fixture.get("pickup_evidence"):
+            raise ValueError("Native original team supplies require Veloren pickup evidence")
+        from game.veloren.evaluators.pickups import team_collection_checks, validate_supplies
+        validate_supplies(supplies=parameters["source_supplies"])
+        declared = [{"item": row["item"], "amount": row["amount"]}
+                    for row in task.fixture.get("supplies", [])]
+        if declared != parameters["source_supplies"]:
+            raise ValueError("Team original supply goal must match the native fixture")
     if "peer_support" in parameters:
         from game.veloren.evaluators.peer_support import support_checks
         support = parameters["peer_support"]
@@ -280,7 +289,7 @@ def create_team_binding(task: TaskConfig, output: Path, *, headless: bool,
                   for goal in totals]
     if "no_death" in parameters and type(parameters["no_death"]) is not bool:
         raise ValueError("no_death must be boolean")
-    if not any(key in parameters for key in ("all", "any", "inventory_total", "crossing", "encounters", "cargo")) and not role_goals and not parameters.get("no_death"):
+    if not any(key in parameters for key in ("all", "any", "inventory_total", "crossing", "encounters", "cargo", "source_supplies")) and not role_goals and not parameters.get("no_death"):
         raise ValueError("Team requires at least one effective goal")
     members = {}
     member_tools = None
@@ -313,6 +322,15 @@ def create_team_binding(task: TaskConfig, output: Path, *, headless: bool,
 
     def evaluate(before: Path, after: Path) -> dict:
         checks = []
+        if "source_supplies" in parameters:
+            from game.veloren.evaluators.endpoints import load_pair
+            pairs = {role: load_pair(before / role, after / role) for role in members}
+            result = team_collection_checks(
+                {role: pair[0] for role, pair in pairs.items()},
+                {role: pair[1] for role, pair in pairs.items()},
+                supplies=parameters["source_supplies"],
+            )
+            checks.append({"scope": "source_supplies", "result": result, "passed": result["success"]})
         if "cargo" in parameters:
             result = evaluate_team_cargo(
                 before, after, {role: member.game.player_uuid for role, member in members.items()},

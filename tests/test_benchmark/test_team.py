@@ -13,6 +13,66 @@ from game.bindings import Controls, GameBinding
 from game.team import TeamGame
 
 
+@pytest.mark.parametrize("defect", ["missing_evidence", "mismatched_stock"])
+def test_original_team_supply_binding_rejects_unverifiable_fixture(tmp_path, defect):
+    from dataclasses import replace
+    from game.team import create_team_binding
+
+    task = load_task(Path("config/veloren/tasks/structured_tools/ridge_scout_ground_team.yaml"))
+    fixture = dict(task.fixture)
+    if defect == "missing_evidence":
+        fixture.pop("pickup_evidence")
+        message = "require Veloren pickup evidence"
+    else:
+        fixture["supplies"] = [{**fixture["supplies"][0], "amount": 5}]
+        message = "must match the native fixture"
+    with pytest.raises(ValueError, match=message):
+        create_team_binding(replace(task, fixture=fixture), tmp_path / "game",
+                            headless=True, recording=False, recording_fps=5)
+
+
+@pytest.mark.parametrize("collected", [False, True])
+def test_original_team_collection_is_distinct_from_matching_inventory(tmp_path, monkeypatch, collected):
+    from dataclasses import replace
+    from game.team import create_team_binding
+
+    task = load_task(Path("config/veloren/tasks/structured_tools/ridge_scout_ground_team.yaml"))
+    goal = task.evaluator_parameters["source_supplies"]
+    task = replace(task, evaluator_parameters={
+        "source_supplies": goal,
+        "inventory_total": task.evaluator_parameters["inventory_total"],
+    })
+    monkeypatch.setattr("benchmark.factory.make_game", lambda *args, **kwargs:
+                        GameBinding(SimpleNamespace(), None, None, None))
+    monkeypatch.setattr("game.veloren.evaluators.endpoints.load_pair",
+                        lambda before, after: ({"role": before.name}, {"role": after.name}))
+    seen = []
+
+    def collection(initial, final, *, supplies):
+        seen.append((initial, final, supplies))
+        return {"success": collected}
+
+    monkeypatch.setattr("game.veloren.evaluators.pickups.team_collection_checks", collection)
+    monkeypatch.setattr("game.veloren.evaluators.endpoints.inventory_counts",
+                        lambda row: {goal[0]["item"]: 4} if row["role"] == "Beta" else {})
+    import json
+    for role in ("Alpha", "Beta"):
+        directory = tmp_path / "after" / role
+        directory.mkdir(parents=True)
+        (directory / "observation.json").write_text(json.dumps({"role": role}))
+    binding = create_team_binding(task, tmp_path / "game",
+                                  headless=True, recording=False, recording_fps=5)
+    result = binding.evaluate(tmp_path / "before", tmp_path / "after")
+    assert result["success"] is collected
+    assert result["checks"][0]["scope"] == "source_supplies"
+    assert result["checks"][1]["passed"]
+    assert seen == [(
+        {"Alpha": {"role": "Alpha"}, "Beta": {"role": "Beta"}},
+        {"Alpha": {"role": "Alpha"}, "Beta": {"role": "Beta"}},
+        goal,
+    )]
+
+
 @pytest.mark.parametrize("fail_ready", [False, True])
 def test_original_veloren_supplies_wait_for_every_native_peer(tmp_path, fail_ready):
     async def scenario():

@@ -1,0 +1,417 @@
+id: ridge_scout_ground_team
+game: veloren
+task_type: visual_motor
+task: 'Recover all four pieces of simple leather from the original marked valley bundle,
+  then bring both players alive to the exit arch carrying at least four pieces between
+  you. Finish grounded and stationary together.
+
+  Alpha starts at a high lookout with two viewpoints and an ordinary broad descending
+  stairway; Beta starts on the valley floor. Native creatures move along the branching
+  approaches. Report useful sightings and decide how to reach the supply and exit.
+  Either player may collect it; killing every creature or sharing damage equally is
+  not required.
+
+  The original ground bundle has only a few native minutes before it vanishes and
+  is never refilled. Another source or merely possessing matching leather does not
+  count. A legal ground-only search is allowed; travel, damage, messages and resource
+  use are recorded. Death recovery does not reset the supply or enemies.'
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/veloren_0_18_0_0.bin
+  world_seed: 130626853
+  time_of_day: '12:00'
+  day_length: 30
+  calendar: none
+  respawn_at_start: true
+  platform:
+    origin:
+    - 18700
+    - 10800
+    - 500
+    size:
+    - 68
+    - 40
+    block: Rock
+  blocks:
+  - origin:
+    - 18700
+    - 10800
+    - 501
+    size:
+    - 68
+    - 1
+    - 4
+  - origin:
+    - 18700
+    - 10839
+    - 501
+    size:
+    - 68
+    - 1
+    - 4
+  - origin:
+    - 18700
+    - 10801
+    - 501
+    size:
+    - 1
+    - 38
+    - 4
+  - origin:
+    - 18767
+    - 10801
+    - 501
+    size:
+    - 1
+    - 38
+    - 4
+  - origin:
+    - 18722
+    - 10815
+    - 501
+    size:
+    - 24
+    - 8
+    - 3
+  - origin:
+    - 18740
+    - 10805
+    - 501
+    size:
+    - 1
+    - 9
+    - 3
+  - origin:
+    - 18740
+    - 10825
+    - 501
+    size:
+    - 1
+    - 9
+    - 3
+  - origin:
+    - 18731
+    - 10814
+    - 501
+    size:
+    - 4
+    - 4
+    - 19
+  - origin:
+    - 18731
+    - 10826
+    - 501
+    size:
+    - 4
+    - 4
+    - 19
+  - origin:
+    - 18729
+    - 10812
+    - 520
+    size:
+    - 10
+    - 20
+    - 1
+  - origin:
+    - 18728
+    - 10823
+    - 519
+    size:
+    - 1
+    - 6
+    - 1
+  - origin:
+    - 18727
+    - 10823
+    - 518
+    size:
+    - 1
+    - 6
+    - 1
+  - origin:
+    - 18726
+    - 10823
+    - 517
+    size:
+    - 1
+    - 6
+    - 1
+  - origin:
+    - 18725
+    - 10823
+    - 516
+    size:
+    - 1
+    - 6
+    - 1
+  - origin:
+    - 18724
+    - 10823
+    - 515
+    size:
+    - 1
+    - 6
+    - 1
+  - origin:
+    - 18723
+    - 10823
+    - 514
+    size:
+    - 1
+    - 6
+    - 1
+  - origin:
+    - 18722
+    - 10823
+    - 513
+    size:
+    - 1
+    - 6
+    - 1
+  - origin:
+    - 18721
+    - 10823
+    - 512
+    size:
+    - 1
+    - 6
+    - 1
+  - origin:
+    - 18720
+    - 10823
+    - 511
+    size:
+    - 1
+    - 6
+    - 1
+  - origin:
+    - 18719
+    - 10823
+    - 510
+    size:
+    - 1
+    - 6
+    - 1
+  - origin:
+    - 18718
+    - 10823
+    - 509
+    size:
+    - 1
+    - 6
+    - 1
+  - origin:
+    - 18717
+    - 10823
+    - 508
+    size:
+    - 1
+    - 6
+    - 1
+  - origin:
+    - 18716
+    - 10823
+    - 507
+    size:
+    - 1
+    - 6
+    - 1
+  - origin:
+    - 18715
+    - 10823
+    - 506
+    size:
+    - 1
+    - 6
+    - 1
+  - origin:
+    - 18714
+    - 10823
+    - 505
+    size:
+    - 1
+    - 6
+    - 1
+  - origin:
+    - 18713
+    - 10823
+    - 504
+    size:
+    - 1
+    - 6
+    - 1
+  - origin:
+    - 18712
+    - 10823
+    - 503
+    size:
+    - 1
+    - 6
+    - 1
+  - origin:
+    - 18711
+    - 10823
+    - 502
+    size:
+    - 1
+    - 6
+    - 1
+  - origin:
+    - 18710
+    - 10823
+    - 501
+    size:
+    - 1
+    - 6
+    - 1
+  - origin:
+    - 18709
+    - 10823
+    - 500
+    size:
+    - 1
+    - 6
+    - 1
+  - origin:
+    - 18754
+    - 10808
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18754
+    - 10812
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18754
+    - 10808
+    - 504
+    size:
+    - 1
+    - 5
+    - 1
+  - origin:
+    - 18760
+    - 10818
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18760
+    - 10822
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18760
+    - 10818
+    - 504
+    size:
+    - 1
+    - 5
+    - 1
+  encounters:
+  - role: north_approach_wolf
+    asset: common.entity.benchmark.male_wolf
+    position:
+    - 18746.5
+    - 10809.5
+    - 501
+    initial_health: 55
+  - role: south_approach_legoom
+    asset: common.entity.benchmark.male_green_legoom
+    position:
+    - 18747.5
+    - 10830.5
+    - 501
+  route_evidence: true
+  pickup_evidence: true
+  supplies:
+  - position:
+    - 18754.5
+    - 10810.5
+    - 501
+    item: common.items.crafting_ing.leather.simple_leather
+    amount: 4
+evaluator:
+  name: team
+  parameters:
+    source_supplies:
+    - item: common.items.crafting_ing.leather.simple_leather
+      amount: 4
+    inventory_total:
+    - item: common.items.crafting_ing.leather.simple_leather
+      min_count: 4
+    all:
+      min_health: 0
+      position:
+        target:
+        - 18760.5
+        - 10820.5
+        - 501
+        horizontal_tolerance: 5
+        vertical_tolerance: 0.5
+        max_speed: 0.1
+    no_death: false
+    native_efficiency: true
+capabilities:
+  primary:
+  - peer_cooperation
+  secondary:
+  - information_adaptation
+  - spatial_interaction
+  - realtime_execution
+participants:
+- id: Alpha
+  player_state:
+    position:
+    - 18736.5
+    - 10814.5
+    - 521
+    look:
+    - 0
+    - 1
+    - 0
+    health: 100
+    inventory:
+      common.items.food.apple: 3
+      common.items.consumable.potion_minor: 2
+    equipment:
+      active_mainhand: common.items.weapons.sword.starter
+      chest: common.items.armor.misc.chest.worker_purple_brown
+      feet: common.items.armor.misc.foot.sandals
+      glider: common.items.glider.basic_white
+      lantern: common.items.lantern.black_0
+      legs: common.items.armor.misc.pants.worker_brown
+- id: Beta
+  player_state:
+    position:
+    - 18705.5
+    - 10820.5
+    - 501
+    look:
+    - 0
+    - 1
+    - 0
+    health: 100
+    inventory:
+      common.items.food.apple: 3
+      common.items.consumable.potion_minor: 2
+    equipment:
+      active_mainhand: common.items.weapons.sword.starter
+      chest: common.items.armor.hide.rawhide.chest
+      feet: common.items.armor.misc.foot.sandals
+      glider: common.items.glider.basic_white
+      lantern: common.items.lantern.black_0
+      legs: common.items.armor.misc.pants.worker_brown
