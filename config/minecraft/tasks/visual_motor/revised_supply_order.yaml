@@ -1,0 +1,61 @@
+id: revised_supply_order
+game: minecraft
+task_type: visual_motor
+task: "Return to the yellow dispatch board with either an iron axe and 8 cooked chicken, or an iron shovel and 8\
+  \ cooked porkchops; retain at least 2 emeralds. The dated stock sheet in the notice chest is not authoritative.\
+  \ Actual native offers are available at three stalls about 20\u201330 blocks from dispatch; one listed offer has\
+  \ changed. Either complete bundle is acceptable. Finish alive, grounded and still."
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/revised_supply_order
+  instance: 1.20.4
+  difficulty: easy
+  player_state:
+    position:
+    - 0.5
+    - 72
+    - 0.5
+    dimension: minecraft:overworld
+    yaw: 0
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+    - slot: 0
+      item: emerald
+      count: 12
+    - slot: 1
+      item: bread
+      count: 8
+evaluator:
+  name: market
+  parameters:
+    position:
+      target:
+      - 0.5
+      - 72
+      - 0.5
+      horizontal_tolerance: 3
+      vertical_tolerance: 1
+      max_speed: 0.1
+    bundles:
+    - - item: iron_axe
+        min_count: 1
+      - item: cooked_chicken
+        min_count: 8
+      - item: emerald
+        min_count: 2
+    - - item: iron_shovel
+        min_count: 1
+      - item: cooked_porkchop
+        min_count: 8
+      - item: emerald
+        min_count: 2
+capabilities:
+  primary:
+  - information_adaptation
+  secondary:
+  - planning_resources
