@@ -63,6 +63,68 @@ async def native_command_text(admin, commands: list[dict], name: str, *arguments
                      and "Plain" in row["data"].get("content", {}))
 
 
+async def final_quote_trade(admin, target: dict, transactions: list[dict]) -> tuple[dict, int]:
+    from scripts.rpg_benchmark import setup
+
+    def merchant(row):
+        found = observed_merchant(row, target["uid"])
+        if found["control_target"] != target:
+            raise RuntimeError("Prepared merchant lifecycle changed before final quote")
+        return found
+
+    try:
+        async with asyncio.timeout(30):
+            for attempt in range(2):
+                ready = await setup.wait_observation(
+                    admin, lambda row: row["social_and_trade"]["pending_trade"] is None
+                    and not row["social_and_trade"]["outgoing_invitee_uids"],
+                    "merchant quote invitation ready", timeout=10,
+                )
+                found = merchant(ready)
+                repositioned = found["distance"] >= 3
+                if repositioned:
+                    await setup.goto(admin, admin, found["position"], settle=False)
+                    ready = await setup.wait_observation(
+                        admin, lambda row: merchant(row)["distance"] < 3,
+                        "same merchant quote range", timeout=10,
+                    )
+                previous = ready["last_trade_result"]
+                actor = ready["control_actor"]
+                receipt = await setup.action(
+                    admin, "social_action", operation="invite_trade", target=target, basis=ready,
+                )
+                transactions.append({
+                    "operation": "quote_invite", "attempt": attempt + 1, "target": target,
+                    "repositioned_administrator": repositioned,
+                    "action_id": receipt.get("action_id"),
+                })
+
+                def declined(row):
+                    result = row["last_trade_result"]
+                    return (result is not None and result != previous
+                            and result["result"] == "Declined"
+                            and target in result["parties"] and actor in result["parties"]
+                            and result["trade"]["phase"] == "Mutate"
+                            and result["trade"]["offers"] == [[], []])
+
+                # A new empty trade can be declined between observe calls after a sale.
+                row = await setup.wait_observation(
+                    admin, lambda row: row["social_and_trade"]["pending_trade"] is not None
+                    or declined(row), "native merchant trade", timeout=30,
+                )
+                trade = row["social_and_trade"]["pending_trade"]
+                if trade is not None:
+                    own = trade["self_party_index"]
+                    if trade["parties"][1 - own] != target["uid"]:
+                        raise RuntimeError("Native merchant trade has the wrong counterparty")
+                    merchant(row)
+                    return trade, own
+                transactions.append({"operation": "quote_declined", "result": row["last_trade_result"]})
+    except TimeoutError as error:
+        raise RuntimeError("native setup did not establish native merchant trade within30s") from error
+    raise RuntimeError("native setup did not establish native merchant trade after two invitations")
+
+
 async def initialize_merchant(admin, actor, fixture: dict) -> dict:
     from scripts.rpg_benchmark import setup
 
@@ -146,7 +208,7 @@ async def initialize_merchant(admin, actor, fixture: dict) -> dict:
     inventory = await admin.request("observe")
     if not any(row["item"]["id"] == {"Simple": spec["payment_item"]} for row in inventory["inventory"]["items"]):
         await setup.gift(admin, admin, spec["payment_item"], 1)
-    trade, own = await invite()
+    trade, own = await final_quote_trade(admin, target, transactions)
     product = quoted_stack(trade["inventories"][1 - own], spec["stock_item"])
     coins = quoted_stack(trade["inventories"][1 - own], "common.items.utility.coins")
     payment = quoted_stack(trade["inventories"][own], spec["payment_item"])

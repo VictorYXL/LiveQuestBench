@@ -135,6 +135,14 @@ verify a working runtime.
 Levels organize the development catalog, not calibrated difficulty guarantees.
 Each task declares its exact budget, starting state, permitted tools and goal.
 
+Private merchant preparation checks the final quote against the same living
+resident and lifecycle after provisioning. It may reposition only the setup
+administrator using the existing authoring `goto`, then reopen once after a
+fresh server-reported decline of an empty trade with that resident. The whole
+quote-readiness operation has a 30-second limit; absent quotes, stale declines
+or changed identities do not count as success. Merchant AI, stock, prices and
+the player's scored condition are unchanged.
+
 `market_hunt_return` uses a roofed merchant shop and a separate eastern hunting
 yard; `dual_legoom` uses a rock divider with an east-side route. These are task
 scene revisions, not changes to NPC AI, budgets or scoring. Preserve task hashes
