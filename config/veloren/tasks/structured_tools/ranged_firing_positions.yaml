@@ -1,0 +1,237 @@
+id: ranged_firing_positions
+game: veloren
+task_type: structured_tool
+task: Defeat both wolves in the separated stone yards using your bow, then return alive to the starting
+  stone arch. Each wolf must receive one of your bow projectile hits and its lethal damage must also be
+  your bow projectile; a token arrow followed by a melee or environmental finish does not count. Stone
+  baffles block entrance-level shots. Find useful firing lines from the broad raised ledges while judging
+  height and range. Finish standing still on the ground at the arch. Death does not restore spent resources
+  or enemies.
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/veloren_0_18_0_0.bin
+  world_seed: 130626853
+  time_of_day: '12:00'
+  day_length: 30
+  calendar: none
+  platform:
+    origin:
+    - 18700
+    - 10800
+    - 500
+    size:
+    - 36
+    - 32
+    block: Rock
+  blocks:
+  - origin:
+    - 18700
+    - 10800
+    - 501
+    size:
+    - 36
+    - 1
+    - 5
+  - origin:
+    - 18700
+    - 10831
+    - 501
+    size:
+    - 36
+    - 1
+    - 5
+  - origin:
+    - 18700
+    - 10801
+    - 501
+    size:
+    - 1
+    - 30
+    - 5
+  - origin:
+    - 18735
+    - 10801
+    - 501
+    size:
+    - 1
+    - 30
+    - 5
+  - origin:
+    - 18721
+    - 10801
+    - 501
+    size:
+    - 1
+    - 30
+    - 4
+  - origin:
+    - 18708
+    - 10811
+    - 501
+    size:
+    - 1
+    - 10
+    - 5
+  - origin:
+    - 18715
+    - 10815
+    - 501
+    size:
+    - 20
+    - 2
+    - 6
+  - origin:
+    - 18713
+    - 10804
+    - 501
+    size:
+    - 11
+    - 8
+    - 5
+  - origin:
+    - 18711
+    - 10804
+    - 501
+    size:
+    - 2
+    - 8
+    - 4
+  - origin:
+    - 18709
+    - 10804
+    - 501
+    size:
+    - 2
+    - 8
+    - 3
+  - origin: [18707, 10804, 501]
+    size: [2, 8, 2]
+  - origin: [18705, 10804, 501]
+    size: [2, 8, 1]
+  - origin:
+    - 18713
+    - 10821
+    - 501
+    size:
+    - 11
+    - 8
+    - 6
+  - origin:
+    - 18711
+    - 10821
+    - 501
+    size:
+    - 2
+    - 8
+    - 5
+  - origin:
+    - 18709
+    - 10821
+    - 501
+    size:
+    - 2
+    - 8
+    - 4
+  - origin:
+    - 18707
+    - 10821
+    - 501
+    size:
+    - 2
+    - 8
+    - 3
+  - origin: [18705, 10821, 501]
+    size: [2, 8, 2]
+  - origin: [18703, 10821, 501]
+    size: [2, 8, 1]
+  - origin:
+    - 18702
+    - 10813
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18702
+    - 10817
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18702
+    - 10813
+    - 504
+    size:
+    - 1
+    - 5
+    - 1
+  player_state:
+    position: &id001
+    - 18703.5
+    - 10815.5
+    - 501
+    look:
+    - 0
+    - 1
+    - 0
+    health: 100
+    inventory:
+      common.items.food.apple: 3
+      common.items.consumable.potion_minor: 2
+    equipment:
+      active_mainhand: common.items.weapons.bow.starter
+      chest: common.items.armor.hide.rawhide.chest
+      feet: common.items.armor.misc.foot.sandals
+      glider: common.items.glider.basic_white
+      lantern: common.items.lantern.black_0
+      legs: common.items.armor.misc.pants.worker_brown
+  encounters:
+  - role: north_yard_wolf
+    asset: common.entity.benchmark.male_wolf
+    position:
+    - 18729.5
+    - 10808.5
+    - 501
+  - role: south_yard_wolf
+    asset: common.entity.benchmark.male_wolf
+    position:
+    - 18729.5
+    - 10824.5
+    - 501
+  respawn_at_start: true
+evaluator:
+  name: encounter
+  parameters:
+    min_health: 0
+    roles:
+    - north_yard_wolf
+    - south_yard_wolf
+    no_death: false
+    required_attack:
+      source: Projectile
+      tool: Bow
+      lethal: true
+    position:
+      target: *id001
+      horizontal_tolerance: 3
+      vertical_tolerance: 1
+      max_speed: 0.1
+tools:
+- MoveTool
+- TurnTool
+- LookTool
+- JumpTool
+- WieldTool
+- AttackTool
+- RollTool
+- UseItemTool
+- StopTool
+- RespawnTool
+capabilities:
+  primary:
+  - spatial_interaction
+  secondary:
+  - realtime_execution

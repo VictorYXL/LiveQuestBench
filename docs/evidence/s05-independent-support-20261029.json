@@ -1,0 +1,41 @@
+{
+  "schema": "livequest-s05-independent-support-addendum/1",
+  "status": "independent_bounded_quality_supported_pending_parent_scoped_main_admission",
+  "reviewer": "811846d9-f6f6-4934-b1d1-1d234e65dbfa",
+  "reported_at": "2026-10-29T23:03:08+08:00",
+  "reviewed_source": "3c4b4811d42aa4fc8d20acba8880d3fbc3d10dfa",
+  "reviewed_receipts_preserved": {
+    "checks/s05-same-stance-20261029.json": "09402ce9589b614f2163cbd508cc3dfbc1fa67368cbc9c8eafad88aa04a91b90",
+    "docs/evidence/s05-same-stance-bridge-20261029.json": "394993c638a18485939a6a11398c2558e179d5f8ab7f992818a8641726e6859b"
+  },
+  "verdict": "Original S05 quality receives bounded constructive support. The exact original ST stance, native camera/body compensation, actual unrefreshed-look charged-shot success and lawful public menu/control path suffice without a new VM hit or whole victory.",
+  "independent_checks": "22 native source and2 public adapter pins verified; frozen calculation exactly reproduced; all30 focus-to-target XY segments avoid every original solid footprint. The original native31-81tick unrefreshed-look operations support the dynamic mechanical bridge. Ordinary slow walking, public integer-coordinate transitions and after-charge body/reticle reacquisition are not private position feeds.",
+  "camera_height_correction": {
+    "supersedes": "Any reading of the frozen bridge's2.45m focus height or7.45/8.45m example heights as fixed actual heights.",
+    "native_formula": "scene/mod.rs adds -sin(min(tilt,0))*camera_distance*0.6 to the base focus height. This is a nonnegative orientation-dependent lift.",
+    "scope": "The examples use baseline heights, not recorded native camera heights. The independently checked XY segments miss all original solid footprints, so the extra lift does not invalidate the terrain-visibility argument. It must not be silently omitted when reconstructing an actual camera pose."
+  },
+  "public_body_orientation_guard": {
+    "source": "voxygen/src/hud/mod.rs2858-2864 displays actual body Ori, not camera yaw.",
+    "observable_guard": "Displayed outward body-orientation component at least0.90.",
+    "rounding_bound": "The native display has two decimals, so the underlying outward component is at least0.895.",
+    "stance_condition": "Inside distance a<=0.35m, established through the public pose/control procedure rather than inferred from the integer HUD alone.",
+    "native_muzzle_margin": "0.44*0.895-0.35=0.0438m.",
+    "limit": "This supplies a concrete public release guard instead of requiring exact orientation convergence. It is not a claim that the guard or proposed positioning procedure has already run in a VM episode."
+  },
+  "native_outcomes_preserved": {
+    "original_ST": "18 qualifying hits EACH,36 total, with one native bow lethal on each original110HP wolf;155.423617s whole success and unchanged consumable stock.",
+    "original_VM": "Actual owned projectile contacts and alive grounded arch return in the same541.999s episode; two deaths and zero damage. Not a death-free return or combined combat success.",
+    "later_VM": "Original34.08s/zero-shot failure and185.64s hinted diagnostic/one death/zero damage remain unchanged.",
+    "event_linkage": "Projectile contacts remain actor/entity-generation/time bound, with strong temporal action association where recorded but no invented public action ID."
+  },
+  "acceptance_boundaries": {
+    "quality": "Bounded constructive support for the unchanged original task pair/runtime.",
+    "difficulty": "Provisional3-4, high uncertainty; final nonblocking calibration deferred.",
+    "formal_model_completion_required": false,
+    "new_native_or_model_episode_required": false,
+    "new_native_or_model_episodes_executed": 0,
+    "main_or_ledger_promotion": false,
+    "next_gate": "Persist independent audit addendum and obtain parent-scoped guarded integration authorization with refreshed exact main/source/task/runtime alignment. This reviewer message is not itself integration authority."
+  }
+}
