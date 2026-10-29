@@ -9,7 +9,7 @@ capabilities:
 task: Extinguish every active fire inside the four marked yard corners, from the ground
   through the orange height markers, and keep that volume fire-free for at least 20
   seconds, preserve at least 80% of the original wooden roofs and corner supports
-  of the two sheds, and finish alive and standing still at the yellow safe pad. Changing
+  of the two sheds, and finish with at least 1 health point and standing still at the yellow safe pad. Changing
   a protected cell's original block type counts as loss, even if later restored. A burning netherrack ignition
   beside the log pile threatens a debris connection to the nearer shed, roughly ten
   blocks from the pad. A small water source is nearby; weather stays clear. Choose
