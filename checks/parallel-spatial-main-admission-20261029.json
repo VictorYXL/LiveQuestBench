@@ -1,0 +1,245 @@
+{
+  "schema": "livequest-spatial-main-admission/1",
+  "admitted_at_utc": "2026-10-29T13:31:28.657729+00:00",
+  "main_before": "966d21875301276c906cbb33f0f7cc796c2e1398",
+  "main_source_commit": "115925763de5652930ddedd37cd529725e37ccab",
+  "isolated_source_head": "be60714832bb7b3934ad9879bcaf6157a74561cc",
+  "original_commits": [
+    "0f0fc8f1195542d1848ead0f0aa2b3a3efe4d42d",
+    "367a79b9cc39bf52dcc504b2851fa68461c1ec14",
+    "6614b93b1224f3515d80a0b09cc70ac0fbcec776",
+    "b55faf0d6d887229c3a2413dc78b326c655a6445",
+    "89babf25c26ef9bf5144b0887a6c6e7634518dc7",
+    "be60714832bb7b3934ad9879bcaf6157a74561cc"
+  ],
+  "integration_lock": "output/temp/task_development/locks/integration.lock",
+  "tasks_admitted": [
+    "VE-S03",
+    "VE-S04"
+  ],
+  "excluded": [
+    "VE-S05"
+  ],
+  "exact_imported_paths": {
+    "checks/parallel-spatial-replay.json": "3fef8afa4cdc0a08a38ca1cc07971152bb8cc573331e253f8f2ae3d560e56e0d",
+    "checks/veloren_spatial_closure.py": "0d43ab113a1a68925242445864e76445203630280a80b6363772759f96b38b2f",
+    "config/veloren/tasks/structured_tools/cliff_ledge_ascent.yaml": "81dd32e178c971a0dfa21f4ee1a78bad2d188ebc478c813e451dc3e4f3ab95b2",
+    "config/veloren/tasks/visual_motor/cliff_ledge_ascent.yaml": "0a147bc4259a39b3a1e7e04e8a4c31c287ac2f051f78d6cde05fde5fd85464a2",
+    "docs/evidence/cliff_ledge_ascent.json": "7e64b0184bc77a3b6527b201626a011e18856ca57ea2d1d978a1c370de4c1d37",
+    "docs/evidence/spatial-closure-20261029.json": "e5bb6dd9f768fae5befd158067bbafdbd2e66ba0047b98be39d6a03f0f7013f8",
+    "tests/test_game/veloren/test_cliff_ascent.py": "5ddaa67140b47ed054b2c1cc1856551430fb4373ab0290bea9c448e51aa59656"
+  },
+  "selected_main_sources_match_reviewed_adapter": {
+    "game/backends/x11/display.py": "2462a9ec7d57bfc126b3df8f1983e97b2f97c05a2217d2c2c5c2bf897989052d",
+    "game/backends/x11/interface.py": "3ea1390d072b2e8dabb1ebebb0b588150fba807865eecffd4a7b677eb087b3cc",
+    "game/route_transfer.py": "2019501c84aeaaa02b7e2e626b306af017671a0635666005e58c0b0935fc2ece",
+    "game/veloren/__init__.py": "f73d16a97595f5cd746f78ae2f5d3e9ee473a350fbf23dac6bd0f57e8f58dfbb",
+    "game/veloren/binding.py": "25fdb14cd368ef00a008ea95605a8ec6c5aeac94fab620ae7acde05dc692547e",
+    "game/veloren/contracts.py": "86e8e2d6b795a248038837710c1afbbb6e3059d462175396723a083d3a3ea7ec",
+    "game/veloren/evaluators/attack.py": "22ca6a3509b13c2ff9f11ec73ca2dc8934172a417f1d34532a089eab729ec4a5",
+    "game/veloren/evaluators/contract.py": "cb4ad9c2c4aa0b690a8eeb250c48926de656b0da25ce7f7b34e377d541e0ebd0",
+    "game/veloren/evaluators/deaths.py": "144d424a3e9efe8196cc54c78700be2f32d63ecb784586b285032869baa38724",
+    "game/veloren/evaluators/encounter.py": "85ff1a3e8f6590492d2cd1a178e5c3a7ce0543a9c3df0508ac99099b42611551",
+    "game/veloren/evaluators/endpoints.py": "ca445973cf0a7295f8801f8667e413da1d4f92e2d146d710d560ceb5bec1fc9c",
+    "game/veloren/evaluators/expedition.py": "20ac61f207290123db441526e6cc11599e942f3b9854c242a4cbf6c6ebdc6115",
+    "game/veloren/evaluators/glide_route.py": "6ff34ef400d2c8b1372908e492353e0a9b5fb204c4ddd5428cffafae8c414098",
+    "game/veloren/evaluators/harvest.py": "323f7373f37a1b3ab218be825109bf4b997e7430b2fcf79790468628807cc286",
+    "game/veloren/evaluators/itinerary.py": "80211f112c5f10d6a2e969fe7389d108377fa27d1592e1c2eed5f053ad1a80d4",
+    "game/veloren/evaluators/peer_support.py": "d1f8d14e3d2e22e2fe60fd8629740fed2dacd9c1c6b669f8b4150715bf76e9e5",
+    "game/veloren/evaluators/pickups.py": "9c8d3a3ae71eaa4e9feb7f708c29e5ba2e0cbef4a9ebe0e8c37335d90fe7d15a",
+    "game/veloren/evaluators/route_transfer.py": "726f9a663b4f15cf7d7cfc6d3bfb672ec14ab8416d48c238a96d227eca805f46",
+    "game/veloren/evaluators/team_efficiency.py": "57532661e2f75630e2dc0fb1c3572c1a5571eb273e755693776152a05c6058b4",
+    "game/veloren/fixture.py": "8679dc8b2dbee74e7c3cc60060ed3bd903e6de3c7cfe76e0b8bb98a3c912354f",
+    "game/veloren/game.py": "ed7db2975a5d80dcb27fdcf9fdc10925840f992f507c2ee8121932d9abc557dd",
+    "game/veloren/harvest.py": "7e31277276d42695e6b1dd446bd24ec5d43ed8b5d7d24fc3d05c54d684315ce2",
+    "game/veloren/native_bindings.py": "8d77711889b5c020cedb79af2be8c607232b225cb58a4e1d7b28f5cc26e81947",
+    "game/veloren/runtime/install.py": "d35c6bda0c267156abf4f680e2816448a2d7ccc7ec8ea7698500488cb1d0468e",
+    "game/veloren/runtime/journal.py": "317402daf3cc33598ea735c1909ca2973c33569d95ceb1eee995de3aa32f0901",
+    "game/veloren/runtime/records.py": "f4aeed2682ccc7334aa3347a8e7087dd3c47e7fdb705eb9f47677bdf896f2bc7",
+    "game/veloren/runtime/server.py": "bbbb74bc200e18d5f50189aead15eb76bec9c315db0119146d08c1026e772d4d",
+    "game/veloren/runtime/server_extension.py": "3832c822580b41399300fba19a24cd10c6159de1b6b6d557a0edb2a52cdee5b4",
+    "game/veloren/runtime/session.py": "d19880666c3d12f8e25c3d2b7809b4cee2aff05957fd1c267e19d6c5e2b760f9",
+    "game/veloren/runtime/startup.py": "2eded18810e550cfb39e121db292610879a49a47bffbe54722ce6f0e31f65083",
+    "game/veloren/runtime/worker.py": "ac442d93848dafa84dde06049b2b9e250ecda732d447751bde4df637daa79c55",
+    "game/veloren/settlement.py": "8498a6d385640b1ddce4179c996f473b074bc46bde462a64a95e604841793fea",
+    "game/veloren/structured_tools/interface.py": "c0993aea0136f920f0458da69a975a925a135ae6b38beb3b5324675bb194ea37",
+    "game/veloren/visual_motor/interface.py": "89479670c13073a7b7dfb409b3768d7f502fdad90750585191885598ea6d1052"
+  },
+  "runtime": {
+    "path": "output/temp/task_development/veloren-route-v2-contact-fix/candidate-runtime.json",
+    "sha256": "f90ca9a97e20a106e6d749368319cdd45243a2f902605e7797c6f8e3613c3793"
+  },
+  "renderer": {
+    "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/veloren-route-v2-contact-fix/bin/veloren-voxygen",
+    "sha256": "5141b9ac796d5e71f5ba999f910777d364480cfb2b0344731425e1a65d1c5878"
+  },
+  "native_receipt": {
+    "path": "checks/parallel-spatial-replay.json",
+    "sha256": "3fef8afa4cdc0a08a38ca1cc07971152bb8cc573331e253f8f2ae3d560e56e0d"
+  },
+  "independent_audit": {
+    "path": "output/temp/task_development/checks/veloren-acceptance-policy-audit-20261029.json",
+    "sha256": "1996031064c906888b9e426eeda68426a40aa433f87b58ddd097a042426a1b8f"
+  },
+  "independent_quality_decisions": {
+    "VE-S03": {
+      "id": "VE-S03",
+      "task_id": "cliff_ledge_ascent",
+      "ledger_category": "testing",
+      "disposition": "supported",
+      "condition": "9985a81f frozen first-final route/2 condition; reviewed native ST/VM source-delta receipts.",
+      "bug_status": "Earlier invalid_motion_evidence/contact failure repaired. Current eligibility review finds no actionable source/construct blocker on frozen condition.",
+      "feasibility_status": "Existing route/2 ST90.325s and VM103.591s witnesses include actual upperz541 visit, retained hide, live grounded lower endpoint and scorer equality.",
+      "construct_status": "Real3D ledge access and energy/motor control. Hide acquisition, no-death descent and a prescribed route are not required.",
+      "difficulty_status": {
+        "st": 3,
+        "vm": 4,
+        "st_range": [
+          2,
+          4
+        ],
+        "vm_range": [
+          3,
+          4
+        ],
+        "uncertainty": "high",
+        "basis": "Mechanics hypotheses; authored route and legal respawn can reduce demand."
+      },
+      "experiment_status": "First-final pair eligibility/running labels are snapshots, not completed current model measurements or source admission.",
+      "diagnostic_transfer_boundary": "Known-layout dogleg limits difficulty inference. Old route/1 outcomes do not qualify route/2; reviewed new pair does, only for this task.",
+      "recommended_action": "Reconcile obsolete ledger whole-VM gate through source/admission review, not more controller victories. No promotion performed.",
+      "evidence_refs": [
+        "output/temp/task_development/assessments/VE-S03.json",
+        "output/temp/task_development/checks/veloren-independent-quality.json#/first_final_eligibility_reviews/0",
+        "output/temp/task_development/veloren-route-v2-contact-fix/first-final-route2/freeze.json"
+      ],
+      "confidence": "high for frozen quality claim; no current-main admission claim"
+    },
+    "VE-S04": {
+      "date": "2026-10-29",
+      "request_received_at": "2026-10-29T21:25:28.287+08:00",
+      "kind": "S04-targeted-final-quality-review-of-existing-route2-bridge",
+      "task_id": "VE-S04",
+      "task_name": "subterranean_switchback",
+      "disposition": "supported",
+      "supersedes": "Only the earlier audit's unresolved S04 affected-route/2 feasibility/quality question, on the exact condition below. Earlier historical records and ledger category are preserved.",
+      "receipt": {
+        "path": "output/temp/task_development/worktrees/parallel-spatial-20261029/checks/parallel-spatial-replay.json",
+        "sha256": "3fef8afa4cdc0a08a38ca1cc07971152bb8cc573331e253f8f2ae3d560e56e0d",
+        "section": "/tasks/VE-S04",
+        "source_commit": "6614b93b1224f3515d80a0b09cc70ac0fbcec776",
+        "task_st_sha256": "23812bef928cff58b35771c0f8834c68a8d7acb57cfd24c1fe5d096b4f3998b8",
+        "task_vm_sha256": "ae44788f13debc4d9f35040a2325ead37d06e00ff1c209164361a450ea7c029a",
+        "runtime_manifest_sha256": "f90ca9a97e20a106e6d749368319cdd45243a2f902605e7797c6f8e3613c3793"
+      },
+      "review_performed": [
+        "Read S04 receipt, actual current itinerary predicates and public VM task condition.",
+        "Independently hashed all23 S04 cited file references: all match, including current snapshots/reference/environment/source manifest, historical references/pickup journal, controls, noninterference/build receipts and cleanup evidence.",
+        "Read actual current opening/terminal route evidence and independently checked route/2 schemas, actor/session identity, preserved opening prefix,532 strictly post-opening samples and the required lower-workshop visit.",
+        "Independently matched historical VM journal line56127 and its exact line hash/event; read the actual whole historical VM evaluation.",
+        "Read existing five-physics/two-renderer passing test logs. Did not execute tests, scorers, games or models; relied on the bound receipt for full32-file executed-adapter comparison and semantic source bridge."
+      ],
+      "bug_status": "No known blocking task, adapter, scoring or lifecycle defect identified in this bounded exact-condition review. Current task-specific route/2 opening, post-readiness sampling and terminal evaluation now have native evidence. Not an exhaustive guarantee for all paths or another runtime.",
+      "feasibility_status": {
+        "structured_tools": "Direct current-route/2 whole lawful native success:18.840832876s/40actions,100HP,hide0-to-1,grounded/still arch error0.545205m.",
+        "current_sampling": "Opening sequence108584/tick21714 to final111613/tick22278 preserves identity/history. Actual post-readiness workshop sample109665 is[18731.6796875,10820.0302734375,501], within horizontal4m/vertical1m of the declared lower region. The173.205m historical setup displacement is excluded; measured-play maximum step is0.269618m.",
+        "visual_motor": "Constructively supported without a new whole-route/2 VM victory: one actual historical278.350s public-VM episode already composes lower-workshop entry, resource acquisition and living grounded arch return on unchanged fixture/world/goal. Byte-identical VM interface/session and bound observer-noninterference evidence support preservation of the legal physical trajectory; fresh exact-task ST evidence exercises the shared route/2 observer at the affected lower region and valid terminal boundary.",
+        "resources_and_timing": "The historical whole VM starts with0 and finishes with1 tough hide. Its same-player native Collected event at journal line56127 is genuine acquisition, not a splice with another run. Pickup host-age upper estimate128.632721s and approximately171.367s host margin to300s are not exact server spawned_at/deadline values. Actual collection plus retained whole endpoint is the stronger evidence. New initializer supply ready host-age upper estimate1.573878s is comparable to historical1.540529s; unchanged finite stock and2700s task limit remain explicit.",
+        "no_source_uid_overclaim": "Collected contains no source UID/request ID. It supports actual fungible hide acquisition, as required by the task, not unique-original-bundle lineage.",
+        "composition_boundary": "No old trajectory is relabeled route/2, no synthetic samples or schema flags are introduced, and no new VM success is asserted. Historical current-scorer rejection remains true. The bridge combines a complete historical legal VM execution with demonstrated unchanged controls/physics and affected current sampling behavior, not incompatible partial inventories or terminal states."
+      },
+      "construct_status": "Meaningful modest spatial floor/route discrimination is supported: the native lower XYZ visit rejects merely reaching the roof, with genuine pickup/return. Broad ground-level openings are legal; no mandatory climb route, source-UID acquisition or no-death rule is invented.",
+      "difficulty_status": {
+        "st": 2,
+        "vm": 3,
+        "plausible_range": [
+          2,
+          3
+        ],
+        "uncertainty": "high",
+        "calibrated_rating": null,
+        "rationale": "Floor discrimination and final arch precision support modest spatial demand; VM adds visual route/motor control. Authored route knowledge and18.84s ST speed do not prove autonomous triviality. Historical endpoint failures do not justify a harder rating. No new material difficulty concern requires reopening beyond this explicit uncertainty."
+      },
+      "experiment_status": "Historical route/1 formal outcomes remain historical. This review establishes no new current-route/2 VM or model measurement and does not require either a successful evaluated agent or a particular successful reference controller.",
+      "diagnostic_transfer_boundary": "This was an exact-task affected-sampling check, not reduced HP or revealed-location modification. Passive observer/control compatibility transfers only the unchanged behavior evidenced by the bound source/runtime/physics receipts. S03 native VM supports shared interface compatibility, not S04 geometry by itself.",
+      "integration_status": "Quality acceptance is supported for the named source/task/runtime condition. Administrative source admission/integration and any ledger reconciliation remain parent-owned and are not inferred from native success or this verdict.",
+      "recommendation": "Permit parent to use this bounded constructive quality pass in an exact-source admission handoff. Do not demand a new whole VM/reference/model win solely for a success badge. Preserve historical route/1 evidence, source/runtime pins and high difficulty uncertainty.",
+      "unaffected_other_tasks": "No S05 promotion: its public-VM firing-line/aim and joint two-target composition gaps remain independent. S03 experimental availability remains separate from task quality.",
+      "confidence": "High for exact current ST sampling/endpoints and historical complete VM resource composition; moderate-to-high for the explicitly scoped cross-version VM feasibility bridge.",
+      "validation_note": "JSON and all30 original audit rows remain intact. During this later addendum, the shared ledger JSON/CSV hashes differ from the original audit snapshot. This reviewer made no ledger edits and did not refresh inventory or attribute those separate changes; original snapshot counts are historical, not a current-count assertion.",
+      "completed_changes": [
+        "Appended this audit addendum only."
+      ],
+      "promotions_demotions_or_ledger_count_changes": []
+    }
+  },
+  "S03_four_part_acceptance": "The bounded four-part quality claim for the frozen task is supported by repaired opening, exact route/2 witnesses and independent mechanism/source-delta review. ST3/VM4 remain high-uncertainty mechanics hypotheses. This is support for quality acceptance, not a claim that administrative admission/integration has occurred.",
+  "scope": "Exact source/task/runtime admission, not a new game or model result. S04 historical VM remains route1; native-grounded composition is independently supported. No task/manifest/scorer/runtime predicate changed.",
+  "experiment_boundary": "S03 current ST valid failure and interrupted/unavailable VM retained. S04 historical formals remain route1-specific. Model completion or victory is not a quality prerequisite.",
+  "tests": {
+    "passed": 98,
+    "reused_exact_source_validation": true,
+    "log": {
+      "path": "output/temp/task_development/worktrees/parallel-spatial-20261029/output/test/final-root-tests.log",
+      "sha256": "db9d6df7b17f69a850e91ff11e1b2f5cb98dbecd515678d3688c5171ad2e7001"
+    },
+    "new_native_or_model_checks": 0
+  },
+  "preservation": {
+    "unrelated_dirty_files": {
+      "agent_framework/agents/deepseek_harness/setup.py": "fd2500a54808a4d8659536007ecde0c36284823f77a815558813d69060e3bf4c",
+      "config/veloren/tasks/structured_tools/native_contract_settlement.yaml": "f2108d92b0e0dc9be41fac1bd662a7366d4053042e64f1cc9fbbf056d28d9372",
+      "config/veloren/tasks/visual_motor/native_contract_settlement.yaml": "cfb366cfc456936d9036d7aeaae239c875abbaffa2b05b95cc4a555ad8f93774",
+      "tests/test_game/veloren/test_initialization.py": "f52108ad4d1981079051e62253fb55261f6b6c28e212f1fc835893dc6749b150",
+      "checks/VE-P03-heavy-sweep-main-admission.json": "a6d4910d86705df4bd1401dbcdee2eb811e52372c0a0416c166e3875afeee466",
+      "checks/veloren_original_motor.py": "2edba893d7b864acd4afe778912c2081ff775a14b32838a1dd583c30613c6ac0",
+      "checks/veloren_original_native.py": "73b4e7d7fc9087dc70d01ee55151a3cd1aef012d8ddeba67b4defa6f1de0a1e0",
+      "checks/veloren_p03_heavy_sweep_admission.py": "ffc739d1a5ab683e9da003404901f527a2859a37ca56f4fdc6488762cede83db",
+      "tests/test_agent/test_deepseek_setup.py": "64f7d30f2674dba89581807a8f01b379fcb3b74f69a7ef28caf3070237147840",
+      "tests/test_game/veloren/test_original_native_policy.py": "7a018c0ae185353342b9312bb20848a739499db4474c24137b38351ed7aa2ce4"
+    },
+    "dirty_diff_sha256": "b9595499dba29867172556f2a19c7b4b8cb4ae0d836b50faf65a15514f7b3bfe",
+    "no_stash_reset_broad_add": true,
+    "old_runtime_and_histories_unmodified": true
+  },
+  "ledger_transaction": {
+    "previous_revision": 10,
+    "backups": [
+      {
+        "path": "output/temp/task_development/checks/task-delivery-status.revision-10-20261029T133128657729Z.json",
+        "sha256": "747b528d3c25ba6272c2354cd72ef1d083262f76e403f36e3f94d957d65d3e32",
+        "revision": 10,
+        "base_snapshot_cutoff_at_utc": "2026-10-29T10:44:15.090475+00:00",
+        "event_update_applied_at_utc": "2026-10-29T12:30:40.930109+00:00"
+      },
+      {
+        "path": "output/temp/task_development/checks/task-delivery-status.revision-10-20261029T133128657729Z.csv",
+        "sha256": "ce468ed3b5d095aa47ebcdfd840cfd16b948ffbb82e14f3fb453506d36033829",
+        "revision": 10,
+        "base_snapshot_cutoff_at_utc": "2026-10-29T10:44:15.090475+00:00",
+        "event_update_applied_at_utc": "2026-10-29T12:30:40.930109+00:00"
+      }
+    ],
+    "only_changed_rows": [
+      "VE-S03",
+      "VE-S04"
+    ],
+    "counts_before": {
+      "fully_validated_integrated": 35,
+      "engineering_pass_review_pending": 1,
+      "testing": 14,
+      "implemented_awaiting_tests": 6,
+      "implementation_incomplete": 4,
+      "other": 0
+    },
+    "recomputed_counts_after": {
+      "fully_validated_integrated": 37,
+      "engineering_pass_review_pending": 1,
+      "testing": 13,
+      "implemented_awaiting_tests": 5,
+      "implementation_incomplete": 4,
+      "other": 0
+    }
+  },
+  "S05_remaining_gate": "Public-VM native bow sightline/aim and joint two-target/return composition remain unsupported. No S05 row, task, outcome or qualification is changed by this transaction."
+}
