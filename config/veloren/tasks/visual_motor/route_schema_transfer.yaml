@@ -4779,6 +4779,7 @@ fixture:
 evaluator:
   name: route_transfer
   parameters:
+    min_health: 0
     variant: 5
     origin:
     - 18702

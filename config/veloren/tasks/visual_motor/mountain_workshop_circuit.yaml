@@ -236,6 +236,7 @@ fixture:
 evaluator:
   name: state
   parameters:
+    min_health: 0
     equipment:
       chest: common.items.armor.hide.rawhide.chest
     position:

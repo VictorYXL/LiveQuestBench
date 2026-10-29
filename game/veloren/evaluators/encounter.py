@@ -220,7 +220,8 @@ def _combat_checks(
                             if companion and companion.get("healing_required") else "")}
 
 
-def team_encounter_checks(initial: dict[str, dict], final: dict[str, dict], *, roles: list[str]) -> dict:
+def team_encounter_checks(initial: dict[str, dict], final: dict[str, dict], *, roles: list[str],
+                          min_health: float = 1) -> dict:
     """Use the owner's journal and each peer's independently bound native identity."""
     from game.veloren.evaluators.deaths import death_metrics
 
@@ -252,12 +253,12 @@ def team_encounter_checks(initial: dict[str, dict], final: dict[str, dict], *, r
         row["opening_sequence"] = opening_sequence
     result = _combat_checks(
         initial[owner], final[owner], roles=roles, require_death=True, no_death=False,
-        _contributors=contributors,
+        _contributors=contributors, min_health=min_health,
     )
     for role in initial:
         result["checks"].append({
             "kind": "participant_alive", "role": role,
-            "passed": state_checks(initial[role], final[role])["success"],
+            "passed": state_checks(initial[role], final[role], min_health=min_health)["success"],
         })
     result["success"] = all(row["passed"] for row in result["checks"])
     result["semantics"] = (

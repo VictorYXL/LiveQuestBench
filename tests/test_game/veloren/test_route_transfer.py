@@ -47,6 +47,33 @@ def test_native_route_rejects_changed_opening_history():
         route_transfer_checks(initial, final, variant=0, origin=[0, 0, 201])
 
 
+def test_route_health_floor_reaches_terminal_check_without_changing_route_evidence(monkeypatch):
+    import game.veloren.evaluators.route_transfer as module
+    from game.route_transfer import build_layout
+
+    initial, final = boundaries()
+    x, y, z = build_layout(0, (0, 0, 201), headroom=3)["wings"][-1]["exit"]
+    final["position"] = [x + 1, y + 1, z]
+    final["survival"]["health"] = {"current": 0.390625, "dead": False, "downed": False}
+    # Isolate the endpoint predicate, not a native route feasibility witness.
+    monkeypatch.setattr(module, "death_metrics", lambda *args: {"deaths": {"count": 0}})
+    monkeypatch.setattr(module, "route_checks", lambda *args, **kwargs: {
+        "success": True, "learning_benefit": "not_estimated",
+    })
+    parameters = {"variant": 0, "origin": [0, 0, 201]}
+    module.validate_route(**parameters, min_health=0)
+    monkeypatch.setattr(module, "load_pair", lambda *args: (initial, final))
+    assert module.evaluate_route(None, None, **parameters, min_health=0)["success"]
+    assert not route_transfer_checks(initial, final, **parameters)["success"]
+    assert not route_transfer_checks(initial, final, **parameters, min_health=75)["success"]
+    for health in ({"current": 0}, {"current": 1, "dead": True},
+                   {"current": 1, "downed": True}):
+        final["survival"]["health"] = health
+        assert not route_transfer_checks(initial, final, **parameters, min_health=0)["success"]
+    with pytest.raises(ValueError, match="nonnegative"):
+        module.validate_route(**parameters, min_health=-1)
+
+
 def test_route_authoring_capacity_is_opt_in_and_still_bounded():
     from game.veloren.fixture import solid_voxels
 

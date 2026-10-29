@@ -20,10 +20,34 @@ not launch automatically. Team objectives instantiate two peer Agents and must
 be accounted for separately from single-player inference cost.
 
 The [portable configuration and fixture manifest](reference_tasks_manifest.json)
-records all active definitions and file hashes. The
+records the frozen original definitions and file hashes. The
 [compact learning evidence](evidence/learning.json) preserves
 the reported native/model outcomes and their source-file hashes; large raw
 journals are retained locally rather than embedded in this release.
+
+### Veloren alive-contract revision 2
+
+The separately versioned [migration record](evidence/veloren-alive-contract-v2.json)
+pins the original and revised source hashes for all six Veloren objectives in
+both tracks. Their public alive-only goals now explicitly use `min_health: 0`:
+positive fractional native HP is allowed; zero HP, native dead and native downed
+states are rejected. The shared implicit floor remains 1, and explicit health
+reserves are unchanged. Team `all.min_health` also reaches the encounter owner's
+health check and every participant's alive check; route scoring forwards its
+explicit floor without changing route evidence requirements.
+
+This is a new scoring source version, not a rewrite of the frozen manifest or
+historical results. The native downed flag was previously not checked explicitly;
+revision 2 rejects it even when HP is positive, including at the legacy floor.
+Absent downed flags remain compatible with older snapshots; their absence does
+not prove a native non-downed state. No original-six run has been demonstrated
+to fail solely because of the old 1 HP floor. Offline tests and retained-endpoint
+predicate replay do not requalify these changed conditions, relabel old verdicts,
+or promote the 37 source-version qualifications to final readiness.
+
+The [main-integration record](evidence/veloren-alive-contract-v2-integration.json)
+separates the admitted revision from pre-existing, uncommitted contract-divider
+experiments. Those local geometry/text changes are not frozen-reference changes.
 
 ## Goals and provisional difficulty
 

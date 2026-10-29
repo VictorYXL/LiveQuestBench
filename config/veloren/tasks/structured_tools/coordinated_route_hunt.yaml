@@ -196,6 +196,7 @@ evaluator:
     - passage_legoom
     - east_legoom
     all:
+      min_health: 0
       position:
         target:
         - 18708.5

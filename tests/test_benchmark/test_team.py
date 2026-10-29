@@ -181,6 +181,43 @@ def test_finishing_one_participant_does_not_end_shared_world(tmp_path):
     asyncio.run(scenario())
 
 
+@pytest.mark.parametrize("floor", [0, 75])
+def test_veloren_team_forwards_all_health_floor_to_encounter(tmp_path, monkeypatch, floor):
+    import json
+    from dataclasses import replace
+    from game.team import create_team_binding
+    from game.veloren.evaluators.endpoints import state_checks
+
+    task = load_task(Path("config/veloren/tasks/structured_tools/coordinated_route_hunt.yaml"))
+    task = replace(task, evaluator_parameters={
+        **task.evaluator_parameters, "all": {"min_health": floor},
+    })
+    monkeypatch.setattr("benchmark.factory.make_game", lambda *args, **kwargs:
+                        GameBinding(SimpleNamespace(), None, None, None))
+    seen = []
+
+    def encounter(initial, final, *, roles, min_health=1):
+        seen.append(min_health)
+        return {"success": all(state_checks(initial[role], final[role], min_health=min_health)["success"]
+                               for role in initial)}
+
+    monkeypatch.setattr("game.veloren.evaluators.encounter.team_encounter_checks", encounter)
+    monkeypatch.setattr("game.veloren.evaluators.endpoints.load_pair",
+                        lambda before, after: tuple(json.loads((p / "observation.json").read_text())
+                                                    for p in (before, after)))
+    binding = create_team_binding(task, tmp_path / "game", headless=True, recording=False, recording_fps=10)
+    for boundary in ("before", "after"):
+        for participant in task.participants:
+            path = tmp_path / boundary / participant.id
+            path.mkdir(parents=True)
+            (path / "observation.json").write_text(json.dumps({
+                "survival": {"health": {"current": 0.390625, "dead": False, "downed": False}},
+            }))
+    result = binding.evaluate(tmp_path / "before", tmp_path / "after")
+    assert result["success"] is (floor == 0)
+    assert seen == [floor]
+
+
 def test_team_goal_composition_uses_each_native_players_inventory(tmp_path, monkeypatch):
     from dataclasses import replace
     from uuid import uuid4

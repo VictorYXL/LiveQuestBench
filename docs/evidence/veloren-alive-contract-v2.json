@@ -1,0 +1,471 @@
+{
+  "schema": "livequest-task-scoring-migration/1",
+  "source_version": "veloren-original-reference-alive/2",
+  "status": "isolated_candidate_offline_verified_not_main_integrated_not_native_qualified",
+  "prior_source_commit": "0bc0917d5a1c84be58e4cd49bd18f89e10969e63",
+  "versioning_pattern": {
+    "task_identity": "benchmark.config.Source retains exact task content and SHA256 in resolved configuration; no task/scorer version field is admitted by TaskConfig",
+    "scorer_identity": "benchmark.results.provenance records Git revision, worktree status and source_sha256",
+    "migration": "Named scoring revision plus exact prior/revised task and scorer hashes, following docs/evidence/qualified-veloren-task-integration.json source-version treatment. Never regenerate the frozen manifest or regrade historical results in place."
+  },
+  "frozen_reference": {
+    "path": "docs/reference_tasks_manifest.json",
+    "sha256": "56c7cc03966075a26335fe8249bb78693a597fa2793038d50344aa9fa5dae766",
+    "unchanged": true,
+    "recovery": "git show 0bc0917d5a1c84be58e4cd49bd18f89e10969e63:docs/reference_tasks_manifest.json",
+    "scope": "Original task definitions; not an assertion that historical native runs used the current base scorer or route/2 runtime."
+  },
+  "decision": "Use the existing explicit min_health: 0 alive-only convention for the six public alive-only goals; retain global default 1 and explicit health reserves.",
+  "prior_art": {
+    "commit": "e211fa59f96e7b95ad703aac9aaa7eb24551214d",
+    "examples": [
+      "config/veloren/tasks/structured_tools/landmark_resource_survey.yaml",
+      "config/veloren/tasks/structured_tools/staggered_expiring_supplies.yaml"
+    ],
+    "existing_regression": "test_alive_only_health_floor_accepts_native_fraction_but_preserves_legacy_default"
+  },
+  "tasks": {
+    "coordinated_route_hunt": {
+      "public_wording": "Together defeat both Green Legooms on the eastern hunting route and return alive to the starting stone arch.\nOne opponent is along the passage east of camp; the other is in the yard at its far end. Your positions and views differ. Choose whether to approach together or split up, and coordinate recovery and return as needed. Damage from either teammate counts; equal contributions are not required.\nBoth players must finish standing still on the ground at the arch.\nEach player's initial native respawn waypoint is their own starting position. Death does not restore enemies, equipment or the time budget.",
+      "evaluator": "team",
+      "prior_default_path": {
+        "config": "team all.position has no min_health",
+        "chain": "team all score -> evaluate_state default1; additionally team_encounter_checks invokes _combat_checks with no floor override and participant_alive uses state_checks(initial[role],final[role]) default1",
+        "remedy_caution": "Adding min_health0 only to all.position would NOT remove the encounter/participant_alive implicit1 gates. Review the team helper explicitly rather than weakening a global default."
+      },
+      "revised_threshold_path": "evaluator.parameters.all.min_health",
+      "revised_min_health": 0,
+      "configurations": [
+        {
+          "path": "config/veloren/tasks/structured_tools/coordinated_route_hunt.yaml",
+          "prior_sha256": "3c272f20fc93e14cbc1789ae8834a525d986b82dc973f94ffcb70fc7dd1b51f9",
+          "revised_sha256": "fd5512da6774684b06568dd7aa594c47d4693d1800fd1452b013a537555d1e57",
+          "prior_matches_frozen_manifest": true,
+          "exact_delta": "insert min_health: 0 only; public goal, geometry, budget, controls and all other predicates byte-preserved"
+        },
+        {
+          "path": "config/veloren/tasks/visual_motor/coordinated_route_hunt.yaml",
+          "prior_sha256": "428f8dbbdb54bda3016a4e754bba04a02fa5d879701d9f407c4998badfb77cae",
+          "revised_sha256": "de0124f5d0a964781c8630ac223fa00c4f07cbca36e0ca1e23bc9e7af1ba1aef",
+          "prior_matches_frozen_manifest": true,
+          "exact_delta": "insert min_health: 0 only; public goal, geometry, budget, controls and all other predicates byte-preserved"
+        }
+      ]
+    },
+    "hostile_route_supply_recovery": {
+      "public_wording": "Retrieve one leather, defeat both Green Legooms on the eastern hunting route, and return alive to the starting stone arch carrying the leather.\nThe bundle is along the eastern passage, roughly 50 metres right and 15 metres forward from your starting position and facing. One opponent is near that part of the route; the other is in the yard at the far end. Loose supplies normally disappear after about five minutes in the world.\nFinish standing still on the ground at the arch.\nThe loose bundle is the supplied leather source; collect it before it disappears or find another lawful source. Completion checks leather delivery, not the identity of the picked-up bundle.\nYour initial native respawn waypoint is the starting arch. Death does not restore supplies, enemies, equipment or the time budget.",
+      "evaluator": "encounter",
+      "prior_default_path": {
+        "config": "encounter parameters omit min_health",
+        "chain": "encounter_checks -> _combat_checks(**state) -> state_checks(**state), default1"
+      },
+      "revised_threshold_path": "evaluator.parameters.min_health",
+      "revised_min_health": 0,
+      "configurations": [
+        {
+          "path": "config/veloren/tasks/structured_tools/hostile_route_supply_recovery.yaml",
+          "prior_sha256": "3d61a4374fc4016516020f09e376759b1f38bb0b88d6f593782101ba723a0f90",
+          "revised_sha256": "bcc29af2895e1a451a898651e870b0e2c1d271ded1ee99a21f51d13e82358552",
+          "prior_matches_frozen_manifest": true,
+          "exact_delta": "insert min_health: 0 only; public goal, geometry, budget, controls and all other predicates byte-preserved"
+        },
+        {
+          "path": "config/veloren/tasks/visual_motor/hostile_route_supply_recovery.yaml",
+          "prior_sha256": "d13b133a093d95ec311b4e048b6ba825c843c2834d66f1e02b46498411489f99",
+          "revised_sha256": "bfdf1d873584a361c1bea531358dfffc2e129a2bc0cbd9e708651d125f54fa77",
+          "prior_matches_frozen_manifest": true,
+          "exact_delta": "insert min_health: 0 only; public goal, geometry, budget, controls and all other predicates byte-preserved"
+        }
+      ]
+    },
+    "mountain_workshop_circuit": {
+      "public_wording": "Obtain and wear a rawhide chestpiece, then return alive to the stone arch where you started.\nRelative to the arch and your initial facing, the tanning rack is roughly 40 metres to the right and 10 metres behind you, on the upper terrace. The crafting bench is roughly 35 metres right and 10 metres forward, on a lower terrace than the rack.\nFinish standing still on the ground at the arch.",
+      "evaluator": "state",
+      "prior_default_path": {
+        "config": "evaluator.parameters omits min_health",
+        "chain": "evaluate_state(min_health=1) -> state_checks(min_health=1)"
+      },
+      "revised_threshold_path": "evaluator.parameters.min_health",
+      "revised_min_health": 0,
+      "configurations": [
+        {
+          "path": "config/veloren/tasks/structured_tools/mountain_workshop_circuit.yaml",
+          "prior_sha256": "3039a6a03f1c757670abf5c63a3130835517fa528e7f50aa4989f0895c843141",
+          "revised_sha256": "9566768835ecf8d548b86ca53af500de6957b68b71d1ebbfbc61fc1362723a0e",
+          "prior_matches_frozen_manifest": true,
+          "exact_delta": "insert min_health: 0 only; public goal, geometry, budget, controls and all other predicates byte-preserved"
+        },
+        {
+          "path": "config/veloren/tasks/visual_motor/mountain_workshop_circuit.yaml",
+          "prior_sha256": "1de18601a7c0847fe8d6667f23e3061588ebe0f112f7505559c337d5b967735f",
+          "revised_sha256": "a33db5d34cab82fe37a51b377b5ac6bd7a0cec50c7cd22908701721cb326939c",
+          "prior_matches_frozen_manifest": true,
+          "exact_delta": "insert min_health: 0 only; public goal, geometry, budget, controls and all other predicates byte-preserved"
+        }
+      ]
+    },
+    "native_contract_settlement": {
+      "public_wording": "Accept the guard's native monster-slaying contract, defeat its designated target after acceptance, and return to the giver to receive the actual coin reward.\nThe guard begins near the starting camp; the monster starts in the northern yard beyond the stone arch. Follow the actual offer and any later movement. The benchmark supplies the giver with 3000 coins before play to fund native offers; the monster-slaying reward remains 1000 coins; no contract is accepted for you.\nFinish alive, standing still on the ground beside the giver after receiving payment.\nOffers can vary between conversations; unrelated delivery or escort jobs do not satisfy the monster-slaying objective. The initial native respawn waypoint is your starting camp. Death does not revive NPCs, cancel quests, repair equipment or reset the time budget.",
+      "evaluator": "contract",
+      "prior_default_path": {
+        "config": "HEAD and dirty contract parameters both omit min_health",
+        "chain": "contract_checks -> encounter_checks -> _combat_checks -> state_checks, default1"
+      },
+      "revised_threshold_path": "evaluator.parameters.min_health",
+      "revised_min_health": 0,
+      "configurations": [
+        {
+          "path": "config/veloren/tasks/structured_tools/native_contract_settlement.yaml",
+          "prior_sha256": "567a29aeb2e65bb2da61a8e81e6ed0c229a0e82358532fe9601f3493c9c112e1",
+          "revised_sha256": "d290abb49c45e08846f9f76510399cea3478d621924a7e949018df6637efbc6c",
+          "prior_matches_frozen_manifest": true,
+          "exact_delta": "insert min_health: 0 only; public goal, geometry, budget, controls and all other predicates byte-preserved"
+        },
+        {
+          "path": "config/veloren/tasks/visual_motor/native_contract_settlement.yaml",
+          "prior_sha256": "3ad8f6f36d9254ae8a0f654277c8278e0f1723c33d2ddcaa9510e1e4168f9fc7",
+          "revised_sha256": "b6baeb97c86540a4ca2d66b06141dbd81b6a491052ab7f91bada2bc13f2c66c7",
+          "prior_matches_frozen_manifest": true,
+          "exact_delta": "insert min_health: 0 only; public goal, geometry, budget, controls and all other predicates byte-preserved"
+        }
+      ]
+    },
+    "route_schema_transfer": {
+      "public_wording": "Explore the first three-module wing, then traverse two application wings and finish alive and stationary at the centre of the final enlarged chamber. Complete the route without dying or respawning.\nEach module has one, two or three shallow niches in the wall beside its entrance. Within this instance, a given niche pattern always has the same continuing exit side relative to the direction in which you enter. One branch continues; the other ends at a solid wall. Learn the architecture through ordinary exploration.\nAfter the first wing, descend the connecting staircase. Later wings rearrange the module order and rotate their orientation. Reuse what you discovered; an absolute compass direction or blindly replaying the first turn sequence will not suffice.\nThe two application wings together allow at most 344 metres of sampled native travel, including detours and backtracking. Practice travel and connecting stairs are outside that distance allowance, but still consume episode time. All movement remains ordinary native movement; there are no modified controls, recipes or physics. Complete the application wings in order and remain in the final chamber.",
+      "evaluator": "route_transfer",
+      "prior_default_path": {
+        "config": "route_transfer parameters expose only variant and origin",
+        "chain": "route_transfer_checks calls state_checks(position=...) without min_health, hence default1",
+        "remedy_caution": "Cannot fix solely by adding an unsupported YAML parameter; any explicit alive-floor alignment needs a versioned wrapper change."
+      },
+      "revised_threshold_path": "evaluator.parameters.min_health",
+      "revised_min_health": 0,
+      "configurations": [
+        {
+          "path": "config/veloren/tasks/structured_tools/route_schema_transfer.yaml",
+          "prior_sha256": "97521653c3c670447f92b788b9f46ec3a48589afd8a17f9ab2dd655a6c88165f",
+          "revised_sha256": "1e37a3c481c91d9ce74d35bad52fd69e1df9442e48c0ee99555ba46a71361325",
+          "prior_matches_frozen_manifest": true,
+          "exact_delta": "insert min_health: 0 only; public goal, geometry, budget, controls and all other predicates byte-preserved"
+        },
+        {
+          "path": "config/veloren/tasks/visual_motor/route_schema_transfer.yaml",
+          "prior_sha256": "95a0d1fbc26142b90403f9cddf8aaa22c26ce7f6f0b47cb1011fde65cf607f12",
+          "revised_sha256": "def55f821530683033bb0c9da72338c442a4c351a4efb955f29ba80b77080bd1",
+          "prior_matches_frozen_manifest": true,
+          "exact_delta": "insert min_health: 0 only; public goal, geometry, budget, controls and all other predicates byte-preserved"
+        }
+      ]
+    },
+    "self_funded_expedition": {
+      "public_wording": "Defeat both Green Legooms on the eastern hunting route, then return alive to the stone arch where you started, wearing a rawhide chestpiece and carrying at least one unused minor potion and ten coins.\nOne opponent is along the passage east of camp; the other is in the yard at its far end. The merchant and crafting stations are in the starting camp. Choose your own preparation, purchases and encounter order.\nFinish standing still on the ground at the arch.\nYour initial native respawn waypoint is the starting arch. Death does not restore spent resources, enemies, equipment or the time budget.",
+      "evaluator": "encounter",
+      "prior_default_path": {
+        "config": "encounter parameters omit min_health",
+        "chain": "encounter_checks -> _combat_checks(**state) -> state_checks(**state), default1"
+      },
+      "revised_threshold_path": "evaluator.parameters.min_health",
+      "revised_min_health": 0,
+      "configurations": [
+        {
+          "path": "config/veloren/tasks/structured_tools/self_funded_expedition.yaml",
+          "prior_sha256": "2f0b9479b878fc5599c17efc7bb64ea3387b0bdb1240dc31217af1902a1ae520",
+          "revised_sha256": "01ede563580f687fce9dc5934b914b1b126d2aa1a93bd8df92763f464821f32a",
+          "prior_matches_frozen_manifest": true,
+          "exact_delta": "insert min_health: 0 only; public goal, geometry, budget, controls and all other predicates byte-preserved"
+        },
+        {
+          "path": "config/veloren/tasks/visual_motor/self_funded_expedition.yaml",
+          "prior_sha256": "1a070753f8e0e813b760c2020f60d9dee5e09710e0e7d7a2b4260d3be39384f1",
+          "revised_sha256": "e184eb3f69dc1825fc44ca43fd6189548d218d6d9bc72badcd32140075a541f4",
+          "prior_matches_frozen_manifest": true,
+          "exact_delta": "insert min_health: 0 only; public goal, geometry, budget, controls and all other predicates byte-preserved"
+        }
+      ]
+    }
+  },
+  "production_source_migration": {
+    "game/team.py": {
+      "prior_sha256": "93ce2a229a3cfc74d3b1537cd61bfc771b6aee8a1dcad7a76c0bba9c9f5fa9f7",
+      "revised_sha256": "bc80b21d245fce6f2d0f37cc457c5339e6d8f97a26fe4d7f7b4b62c37ed86245",
+      "recover_prior": "git show 0bc0917d5a1c84be58e4cd49bd18f89e10969e63:game/team.py"
+    },
+    "game/veloren/evaluators/endpoints.py": {
+      "prior_sha256": "67433487082e51dd6f87074af57be1450ae19a848dc7ae1c82520caa3b50892e",
+      "revised_sha256": "ca445973cf0a7295f8801f8667e413da1d4f92e2d146d710d560ceb5bec1fc9c",
+      "recover_prior": "git show 0bc0917d5a1c84be58e4cd49bd18f89e10969e63:game/veloren/evaluators/endpoints.py"
+    },
+    "game/veloren/evaluators/encounter.py": {
+      "prior_sha256": "f300ba1871cc933d3264171aa6bcf656c770fee24540b0f2a2f600c31b455776",
+      "revised_sha256": "85ff1a3e8f6590492d2cd1a178e5c3a7ce0543a9c3df0508ac99099b42611551",
+      "recover_prior": "git show 0bc0917d5a1c84be58e4cd49bd18f89e10969e63:game/veloren/evaluators/encounter.py"
+    },
+    "game/veloren/evaluators/route_transfer.py": {
+      "prior_sha256": "346eb84326256c20cd8543eba808c8b7c33c4153e58eae1848b80a79c87feeb9",
+      "revised_sha256": "726f9a663b4f15cf7d7cfc6d3bfb672ec14ab8416d48c238a96d227eca805f46",
+      "recover_prior": "git show 0bc0917d5a1c84be58e4cd49bd18f89e10969e63:game/veloren/evaluators/route_transfer.py"
+    },
+    "config/veloren/tasks/structured_tools/coordinated_route_hunt.yaml": {
+      "prior_sha256": "3c272f20fc93e14cbc1789ae8834a525d986b82dc973f94ffcb70fc7dd1b51f9",
+      "revised_sha256": "fd5512da6774684b06568dd7aa594c47d4693d1800fd1452b013a537555d1e57",
+      "recover_prior": "git show 0bc0917d5a1c84be58e4cd49bd18f89e10969e63:config/veloren/tasks/structured_tools/coordinated_route_hunt.yaml"
+    },
+    "config/veloren/tasks/structured_tools/hostile_route_supply_recovery.yaml": {
+      "prior_sha256": "3d61a4374fc4016516020f09e376759b1f38bb0b88d6f593782101ba723a0f90",
+      "revised_sha256": "bcc29af2895e1a451a898651e870b0e2c1d271ded1ee99a21f51d13e82358552",
+      "recover_prior": "git show 0bc0917d5a1c84be58e4cd49bd18f89e10969e63:config/veloren/tasks/structured_tools/hostile_route_supply_recovery.yaml"
+    },
+    "config/veloren/tasks/structured_tools/mountain_workshop_circuit.yaml": {
+      "prior_sha256": "3039a6a03f1c757670abf5c63a3130835517fa528e7f50aa4989f0895c843141",
+      "revised_sha256": "9566768835ecf8d548b86ca53af500de6957b68b71d1ebbfbc61fc1362723a0e",
+      "recover_prior": "git show 0bc0917d5a1c84be58e4cd49bd18f89e10969e63:config/veloren/tasks/structured_tools/mountain_workshop_circuit.yaml"
+    },
+    "config/veloren/tasks/structured_tools/native_contract_settlement.yaml": {
+      "prior_sha256": "567a29aeb2e65bb2da61a8e81e6ed0c229a0e82358532fe9601f3493c9c112e1",
+      "revised_sha256": "d290abb49c45e08846f9f76510399cea3478d621924a7e949018df6637efbc6c",
+      "recover_prior": "git show 0bc0917d5a1c84be58e4cd49bd18f89e10969e63:config/veloren/tasks/structured_tools/native_contract_settlement.yaml"
+    },
+    "config/veloren/tasks/structured_tools/route_schema_transfer.yaml": {
+      "prior_sha256": "97521653c3c670447f92b788b9f46ec3a48589afd8a17f9ab2dd655a6c88165f",
+      "revised_sha256": "1e37a3c481c91d9ce74d35bad52fd69e1df9442e48c0ee99555ba46a71361325",
+      "recover_prior": "git show 0bc0917d5a1c84be58e4cd49bd18f89e10969e63:config/veloren/tasks/structured_tools/route_schema_transfer.yaml"
+    },
+    "config/veloren/tasks/structured_tools/self_funded_expedition.yaml": {
+      "prior_sha256": "2f0b9479b878fc5599c17efc7bb64ea3387b0bdb1240dc31217af1902a1ae520",
+      "revised_sha256": "01ede563580f687fce9dc5934b914b1b126d2aa1a93bd8df92763f464821f32a",
+      "recover_prior": "git show 0bc0917d5a1c84be58e4cd49bd18f89e10969e63:config/veloren/tasks/structured_tools/self_funded_expedition.yaml"
+    },
+    "config/veloren/tasks/visual_motor/coordinated_route_hunt.yaml": {
+      "prior_sha256": "428f8dbbdb54bda3016a4e754bba04a02fa5d879701d9f407c4998badfb77cae",
+      "revised_sha256": "de0124f5d0a964781c8630ac223fa00c4f07cbca36e0ca1e23bc9e7af1ba1aef",
+      "recover_prior": "git show 0bc0917d5a1c84be58e4cd49bd18f89e10969e63:config/veloren/tasks/visual_motor/coordinated_route_hunt.yaml"
+    },
+    "config/veloren/tasks/visual_motor/hostile_route_supply_recovery.yaml": {
+      "prior_sha256": "d13b133a093d95ec311b4e048b6ba825c843c2834d66f1e02b46498411489f99",
+      "revised_sha256": "bfdf1d873584a361c1bea531358dfffc2e129a2bc0cbd9e708651d125f54fa77",
+      "recover_prior": "git show 0bc0917d5a1c84be58e4cd49bd18f89e10969e63:config/veloren/tasks/visual_motor/hostile_route_supply_recovery.yaml"
+    },
+    "config/veloren/tasks/visual_motor/mountain_workshop_circuit.yaml": {
+      "prior_sha256": "1de18601a7c0847fe8d6667f23e3061588ebe0f112f7505559c337d5b967735f",
+      "revised_sha256": "a33db5d34cab82fe37a51b377b5ac6bd7a0cec50c7cd22908701721cb326939c",
+      "recover_prior": "git show 0bc0917d5a1c84be58e4cd49bd18f89e10969e63:config/veloren/tasks/visual_motor/mountain_workshop_circuit.yaml"
+    },
+    "config/veloren/tasks/visual_motor/native_contract_settlement.yaml": {
+      "prior_sha256": "3ad8f6f36d9254ae8a0f654277c8278e0f1723c33d2ddcaa9510e1e4168f9fc7",
+      "revised_sha256": "b6baeb97c86540a4ca2d66b06141dbd81b6a491052ab7f91bada2bc13f2c66c7",
+      "recover_prior": "git show 0bc0917d5a1c84be58e4cd49bd18f89e10969e63:config/veloren/tasks/visual_motor/native_contract_settlement.yaml"
+    },
+    "config/veloren/tasks/visual_motor/route_schema_transfer.yaml": {
+      "prior_sha256": "95a0d1fbc26142b90403f9cddf8aaa22c26ce7f6f0b47cb1011fde65cf607f12",
+      "revised_sha256": "def55f821530683033bb0c9da72338c442a4c351a4efb955f29ba80b77080bd1",
+      "recover_prior": "git show 0bc0917d5a1c84be58e4cd49bd18f89e10969e63:config/veloren/tasks/visual_motor/route_schema_transfer.yaml"
+    },
+    "config/veloren/tasks/visual_motor/self_funded_expedition.yaml": {
+      "prior_sha256": "1a070753f8e0e813b760c2020f60d9dee5e09710e0e7d7a2b4260d3be39384f1",
+      "revised_sha256": "e184eb3f69dc1825fc44ca43fd6189548d218d6d9bc72badcd32140075a541f4",
+      "recover_prior": "git show 0bc0917d5a1c84be58e4cd49bd18f89e10969e63:config/veloren/tasks/visual_motor/self_funded_expedition.yaml"
+    }
+  },
+  "unchanged_score_dependencies": {
+    "game/veloren/evaluators/contract.py": "cb4ad9c2c4aa0b690a8eeb250c48926de656b0da25ce7f7b34e377d541e0ebd0",
+    "game/veloren/binding.py": "c5ba9baa4f96609dace86b99e99091faeddb642ffacb1c64b0dc6025c9be4450",
+    "game/route_transfer.py": "2019501c84aeaaa02b7e2e626b306af017671a0635666005e58c0b0935fc2ece",
+    "game/veloren/evaluators/deaths.py": "144d424a3e9efe8196cc54c78700be2f32d63ecb784586b285032869baa38724"
+  },
+  "wrapper_semantics": {
+    "team": "Only non-peer_support team encounters inherit all.min_health (default 1). Both owner combat and every participant alive gate receive the same floor; role/any/higher-reserve checks remain additional requirements. No peer_support API expansion.",
+    "route": "validate_route, evaluate_route and route_transfer_checks accept/forward explicit min_health, default 1. No route/2 identity, counter, history, travel, deaths or sampling changes.",
+    "downed": "Native survival.health.downed=true now explicitly rejects state-based success even at positive HP. Prior source did not check this flag; this is a coupled tightening, not a claim that old scoring already rejected every downed endpoint."
+  },
+  "compatibility_limits": [
+    "Zero min_health still requires strictly positive finite HP; native dead and downed flags reject success.",
+    "Default 1 remains for omitted floors; explicit reserve goals (including both 75HP tasks) remain unchanged.",
+    "Missing downed flags retain older-snapshot compatibility; absence is not evidence that the player was not downed.",
+    "The downed-flag guard affects all state_checks callers, including legacy-default and reserve goals, when a true flag is supplied. Pin the prior source for exact historical reproduction.",
+    "Task YAMLs now differ from the frozen original manifest intentionally; resolve revision 2 with this migration artifact rather than silently updating the original manifest.",
+    "No original-six completed episode was demonstrated to fail solely for HP below 1; neither frequency nor retrospective failure counts are inferred.",
+    "The retained R05 endpoint is domain evidence and a health-predicate-only replay; its full historical failure is independently established and unchanged.",
+    "No native/model/Azure/fullbenchmark work; route2 reliability remains separately owned.",
+    "Prior qualification remains tied to its source version. Revision 2 has offline checks only; 37 source-version qualifications are preserved, not certified final-ready."
+  ],
+  "offline_validation": {
+    "pre_fix": {
+      "command": "pytest -q tests/test_game/veloren/test_evaluators.py tests/test_game/veloren/test_encounter.py tests/test_game/veloren/test_route_transfer.py tests/test_benchmark/test_team.py -k \"alive_only_health or original_reference_alive or explicit_health_reserves or team_encounter_accepts or route_health_floor or forwards_all_health or actual_death_and_own or native_contract_requires\" --basetemp=output/test/alive-contract-before-corrected",
+      "result": "17 failed, 6 passed, 58 deselected; failures reproduce config floors, downed guard and missing wrapper propagation; not native failures",
+      "log": "output/temp/task_development/alive-contract-fix/focused-before-corrected.log",
+      "sha256": "2103920f2650fa546ca7e6f9a95ec8b6ab48958d0af04defe738de57e86b255a"
+    },
+    "post_fix": {
+      "command": "pytest -q tests/test_game/veloren/test_evaluators.py tests/test_game/veloren/test_encounter.py tests/test_game/veloren/test_route_transfer.py tests/test_benchmark/test_team.py --basetemp=output/test/alive-contract-after",
+      "result": "81 passed",
+      "log": "output/temp/task_development/alive-contract-fix/focused-after.log",
+      "sha256": "75ce14b4e27414f849848d3823c9d88ce22768d44feb565d1b6c98de7bd139a2"
+    },
+    "admission": "All 12 configs load and make_game/create_binding successfully without starting a game.",
+    "asserted_task_delta": "All 12 files equal committed frozen-manifest bytes after removing precisely the new min_health line.",
+    "retained_endpoint_replay": {
+      "kind": "offline_retained_endpoint_health_predicate_only_not_full_regrade",
+      "evidence": {
+        "result": {
+          "path": "output/temp/task_development/veloren-interaction/VE-R05-baseline-vm/baseline/moving_target_bow_hunt.visual_motor/episode_1/results/result.json",
+          "sha256": "fa608b6acd266d1317109e523099b00003c839f1d131e37828f42667aca8f48a"
+        },
+        "evaluation": {
+          "path": "output/temp/task_development/veloren-interaction/VE-R05-baseline-vm/baseline/moving_target_bow_hunt.visual_motor/episode_1/results/evaluation.json",
+          "sha256": "2fe1c28ee3e1152e4425f2be80fd90d5b275d29850dd575239e5846f8c631d4c"
+        },
+        "observation": {
+          "path": "output/temp/task_development/veloren-interaction/VE-R05-baseline-vm/baseline/moving_target_bow_hunt.visual_motor/episode_1/after/observation.json",
+          "sha256": "354ce2f7e4b25a83eabcec78fcf9eef32a95f28584c20b51d0f3ffd2036359ba"
+        },
+        "snapshot_metadata": {
+          "path": "output/temp/task_development/veloren-interaction/VE-R05-baseline-vm/baseline/moving_target_bow_hunt.visual_motor/episode_1/after/_livequest_snapshot.json",
+          "sha256": "500c2d836f539c1961e809eb770d9eae5a0d6aaf49b8eff0142db8577fb92abe"
+        },
+        "before_observation.json": {
+          "path": "output/temp/task_development/veloren-interaction/VE-R05-baseline-vm/baseline/moving_target_bow_hunt.visual_motor/episode_1/before/observation.json",
+          "sha256": "7117efab1f4fea354e2266819ecd847aa491e9aa3ea07d39230fff27b9528348"
+        },
+        "before__livequest_snapshot.json": {
+          "path": "output/temp/task_development/veloren-interaction/VE-R05-baseline-vm/baseline/moving_target_bow_hunt.visual_motor/episode_1/before/_livequest_snapshot.json",
+          "sha256": "ec34a8a0a8127480c52b494d09ab82f6741c014060d20c4b9fb57f21d5f66cdb"
+        }
+      },
+      "native_health": {
+        "can_have_death_protection": true,
+        "current": 0.390625,
+        "dead": false,
+        "death_protection": true,
+        "downed": false,
+        "fraction": 0.00390625,
+        "maximum": 100.0
+      },
+      "legacy_floor": {
+        "success": false,
+        "checks": [
+          {
+            "kind": "health",
+            "actual": 0.390625,
+            "minimum": 1,
+            "passed": false
+          }
+        ],
+        "semantics": "simultaneous terminal state; no action attribution or continuous-survival claim"
+      },
+      "alive_only": {
+        "success": true,
+        "checks": [
+          {
+            "kind": "health",
+            "actual": 0.390625,
+            "minimum": 0,
+            "passed": true
+          }
+        ],
+        "semantics": "simultaneous terminal state; no action attribution or continuous-survival claim"
+      },
+      "historical_verdict_preserved": true,
+      "original_six_failure_count_attributable_to_floor": "not demonstrated; no count inferred",
+      "source_provenance": [
+        {
+          "path": "output/temp/veloren-native-20261022/source/common/src/comp/health.rs",
+          "sha256": "a2e61693e274bd68f35c5399c4b05c1511180ea1969c331217c27ee955ed2497",
+          "recorded_source_manifest_sha256": "a2e61693e274bd68f35c5399c4b05c1511180ea1969c331217c27ee955ed2497",
+          "matches_recorded_source_manifest": true
+        },
+        {
+          "path": "output/temp/veloren-native-20261022/source/client/src/agent_protocol/mod.rs",
+          "sha256": "6c987a59830fc5a7bcd48f616e252733bef6af6cd9319d32f409162880d31bfc",
+          "recorded_source_manifest_sha256": "c81e5f2e8f18f0cd4b6961937bd458cef8f5791922dff46d3bc88304a4edcdaa",
+          "matches_recorded_source_manifest": false
+        },
+        {
+          "path": "output/temp/veloren-native-20261022/source/voxygen/src/hud/skillbar.rs",
+          "sha256": "c7cb915de6f9b7ed7a1639cd92a4c123d0bb6e28acb41582401b7ad10f698574",
+          "recorded_source_manifest_sha256": "c7cb915de6f9b7ed7a1639cd92a4c123d0bb6e28acb41582401b7ad10f698574",
+          "matches_recorded_source_manifest": true
+        }
+      ],
+      "source_provenance_limit": "Health and HUD source hashes match their recorded native source manifest. agent_protocol is a later source overlay whose full-file hash differs; the local serializer code is statically inspected, not represented as a proven exact binary build. The independent archived VM endpoint supplies runtime existence evidence."
+    }
+  },
+  "review_basis": {
+    "path": "output/temp/task_development/checks/veloren-independent-quality.json",
+    "sha256": "0f6f741df21db16e05eb59a70490a9a4cea5a55fbd9d8d91c7227d9a501dd84b",
+    "section": "original_reference_review.actionability_followup.health_floor_adjudication",
+    "native_domain": {
+      "source": "common/src/comp/health.rs",
+      "representation": "Health.current is internal u32 fixed-point scaled by256; current() returns current/256 as f32. HealthChange.amount is f32; change_by applies native scaled fractional changes. should_die is internal current==0.",
+      "legitimate_positive_range_below_one": "1/256 through255/256; 0.390625 equals100/256.",
+      "death_protection_caveat": "The native death-protection comment mentions1HP, but it does not quantize every positive living state to whole health points. Actual ended native observation has0.390625,dead=false,downed=false.",
+      "source_provenance": [
+        {
+          "path": "output/temp/veloren-native-20261022/source/common/src/comp/health.rs",
+          "sha256": "a2e61693e274bd68f35c5399c4b05c1511180ea1969c331217c27ee955ed2497",
+          "recorded_source_manifest_sha256": "a2e61693e274bd68f35c5399c4b05c1511180ea1969c331217c27ee955ed2497",
+          "matches_recorded_source_manifest": true
+        },
+        {
+          "path": "output/temp/veloren-native-20261022/source/client/src/agent_protocol/mod.rs",
+          "sha256": "6c987a59830fc5a7bcd48f616e252733bef6af6cd9319d32f409162880d31bfc",
+          "recorded_source_manifest_sha256": "c81e5f2e8f18f0cd4b6961937bd458cef8f5791922dff46d3bc88304a4edcdaa",
+          "matches_recorded_source_manifest": false
+        },
+        {
+          "path": "output/temp/veloren-native-20261022/source/voxygen/src/hud/skillbar.rs",
+          "sha256": "c7cb915de6f9b7ed7a1639cd92a4c123d0bb6e28acb41582401b7ad10f698574",
+          "recorded_source_manifest_sha256": "c7cb915de6f9b7ed7a1639cd92a4c123d0bb6e28acb41582401b7ad10f698574",
+          "matches_recorded_source_manifest": true
+        }
+      ],
+      "provenance_limit": "Health and HUD source hashes match their recorded native source manifest. agent_protocol is a later source overlay whose full-file hash differs; the local serializer code is statically inspected, not represented as a proven exact binary build. The independent archived VM endpoint supplies runtime existence evidence."
+    },
+    "independent_contract_adjudication": "Both committed/index contract YAMLs match the frozen original manifest. Pre-existing working-tree divider/text edits are not part of this candidate."
+  },
+  "integration_gate": {
+    "blocking_paths": [
+      "config/veloren/tasks/structured_tools/native_contract_settlement.yaml",
+      "config/veloren/tasks/visual_motor/native_contract_settlement.yaml"
+    ],
+    "reason": "Required contract YAMLs have pre-existing dirty edits. Do not merge/overwrite/admit the experimental divider. Candidate is based only on committed frozen-reference bytes.",
+    "required": "Owner resolves the two existing dirty contract files separately; then refresh main/HEAD, clean index, no operation, recheck source hashes/tests and all five preserved paths under flock output/temp/task_development/locks/integration.lock before exact integration. No automatic partial integration or qualification promotion.",
+    "locked_main_check": {
+      "lock": "output/temp/task_development/locks/integration.lock",
+      "HEAD": "0bc0917d5a1c84be58e4cd49bd18f89e10969e63",
+      "branch": "main",
+      "main": "0bc0917d5a1c84be58e4cd49bd18f89e10969e63",
+      "index_clean": true,
+      "operations": {
+        "MERGE_HEAD": false,
+        "CHERRY_PICK_HEAD": false,
+        "REVERT_HEAD": false,
+        "rebase-merge": false,
+        "rebase-apply": false,
+        "sequencer": false
+      },
+      "five_dirty_paths_bytepreserved": true,
+      "dirty_sha256": {
+        "agent_framework/agents/deepseek_harness/setup.py": "fd2500a54808a4d8659536007ecde0c36284823f77a815558813d69060e3bf4c",
+        "config/veloren/tasks/structured_tools/native_contract_settlement.yaml": "5db3400cab9df92438ca0226d336acf810b4b641dfd770ed2980e293f2934a40",
+        "config/veloren/tasks/visual_motor/native_contract_settlement.yaml": "f26aa7bfcdfa76f93086b562b616b6aa0824e1ac30168ae6309e1fdaeec911aa",
+        "tests/test_game/veloren/test_initialization.py": "f52108ad4d1981079051e62253fb55261f6b6c28e212f1fc835893dc6749b150",
+        "tests/test_agent/test_deepseek_setup.py": "64f7d30f2674dba89581807a8f01b379fcb3b74f69a7ef28caf3070237147840"
+      },
+      "blocking_contract_sources": {
+        "config/veloren/tasks/structured_tools/native_contract_settlement.yaml": {
+          "HEAD_sha256": "567a29aeb2e65bb2da61a8e81e6ed0c229a0e82358532fe9601f3493c9c112e1",
+          "index_sha256": "567a29aeb2e65bb2da61a8e81e6ed0c229a0e82358532fe9601f3493c9c112e1",
+          "working_tree_sha256": "5db3400cab9df92438ca0226d336acf810b4b641dfd770ed2980e293f2934a40"
+        },
+        "config/veloren/tasks/visual_motor/native_contract_settlement.yaml": {
+          "HEAD_sha256": "3ad8f6f36d9254ae8a0f654277c8278e0f1723c33d2ddcaa9510e1e4168f9fc7",
+          "index_sha256": "3ad8f6f36d9254ae8a0f654277c8278e0f1723c33d2ddcaa9510e1e4168f9fc7",
+          "working_tree_sha256": "f26aa7bfcdfa76f93086b562b616b6aa0824e1ac30168ae6309e1fdaeec911aa"
+        }
+      },
+      "decision": "blocked_required_contract_paths_dirty_leave_main_untouched",
+      "main_source_modified": false,
+      "integration_attempted": false
+    }
+  }
+}

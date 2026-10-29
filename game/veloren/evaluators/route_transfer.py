@@ -3,15 +3,18 @@
 from pathlib import Path
 
 from game.route_transfer import build_layout, route_checks, validate_samples
-from game.veloren.evaluators.endpoints import load_pair, state_checks
+from game.veloren.evaluators.endpoints import load_pair, state_checks, validate_state
 from game.veloren.evaluators.deaths import death_metrics
 
 
-def validate_route(*, variant: int, origin: list[int]) -> None:
+def validate_route(*, variant: int, origin: list[int], min_health: float = 1) -> None:
     build_layout(variant, tuple(origin), headroom=3)
+    validate_state(min_health=min_health)
 
 
-def route_transfer_checks(initial: dict, final: dict, *, variant: int, origin: list[int]) -> dict:
+def route_transfer_checks(initial: dict, final: dict, *, variant: int, origin: list[int],
+                          min_health: float = 1) -> dict:
+    validate_state(min_health=min_health)
     layout = build_layout(variant, tuple(origin), headroom=3)
     first, last = (row["private_route_evidence"] for row in (initial, final))
     for boundary, evidence in ((initial, first), (final, last)):
@@ -40,7 +43,7 @@ def route_transfer_checks(initial: dict, final: dict, *, variant: int, origin: l
     deaths = death_metrics(initial, final)["deaths"]["count"]
     route = route_checks(samples, layout["wings"], layout["application_distance_limit"], deaths=deaths)
     x, y, z = layout["wings"][-1]["exit"]
-    result = state_checks(initial, final, position={
+    result = state_checks(initial, final, min_health=min_health, position={
         "target": [x + 1, y + 1, z], "horizontal_tolerance": 2,
         "vertical_tolerance": 0.5, "max_speed": 0.1,
     })
@@ -50,5 +53,7 @@ def route_transfer_checks(initial: dict, final: dict, *, variant: int, origin: l
     return result
 
 
-def evaluate_route(before: Path, after: Path, *, variant: int, origin: list[int]) -> dict:
-    return route_transfer_checks(*load_pair(before, after), variant=variant, origin=origin)
+def evaluate_route(before: Path, after: Path, *, variant: int, origin: list[int],
+                   min_health: float = 1) -> dict:
+    return route_transfer_checks(*load_pair(before, after), variant=variant, origin=origin,
+                                 min_health=min_health)

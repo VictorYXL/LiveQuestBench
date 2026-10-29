@@ -291,7 +291,8 @@ def state_checks(
     hp = finite(final["survival"]["health"]["current"], "health")
     checks.append({"kind": "health", "actual": hp, "minimum": min_health,
                    "passed": hp > 0 and hp >= min_health and final["survival"].get("dead") is not True
-                   and final["survival"]["health"].get("dead") is not True})
+                   and final["survival"]["health"].get("dead") is not True
+                   and final["survival"]["health"].get("downed") is not True})
     if wielding is not None:
         if type(final["wielding"]) is not bool:
             raise ValueError("Native wielding evidence must be boolean")

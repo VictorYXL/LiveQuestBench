@@ -277,6 +277,7 @@ fixture:
 evaluator:
   name: encounter
   parameters:
+    min_health: 0
     roles:
     - passage_legoom
     - east_legoom

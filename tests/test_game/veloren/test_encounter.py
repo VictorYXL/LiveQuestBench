@@ -183,6 +183,16 @@ def test_team_encounter_accepts_peer_damage_not_unregistered_or_other_session():
     damage = final["Alpha"]["private_encounter_evidence"]["events"][0]["data"]
     damage.update(contributor={"Solo": 3}, contributor_entity="peer-generation-1")
     assert team_encounter_checks(initial, final, roles=["enemy"])["success"]
+    for role in final:
+        fractional = deepcopy(final)
+        fractional[role]["survival"]["health"]["current"] = 0.390625
+        assert team_encounter_checks(initial, fractional, roles=["enemy"], min_health=0)["success"]
+        assert not team_encounter_checks(initial, fractional, roles=["enemy"])["success"]
+        assert not team_encounter_checks(initial, fractional, roles=["enemy"], min_health=75)["success"]
+        for health in ({"current": 0}, {"current": 1, "downed": True},
+                       {"current": 1, "dead": True}):
+            fractional[role]["survival"]["health"] = health
+            assert not team_encounter_checks(initial, fractional, roles=["enemy"], min_health=0)["success"]
     damage["contributor"] = {"Solo": 99}
     assert not team_encounter_checks(initial, final, roles=["enemy"])["success"]
     for boundary in (initial, final):
@@ -206,6 +216,10 @@ def test_fresh_supply_must_still_exist_at_opening():
 def test_actual_death_and_own_damage_are_both_required():
     initial, final = evidence()
     assert encounter_checks(initial, final, roles=["enemy"])["success"]
+    fractional = deepcopy(final)
+    fractional["survival"]["health"]["current"] = 0.390625
+    assert encounter_checks(initial, fractional, roles=["enemy"], min_health=0)["success"]
+    assert not encounter_checks(initial, fractional, roles=["enemy"])["success"]
     damage_only = deepcopy(final)
     damage_only["private_encounter_evidence"]["events"].pop()
     assert damage_checks(initial, damage_only, roles=["enemy"])["success"]
@@ -379,6 +393,10 @@ def test_native_contract_requires_activation_then_bound_kill_and_actual_reward_c
     final["nearby_entities"].append({"uid": 4, "control_target": giver_ref, "position": [2, 0, 0]})
     arrival = {"max_distance": 3, "max_speed": .1}
     assert contract_checks(initial, final, giver_arrival=arrival)["success"]
+    fractional = deepcopy(final)
+    fractional["survival"]["health"]["current"] = 0.390625
+    assert contract_checks(initial, fractional, giver_arrival=arrival, min_health=0)["success"]
+    assert not contract_checks(initial, fractional, giver_arrival=arrival)["success"]
     for change in (
         lambda row: row["nearby_entities"][-1].update(position=[4, 0, 0]),
         lambda row: row["nearby_entities"][-1].update(control_target={"uid": 4, "lifecycle": "replacement"}),

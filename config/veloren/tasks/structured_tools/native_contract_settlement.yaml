@@ -130,6 +130,7 @@ fixture:
 evaluator:
   name: contract
   parameters:
+    min_health: 0
     min_reward: 1000
     no_death: false
     giver_arrival:

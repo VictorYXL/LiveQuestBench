@@ -331,7 +331,10 @@ def create_team_binding(task: TaskConfig, output: Path, *, headless: bool,
             if "peer_support" in parameters:
                 result = support_checks(initial, final, roles=parameters["encounters"], **parameters["peer_support"])
             else:
-                result = team_encounter_checks(initial, final, roles=parameters["encounters"])
+                result = team_encounter_checks(
+                    initial, final, roles=parameters["encounters"],
+                    min_health=parameters.get("all", {}).get("min_health", 1),
+                )
             checks.append({"scope": "encounters", "result": result, "passed": result["success"]})
         for scope in ("all", "any"):
             if scope in parameters:

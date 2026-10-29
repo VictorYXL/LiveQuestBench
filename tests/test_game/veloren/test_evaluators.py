@@ -120,9 +120,41 @@ def test_alive_only_health_floor_accepts_native_fraction_but_preserves_legacy_de
         {"health": {"current": -0.1, "dead": False}},
         {"health": {"current": 0.390625, "dead": True}},
         {"health": {"current": 0.390625, "dead": False}, "dead": True},
+        {"health": {"current": 1, "dead": False, "downed": True}},
     ):
         final = {"survival": survival}
         assert not state_checks(row, final, min_health=0)["success"]
+
+
+@pytest.mark.parametrize("mode", ["structured_tools", "visual_motor"])
+@pytest.mark.parametrize("name", [
+    "mountain_workshop_circuit", "self_funded_expedition", "hostile_route_supply_recovery",
+    "native_contract_settlement", "coordinated_route_hunt", "route_schema_transfer",
+])
+def test_original_reference_alive_goal_accepts_fractional_health(mode, name):
+    from benchmark.config import load_task
+
+    root = Path(__file__).resolve().parents[3]
+    task = load_task(root / f"config/veloren/tasks/{mode}/{name}.yaml")
+    parameters = task.evaluator_parameters
+    if task.evaluator == "team":
+        parameters = parameters["all"]
+    row = {"survival": {"health": {"current": 0.390625, "dead": False, "downed": False}}}
+    assert state_checks(row, row, min_health=parameters.get("min_health", 1))["success"]
+
+
+@pytest.mark.parametrize("mode", ["structured_tools", "visual_motor"])
+@pytest.mark.parametrize("name", ["merchant_trade_in_loadout", "provisioning_reserve_circuit"])
+def test_explicit_health_reserves_still_reject_below_threshold(mode, name):
+    from benchmark.config import load_task
+
+    root = Path(__file__).resolve().parents[3]
+    task = load_task(root / f"config/veloren/tasks/{mode}/{name}.yaml")
+    floor = task.evaluator_parameters["min_health"]
+    row = {"survival": {"health": {"current": floor - 1 / 256, "dead": False}}}
+    assert not state_checks(row, row, min_health=floor)["success"]
+    row["survival"]["health"]["current"] = floor
+    assert state_checks(row, row, min_health=floor)["success"]
 
 
 @pytest.mark.parametrize("mode", ["structured_tools", "visual_motor"])
