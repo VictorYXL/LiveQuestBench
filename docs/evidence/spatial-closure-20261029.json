@@ -1,0 +1,34 @@
+{
+  "schema": "livequest-spatial-targeted-closure-plan/1",
+  "base_commit": "966d218",
+  "scope": ["VE-S03", "VE-S04", "VE-S05"],
+  "main_or_ledger_changed": false,
+  "model_runs": 0,
+  "VE-S03": {
+    "frozen_source": "9985a81fb6790af28e0b3064de233a002f8d0644",
+    "exact_task_import": "cc5fa62",
+    "exact_regression_import": "227b5c0",
+    "current_native_evidence": "output/temp/task_development/veloren-route-v2-contact-fix/vm-dogleg-stdlib-verification.json",
+    "historical_evidence_boundary": "cliff_ledge_ascent.json retains route/1 history only. Its baseline and witness outcomes do not qualify route/2. Current acceptance instead uses the retained route/2 ST and VM witnesses and exact current-scorer replay.",
+    "experiment_boundary": "Missing or interrupted model outcomes are not task acceptance blockers."
+  },
+  "VE-S04": {
+    "task": "subterranean_switchback",
+    "specific_uncertainty": "The historical ground-route successes use native-client-route/1. Current itinerary requires native-client-route/2 ordered actual lower-workshop samples.",
+    "authorized_targeted_check": "One model-free ST native execution of the unchanged archived bounded public controller, under the exact current adapter and checksum-pinned contact-fixed route/2 runtime.",
+    "controller": "output/temp/task_development/experiments/VE-S04-contained-public-reference-st/reference-controller.py",
+    "controller_sha256": "32b7e066bbbc153a57221eed220b3d74504ffb51ac5075bce2d9bf1d273a7dec",
+    "limits": "Existing helper limit600s; original task2700s; no model, hints, changed task, source rewrite, runtime mutation or concurrent owned native episode.",
+    "runtime_sha256": "f90ca9a97e20a106e6d749368319cdd45243a2f902605e7797c6f8e3613c3793",
+    "renderer_sha256": "5141b9ac796d5e71f5ba999f910777d364480cfb2b0344731425e1a65d1c5878",
+    "prohibited_transfer": "No route/1 relabeling, sample interpolation or relaxation of the native4m contact gate. This is a task-specific observer check, not a demanded controller-success badge."
+  },
+  "VE-S05": {
+    "automatic_vm_source": "c7f0fc84966d80ed0c35b84e4b6a4969d51ed8fc",
+    "automatic_vm_lease": "4997fc178b754afd923a73c88f7e6b40",
+    "recovered_status": "finished_with_returncode_minus15_before_readiness",
+    "no_terminal_artifacts": ["before", "after", "reference.json", "control.json"],
+    "classification": "Interrupted initialization; neither a gameplay failure nor a success. Previous valid failed references and ST155.424s whole success remain unchanged.",
+    "remaining_review": "Public-image bow line acquisition and native-grounded composition of both lethal targets and return, within original resources and time. No required model victory."
+  }
+}

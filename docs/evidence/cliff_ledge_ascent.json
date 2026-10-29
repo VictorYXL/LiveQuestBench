@@ -1,7 +1,8 @@
 {
   "task": "cliff_ledge_ascent",
   "slot": "VE-S03",
-  "status": "qualified_candidate_ready_for_integration",
+  "status": "historical_route1_evidence_not_current_route2_qualification",
+  "current_route2_evidence": "docs/evidence/spatial-closure-20261029.json",
   "integrated": false,
   "task_definition_commit": "685660d4145c3efe93f02e8867a6fd7a7b16f042",
   "task_sha256": {
