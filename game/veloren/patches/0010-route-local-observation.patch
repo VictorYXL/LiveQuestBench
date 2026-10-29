@@ -1,0 +1,43 @@
+--- a/voxygen/src/native_agent.rs
++++ b/voxygen/src/native_agent.rs
+@@ -218,2 +218,14 @@
++const ROUTE_LOCAL_VIEW: &str = "native-route-local-view/1";
++
++pub(crate) fn route_observation_contract() -> Option<&'static str> {
++    (std::env::var("LIVEQUEST_ROUTE_OBSERVATION").as_deref() == Ok(ROUTE_LOCAL_VIEW))
++        .then_some(ROUTE_LOCAL_VIEW)
++}
++
++pub(crate) fn route_voxel_map_visible(requested: bool, contract: Option<&str>) -> bool {
++    // A native UI toggle must not restore nonlocal voxel topology in this contract.
++    requested && contract != Some(ROUTE_LOCAL_VIEW)
++}
++
+ fn renderer_ready(session: &str, identity: &Value, observation: &str) -> Value {
+     json!({
+@@ -226,3 +238,5 @@
+             "observation_profile": observation,
+-            "camera_profile": "ordinary-player", "hud_profile": "normal-voxygen",
++            "route_observation": route_observation_contract(),
++            "camera_profile": "ordinary-player",
++            "hud_profile": route_observation_contract().unwrap_or("normal-voxygen"),
+             "native_tick": null, "tick_semantics": "client-update-counter-not-server-tick",
+@@ -595,2 +609,10 @@
+     #[test]
++    fn route_local_view_survives_voxel_map_preference_toggles() {
++        for requested in [false, true, false, true] {
++            assert!(!route_voxel_map_visible(requested, Some(ROUTE_LOCAL_VIEW)));
++            assert_eq!(route_voxel_map_visible(requested, None), requested);
++        }
++    }
++
++    #[test]
+     fn production_ready_and_frame_capabilities_reach_public_schema() {
+--- a/voxygen/src/hud/minimap.rs
++++ b/voxygen/src/hud/minimap.rs
+@@ -497,1 +497,4 @@
+-        let show_voxel_map = self.global_state.settings.interface.map_show_voxel_map;
++        let show_voxel_map = crate::native_agent::route_voxel_map_visible(
++            self.global_state.settings.interface.map_show_voxel_map,
++            crate::native_agent::route_observation_contract(),
++        );

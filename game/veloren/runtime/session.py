@@ -16,9 +16,13 @@ ORIGINAL_RUNTIME_ENVIRONMENTS = {
     "self-funded-expedition/1": "LIVEQUEST_VELOREN_SELF_FUNDED_RUNTIME",
 }
 ORIGINAL_RUNTIME_SHA256 = "71de989307966e8d984d7be651823844985d0c0c0c39cdd14e6097707637aa79"
+LOCAL_SOLID_RUNTIME_SHA256 = "2f95878023ca912f04a15209a4121558251a01e58ff5127288499fc567cd943b"
 
 
 def runtime_configuration(fixture: dict) -> tuple[Path, dict]:
+    observations = {"route_observation", "camera_observation", "scene_observation"} & fixture.keys()
+    if observations and {"runtime_profile", "message_contract", "market"} & fixture.keys():
+        raise ValueError("Observation profiles cannot share a task-specific runtime profile")
     protocol = fixture.get("message_contract", {}).get("initialization_protocol")
     override = {
         "initial-message-v2": "LIVEQUEST_VELOREN_INITIAL_MESSAGE_V2_RUNTIME",
@@ -31,6 +35,11 @@ def runtime_configuration(fixture: dict) -> tuple[Path, dict]:
         if profile not in ORIGINAL_RUNTIME_ENVIRONMENTS or protocol is not None or "market" in fixture:
             raise ValueError("Unsupported or conflicting original-task runtime profile")
         override = ORIGINAL_RUNTIME_ENVIRONMENTS[profile]
+    solid = fixture.get("scene_observation")
+    if "scene_observation" in fixture:
+        if solid != "native-solid-scene/1":
+            raise ValueError("Unsupported scene observation profile")
+        override = "LIVEQUEST_VELOREN_LOCAL_SOLID_RUNTIME"
     selected = (os.environ.get(override) if override else None) or os.environ.get("LIVEQUEST_VELOREN_RUNTIME")
     if not selected:
         setting = override or "LIVEQUEST_VELOREN_RUNTIME"
@@ -38,6 +47,8 @@ def runtime_configuration(fixture: dict) -> tuple[Path, dict]:
     path = Path(selected).resolve()
     encoded = path.read_bytes()
     runtime = json.loads(encoded)
+    if solid is not None and hashlib.sha256(encoded).hexdigest() != LOCAL_SOLID_RUNTIME_SHA256:
+        raise ValueError(f"{solid} requires its exact independently qualified runtime; configure {override}")
     if profile is not None and hashlib.sha256(encoded).hexdigest() != ORIGINAL_RUNTIME_SHA256:
         raise ValueError(f"{profile} requires its exact independently qualified runtime; configure {override}")
     if protocol is not None and runtime.get("initial_message_protocol") != protocol:

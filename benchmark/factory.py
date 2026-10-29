@@ -30,6 +30,10 @@ def make_game(
     task: TaskConfig, output: Path, *, headless: bool, recording: bool, recording_fps: int,
     recording_path: Path | None = None,
 ) -> GameBinding:
+    fixture = task.fixture
+    if task.game == "veloren" and task.id == "covered_support_forks_local_solid_v2":
+        from game.veloren.support_forks import prepare_episode_fixture
+        fixture = prepare_episode_fixture(task)
     if task.participants:
         from game.team import create_team_binding
         return create_team_binding(
@@ -42,7 +46,7 @@ def make_game(
     else:
         raise ConfigError(f"Unknown game: {task.game}")
     return create_binding(
-        fixture=task.fixture, task_type=task.task_type, evaluator=task.evaluator,
+        fixture=fixture, task_type=task.task_type, evaluator=task.evaluator,
         parameters=task.evaluator_parameters, tools=task.tools, output_dir=output,
         headless=headless, recording=recording, recording_fps=recording_fps, recording_path=recording_path,
     )

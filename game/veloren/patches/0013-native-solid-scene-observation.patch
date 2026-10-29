@@ -1,0 +1,90 @@
+--- a/voxygen/src/native_agent.rs
++++ b/voxygen/src/native_agent.rs
+@@ -236,2 +236,8 @@
++pub(crate) fn scene_observation_contract() -> Option<&'static str> {
++    let contract = crate::render::SOLID_SCENE_CONTRACT;
++    (std::env::var("LIVEQUEST_SCENE_OBSERVATION").as_deref() == Ok(contract))
++        .then_some(contract)
++}
++
+ fn renderer_ready(session: &str, identity: &Value, observation: &str) -> Value {
+     json!({
+@@ -247,2 +253,4 @@
+             "camera_observation": camera_observation_contract(),
++            "scene_observation": scene_observation_contract(),
++            "scene_profile": scene_observation_contract().unwrap_or("normal-voxygen"),
+             "camera_profile": camera_observation_contract().unwrap_or("ordinary-player"),
+--- a/voxygen/src/render/mod.rs
++++ b/voxygen/src/render/mod.rs
+@@ -484,9 +484,15 @@
+ impl PipelineModes {
+     pub fn remove_unsupported(&mut self) {
++        self.remove_unsupported_for_scene(
++            crate::native_agent::scene_observation_contract().is_some(),
++        );
++    }
++
++    fn remove_unsupported_for_scene(&mut self, restricted: bool) {
+         // Only enable experimental shaders that are supported by the game's current
+         // state
+         self.experimental_shaders.retain(|s| {
+-            if s.is_supported() {
++            if s.is_supported_for_scene(restricted) {
+                 true
+             } else {
+                 warn!(
+@@ -613,8 +619,53 @@
++pub(crate) const SOLID_SCENE_CONTRACT: &str = "native-solid-scene/1";
++
+ impl ExperimentalShader {
+     pub fn is_supported(&self) -> bool {
+-        match self {
++        self.is_supported_for_scene(crate::native_agent::scene_observation_contract().is_some())
++    }
++
++    fn is_supported_for_scene(&self, restricted: bool) -> bool {
++        !restricted && match self {
+             Self::Wireframe => cfg!(debug_assertions),
+             _ => true,
+         }
+     }
+ }
++
++#[cfg(test)]
++mod local_solid_scene_tests {
++    use super::{CloudMode, ExperimentalShader, RenderMode};
++    use strum::IntoEnumIterator;
++
++    #[test]
++    fn local_solid_scene_rejects_all_requests_and_replacement_preferences() {
++        let mode = RenderMode {
++            cloud: CloudMode::None,
++            ..RenderMode::default()
++        };
++        let (normal, _) = mode.split();
++        let mut pipeline = normal.clone();
++        for shader in ExperimentalShader::iter() {
++            assert!(!shader.is_supported_for_scene(true));
++            pipeline.experimental_shaders.insert(shader);
++        }
++        pipeline.remove_unsupported_for_scene(true);
++        assert_eq!(pipeline, normal);
++        pipeline.experimental_shaders.extend(ExperimentalShader::iter());
++        pipeline.remove_unsupported_for_scene(true);
++        assert_eq!(pipeline, normal);
++    }
++
++    #[test]
++    fn local_solid_scene_preserves_unrequested_native_preferences() {
++        let mut mode = RenderMode::default();
++        for shader in ExperimentalShader::iter() {
++            if shader != ExperimentalShader::Wireframe || cfg!(debug_assertions) {
++                mode.experimental_shaders.insert(shader);
++            }
++        }
++        let (mut pipeline, _) = mode.split();
++        let expected = pipeline.clone();
++        pipeline.remove_unsupported_for_scene(false);
++        assert_eq!(pipeline, expected);
++    }
++}

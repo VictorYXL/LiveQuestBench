@@ -1,0 +1,17 @@
+--- a/voxygen/src/native_agent.rs
++++ b/voxygen/src/native_agent.rs
+@@ -230,2 +230,8 @@
++pub(crate) fn camera_observation_contract() -> Option<&'static str> {
++    let contract = crate::scene::camera::LOCAL_CAMERA_CONTRACT;
++    (std::env::var("LIVEQUEST_CAMERA_OBSERVATION").as_deref() == Ok(contract))
++        .then_some(contract)
++}
++
+ fn renderer_ready(session: &str, identity: &Value, observation: &str) -> Value {
+     json!({
+@@ -239,3 +245,4 @@
+             "route_observation": route_observation_contract(),
+-            "camera_profile": "ordinary-player",
++            "camera_observation": camera_observation_contract(),
++            "camera_profile": camera_observation_contract().unwrap_or("ordinary-player"),
+             "hud_profile": route_observation_contract().unwrap_or("normal-voxygen"),

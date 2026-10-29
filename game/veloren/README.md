@@ -96,6 +96,31 @@ identity changes, nonfinite samples and overflow likewise remain fail-closed.
 Private rejection diagnostics identify the guard without resetting its history.
 Historical route/1 evidence does not qualify a rebuilt route/2 task.
 
+### Explicit local solid observation profiles
+
+`scene_observation: native-solid-scene/1` selects
+`LIVEQUEST_VELOREN_LOCAL_SOLID_RUNTIME`, with generic fallback only for the exact
+manifest SHA256 `2f95878023ca912f04a15209a4121558251a01e58ff5127288499fc567cd943b`.
+The frozen manifest is `output/temp/task_development/veloren-solid-local-view-20261029/candidate-runtime.json`;
+it binds renderer `165f2a692d87e4cc83e17e5c66540ee1a78cac25293b8c99b13b300b33289df3`
+and the reviewed native source/patch sidecars. Relocation or rebuilding needs a
+new explicit compatibility decision, not a silent checksum update.
+
+The scene profile rejects experimental/debug shaders, including saved preferences.
+`camera_observation: native-local-camera/1` separately bounds the camera to 10m and
+solid/unloaded-terrain collision. `route_observation: native-route-local-view/1`
+separately disables the voxel minimap and requires route/2 evidence. Camera and
+scene profiles do not request route restrictions: a camera+scene-only task retains
+its normal minimap, static map, compass and HUD. All three are opt-in; the renderer
+must advertise each requested capability and attest the exact active profile
+(including absence) in its actual same-client ready event.
+
+These observation profiles cannot be mixed with frozen original-task runtime
+profiles or Message/market-specific runtimes. Their existing selectors and generic
+route/2 validation remain unchanged. The shared renderer evidence qualifies only
+its component behavior; it does not automatically admit any task or relabel an
+older runtime's frames as new execution.
+
 ### Versioned information-task runtimes
 
 `native_message_courier_initial_v3` requires the separately rebuilt
@@ -457,3 +482,36 @@ to an episode policy. The unchanged raw v7 generator remains an authoring/audit
 API; generated variants need explicit publication/runtime binding rather than
 automatically inheriting the new paired-definition admission. No L02/L03/L05
 admission follows from this work.
+
+## VE-L05: optional support-side acquisition and rotated reuse
+
+The separately registered VM task is
+`covered_support_forks_local_solid_v2.yaml`, with its own same-named experiment.
+It preserves the reviewed 6974-voxel sample and opposite-heading 8/10-metre
+galleries, 600 seconds, ordinary resources and state-only final goal. It does
+not register an ST counterpart or replace the rejected v4 prototype.
+
+Set `LIVEQUEST_VELOREN_LOCAL_SOLID_RUNTIME` to the exact reviewed
+`output/temp/task_development/veloren-solid-local-view-20261029/candidate-runtime.json`
+(SHA256 `2f95878023ca912f04a15209a4121558251a01e58ff5127288499fc567cd943b`).
+The shared selector, manifest/file pins and actual native-ready checks reject
+stale or mismatched runtimes. L05 requests camera1 and scene1 only: route remains
+unset, and ordinary minimap/map inspection remains legal. The shared executable's
+bundled route capability does not enable that profile for L05.
+
+The registered YAML is a portable template of the reviewed native instance,
+not a permanently known support assignment. Each `make_game` independently
+draws a private seed using the unchanged reviewed generator, validates both the
+input contract and resulting definition against its two complete mappings, and
+holds a separate fixture. Consecutive draws may select the same side. Preflight
+does not launch a game, write an instance or cache a mapping for later episodes;
+the existing worker records the actual fixture in private `fixture-input.json`.
+No seed or private fixture is added to the Agent's observations.
+
+Independent review supports only optional support-bit acquisition and changed-
+orientation reuse, provisionally learning2 with high uncertainty. Cheap legal
+inspection is retained; the 18–18.828-metre comparisons are constructed walking
+alternatives, not global cold-policy bounds. Actual native whole-task scores
+remain false; no new second-gallery/whole VM victory is inferred.
+See the [integration bridge](../../docs/evidence/VE-L05-main-integration-bridge-20261030.json)
+and the unchanged [four-gate packet](../../docs/evidence/VE-L05-four-gate-packet-v2.json).

@@ -1,0 +1,94 @@
+{
+  "schema": "covered-support-forks-native-cold-access/1",
+  "date": "2026-10-29",
+  "status": "bounded_sample_and_lawful_local_inspection_completed",
+  "authorization": "First of at most three additional parent2337 episodes; one owned shared lease, no models, unchanged600s task. Stop after this useful calibration because independent reviews35/38 do not require a second-gallery or whole-win badge.",
+  "source": {
+    "candidate_commit": "29956645ea371c68863aed6b23cbf90982225a46",
+    "harness_commit": "ac33a49cf2953d0f15b27bd279fee09f9a5a3e7c",
+    "checker_sha256": "7d83cafcb1dfcdb46dc03a1068b4ff3ba783204efb9aaea811056c8d4ca2ca30",
+    "task_sha256": "e74cc3a0cef1b59c81c394a586150d7951ef284db90581c3380b112331ae9ef2",
+    "runtime_sha256": "2f95878023ca912f04a15209a4121558251a01e58ff5127288499fc567cd943b",
+    "actual_proc_renderer_sha256": "165f2a692d87e4cc83e17e5c66540ee1a78cac25293b8c99b13b300b33289df3",
+    "native_commit": "e664297689f29e24a8c3e28d23d9c1590e5a50a1",
+    "configuration": "6974unchanged voxels;camera1+scene1;actual readyroute=null,hud=normal-voxygen,same_client=true. No minimap restriction, savedpreference wrapper, gameplay reset, resource refill, mandatory practice or score modification."
+  },
+  "execution": {
+    "root_in_worktree": "output/support-forks-solid-v2/native-cold-1",
+    "lease": "cf3d3bff3c304dad9228a63288cc77fe",
+    "status": "completed",
+    "public_frames": 7,
+    "public_action_batches": 8,
+    "public_seconds": 92.948554468,
+    "checker_seconds_including_terminal_capture": 100.70708066318184,
+    "sum_actual_action_request_windows_seconds": 8.05067643057555,
+    "direction_key_hold_seconds": 6.15,
+    "timing_boundary": "Only request windows and key holds are bounded control measurements. Public92.949s includes manual image interpretation/idle; checker100.707s also includes terminal capture. Neither is an efficient traversal time or a difficulty score.",
+    "control_boundary": "Public images/ordinary0,w,a,d and two relative mouse moves only. First-person sample captured before translation. Fixed-world-west helper does not consume a side; subsequent corrections follow visible walls/opening. Operator did see the sample, so this is not a blinded cold-policy experiment. No hidden seed, private live pose or mid-episode snapshot was used.",
+    "retained_launch_issue": "Initial direct-script helper failed importing game before any public command. Only helper invocation was corrected to python -m; untouched downstream waiter stopped. No native restart or gameplay change."
+  },
+  "observed": [
+    {
+      "frame": 2,
+      "elapsed_seconds": 1.4977313550189137,
+      "finding": "Real raised Rock sample is visibly left before any direction-key input. Acquisition requires no additional physical journey, rather than a compulsory duplicate climb.",
+      "sha256": "49b795f4fc738959f4bb6461d154affd7e2166889e05dddda6a3591e1deb1617"
+    },
+    {
+      "frame": 5,
+      "elapsed_seconds": 8.744443052448332,
+      "finding": "Early scripted view is predominantly wall and a narrow opening. Its intended inspection label does not certify support-bit readability, exact native pose or the static12.657m witness.",
+      "sha256": "e3546fbd9971a6c5656c9b3b3737864ba05ff95741a7f5ecdecc31f3265b9994"
+    },
+    {
+      "frame": 7,
+      "elapsed_seconds": 70.26771073695272,
+      "finding": "After an ordinary look correction and wall-guided walk, the west/left upper floor strip through the first gallery is visibly continuous. No fall, jump, glider or climb was required to inspect it. This realization chose the supported branch; it does not measure a wrong-branch penalty.",
+      "sha256": "cfa7b0f8405cbf74146e92d7109254175822ddd9ce78f511e44495553df217d3"
+    }
+  ],
+  "authenticated_terminal": {
+    "position": [18705.66796875, 10825.5498046875, 501.0],
+    "health": 100,
+    "energy": 100,
+    "on_ground": true,
+    "character_state": "Idle",
+    "speed": 1.401298464324817e-45,
+    "death_events": 0,
+    "aimed_block_position": [18705, 10830, 500],
+    "interpretation": "Post-end native aim readback corroborates visible first-gallery floor; it was not supplied to the public controller. Native endpoint is on the common approach before the gap, not a completed first bridge or second application. Native-body static support/clearance at this exact position passes both6974voxel mappings.",
+    "whole_success": false,
+    "goal_horizontal_error_m": 34.9734194640426,
+    "snapshot_hashes_verified": true,
+    "unchanged_scorer_replay_equal": true,
+    "resource_boundary": "100energy is terminal net state, not a peak-expenditure measurement. Nothing here supports a necessary health, climb-energy or severe recovery penalty."
+  },
+  "bounded_final_argument": {
+    "supported": "Actual zero-translation sample supplies the relative support assignment. Reusing it selects a branch and, in the constructed opposite-heading application, changes the world-side decision. The independent bounded optional-learning2 judgment stands.",
+    "cheap_alternative": "Actual ordinary local inspection is legal and cheap. This supported first-branch realization needs no correction and establishes no extra distance penalty. The frozen two-map walking comparisons still show only one avoidable18–18.828m inspection/retreat across both orientations; these remain constructed comparisons, not measured native penalties or global lower bounds.",
+    "composition": "Retain old150ede native first-upper-lip evidence plus both full-body same-fixture walks through two actual opposite-oriented bridges, independently reviewed in35. This new165f episode adds genuine sample/local-view evidence under the final two-profile condition. Do not splice resets into a claimed new native two-application success.",
+    "not_claimed": "No material-law discovery, essential memory, exclusion of every cold/glide policy, binding resource advantage, expensive5m recovery, native second-gallery completion or whole-task victory.",
+    "remaining": "No substantive blocker under the independently reviewed limited claim. Parent source/runtime integration and adoption remain separate. Higher-precision cold/glide timing and difficulty calibration are optional, not new admission gates."
+  },
+  "raw_evidence": {
+    "index_in_episode_root": "evidence-index.json",
+    "index_sha256": "554a722643cf6b5bfc7f8a28a26242bb7e05d4a78aa5fdaadc7683275be6a917",
+    "coverage": "31files including all7images/settings, public phases, initial/terminal snapshots, fixture input and full fixture receipt, full native journal, video, ready/process/boundary/cleanup receipts.",
+    "result_sha256": "2c6167f625ab8215b257dd4e18e51c58725366b6250723596bb769607a69cd40",
+    "video_sha256": "eaa6467f81025206a1771e1435692ff060ef779d117e834feff70e06b7c3d9a0"
+  },
+  "cleanup": {
+    "lease_status": "finished",
+    "lease_returncode": 0,
+    "worker_returncode": 0,
+    "server_stopped": true,
+    "server_exit_code": -15,
+    "owned_processes_verified_absent": [2050153, 2050155, 2050172, 2050269, 2050408, 2050565, 2050151],
+    "public_port": 43703,
+    "public_port_connection_refused": true
+  },
+  "additional_native_allowance_used": 1,
+  "additional_native_allowance_ceiling": 3,
+  "further_episode_started": false,
+  "canonical_or_ledger_changed": false
+}

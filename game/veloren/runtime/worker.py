@@ -59,6 +59,9 @@ class LocalRenderer(RendererBridge):
             "NO_PROXY": "127.0.0.1,localhost", "no_proxy": "127.0.0.1,localhost",
             "LIVEQUEST_DISABLE_NATIVE_PROTECTION": "1",
             "LIVEQUEST_ROUTE_EVIDENCE": "1" if getattr(self, "route_evidence", False) else "0",
+            "LIVEQUEST_ROUTE_OBSERVATION": getattr(self, "route_observation", None) or "",
+            "LIVEQUEST_CAMERA_OBSERVATION": getattr(self, "camera_observation", None) or "",
+            "LIVEQUEST_SCENE_OBSERVATION": getattr(self, "scene_observation", None) or "",
         }
         Path(env["HOME"]).mkdir(exist_ok=True)
         self.process = await asyncio.create_subprocess_exec(
@@ -76,6 +79,12 @@ class LocalRenderer(RendererBridge):
         await asyncio.wait_for(asyncio.shield(self.renderer_ready), 120)
         if self.renderer_ready.result()["data"]["same_client"] is not True:
             raise RuntimeError("Renderer is not the controlled native player")
+        if self.renderer_ready.result()["data"].get("route_observation") != getattr(self, "route_observation", None):
+            raise RuntimeError("Renderer did not enforce the declared route observation contract")
+        if self.renderer_ready.result()["data"].get("camera_observation") != getattr(self, "camera_observation", None):
+            raise RuntimeError("Renderer did not enforce the declared camera observation contract")
+        if self.renderer_ready.result()["data"].get("scene_observation") != getattr(self, "scene_observation", None):
+            raise RuntimeError("Renderer did not enforce the declared scene observation contract")
 
 
 class Session:
@@ -109,6 +118,12 @@ class Session:
             raise ValueError("Fixture requires passive native glide evidence; rerun Veloren setup")
         if self.fixture.get("route_evidence") and cfg.get("route_evidence") != "native-client-route/2":
             raise ValueError("Fixture requires passive native route evidence; rerun Veloren setup")
+        if self.fixture.get("route_observation") and cfg.get("route_observation") != self.fixture["route_observation"]:
+            raise ValueError("Fixture requires a renderer with the declared route observation contract")
+        if self.fixture.get("camera_observation") and cfg.get("camera_observation") != self.fixture["camera_observation"]:
+            raise ValueError("Fixture requires a renderer with the declared camera observation contract")
+        if self.fixture.get("scene_observation") and cfg.get("scene_observation") != self.fixture["scene_observation"]:
+            raise ValueError("Fixture requires a renderer with the declared scene observation contract")
         if self.fixture.get("pickup_evidence") and cfg.get("pickup_evidence") != "native-server-pickups/1":
             raise ValueError("Fixture requires passive native original-supply evidence")
         if "sword_skill_points" in self.fixture and cfg.get("auxiliary_input") != "native-client-auxiliary/1":
@@ -163,6 +178,9 @@ class Session:
         )
         self.stack.push_async_callback(self.actor.close)
         self.actor.route_evidence = self.fixture.get("route_evidence", False)
+        self.actor.route_observation = self.fixture.get("route_observation")
+        self.actor.camera_observation = self.fixture.get("camera_observation")
+        self.actor.scene_observation = self.fixture.get("scene_observation")
         await self.actor.start()
         initialized = await initialize_fixture(
             admin, self.actor, self.fixture, shared_world=bool(self.attachment),
@@ -178,6 +196,9 @@ class Session:
         write_fixture_record(self.output, initialized, self.record["world_fixture"])
         return {"renderer_pid": self.actor.process.pid, "actor": self.actor.ready.result(),
                 "runtime": cfg, "display": os.environ["DISPLAY"],
+                "route_observation": self.actor.renderer_ready.result()["data"].get("route_observation"),
+                "camera_observation": self.actor.renderer_ready.result()["data"].get("camera_observation"),
+                "scene_observation": self.actor.renderer_ready.result()["data"].get("scene_observation"),
                 "shared_world": {"port": port, "userdata": str(userdata), "output": str(self.oracle_output),
                                  "username": self.record["username"], "world_fixture": self.record["world_fixture"]}}
 

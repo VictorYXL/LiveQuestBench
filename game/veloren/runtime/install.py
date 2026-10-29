@@ -42,11 +42,17 @@ def main() -> None:
     auxiliary_patch = patch.with_name("0005-bounded-auxiliary-input.patch")
     route_patch = patch.with_name("0006-native-route-evidence.patch")
     physics_route_patch = patch.with_name("0008-native-physics-route-evidence.patch")
+    route_observation_patch = patch.with_name("0010-route-local-observation.patch")
+    camera_patch = patch.with_name("0011-native-local-camera.patch")
+    camera_contract_patch = patch.with_name("0012-native-camera-observation-contract.patch")
+    scene_patch = patch.with_name("0013-native-solid-scene-observation.patch")
     changed = ("voxygen/src/native_agent.rs", "voxygen/src/session/mod.rs",
                "client/src/agent_protocol/continuous_control.rs", "client/src/agent_protocol/mod.rs",
                "common/src/comp/phys.rs", "common/src/comp/mod.rs",
                "common/systems/src/phys/mod.rs", "common/systems/src/phys/collision.rs",
-               "common/systems/tests/phys/fixture_authoring.rs")
+               "common/systems/tests/phys/fixture_authoring.rs", "voxygen/src/hud/minimap.rs",
+               "voxygen/src/scene/camera.rs", "voxygen/src/scene/mod.rs",
+               "voxygen/src/render/mod.rs")
     with tempfile.TemporaryDirectory(prefix="veloren-patch-", dir=root.parent) as temporary:
         expected = Path(temporary)
         for name in changed:
@@ -68,6 +74,13 @@ def main() -> None:
         subprocess.run(["patch", "--batch", "-p1", "-i", str(route_patch.resolve())], cwd=expected, check=True)
         without_physics_route = hashes | {name: digest(expected / name) for name in changed}
         subprocess.run(["patch", "--batch", "-p1", "-i", str(physics_route_patch.resolve())], cwd=expected, check=True)
+        without_route_observation = hashes | {name: digest(expected / name) for name in changed}
+        subprocess.run(["patch", "--batch", "-p1", "-i", str(route_observation_patch.resolve())], cwd=expected, check=True)
+        without_camera = hashes | {name: digest(expected / name) for name in changed}
+        subprocess.run(["patch", "--batch", "-p1", "-i", str(camera_patch.resolve())], cwd=expected, check=True)
+        subprocess.run(["patch", "--batch", "-p1", "-i", str(camera_contract_patch.resolve())], cwd=expected, check=True)
+        without_scene = hashes | {name: digest(expected / name) for name in changed}
+        subprocess.run(["patch", "--batch", "-p1", "-i", str(scene_patch.resolve())], cwd=expected, check=True)
         patched = hashes | {name: digest(expected / name) for name in changed}
     if not root.exists():
         shutil.copytree(cache, root, symlinks=False)
@@ -100,6 +113,20 @@ def main() -> None:
     if current == without_physics_route:
         subprocess.run(["patch", "--batch", "-p1", "-i", str(physics_route_patch.resolve())],
                        cwd=root / "source", check=True)
+        current = without_route_observation
+    if current == without_route_observation:
+        subprocess.run(["patch", "--batch", "-p1", "-i", str(route_observation_patch.resolve())],
+                       cwd=root / "source", check=True)
+        current = without_camera
+    if current == without_camera:
+        subprocess.run(["patch", "--batch", "-p1", "-i", str(camera_patch.resolve())],
+                       cwd=root / "source", check=True)
+        subprocess.run(["patch", "--batch", "-p1", "-i", str(camera_contract_patch.resolve())],
+                       cwd=root / "source", check=True)
+        current = without_scene
+    if current == without_scene:
+        subprocess.run(["patch", "--batch", "-p1", "-i", str(scene_patch.resolve())],
+                       cwd=root / "source", check=True)
     elif current != patched:
         raise ValueError("Build source differs from the selected source plus declared patch")
     if {name: digest(root / "source" / name) for name in hashes} != patched:
@@ -128,11 +155,22 @@ def main() -> None:
         "auxiliary_patch_sha256": digest(auxiliary_patch), "auxiliary_input": "native-client-auxiliary/1",
         "route_patch_sha256": digest(route_patch), "route_evidence": "native-client-route/2",
         "physics_route_patch_sha256": digest(physics_route_patch),
+        "route_observation_patch_sha256": digest(route_observation_patch),
+        "route_observation": "native-route-local-view/1",
+        "camera_observation": "native-local-camera/1",
+        "camera_observation_patches_sha256": {
+            camera_patch.name: digest(camera_patch),
+            camera_contract_patch.name: digest(camera_contract_patch),
+        },
+        "scene_observation": "native-solid-scene/1",
+        "scene_observation_patch_sha256": digest(scene_patch),
         "native_protection": "disabled by explicit renderer launch environment",
         "compiler_cache": str(cache), "qualification": "requires LiveQuestBench real-game checks",
         "sha256": {str(path.resolve()): digest(path)
                    for path in (executable, patch, protection_patch, motion_patch, glide_patch,
-                                auxiliary_patch, route_patch, physics_route_patch, source_manifest)},
+                                auxiliary_patch, route_patch, physics_route_patch, route_observation_patch,
+                                camera_patch, camera_contract_patch, scene_patch,
+                                source_manifest)},
     }
     pending = root / ".runtime.json.tmp"
     pending.write_text(json.dumps(record, indent=2) + "\n")

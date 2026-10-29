@@ -1,0 +1,73 @@
+{
+  "schema": "covered-support-forks-bounded-learning-argument/2",
+  "date": "2026-10-29",
+  "status": "quantified_constructive_argument_for_independent_review_not_admission",
+  "authorization": "Parent23:21 explicitly approved isolated scene_observation repair, unchanged geometry/resources/scorer/routes, source/runtime/config transfer from the shared general-render diagnostic, and a bounded cold-cost/changed-application argument. No additional L05 native launch.",
+  "unchanged_condition": {
+    "task": "covered_support_forks_local_solid_v2",
+    "candidate_commit": "29956645ea371c68863aed6b23cbf90982225a46",
+    "camera_observation": "native-local-camera/1",
+    "scene_observation": "native-solid-scene/1",
+    "route_observation": null,
+    "route_evidence": false,
+    "scope": "6974voxels,100HP/normal energy,ordinary loadout/glider,600s,state-only final endpoint. All legal viewing/physical routes remain; no practice/side/path/memory or failed-attempt score."
+  },
+  "exact_runtime_bridge": {
+    "old_runtime_sha256": "150ede8002967327ddb6a5e56637911fd04d746301eaf0f11521685f131b4cfb",
+    "new_runtime": "output/temp/task_development/veloren-solid-local-view-20261029/candidate-runtime.json",
+    "new_runtime_sha256": "2f95878023ca912f04a15209a4121558251a01e58ff5127288499fc567cd943b",
+    "new_renderer_sha256": "165f2a692d87e4cc83e17e5c66540ee1a78cac25293b8c99b13b300b33289df3",
+    "new_native_source_commit": "e664297689f29e24a8c3e28d23d9c1590e5a50a1",
+    "own_validation": "Rehashed all34old and35new runtime-declared files successfully. Compared ten relevant old/new native source files byte-for-byte: climb,idle,utils,body,consts,stats,collision,landing events,camera,scene are unchanged. The shared owner reports completed build0 and actual native10tests passed, including all36experimental modes.",
+    "physics_sha256": {
+      "common/src/states/climb.rs": "efcdf834a94703cdf79c5270198b63e894e2f2abada947700d58cb67c80584e3",
+      "common/src/states/idle.rs": "a3072eb5ea013ed0d213e721b4cc30257ccd7e2374df940ee94acbb4bd5b0459",
+      "common/src/states/utils.rs": "9472eab740f77da8479bf22a06dd4c560b8ef663fd0efbe558328be2be9c042a",
+      "common/src/comp/body/mod.rs": "c612dc78e83c23cfdf323100b02efb1e56c8c9ad6616d3c242b459b951624ac2",
+      "common/src/consts.rs": "097c5d29a18a143240afcef9e43d7a1299c33f0a0fc40ee8341ac65392bd2145",
+      "common/systems/src/stats.rs": "5503d5dc29796852b127fad0def56664975a3156f2293711854983cc08c5d0dd",
+      "common/systems/src/phys/collision.rs": "bf72d4a7945397d11dcf471712943b9c265e439190645386dfdf8a17ca6f81a4",
+      "server/src/events/entity_manipulation.rs": "3b34cd4f431d6399862d4e214c465b895802f0ebc2085a96020c4b6be7b77bbf"
+    },
+    "flag_boundary": "Runtime advertises three capabilities, but L05 requests onlycamera/1+scene/1. Worker clearsLIVEQUEST_ROUTE_OBSERVATION and sets route evidence0. Scene contract reads onlyLIVEQUEST_SCENE_OBSERVATION; it does not depend on route/minimap opt-in. Camera and scene guards were byte-identical across binaries.",
+    "shared_GUI": "Owner's single267voxel/180s general diagnostic is proposed with all three profiles, startup Wireframe/ViewDepth saved preferences, ordinary chat attempts and preserved map/camera/HUD. No result is claimed yet. Its eventual scene-guard evidence can transfer through the identical general path, but it will not be an L05 route=null native run.",
+    "default_boundary": "Old150ede unrestricted Wireframe016/017 remains real negative/control evidence. New native full-mode profile-off tests/source preserve original behavior; do not claim new165f profile-off native execution if it was not run.",
+    "no_relabelling": "Actual L05 sample/first-gallery receipts remain old150ede native evidence, never new165f execution."
+  },
+  "observed_native_components": {
+    "binding": "6c4a6f09432dfd32e72bd157f79a1066b1cee4bf and VE-L05-covered-support-forks-native-v1.json; independent audit dated_addenda[26].",
+    "sample_acquisition": "Frame003 shows the actual left raised pad after ordinary first-person switching and before any translation. Zero extra practice journey, climb, ability use or forced probe was needed. This is a demonstrated acquisition component, not a measured model processing cost.",
+    "physical_access": "Authenticated after[18715.55078125,10836.17578125,501],100HP/100energy,Idle,grounded,essentially zero speed, at the first-gallery far upper lip. Whole=false and32.262m final-goal error remain unchanged.",
+    "limits": "Terminal full energy is net state after idle/regeneration, not proof of zero peak expenditure. No intermediate positions/grounding or cold recovery are reconstructed from images.369.99s checker time is not efficient route time or difficulty calibration."
+  },
+  "new_reproducible_construction": {
+    "source": "game/veloren/prototypes/support_fork_cost_audit.py",
+    "output": "docs/evidence/VE-L05-cold-route-witness-v2.json",
+    "tests": "13passed in1.96s across new cold-cost checks, original both-map/rotated geometry checks and v2 invariance/writer tests.",
+    "metric": "Literal metres of eight-neighbour supported cell-centre walks with both side cells clear at every diagonal. Native body0.45terrain half-width/2.333333height. A first-person eye at0.8body-height has unobstructed rays to all four corners of a0.25m surface patch that exists in only one mapping. These are static actual-fixture witnesses, not a new task score, native timing or global motor optimum.",
+    "known_walk": "Stage entry-to-exit witnesses39.142m and41.142m; whole continuous start-to-final witnesses117.456m/right-map and119.113m/left-map. Each whole path crosses both actual bridges in one connected fixture, not two reset episodes.",
+    "cold_direct_inspection": "A wrong-branch first-person inspection is already available12.657m along a safe supported approach from that stage entry, without falling or climbing. Complete that stage by retreating and taking the other supported side:18.828m extra in this finite walking construction. A correct-branch view can lie on the known supported route with no extra walking. Third-person corner viewing or finer continuous paths may be cheaper;12.657m is not a universal visibility lower bound.",
+    "sample_vs_first_application_learning": "A no-sample policy can inspect the first relative-left approach, infer the same bit and reuse it at the second. Its whole route is119.113m on the left map,136.284m on the right map:0 or18.828m extra, not two repeated penalties. Thus the sample saves only acquisition/correction that would otherwise happen once; merely having two applications does not double its value.",
+    "concrete_memoryless_alternative": "Always initially choose WORLD WEST, inspect locally and retreat on solid ground when unsupported. Because application2 is rotated180degrees, this is relative-left then relative-right: exactly ONE initially unsupported choice for either map, not two. Constructed whole walks136.284m/right-map and137.113m/left-map, respectively18.828m and18.000m above the known-support walk. This needs no retained support bit and no climb/glide/jump. It is an explicit cheap legal counterpolicy, not a measured controller run.",
+    "ground_recovery_alternative": "The same world-west policy can instead continue through the one unsupported bay and recover. Source witnesses give7m or9m between lower-floor interior centres, then a clear5m vertical corridor and1m lip-crossing to full support. Entry fall and exit dynamics are not certified by these static sweeps. The fixed-compass rule requires this at most once across the two orientations; regeneration during the connector further defeats doubled energy-penalty claims.",
+    "second_application_continuation": "From fully supported[18715.5,10836.5,501], adjacent to but not substituted for the actual native endpoint, supported continuations are78.385m/right-map and79.213m/left-map. They include the connector and opposite-heading second bridge. The actual endpoint has a small conservative-footprint edge discrepancy; this grid anchor is not an invented intermediate native pose."
+  },
+  "native_resource_accounting": {
+    "safe_inspection_retreat": "Ordinary supported Idle walking has no climb/ability energy charge, and native stats allows regeneration. No health hazard is authored on these supported paths. Do not assign arbitrary time or stamina penalties to looking or backtracking.",
+    "drop_health": "Native landing damage starts at normal-relative speed30. Gravity is25. A gravity-only5m drop from rest has ideal speed sqrt(2*25*5)=15.811, below threshold; this supports rejecting a claimed necessary health penalty, not a native measured fall. Existing downward momentum, other inputs and contacts are separate conditions.",
+    "recovery_energy": "Climb use=max(1,magnitude(lateral_input,15*positive_upward_input)) per second. Full upward input costs15/s while pure lateral cling can cost1/s. Climb cancels gravity before its25*input acceleration; wall friction is0.15 with elapsed-time exponent.5is not observed metres/second. No fixed energy total or native climb time is invented; jumping/gliding can further reduce the descent/recovery and remain legal.",
+    "budget": "Neither100energy nor600s is shown binding. Net endpoint100energy cannot establish a history-free recovery duration. This package makes no time conversion from physical distance or operator-idle wall time."
+  },
+  "bounded_learning_argument": {
+    "learned_quantity": "The episode's actual relative supported side, one of two realized physical assignments. The transfer rule is disclosed; no new material-response law or general climbing skill is learned.",
+    "changed_use": "Remembered relative-left/right selects opposite world-x in the second, longer bay. A fixed world-side choice demonstrably cannot select both supported bridges. The useful change is a concrete branch decision, not navigation labelled learning.",
+    "positive_supported_claim": "The initial real sample offers that reusable assignment with no additional physical journey. It can eliminate a later unsupported-branch inspection/correction and permits two supported traversals without re-acquiring the side at application2. The explicit supported-walk comparison quantifies this information/control convenience without banning cold routes.",
+    "not_proved": "This does not show dominance over the cheapest skilled jump/glide/cling policy, a binding resource advantage, necessity of memory, a calibrated model-success gap or rendered readability at every computed inspection viewpoint. The legal memoryless ground-retreat construction is cheap and must be weighed, not excluded.",
+    "requested_review": "Decide whether this bounded optional concealed-support acquisition and changed-orientation reuse is a substantive enough learning construct under current policy, accounting for the explicit cheap counterpolicy. If not, identify the specific remaining value/composition defect rather than demanding a full win or statistical causal proof."
+  },
+  "next_check_boundary": {
+    "global_observation": "Use the shared owner's exact restrictive-render GUI; no duplicate L05 camera/shader run.",
+    "only_if_still_discriminating_after_review": "A separately parent-approved L05-specific component check could test an ordinary publicly selected unsupported-bay glide/cling/recovery and immediate landing/resource state under the unchanged fixture. It would answer whether cold crossing is effectively no-cost, not force a learner mistake or become a required probe. No such run is authorized or started here.",
+    "no_new_native_models_main_or_ledger_edits": true
+  }
+}

@@ -73,7 +73,8 @@ def validate_fixture(value: object) -> dict:
                 "motion_evidence", "glide_evidence", "platform", "native_site", "merchant",
                 "sword_skill_points", "companion", "contract", "respawn_at_start", "route_evidence",
                 "public_energy", "pickup_evidence", "peer_group", "harvest_sites",
-                "message_contract", "market", "runtime_profile"}
+                "message_contract", "market", "runtime_profile", "route_observation",
+                "camera_observation", "scene_observation"}
     if not isinstance(value, dict) or required - value.keys() or value.keys() - required - optional:
         raise ValueError(f"Veloren fixture requires exactly {sorted(required)} plus optional {sorted(optional)}")
     fixture = value
@@ -82,9 +83,21 @@ def validate_fixture(value: object) -> dict:
             "native-contract-settlement/1", "hostile-route-supply-recovery/1", "self-funded-expedition/1",
         ):
             raise ValueError("Unsupported original-task runtime profile")
-        if ({"message_contract", "market"} & fixture.keys()
+        if ({"message_contract", "market", "route_observation", "camera_observation", "scene_observation"} & fixture.keys()
                 or fixture.get("route_evidence") or fixture.get("pickup_evidence")):
             raise ValueError("Original-task runtime profiles cannot qualify newer native evidence")
+    if "route_observation" in fixture and (
+        fixture["route_observation"] != "native-route-local-view/1"
+        or fixture.get("route_evidence") is not True
+    ):
+        raise ValueError("route_observation requires native-route-local-view/1 and route_evidence")
+    if "camera_observation" in fixture and fixture["camera_observation"] != "native-local-camera/1":
+        raise ValueError("camera_observation requires native-local-camera/1")
+    if "scene_observation" in fixture and fixture["scene_observation"] != "native-solid-scene/1":
+        raise ValueError("scene_observation requires native-solid-scene/1")
+    if ({"route_observation", "camera_observation", "scene_observation"} & fixture.keys()
+            and {"message_contract", "market"} & fixture.keys()):
+        raise ValueError("Information-task runtimes cannot qualify observation profiles")
     if "message_contract" in fixture and "market" in fixture:
         raise ValueError("Message and market preparation require separate fixtures")
     if {"message_contract", "market"} & fixture.keys() and "harvest_sites" in fixture:

@@ -1,0 +1,450 @@
+diff --git a/voxygen/src/scene/camera.rs b/voxygen/src/scene/camera.rs
+index 9cd01f3..e74b13e 100644
+--- a/voxygen/src/scene/camera.rs
++++ b/voxygen/src/scene/camera.rs
+@@ -14,6 +14,165 @@ const FREEFLY_INTERP_TIME: f32 = 0.0;
+ const LERP_ORI_RATE: f32 = 15.0;
+ const CLIPPING_MODE_RANGE: Range<f32> = 2.0..20.0;
+ pub const MIN_ZOOM: f32 = 0.1;
++pub(crate) const LOCAL_CAMERA_CONTRACT: &str = "native-local-camera/1";
++pub(crate) const LOCAL_CAMERA_MAX_DISTANCE: f32 = 10.0;
++
++// Pure collision core: shared by the renderer and lightweight native regressions.
++fn local_camera_distance(
++    focus: [f32; 3],
++    requested: [f32; 3],
++    radius: f32,
++    mut solid: impl FnMut([i32; 3]) -> bool,
++) -> Option<f32> {
++    if !focus.iter().chain(requested.iter()).all(|v| v.is_finite())
++        || !radius.is_finite()
++        || !(0.0..=1.0).contains(&radius)
++    {
++        return None;
++    }
++    let delta = std::array::from_fn::<_, 3, _>(|i| requested[i] - focus[i]);
++    let length = delta.iter().map(|v| v * v).sum::<f32>().sqrt();
++    if !length.is_finite() {
++        return None;
++    }
++    let distance = length.min(LOCAL_CAMERA_MAX_DISTANCE);
++    let delta = delta.map(|v| if length > 0.0 { v * distance / length } else { 0.0 });
++    let end = std::array::from_fn::<_, 3, _>(|i| focus[i] + delta[i]);
++    let lower = std::array::from_fn::<_, 3, _>(|i| (focus[i].min(end[i]) - radius).floor());
++    let upper = std::array::from_fn::<_, 3, _>(|i| (focus[i].max(end[i]) + radius).floor());
++    if lower.iter().chain(upper.iter()).any(|v| v.abs() > 1_000_000_000.0) {
++        return None;
++    }
++    let lower = lower.map(|v| v as i32);
++    let upper = upper.map(|v| v as i32);
++    let mut limit = 1.0_f32;
++    for x in lower[0]..=upper[0] {
++        for y in lower[1]..=upper[1] {
++            for z in lower[2]..=upper[2] {
++                let cell = [x, y, z];
++                if !solid(cell) {
++                    continue;
++                }
++                let mut enter = 0.0_f32;
++                let mut leave = 1.0_f32;
++                for axis in 0..3 {
++                    let low = cell[axis] as f32 - radius;
++                    let high = cell[axis] as f32 + 1.0 + radius;
++                    if delta[axis].abs() < f32::EPSILON {
++                        if focus[axis] < low || focus[axis] > high {
++                            leave = -1.0;
++                            break;
++                        }
++                    } else {
++                        let a = (low - focus[axis]) / delta[axis];
++                        let b = (high - focus[axis]) / delta[axis];
++                        enter = enter.max(a.min(b));
++                        leave = leave.min(a.max(b));
++                    }
++                }
++                if enter <= leave {
++                    if enter <= 0.0 {
++                        return None;
++                    }
++                    limit = limit.min(enter);
++                }
++            }
++        }
++    }
++    Some(if limit < 1.0 { (distance * limit - 0.01).max(0.0) } else { distance })
++}
++
++fn local_near_plane_radius(fov: f32, aspect: f32) -> Option<f32> {
++    if !fov.is_finite() || !(0.0..std::f32::consts::PI).contains(&fov)
++        || fov == 0.0 || !aspect.is_finite() || aspect <= 0.0
++    {
++        return None;
++    }
++    let half_height = NEAR_PLANE * (fov * 0.5).tan();
++    let radius = (NEAR_PLANE.powi(2) + half_height.powi(2) * (1.0 + aspect.powi(2))).sqrt() + 0.02;
++    (radius.is_finite() && radius <= 1.0).then_some(radius)
++}
++
++#[cfg(test)]
++mod local_camera_tests {
++    use super::{CameraMode, local_camera_distance, local_near_plane_radius, next_camera_mode};
++
++    #[test]
++    fn local_camera_cycle_keeps_first_and_third_person_without_freefly() {
++        assert_eq!(next_camera_mode(CameraMode::FirstPerson, true, true, true), CameraMode::ThirdPerson);
++        assert_eq!(next_camera_mode(CameraMode::ThirdPerson, true, true, true), CameraMode::FirstPerson);
++        assert_eq!(next_camera_mode(CameraMode::Freefly, true, true, true), CameraMode::ThirdPerson);
++        assert_eq!(next_camera_mode(CameraMode::FirstPerson, true, false, true), CameraMode::ThirdPerson);
++        assert_eq!(next_camera_mode(CameraMode::FirstPerson, true, true, false), CameraMode::Freefly);
++        assert_eq!(next_camera_mode(CameraMode::FirstPerson, false, true, false), CameraMode::ThirdPerson);
++        assert_eq!(next_camera_mode(CameraMode::ThirdPerson, false, false, false), CameraMode::Freefly);
++    }
++
++    #[test]
++    fn local_camera_remote_air_does_not_bypass_intervening_wall() {
++        let distance = local_camera_distance(
++            [0.5, 0.5, 0.5], [8.5, 0.5, 0.5], 0.15,
++            |cell| cell == [3, 0, 0],
++        ).unwrap();
++        assert!((distance - 2.34).abs() < 0.0001);
++    }
++
++    #[test]
++    fn local_camera_near_wall_has_no_reverse_ray_fallback() {
++        let distance = local_camera_distance(
++            [0.5, 0.5, 0.5], [-1.5, 0.5, 0.5], 0.15,
++            |cell| cell == [-1, 0, 0],
++        ).unwrap();
++        assert!((distance - 0.34).abs() < 0.0001);
++    }
++
++    #[test]
++    fn local_camera_near_plane_corner_cannot_cut_adjacent_solid() {
++        let focus = [0.5, 0.9, 0.5];
++        let requested = [5.5, 0.9, 0.5];
++        let point = local_camera_distance(focus, requested, 0.0, |c| c == [2, 1, 0]).unwrap();
++        let plane = local_camera_distance(focus, requested, 0.15, |c| c == [2, 1, 0]).unwrap();
++        assert_eq!(point, 5.0);
++        assert!((plane - 1.34).abs() < 0.0001);
++    }
++
++    #[test]
++    fn local_camera_solid_or_unloaded_origin_fails_closed() {
++        assert!(local_camera_distance(
++            [0.5, 0.5, 0.5], [8.5, 0.5, 0.5], 0.15, |c| c == [0, 0, 0],
++        ).is_none());
++        assert!(local_camera_distance(
++            [0.5, 0.5, 0.5], [8.5, 0.5, 0.5], 0.15, |_| true,
++        ).is_none());
++        assert!(local_camera_distance(
++            [0.1, 0.5, 0.5], [8.5, 0.5, 0.5], 0.15, |c| c == [-1, 0, 0],
++        ).is_none());
++    }
++
++    #[test]
++    fn local_camera_large_zoom_and_diagonal_wall_are_bounded() {
++        let free = local_camera_distance(
++            [0.5, 0.5, 0.5], [1000.5, 0.5, 0.5], 0.15, |_| false,
++        ).unwrap();
++        assert_eq!(free, 10.0);
++        let diagonal = local_camera_distance(
++            [0.5, 0.5, 0.5], [5.5, 5.5, 5.5], 0.15, |c| c == [1, 1, 1],
++        ).unwrap();
++        assert!(diagonal > 0.0 && diagonal < 1.0);
++    }
++
++    #[test]
++    fn local_camera_optics_and_coordinates_reject_invalid_values() {
++        let radius = local_near_plane_radius(70_f32.to_radians(), 16.0 / 9.0).unwrap();
++        assert!(radius > 0.0625 && radius < 0.25);
++        assert!(local_near_plane_radius(f32::NAN, 1.0).is_none());
++        assert!(local_near_plane_radius(std::f32::consts::PI, 1.0).is_none());
++        assert!(local_near_plane_radius(1.0, 0.0).is_none());
++        assert!(local_camera_distance(
++            [f32::NAN, 0.0, 0.0], [1.0, 0.0, 0.0], radius, |_| false,
++        ).is_none());
++    }
++}
+ 
+ // Possible TODO: Add more modes
+ #[derive(PartialEq, Debug, Clone, Copy, Eq, Hash, Default)]
+@@ -24,6 +183,17 @@ pub enum CameraMode {
+     Freefly = 2,
+ }
+ 
++fn next_camera_mode(mode: CameraMode, is_admin: bool, has_target: bool, local: bool) -> CameraMode {
++    if !has_target {
++        return if local { CameraMode::ThirdPerson } else { CameraMode::Freefly };
++    }
++    match mode {
++        CameraMode::ThirdPerson => CameraMode::FirstPerson,
++        CameraMode::FirstPerson if is_admin && !local => CameraMode::Freefly,
++        CameraMode::FirstPerson | CameraMode::Freefly => CameraMode::ThirdPerson,
++    }
++}
++
+ #[derive(Clone, Copy)]
+ pub struct Dependents {
+     pub view_mat: Mat4<f32>,
+@@ -55,6 +225,7 @@ pub struct Camera {
+ 
+     dependents: Dependents,
+     frustum: Frustum<f32>,
++    local_view_valid: bool,
+ }
+ 
+ fn clamp_and_modulate(ori: Vec3<f32>) -> Vec3<f32> {
+@@ -314,6 +485,13 @@ where
+ impl Camera {
+     /// Create a new `Camera` with default parameters.
+     pub fn new(aspect: f32, mode: CameraMode) -> Self {
++        let mode = if crate::native_agent::camera_observation_contract().is_some()
++            && mode == CameraMode::Freefly
++        {
++            CameraMode::ThirdPerson
++        } else {
++            mode
++        };
+         // Make sure aspect is valid
+         let aspect = if aspect.is_normal() { aspect } else { 1.0 };
+ 
+@@ -337,6 +515,7 @@ impl Camera {
+             mode,
+ 
+             last_time: None,
++            local_view_valid: false,
+ 
+             dependents: Dependents {
+                 view_mat: Mat4::identity(),
+@@ -354,7 +533,11 @@ impl Camera {
+     /// Compute the transformation matrices (view matrix and projection matrix)
+     /// and position of the camera.
+     pub fn compute_dependents(&mut self, terrain: &TerrainGrid) {
+-        self.compute_dependents_full(terrain, |block| block.is_opaque())
++        if crate::native_agent::camera_observation_contract().is_some() {
++            self.compute_dependents_full(terrain, |block| block.is_solid())
++        } else {
++            self.compute_dependents_full(terrain, |block| block.is_opaque())
++        }
+     }
+ 
+     /// The is_fluid argument should return true for transparent voxels.
+@@ -364,6 +547,28 @@ impl Camera {
+         is_transparent: fn(&V::Vox) -> bool,
+     ) {
+         span!(_guard, "compute_dependents", "Camera::compute_dependents");
++        if crate::native_agent::camera_observation_contract().is_some() {
++            self.enforce_local_limits();
++            self.local_view_valid = false;
++            let Some(radius) = local_near_plane_radius(self.get_effective_fov(), self.aspect) else {
++                return;
++            };
++            let desired = self.focus - self.forward() * self.dist;
++            let distance = local_camera_distance(
++                [self.focus.x, self.focus.y, self.focus.z],
++                [desired.x, desired.y, desired.z],
++                radius,
++                |cell| terrain.get(Vec3::from(cell)).map_or(true, is_transparent),
++            );
++            if let Some(distance) = distance {
++                self.dist = distance;
++                let dependents = self.compute_dependents_helper(distance);
++                self.frustum = self.compute_frustum(&dependents);
++                self.dependents = dependents;
++                self.local_view_valid = true;
++            }
++            return;
++        }
+         // TODO: More intelligent function to decide on which strategy to use
+         if self.tgt_dist < CLIPPING_MODE_RANGE.end {
+             self.compute_dependents_near(terrain, is_transparent)
+@@ -512,6 +717,32 @@ impl Camera {
+ 
+     pub fn dependents(&self) -> Dependents { self.dependents }
+ 
++    pub fn local_view_valid(&self) -> bool {
++        crate::native_agent::camera_observation_contract().is_none() || self.local_view_valid
++    }
++
++    pub fn invalidate_local_view(&mut self) {
++        self.local_view_valid = false;
++    }
++
++    fn enforce_local_limits(&mut self) {
++        if crate::native_agent::camera_observation_contract().is_some() {
++            if self.mode == CameraMode::Freefly {
++                self.mode = CameraMode::ThirdPerson;
++            }
++            self.tgt_dist = if self.tgt_dist.is_finite() {
++                self.tgt_dist.clamp(0.0, LOCAL_CAMERA_MAX_DISTANCE)
++            } else {
++                MIN_ZOOM
++            };
++            self.dist = if self.dist.is_finite() {
++                self.dist.clamp(0.0, LOCAL_CAMERA_MAX_DISTANCE)
++            } else {
++                MIN_ZOOM
++            };
++        }
++    }
++
+     /// Rotate the camera about its focus by the given delta, limiting the input
+     /// accordingly.
+     pub fn rotate_by(&mut self, delta: Vec3<f32>) {
+@@ -543,6 +774,7 @@ impl Camera {
+         if let Some(cap) = cap {
+             self.tgt_dist = self.tgt_dist.min(cap);
+         }
++        self.enforce_local_limits();
+     }
+ 
+     /// Zoom with the ability to switch between first and third-person mode.
+@@ -569,15 +801,20 @@ impl Camera {
+         }
+ 
+         self.tgt_dist = self.tgt_dist.min(cap);
++        self.enforce_local_limits();
+     }
+ 
+     /// Get the distance of the camera from the focus
+     pub fn get_distance(&self) -> f32 { self.dist }
+ 
+     /// Set the distance of the camera from the focus (i.e., zoom).
+-    pub fn set_distance(&mut self, dist: f32) { self.tgt_dist = dist; }
++    pub fn set_distance(&mut self, dist: f32) {
++        self.tgt_dist = dist;
++        self.enforce_local_limits();
++    }
+ 
+     pub fn update(&mut self, time: f64, dt: f32, smoothing_enabled: bool) {
++        self.enforce_local_limits();
+         // This is horribly frame time dependent, but so is most of the game
+         let delta = self.last_time.replace(time).map_or(0.0, |t| time - t);
+         if (self.dist - self.tgt_dist).abs() > 0.01 {
+@@ -635,6 +872,7 @@ impl Camera {
+             self.tgt_ori
+         };
+         self.ori = clamp_and_modulate(ori);
++        self.enforce_local_limits();
+     }
+ 
+     pub fn lerp_toward(&mut self, tgt_ori: Vec3<f32>, dt: f32, rate: f32) {
+@@ -718,6 +956,9 @@ impl Camera {
+ 
+     /// Set the mode of the camera.
+     pub fn set_mode(&mut self, mode: CameraMode) {
++        if crate::native_agent::camera_observation_contract().is_some() && mode == CameraMode::Freefly {
++            return;
++        }
+         if self.mode != mode {
+             self.mode = mode;
+             match self.mode {
+@@ -748,21 +989,10 @@ impl Camera {
+     /// Cycle the camera to its next valid mode. If is_admin is false then only
+     /// modes which are accessible without admin access will be cycled to.
+     pub fn next_mode(&mut self, is_admin: bool, has_target: bool) {
+-        if has_target {
+-            self.set_mode(match self.mode {
+-                CameraMode::ThirdPerson => CameraMode::FirstPerson,
+-                CameraMode::FirstPerson => {
+-                    if is_admin {
+-                        CameraMode::Freefly
+-                    } else {
+-                        CameraMode::ThirdPerson
+-                    }
+-                },
+-                CameraMode::Freefly => CameraMode::ThirdPerson,
+-            });
+-        } else {
+-            self.set_mode(CameraMode::Freefly);
+-        }
++        self.set_mode(next_camera_mode(
++            self.mode, is_admin, has_target,
++            crate::native_agent::camera_observation_contract().is_some(),
++        ));
+     }
+ 
+     /// Return a unit vector in the forward direction for the current camera
+diff --git a/voxygen/src/scene/mod.rs b/voxygen/src/scene/mod.rs
+index 4b3fddb..848c733 100644
+--- a/voxygen/src/scene/mod.rs
++++ b/voxygen/src/scene/mod.rs
+@@ -431,7 +431,9 @@ impl Scene {
+             },
+             // Zoom the camera when a zoom event occurs
+             Event::Zoom(delta) => {
+-                let cap = if client.is_moderator() {
++                let cap = if crate::native_agent::camera_observation_contract().is_some() {
++                    camera::LOCAL_CAMERA_MAX_DISTANCE
++                } else if client.is_moderator() {
+                     ZOOM_CAP_ADMIN
+                 } else {
+                     ZOOM_CAP_PLAYER
+@@ -602,7 +604,8 @@ impl Scene {
+                 )
+             });
+         // When in first person, use the animated head position for the viewpoint
+-        let viewpoint_eye_height = if matches!(self.camera.get_mode(), CameraMode::FirstPerson)
++        let viewpoint_eye_height = if crate::native_agent::camera_observation_contract().is_none()
++            && matches!(self.camera.get_mode(), CameraMode::FirstPerson)
+             && let Some(char_state) = self
+                 .figure_mgr
+                 .states
+@@ -644,7 +647,11 @@ impl Scene {
+             self.camera.set_orientation(viewpoint_look_ori);
+         }
+ 
+-        let viewpoint_offset = if is_humanoid {
++        let viewpoint_offset = if crate::native_agent::camera_observation_contract().is_some() {
++            // A local view is anchored to the actor, not the zoom-dependent raised
++            // or shoulder-offset focus that can lie beyond a solid ceiling/wall.
++            Vec3::unit_z() * viewpoint_eye_height.clamp(0.25, viewpoint_height.max(0.5) * 0.9)
++        } else if is_humanoid {
+             let is_running = ecs
+                 .read_storage::<comp::Vel>()
+                 .get(scene_data.viewpoint_entity)
+@@ -750,12 +757,21 @@ impl Scene {
+             CameraMode::Freefly => entity_pos,
+         };
+ 
++        if crate::native_agent::camera_observation_contract().is_some() {
++            self.camera.force_focus_pos(entity_pos + viewpoint_offset);
++        }
++
+         // Tick camera for interpolation.
+         self.camera
+             .update(scene_data.state.get_time(), dt, scene_data.mouse_smoothing);
+ 
+         // Compute camera matrices.
+         self.camera.compute_dependents(&scene_data.state.terrain());
++        if crate::native_agent::camera_observation_contract().is_some()
++            && positions.get(scene_data.viewpoint_entity).is_none()
++        {
++            self.camera.invalidate_local_view();
++        }
+         let camera::Dependents {
+             view_mat,
+             view_mat_inv,
+@@ -1006,7 +1022,7 @@ impl Scene {
+             self.camera.get_mode(),
+             scene_data.sprite_render_distance - 20.0,
+             player_mmap_ori,
+-            self.screen_fade,
++            if self.camera.local_view_valid() { self.screen_fade } else { 0.0 },
+         )]);
+         renderer.update_clouds_locals(CloudsLocals::new(proj_mat_inv, view_mat_inv));
+         renderer.update_postprocess_locals(PostProcessLocals::new(proj_mat_inv, view_mat_inv));
+@@ -1469,6 +1485,13 @@ impl Scene {
+         scene_data: &SceneData,
+     ) {
+         span!(_guard, "render", "Scene::render");
++        if !self.camera.local_view_valid() {
++            // An origin/near plane inside solid or unloaded terrain has no safe
++            // world view. Clear the world pass rather than render through it;
++            // the ordinary HUD remains available for movement and recovery.
++            drop(drawer.first_pass());
++            return;
++        }
+         let sun_dir = scene_data.get_sun_dir();
+         let is_daylight = sun_dir.z < 0.0;
+         let focus_pos = self.camera.get_focus_pos();
