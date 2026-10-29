@@ -1,0 +1,248 @@
+diff --git a/server/src/events/inventory_manip.rs b/server/src/events/inventory_manip.rs
+index 9dd24b8..c7d8237 100644
+--- a/server/src/events/inventory_manip.rs
++++ b/server/src/events/inventory_manip.rs
+@@ -11,7 +11,7 @@ use common::{
+     comp::{
+         self, LootOwner, PickupItem,
+         group::members,
+-        item::{self, Lantern, MaterialStatManifest, flatten_counted_items, tool::AbilityMap},
++        item::{self, ItemDesc, Lantern, MaterialStatManifest, flatten_counted_items, tool::AbilityMap},
+         loot_owner::{LootOwnerKind, ONWERSHIP_TIMEOUT_FAST, ONWERSHIP_TIMEOUT_SLOW},
+         slot::{self, Slot},
+     },
+@@ -248,6 +248,8 @@ impl ServerEvent for InventoryManipEvent {
+                                                               since we just successfully removed \
+                                                               its PickupItem component.";
+ 
++                    #[cfg(feature = "worldgen")]
++                    let source_amount_before = item.amount();
+                     let (item, reinsert_item) = item.pick_up();
+ 
+                     let mut item_msg = item.frontend_item(&data.ability_map, &data.msm);
+@@ -341,6 +343,24 @@ impl ServerEvent for InventoryManipEvent {
+                         },
+                     };
+ 
++                    #[cfg(feature = "worldgen")]
++                    if crate::private_oracle::enabled() {
++                        if let InventoryUpdateEvent::Collected(ref collected) = event {
++                            crate::private_oracle::event("item_pickup_applied", serde_json::json!({
++                                "collector_uid": uid.0.get(),
++                                "collector_entity": format!("{entity:?}"),
++                                "source_uid": pickup_uid.0.get(),
++                                "source_entity": format!("{item_entity:?}"),
++                                "item": collected.item_definition_id().to_owned(),
++                                "amount": collected.amount().get(),
++                                "source_amount_before": source_amount_before,
++                                "source_amount_after": data.items.get(item_entity)
++                                    .map_or(0, PickupItem::amount),
++                                "server_time": data.time.0,
++                                "scope": "actual_native_inventory_insertion;not_request_or_compatible_feedback",
++                            }));
++                        }
++                    }
+                     if let Some(buf) = data.inventory_update_buffers.get_mut(entity) {
+                         buf.push(event);
+                     }
+diff --git a/server/src/state_ext.rs b/server/src/state_ext.rs
+index 37083f6..65dd2b8 100644
+--- a/server/src/state_ext.rs
++++ b/server/src/state_ext.rs
+@@ -307,11 +307,32 @@ impl StateExt for State {
+             if let Some((mergeable_item, _)) =
+                 nearby_items.min_by_key(|(_, dist)| (dist * 1000.0) as i32)
+             {
++                let incoming_amount = world_item.amount();
++                let target_amount_before = items.get(mergeable_item)
++                    .expect("we know that the item exists").amount();
+                 items
+                     .get_mut(mergeable_item)
+                     .expect("we know that the item exists")
+                     .try_merge(world_item)
+                     .expect("`try_merge` should succeed because `can_merge` returned `true`");
++                #[cfg(feature = "worldgen")]
++                if crate::private_oracle::enabled() {
++                    let uids = self.ecs().read_storage::<Uid>();
++                    if let (Some(uid), Some(item)) =
++                        (uids.get(mergeable_item), items.get(mergeable_item))
++                    {
++                        crate::private_oracle::event("item_drop_merged_on_creation", serde_json::json!({
++                            "target_uid": uid.0.get(),
++                            "target_entity": format!("{mergeable_item:?}"),
++                            "item": item.item().item_definition_id().to_owned(),
++                            "incoming_amount": incoming_amount,
++                            "target_amount_before": target_amount_before,
++                            "target_amount_after": item.amount(),
++                            "server_time": self.ecs().read_resource::<Time>().0,
++                            "scope": "actual_native_merge_before_source_entity_creation;no_source_uid_exists",
++                        }));
++                    }
++                }
+                 return None;
+             }
+         }
+@@ -330,8 +351,7 @@ impl StateExt for State {
+             }),
+             _ => None,
+         };
+-        Some(
+-            self.ecs_mut()
++        let entity = self.ecs_mut()
+                 .create_entity_synced()
+                 .with(world_item)
+                 .with(pos)
+@@ -349,8 +369,26 @@ impl StateExt for State {
+                 })
+                 .maybe_with(loot_owner)
+                 .maybe_with(light_emitter)
+-                .build(),
+-        )
++                .build();
++        #[cfg(feature = "worldgen")]
++        if crate::private_oracle::enabled() {
++            let uids = self.ecs().read_storage::<Uid>();
++            let items = self.ecs().read_storage::<comp::PickupItem>();
++            if let (Some(uid), Some(item)) = (uids.get(entity), items.get(entity)) {
++                crate::private_oracle::event("item_drop_created", serde_json::json!({
++                    "source_uid": uid.0.get(),
++                    "source_entity": format!("{entity:?}"),
++                    "item": item.item().item_definition_id().to_owned(),
++                    "amount": item.amount(),
++                    "position": pos.0,
++                    "spawned_at": spawned_at.0,
++                    "lifetime_seconds": 300.0,
++                    "server_time": spawned_at.0,
++                    "scope": "actual_native_ground_item_creation",
++                }));
++            }
++        }
++        Some(entity)
+     }
+ 
+     fn create_ship<F: FnOnce(comp::ship::Body) -> comp::Collider>(
+diff --git a/server/src/sys/item.rs b/server/src/sys/item.rs
+index 7bb9d61..edfffe2 100644
+--- a/server/src/sys/item.rs
++++ b/server/src/sys/item.rs
+@@ -3,7 +3,8 @@ use std::collections::HashMap;
+ use common::{
+     CachedSpatialGrid, comp,
+     event::{DeleteEvent, EventBus},
+-    resources::ProgramTime,
++    resources::{ProgramTime, Time},
++    uid::Uid,
+ };
+ use common_ecs::{Origin, Phase, System};
+ use specs::{Entities, Entity, Join, LendJoin, Read, ReadStorage, WriteStorage};
+@@ -22,6 +23,8 @@ impl<'a> System<'a> for Sys {
+         ReadStorage<'a, comp::LootOwner>,
+         Read<'a, CachedSpatialGrid>,
+         Read<'a, ProgramTime>,
++        Read<'a, Time>,
++        ReadStorage<'a, Uid>,
+         Read<'a, EventBus<DeleteEvent>>,
+     );
+ 
+@@ -38,6 +41,8 @@ impl<'a> System<'a> for Sys {
+             loot_owners,
+             spatial_grid,
+             program_time,
++            time,
++            uids,
+             delete_bus,
+         ): Self::SystemData,
+     ) {
+@@ -93,6 +98,8 @@ impl<'a> System<'a> for Sys {
+                 .get_mut(target)
+                 .expect("We know this entity must have an item.");
+ 
++            #[cfg(feature = "worldgen")]
++            let amounts_before = (source_item.amount(), target_item.amount());
+             if let Err(item) = target_item.try_merge(source_item) {
+                 // We re-insert the item, should be unreachable since we already checked whether
+                 // the items were mergeable in the above loop
+@@ -100,6 +107,23 @@ impl<'a> System<'a> for Sys {
+                     .insert(source, item)
+                     .expect("PickupItem was removed from this entity earlier");
+             } else {
++                #[cfg(feature = "worldgen")]
++                if crate::private_oracle::enabled() {
++                    if let (Some(source_uid), Some(target_uid)) = (uids.get(source), uids.get(target)) {
++                        crate::private_oracle::event("item_drop_merged", serde_json::json!({
++                            "source_uid": source_uid.0.get(),
++                            "source_entity": format!("{source:?}"),
++                            "target_uid": target_uid.0.get(),
++                            "target_entity": format!("{target:?}"),
++                            "item": target_item.item().item_definition_id().to_owned(),
++                            "source_amount": amounts_before.0,
++                            "target_amount_before": amounts_before.1,
++                            "target_amount_after": target_item.amount(),
++                            "server_time": time.0,
++                            "scope": "actual_native_ground_stack_merge",
++                        }));
++                    }
++                }
+                 // If the merging was successfull, we remove the old item entity from the ECS
+                 delete_emitter.emit(DeleteEvent(source));
+             }
+diff --git a/server/src/sys/object.rs b/server/src/sys/object.rs
+index e820b17..d6175fd 100644
+--- a/server/src/sys/object.rs
++++ b/server/src/sys/object.rs
+@@ -1,13 +1,14 @@
+ use common::{
+     CachedSpatialGrid, Damage, DamageKind, GroupTarget,
+     combat::{Attack, AttackDamage},
+-    comp::{Body, Object, Pos, Teleporting, Vel, beam, object},
++    comp::{Body, Object, PickupItem, Pos, Teleporting, Vel, beam, object},
+     consts::TELEPORTER_RADIUS,
+     event::{ChangeBodyEvent, DeleteEvent, EmitExt, EventBus},
+     event_emitters,
+     outcome::Outcome,
+     resources::{DeltaTime, Secs, Time},
+     states::basic_summon::BeamPillarIndicatorSpecifier,
++    uid::Uid,
+ };
+ use common_ecs::{Job, Origin, Phase, System};
+ use hashbrown::HashMap;
+@@ -38,6 +39,8 @@ impl<'a> System<'a> for Sys {
+         ReadStorage<'a, Body>,
+         ReadStorage<'a, Teleporting>,
+         ReadStorage<'a, beam::Beam>,
++        ReadStorage<'a, Uid>,
++        ReadStorage<'a, PickupItem>,
+         Read<'a, LazyUpdate>,
+     );
+ 
+@@ -60,6 +63,8 @@ impl<'a> System<'a> for Sys {
+             bodies,
+             teleporting,
+             beams,
++            uids,
++            items,
+             updater,
+         ): Self::SystemData,
+     ) {
+@@ -81,6 +86,21 @@ impl<'a> System<'a> for Sys {
+                     timeout,
+                 } => {
+                     if (time.0 - spawned_at.0).max(0.0) > timeout.as_secs_f64() {
++                        #[cfg(feature = "worldgen")]
++                        if crate::private_oracle::enabled() {
++                            if let (Some(uid), Some(item)) = (uids.get(entity), items.get(entity)) {
++                                crate::private_oracle::event("item_drop_expired", serde_json::json!({
++                                    "source_uid": uid.0.get(),
++                                    "source_entity": format!("{entity:?}"),
++                                    "item": item.item().item_definition_id().to_owned(),
++                                    "amount": item.amount(),
++                                    "spawned_at": spawned_at.0,
++                                    "lifetime_seconds": timeout.as_secs_f64(),
++                                    "server_time": time.0,
++                                    "scope": "native_DeleteAfter_timeout;not_unload_or_missing_entity",
++                                }));
++                            }
++                        }
+                         emitters.emit(DeleteEvent(entity));
+                     }
+                 },

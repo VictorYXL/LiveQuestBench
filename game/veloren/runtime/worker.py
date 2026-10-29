@@ -107,17 +107,21 @@ class Session:
             raise ValueError("Fixture requires passive native glide evidence; rerun Veloren setup")
         if self.fixture.get("route_evidence") and cfg.get("route_evidence") != "native-client-route/1":
             raise ValueError("Fixture requires passive native route evidence; rerun Veloren setup")
+        if self.fixture.get("pickup_evidence") and cfg.get("pickup_evidence") != "native-server-pickups/1":
+            raise ValueError("Fixture requires passive native original-supply evidence")
         if "sword_skill_points" in self.fixture and cfg.get("auxiliary_input") != "native-client-auxiliary/1":
             raise ValueError("Skill fixture requires bounded native auxiliary input; rerun Veloren setup")
         for path, digest in cfg["sha256"].items():
             if hashlib.sha256(Path(path).read_bytes()).hexdigest() != digest:
                 raise ValueError(f"Prepared runtime changed: {path}")
         selected = runtime.load_runtime(Path(cfg["upstream_runtime"]), cfg["upstream_sha256"], backend="renderer")
+        from game.veloren.runtime.server_extension import select_server
+        server = select_server(cfg, Path(selected["renderer"]["paths"]["server"]))
         renderer = selected["renderer"]
         renderer["paths"]["executable"] = cfg["renderer"]
         paths = renderer["paths"]
         native = NativeConfig(
-            server=Path(paths["server"]), bridge=Path(selected["renderer_fixture_helper"]["executable"]),
+            server=server, bridge=Path(selected["renderer_fixture_helper"]["executable"]),
             assets=Path(paths["assets"]), root=Path(paths["source_root"]),
             seed=self.fixture["world_seed"], small_world=False,
         )
@@ -234,11 +238,20 @@ class Session:
                 encounters=bool(self.initialized["encounters"]),
                 contracts=self.initialized.get("contract") is not None,
                 equipment_uid=observation["self_identity"]["uid"],
+                pickups=self.fixture.get("pickup_evidence", False),
             )
             observation["private_death_evidence"] = death_snapshot(
                 rows, observation["self_identity"], registry,
             )
             self.death_registry = observation["private_death_evidence"]["registry"]
+            if self.fixture.get("pickup_evidence") and not self.attachment:
+                from game.veloren.evaluators.pickups import pickup_snapshot
+                evidence = pickup_snapshot(
+                    rows, self.initialized["supplies"], self.death_registry,
+                    observation["survival"]["buff_clock"]["now"], getattr(self, "pickup_registry", None),
+                )
+                observation["private_pickup_evidence"] = evidence
+                self.pickup_registry = evidence["registry"]
             if not self.attachment and not hasattr(self, "supplies_opening"):
                 from game.veloren.fixture import verify_aged_supplies
                 verify_aged_supplies(self.initialized, observation)

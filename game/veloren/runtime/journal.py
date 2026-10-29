@@ -7,7 +7,7 @@ from pathlib import Path
 
 def snapshot_rows(
     path: Path, run_id: str, *, after_sequence: int | None = None, encounters: bool = False,
-    contracts: bool = False, equipment_uid: int | None = None,
+    contracts: bool = False, equipment_uid: int | None = None, pickups: bool = False,
 ) -> list[dict]:
     """Validate every row; retain equipment transitions, not every world-wide health sample."""
     retained = {}
@@ -49,6 +49,11 @@ def snapshot_rows(
                 if changed and (contracts or encounters and after_sequence is not None
                                 and sequence > after_sequence):
                     retained[sequence] = {**row, "data": {**row["data"], "bindings": changed}}
+            elif pickups and row["event"] in {
+                "item_drop_created", "item_pickup_applied", "item_drop_expired",
+                "item_drop_merged", "item_drop_merged_on_creation",
+            }:
+                retained[sequence] = row
             elif contracts or after_sequence is not None and sequence > after_sequence and (
                 row["event"] == "native_entity_death"
                 or encounters and row["event"] in ("health_effect_applied", "attack_health_effect_queued")
