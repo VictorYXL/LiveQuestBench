@@ -289,11 +289,12 @@ class Session:
                         if (pet is None or pet["control_target"] != companion["player_target"]
                                 or pet["companion"]["owned_by_actor"] is not True
                                 or pet["same_native_group"] is not True
-                                or pet["health"]["current"] != companion["binding"]["maximum_health"]
+                                or pet["health"]["current"] != companion.get("initial_health", companion["binding"]["maximum_health"])
                                 or pet["health"]["dead"]):
                             raise RuntimeError("Owned companion unavailable or injured before measured play")
                         self.encounter_registry["companion"] = {
-                            key: companion[key] for key in ("binding", "player_target")
+                            key: companion[key] for key in ("binding", "player_target", "initial_health")
+                            if key in companion
                         }
                 equipment_samples = []
                 previous_equipment = self.encounter_registry["source"]["equipment"]

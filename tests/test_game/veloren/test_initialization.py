@@ -102,6 +102,48 @@ def upstream(monkeypatch, setup, combat=None):
         monkeypatch.setitem(sys.modules, "scripts.rpg_benchmark.combat_support", combat)
 
 
+def test_injured_companion_waits_for_post_injury_native_binding(monkeypatch):
+    scene = {"self_identity": {"uid": 1}, "nearby_entities": []}
+    pet = {"uid": 2, "position": [3, 0, 1], "control_target": {"uid": 2, "lifecycle": "pet"},
+           "companion": {"owned_by_actor": True}, "same_native_group": True,
+           "body_identity": {"QuadrupedSmall": {"species": "Sheep"}},
+           "health": {"current": 40}}
+    reads = []
+
+    class Actor:
+        name = "Player"
+
+        async def request(self, *args, **kwargs):
+            return deepcopy(scene)
+
+    async def command(admin, *args):
+        if args[2] == "spawn":
+            scene["nearby_entities"] = [pet]
+        elif args[2] == "health":
+            assert args[-1] == 16
+            pet["health"]["current"] = 16
+        return {"status": "completed"}
+
+    async def wait(actor, predicate, reason):
+        assert predicate(scene)
+        return deepcopy(scene)
+
+    async def native_binding(actor, uid):
+        assert uid == 2
+        reads.append(uid)
+        return {"uid": uid, "server_entity": "sheep", "alignment": {"Owned": 1},
+                "health": 40 if len(reads) < 3 else 16, "maximum_health": 40, "dead": False}
+
+    upstream(monkeypatch, SimpleNamespace(command=command, wait_observation=wait),
+             SimpleNamespace(native_binding=native_binding))
+    result = asyncio.run(fixtures.initialize_companion(
+        object(), Actor(), {"companion": {"position": [3, 0, 1], "initial_health_fraction": .4}},
+    ))
+    assert result["initial_health"] == result["binding"]["health"] == 16
+    assert result["initial_public"]["health"]["current"] == 16
+    assert len(reads) == 3
+
+
 @pytest.mark.parametrize(("health", "stale_health"), [(35, 100), (100, 99.98828125)])
 @pytest.mark.parametrize("respawn_at_start", [False, True])
 def test_initialize_waits_for_actual_health(monkeypatch, health, stale_health, respawn_at_start):

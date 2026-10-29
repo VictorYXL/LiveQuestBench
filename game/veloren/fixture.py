@@ -181,7 +181,14 @@ def validate_fixture(value: object) -> dict:
         roles.add(role)
         positions.add(tuple(spawn))
     if "companion" in fixture:
-        companion = fields(fixture["companion"], {"species", "position"}, "companion")
+        companion = fixture["companion"]
+        if not isinstance(companion, dict):
+            raise ValueError("companion requires species and position")
+        fields({key: value for key, value in companion.items() if key != "initial_health_fraction"},
+               {"species", "position"}, "companion")
+        fraction = companion.get("initial_health_fraction", 1)
+        if type(fraction) not in (int, float) or not math.isfinite(fraction) or not 0 < fraction <= 1:
+            raise ValueError("Companion initial_health_fraction must be in (0, 1]")
         if companion["species"] != "sheep" or not encounters:
             raise ValueError("Companion fixtures require a native sheep and a designated encounter")
         spawn = vector(companion["position"], "companion.position")
@@ -498,7 +505,21 @@ async def initialize_companion(admin, actor, fixture: dict) -> dict:
             or binding["alignment"] != {"Owned": before["self_identity"]["uid"]}
             or binding["health"] != binding["maximum_health"] or binding["health"] <= 0 or binding["dead"]):
         raise RuntimeError("Companion lacks native sheep identity, ownership or full ordinary health")
-    return {"binding": binding, "player_target": pet["control_target"], "spawn_receipt": receipt,
+    initial_health = binding["maximum_health"] * fixture["companion"].get("initial_health_fraction", 1)
+    if initial_health != binding["health"]:
+        await setup.command(admin, "sudo", f"uid@{pet['uid']}", "health", initial_health)
+        settled = await setup.wait_observation(actor, lambda row: any(
+            entry["uid"] == pet["uid"] and abs(entry["health"]["current"] - initial_health) < .01
+            for entry in row["nearby_entities"]), "declared initial native companion injury")
+        pet = next(row for row in settled["nearby_entities"] if row["uid"] == pet["uid"])
+        async with asyncio.timeout(10):
+            while True:
+                binding = await native_binding(actor, pet["uid"])
+                if abs(binding["health"] - initial_health) < .01:
+                    break
+                await asyncio.sleep(.1)
+    return {"binding": binding, "initial_health": initial_health,
+            "player_target": pet["control_target"], "spawn_receipt": receipt,
             "initial_public": pet, "native_ai": True, "tethered": False}
 
 

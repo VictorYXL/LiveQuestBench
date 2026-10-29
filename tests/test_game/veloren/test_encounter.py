@@ -283,6 +283,55 @@ def test_companion_requires_original_living_owned_identity_not_replacement_or_di
     assert not encounter_checks(initial, final, **parameters)["success"]
 
 
+def test_injured_companion_needs_sourced_healing_before_target_lethal_damage():
+    initial, final = evidence()
+    pet = {"uid": 3, "server_entity": "sheep", "alignment": {"Owned": 1},
+           "group": 7, "health": 16, "maximum_health": 40, "dead": False}
+    target = {"uid": 3, "lifecycle": "sheep-client"}
+    for row in (initial, final):
+        row.update(position=[0, 0, 0], nearby_entities=[{
+            "uid": 3, "control_target": target, "position": [3, 0, 0], "group": 7,
+            "same_native_group": True, "companion": {"owned_by_actor": True},
+            "health": {"current": 26, "dead": False},
+        }])
+        registry = row["private_encounter_evidence"]["registry"]
+        registry["source"]["group"] = 7
+        registry["companion"] = {"binding": deepcopy(pet), "player_target": target, "initial_health": 16}
+        row["private_encounter_evidence"]["companion_binding"] = {**pet, "health": 26}
+    events = final["private_encounter_evidence"]["events"]
+    hit, death = deepcopy(events)
+    hit["data"].update(after=20, requested_amount=-5)
+    heal = deepcopy(hit)
+    heal.update(sequence=12)
+    heal["data"].update(
+        target_uid=3, target_entity="sheep", before=16, after=26, requested_amount=10,
+        contributor={"Group": {"entity_uid": 1, "group": 7}}, contributor_group=7,
+        target_group=7, cause={"Buff": "Regeneration"},
+    )
+    lethal = deepcopy(hit)
+    lethal.update(sequence=13)
+    lethal["data"].update(before=20, after=0, requested_amount=-20)
+    death["sequence"] = 14
+    events[:] = [hit, heal, lethal, death]
+    final["private_encounter_evidence"]["through_sequence"] = 14
+    parameters = {"roles": ["enemy"], "companion": {
+        "max_distance": 4, "min_health": 1, "min_health_fraction": .6,
+        "healing_required": True, "heal_while_target_alive": True,
+    }}
+    assert encounter_checks(initial, final, **parameters)["success"]
+    for field, value in (("contributor_entity", "foreign"), ("target_group", 8)):
+        changed = deepcopy(final)
+        changed["private_encounter_evidence"]["events"][1]["data"][field] = value
+        assert not encounter_checks(initial, changed, **parameters)["success"]
+    for order in ((0, 2, 1, 3), (0, 2, 3, 1)):
+        changed = deepcopy(final)
+        rows = changed["private_encounter_evidence"]["events"]
+        rows[:] = [rows[index] for index in order]
+        for index, event in enumerate(rows):
+            event["sequence"] = 11 + index
+        assert not encounter_checks(initial, changed, **parameters)["success"]
+
+
 def test_native_contract_requires_activation_then_bound_kill_and_actual_reward_chain():
     from game.veloren.evaluators.contract import contract_checks
 

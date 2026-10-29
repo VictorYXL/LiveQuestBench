@@ -37,10 +37,21 @@ def validate_encounter(*, roles: list[str], companion: dict | None = None,
             or len(set(roles)) != len(roles)):
         raise ValueError("Encounter roles must be unique nonempty names")
     if companion is not None:
-        if not isinstance(companion, dict) or set(companion) != {"max_distance", "min_health"}:
+        if (not isinstance(companion, dict)
+                or {"max_distance", "min_health"} - companion.keys()
+                or companion.keys() - {"max_distance", "min_health", "min_health_fraction", "healing_required",
+                                       "heal_while_target_alive"}):
             raise ValueError("companion requires max_distance and min_health")
-        if any(finite(value, key) <= 0 for key, value in companion.items()):
+        if any(finite(companion[key], key) <= 0 for key in ("max_distance", "min_health")):
             raise ValueError("Companion distance and health thresholds must be positive")
+        if "min_health_fraction" in companion and not 0 < finite(companion["min_health_fraction"], "fraction") <= 1:
+            raise ValueError("Companion health fraction must be in (0, 1]")
+        if "healing_required" in companion and type(companion["healing_required"]) is not bool:
+            raise ValueError("Companion healing_required must be boolean")
+        if ("heal_while_target_alive" in companion
+                and (type(companion["heal_while_target_alive"]) is not bool
+                     or companion["heal_while_target_alive"] and not companion.get("healing_required"))):
+            raise ValueError("Live-target companion healing requires sourced healing")
     validate_state(**state)
 
 
@@ -83,6 +94,13 @@ def _combat_checks(
                 and row["data"]["uid"] == binding["uid"]
                 and row["data"]["entity"] == binding["server_entity"]]
 
+    def alive_before(binding, sequence):
+        changes = [row for row in events if row["event"] == "health_effect_applied"
+                   and row["sequence"] < sequence and row["data"]["target_uid"] == binding["uid"]
+                   and row["data"]["target_entity"] == binding["server_entity"]]
+        health = changes[-1]["data"]["after"] if changes else binding["health"]
+        return health > 0 and not any(row["sequence"] < sequence for row in deaths(binding))
+
     checks = []
     contributors = _contributors or [{
         **source, "opening_sequence": first["through_sequence"],
@@ -121,12 +139,14 @@ def _combat_checks(
         pet = registered["binding"]
         if (pet["alignment"] != {"Owned": source["uid"]} or source["group"] is None
                 or pet["group"] != source["group"] or pet["dead"] is not False
-                or pet["health"] <= 0 or pet["health"] != pet["maximum_health"]
+                or pet["health"] <= 0 or pet["health"] != registered.get("initial_health", pet["maximum_health"])
                 or (pet["uid"], pet["server_entity"]) in identities
                 or pet["uid"] == source["uid"]):
-            raise ValueError("Companion opening lacks a distinct, fully healthy native owned group member")
+            raise ValueError("Companion opening lacks a distinct native owned group member at its declared health")
         public = next((row for row in final["nearby_entities"] if row["uid"] == pet["uid"]), None)
         current = last["companion_binding"]
+        companion = {**companion, "min_health": max(
+            companion["min_health"], pet["maximum_health"] * companion.get("min_health_fraction", 0))}
         distance = None
         visible_alive = False
         if public is not None:
@@ -152,6 +172,31 @@ def _combat_checks(
                        "distance": distance, "minimum_health": companion["min_health"],
                        "maximum_distance": companion["max_distance"],
                        "passed": visible_alive and native_alive and not killed})
+        if companion.get("healing_required"):
+            heals = []
+            for event in events:
+                if event["event"] != "health_effect_applied":
+                    continue
+                data = event["data"]
+                contributor = data["contributor"] or {}
+                group = data.get("contributor_group")
+                if (data["changed"] is True and data["after"] > data["before"]
+                        and data["requested_amount"] > 0 and data["target_uid"] == pet["uid"]
+                        and data["target_entity"] == pet["server_entity"]
+                        and contributor.get("Group", {}).get("entity_uid") == source["uid"]
+                        and data["contributor_entity"] == source["server_entity"]
+                        and group is not None and group == data.get("target_group")
+                        and contributor["Group"]["group"] == group
+                        and data.get("cause") == {"Buff": "Regeneration"}):
+                    if companion.get("heal_while_target_alive") and not any(
+                        alive_before(target["binding"], event["sequence"]) for target in targets
+                    ):
+                        continue
+                    heals.append(event)
+            checks.append({"kind": "player_sourced_companion_healing", "events": heals,
+                           "while_original_target_alive": companion.get("heal_while_target_alive", False),
+                           "health_restored": sum(row["data"]["after"] - row["data"]["before"] for row in heals),
+                           "passed": bool(heals)})
     if no_death:
         checks.append({"kind": "player_never_died", "passed": not deaths(source)})
     result = state_checks(initial, final, **state)
@@ -170,7 +215,9 @@ def _combat_checks(
                          + "Disappearance and loot do not prove death. "
                          "Evidence ends at post-gate client snapshot, not an atomic server pause."
                          + (" Original owned companion must never die and remain alive, owned, grouped and "
-                            "within the declared terminal distance; no required support input." if companion else "")}
+                            "within the declared terminal distance." if companion else "")
+                         + (" Actual player-sourced regeneration must restore companion health."
+                            if companion and companion.get("healing_required") else "")}
 
 
 def team_encounter_checks(initial: dict[str, dict], final: dict[str, dict], *, roles: list[str]) -> dict:
