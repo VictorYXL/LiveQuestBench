@@ -30,6 +30,18 @@ class TeamGame(BaseGame[object]):
             for member in self.members.values():
                 self.stack.push_async_callback(member.game.close)
                 await member.game.start()
+            if self.task.game == "veloren" and self.task.fixture.get("peer_group"):
+                leader, other = self.members.values()
+                first, second = await asyncio.gather(
+                    leader.game._session.request("setup_peer_group", mode="identity"),
+                    other.game._session.request("setup_peer_group", mode="identity"),
+                )
+                await leader.game._session.request("setup_peer_group", mode="invite", **second)
+                await other.game._session.request("setup_peer_group", mode="accept", uid=first["uid"])
+                await asyncio.gather(
+                    leader.game._session.request("setup_peer_group", mode="verify", uid=second["uid"]),
+                    other.game._session.request("setup_peer_group", mode="verify", uid=first["uid"]),
+                )
             self.phase = "ready"
         except BaseException as error:
             self.phase = "failed"
@@ -196,6 +208,8 @@ def create_team_binding(task: TaskConfig, output: Path, *, headless: bool,
         raise ValueError("Team tool allowlists must be nonempty and unique")
     if task.task_type == "visual_motor" and task.tools is not None:
         raise ValueError("VM teams cannot receive semantic tool allowlists")
+    if task.game == "veloren" and task.fixture.get("peer_group") and len(task.participants) != 2:
+        raise ValueError("Native peer Group setup requires exactly two participants")
     if task.game == "minecraft":
         from game.minecraft.evaluators.state import validate_state, evaluate_state
         fallback = {"min_food": 0}
@@ -204,8 +218,16 @@ def create_team_binding(task: TaskConfig, output: Path, *, headless: bool,
         fallback = {"min_health": 1}
     parameters = task.evaluator_parameters
     if not parameters or set(parameters) - {"all", "any", "roles", "inventory_total", "no_death",
-                                           "crossing", "encounters", "cargo", "native_efficiency"}:
+                                           "crossing", "encounters", "cargo", "native_efficiency", "peer_support"}:
         raise ValueError("Unsupported team goal predicate")
+    if "peer_support" in parameters:
+        from game.veloren.evaluators.peer_support import support_checks
+        support = parameters["peer_support"]
+        if (task.game != "veloren" or not task.fixture.get("peer_group") or len(task.participants) != 2
+                or not isinstance(support, dict) or set(support) != {"window_seconds"}
+                or type(support["window_seconds"]) not in (int, float)
+                or not 0 < support["window_seconds"] <= 120 or "encounters" not in parameters):
+            raise ValueError("Peer support requires two native grouped peers, encounters and a positive bounded native window")
     if "cargo" in parameters:
         from game.minecraft.evaluators.cargo import validate_cargo
         from game.minecraft.evaluators.team_cargo import evaluate_team_cargo, verify_team_cargo
@@ -301,7 +323,10 @@ def create_team_binding(task: TaskConfig, output: Path, *, headless: bool,
                 {role: json.loads((boundary / role / "observation.json").read_text()) for role in members}
                 for boundary in (before, after)
             ]
-            result = team_encounter_checks(initial, final, roles=parameters["encounters"])
+            if "peer_support" in parameters:
+                result = support_checks(initial, final, roles=parameters["encounters"], **parameters["peer_support"])
+            else:
+                result = team_encounter_checks(initial, final, roles=parameters["encounters"])
             checks.append({"scope": "encounters", "result": result, "passed": result["success"]})
         for scope in ("all", "any"):
             if scope in parameters:

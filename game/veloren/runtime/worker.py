@@ -208,6 +208,31 @@ class Session:
     async def dispatch(self, operation: str, args: dict) -> dict:
         if operation == "start":
             return await self.start()
+        if operation == "setup_peer_group":
+            if self.running or not self.team_role or not self.fixture.get("peer_group"):
+                raise PermissionError("Native Group setup is only available before declared peer play")
+            await self.finish_setup()
+            mode = args["mode"]
+            if mode == "identity":
+                row = await self.actor.request("observe", origin="setup")
+                return {"uid": row["self_identity"]["uid"], "alias": self.actor.name}
+            if mode == "invite":
+                await setup.action(self.actor, "social_action", operation="invite_group",
+                                   target_uid=args["uid"], target_alias=args["alias"])
+            elif mode == "accept":
+                await setup.wait_observation(
+                    self.actor, lambda row: bool(row["social_and_trade"]["incoming_invite"]),
+                    "peer's native Group invitation",
+                )
+                await setup.action(self.actor, "social_action", operation="respond_accept",
+                                   inviter_uid=args["uid"], invite_kind="Group")
+            elif mode == "verify":
+                await setup.wait_observation(self.actor, lambda row: any(
+                    entity["uid"] == args["uid"] and entity.get("same_native_group") is True
+                    for entity in row["nearby_entities"]), "native peer Group membership")
+            else:
+                raise ValueError("Unsupported Group setup operation")
+            return {"native_group_setup": mode}
         if operation == "begin":
             await self.finish_setup()
             if self.team_role:
