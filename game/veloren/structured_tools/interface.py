@@ -70,6 +70,12 @@ SPECS["GlideTool"] = (
     "No automatic takeoff, steering, landing or navigation; ordinary physics continue.",
     "glide", {"enabled": {"type": "boolean"}},
 )
+SPECS["WallJumpTool"] = (
+    "Request one native wall jump while attached to a wall, then await landing. "
+    "Requires native wall contact and climbing or wall-running state; no automatic approach, "
+    "steering, ledge selection or energy restoration.",
+    "wall_jump", {},
+)
 TARGET_FIELDS = {
     "uid": {"type": "integer", "minimum": 1, "maximum": 2**64 - 1},
     "lifecycle": {"type": "string", "minLength": 1, "maxLength": 128},

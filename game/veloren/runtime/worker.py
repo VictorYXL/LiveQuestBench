@@ -367,7 +367,7 @@ class Session:
                 raise PermissionError("VM cannot invoke native skills")
             if args.get("action_type") not in (
                 "move_forward", "move_backward", "move_left", "move_right",
-                "turn", "jump", "pickup", "use_item", "craft", "equip",
+                "turn", "jump", "wall_jump", "pickup", "use_item", "craft", "equip",
                 "look_at", "attack_primary", "attack_secondary", "toggle_wield", "block", "roll", "stop",
                 "aimed_attack", "glide", "context_interact", "social_action", "dialogue_action", "trade_action",
                 "unlock_skill", "configure_auxiliary_ability", "attack_auxiliary",

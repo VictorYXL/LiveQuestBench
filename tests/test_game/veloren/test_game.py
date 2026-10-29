@@ -19,7 +19,12 @@ from game.veloren.game import VelorenGame
 from game.veloren.structured_tools.interface import StructuredInterface, agent_tools
 
 
-def test_native_tool_wait_uses_episode_cutoff_and_releases_lock(tmp_path, veloren_fixture):
+@pytest.mark.parametrize(("tool_name", "action_type"), [
+    ("JumpTool", "jump"), ("WallJumpTool", "wall_jump"),
+])
+def test_native_tool_wait_uses_episode_cutoff_and_releases_lock(
+    tmp_path, veloren_fixture, tool_name, action_type,
+):
     from types import SimpleNamespace
 
     game = VelorenGame(output_dir=tmp_path / "game", fixture=veloren_fixture, track="structured_tool")
@@ -39,7 +44,7 @@ def test_native_tool_wait_uses_episode_cutoff_and_releases_lock(tmp_path, velore
                 cancelled.set()
 
         game._session = SimpleNamespace(check_ready=lambda: None, request=request)
-        action = asyncio.create_task(game._call_tool("JumpTool", {}))
+        action = asyncio.create_task(game._call_tool(tool_name, {}))
         await submitted.wait()
         await game._cancel_tool()
         with pytest.raises(asyncio.CancelledError):
@@ -49,7 +54,7 @@ def test_native_tool_wait_uses_episode_cutoff_and_releases_lock(tmp_path, velore
         assert game._active_tool is None
 
     asyncio.run(scenario())
-    assert calls == [("action", None, {"action_type": "jump"})]
+    assert calls == [("action", None, {"action_type": action_type})]
 
 
 def test_native_rpc_keeps_payload_operation_separate_from_transport_method(tmp_path, monkeypatch):
