@@ -81,6 +81,41 @@ dedicated `LIVEQUEST_MINECRAFT_HOME` and explicitly authorize provisioning
 before running setup. Never rebuild a live installation or relabel historical
 native results as evidence for a newer client.
 
+### Placement producer runtime (2026-10-29, version 1)
+
+The placement confirmation repair retains native reach/occlusion checks and
+confirms a changed, replaceable target by held block-item identity (including
+`redstone` placing `redstone_wire`). It also retains the existing vitals RPC.
+The combined native source digest is
+`6e63bec1277833f648a0af93d6f1cd9232ae86756a3054ff3af9ec2b723014aa`.
+The historical I03 `a1bf410…` runtime lacks the vitals RPC; neither it nor the
+older vitals-only installation matches this source. Keep those installations
+and their measured evidence unchanged.
+
+On the development host, select the newly compiled, isolated installation
+explicitly from the repository root:
+
+```bash
+LIVEQUEST_MINECRAFT_HOME="$PWD/output/temp/task_development/minecraft-runtime/MC-I03-main-vitals-placement-v1" \
+  .venv/bin/python -m game.minecraft.runtime.install check --track all
+```
+
+This is a read-only offline check, not an experiment. Its absolute-path build
+provenance is retained in
+[`minecraft-placement-runtime-v1.json`](../../docs/evidence/minecraft-placement-runtime-v1.json).
+Other hosts must provision a new dedicated installation from these exact
+sources using the installation instructions above; the local directory name
+is not a compatibility guarantee. No automatic fallback or fingerprint gate
+was relaxed.
+
+All 50 currently published ST/VM definitions passed read-only binding and
+installation admission against this selection. The nine-case Fabric producer
+regression exits before client/world creation. These checks do **not** establish
+fresh gameplay reliability. I03 v3 remains an isolated engineering candidate:
+its historical corrected-runtime ST/VM witnesses and independent bounded
+construct review do not transfer the old task's formal measurements or add a
+qualified task.
+
 ## Run an experiment
 
 Choose a configuration from

@@ -10,6 +10,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Item;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -77,6 +80,10 @@ public class NativeBridge implements ClientModInitializer {
     }
     static JsonObject fail(String message) {
         return object("success", false, "message", message, "payload", object("failure_kind", "action_refused"));
+    }
+    static boolean matchesPlacedBlock(Item held, BlockState before, BlockState after, boolean replaceable) {
+        return replaceable && held instanceof BlockItem && !after.equals(before)
+            && after.getBlock().asItem() == held;
     }
     private static void reply(JsonObject request, JsonObject result) {
         OUTPUT.println("LIVEQUEST_RPC " + object("protocol", 1, "id", request.get("id"), "ok", true, "result", result));
@@ -383,15 +390,24 @@ public class NativeBridge implements ClientModInitializer {
                 BlockHitResult supportHit = aimedBlock();
                 if (supportHit == null || !supportHit.getBlockPos().equals(support) || supportHit.getSide() != side)
                     return () -> fail("Support face is occluded");
-                String held = itemName(mc.player.getMainHandStack());
-                if (!mc.interactionManager.interactBlock(mc.player, Hand.MAIN_HAND,
-                        new BlockHitResult(point, side, support, false)).isAccepted()) return () -> fail("Placement refused");
+                Item held = mc.player.getMainHandStack().getItem();
+                BlockHitResult placementHit = new BlockHitResult(point, side, support, false);
+                ItemPlacementContext placementContext = new ItemPlacementContext(
+                        mc.player, Hand.MAIN_HAND, mc.player.getMainHandStack(), placementHit);
+                BlockPos placementTarget = placementContext.getBlockPos().toImmutable();
+                BlockState placementBefore = mc.world.getBlockState(placementTarget);
+                boolean replaceable = placementContext.canPlace();
+                if (!(held instanceof BlockItem) || !replaceable) return () -> fail("Placement target cannot be replaced");
+                if (!mc.interactionManager.interactBlock(mc.player, Hand.MAIN_HAND, placementHit).isAccepted())
+                    return () -> fail("Placement refused");
                 mc.player.swingHand(Hand.MAIN_HAND);
                 long placedAt = ticks;
                 return () -> {
                     if (ticks - placedAt < 5) return null;
-                    String actual = Registries.BLOCK.getId(mc.world.getBlockState(support.offset(side)).getBlock()).getPath();
-                    return actual.equals(held) ? ok("placed_name", actual) : fail("No matching placed block confirmed");
+                    BlockState actual = mc.world.getBlockState(placementTarget);
+                    return matchesPlacedBlock(held, placementBefore, actual, replaceable)
+                        ? ok("placed_name", Registries.BLOCK.getId(actual.getBlock()).getPath())
+                        : fail("No matching placed block confirmed");
                 };
             case "go_to_position": return NativeNavigation.create(vector(params));
             case "craft": return NativeInventory.craft(params);
