@@ -69,6 +69,11 @@ def create_binding(
         inspect.signature(evaluate_air_salvage).bind(Path(), Path(), None, **parameters)
         validate_cargo(**parameters)
         score = evaluate_air_salvage
+    elif evaluator == "farm":
+        from game.minecraft.evaluators.farm import evaluate_farm, farm_evidence
+        validate_state(**parameters)
+        farm_evidence(world_path)
+        score = evaluate_farm
     elif evaluator == "state":
         inspect.signature(evaluate_state).bind(Path(), Path(), None, **parameters)
         validate_state(**parameters)
@@ -112,6 +117,11 @@ def create_binding(
         validate_state(**parameters)
         furnace_evidence(world_path)
         score = evaluate_dispatch
+    elif evaluator == "shaft":
+        from game.minecraft.evaluators.shaft import evaluate_shaft, validate_shaft, visits as shaft_visits
+        validate_shaft(**parameters)
+        shaft_visits(world_path)
+        score = evaluate_shaft
     elif evaluator == "cargo":
         inspect.signature(evaluate_cargo).bind(Path(), Path(), None, **parameters)
         validate_cargo(**parameters)
@@ -181,6 +191,8 @@ def create_binding(
             raise RuntimeError("Furnace production history must start empty")
         if evaluator == "raid":
             verify_initial_raid(before, game.player_uuid)
+        if evaluator == "farm" and farm_evidence(before)["events"]:
+            raise RuntimeError("Farm breeding history must start empty")
         if evaluator == "air_salvage":
             verify_initial_air_salvage(before, game.player_uuid, **parameters)
         if evaluator == "state" and parameters.get("action_sequence") is not None and action_events(before):

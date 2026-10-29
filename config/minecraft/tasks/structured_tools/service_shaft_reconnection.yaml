@@ -1,0 +1,85 @@
+id: service_shaft_reconnection
+game: minecraft
+task_type: structured_tool
+task: Build a usable ascent from the yellow shaft-bottom marker to the upper service landing, recover its original
+  Maintenance Part and carry it back to the bottom marker. Leave an unbroken, supported route inside the shaft and
+  service passage, traversable both ways with body clearance; temporary pillaring that is removed afterward does
+  not count. Landings are roughly 3 and 7 blocks above the bottom. Ladders, stone stairs and cobblestone are supplied,
+  and a short upper passage also needs repair. Finish with at least 1 HP, grounded and still.
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/service_shaft_reconnection
+  instance: 1.20.4
+  difficulty: easy
+  player_state:
+    position:
+    - 0.5
+    - 62
+    - -2.5
+    dimension: minecraft:overworld
+    yaw: 0
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+    - slot: 0
+      item: ladder
+      count: 24
+    - slot: 1
+      item: cobblestone
+      count: 32
+    - slot: 2
+      item: stone_brick_stairs
+      count: 12
+    - slot: 3
+      item: iron_pickaxe
+      count: 1
+    - slot: 4
+      item: bread
+      count: 8
+evaluator:
+  name: shaft
+  parameters:
+    position:
+      target:
+      - 0.5
+      - 62
+      - -2.5
+      horizontal_tolerance: 3
+      vertical_tolerance: 1
+      max_speed: 0.1
+    cargo:
+    - id: maintenance_part
+      item: minecraft:iron_nugget
+      chest:
+      - 11
+      - 69
+      - 5
+    route_region:
+      min:
+      - -6
+      - 61
+      - -6
+      max:
+      - 13
+      - 74
+      - 8
+capabilities:
+  primary:
+  - spatial_interaction
+  secondary: []
+tools:
+- MoveTool
+- LookAtPositionTool
+- SelectTool
+- StopTool
+- JumpTool
+- DigTool
+- PlaceTool
+- UseHeldItemTool
+- RespawnTool
+- InspectContainerTool
+- TakeContainerItemTool

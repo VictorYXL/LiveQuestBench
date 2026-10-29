@@ -1,0 +1,10 @@
+{
+  "schema": "minecraft-service-shaft/1",
+  "sha256": {
+    "pack.mcmeta": "d6471c1a8718933780eab9c445de109e1c4a17fc9548d67d7115c83fdfc54d19",
+    "data/minecraft/tags/functions/tick.json": "20a663f3238a4f0753e34fac6b244d4aef24c76d12928cf8a7b6898ab057f030",
+    "data/livequest_shaft/predicates/upper.json": "4c031ceb3351e788d4dd0d06024b031b7f3732613d1db6568073f736957077f1",
+    "data/livequest_shaft/functions/tick.mcfunction": "161aa6b69cd524885c83513800152488de071cd104d852fcc17139f8e267ffc9",
+    "data/livequest_shaft/functions/upper.mcfunction": "30856049dfbc1e88c520137d035efa2746fff3f60d4cd271cd0a572884b80603"
+  }
+}

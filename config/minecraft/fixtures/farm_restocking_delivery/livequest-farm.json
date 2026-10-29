@@ -1,0 +1,12 @@
+{
+  "schema": "minecraft-farm-breeding/1",
+  "sha256": {
+    "pack.mcmeta": "9a1c18b5d07c805cdc6bb4e26dec41dd814533c1b6d728026d680aa44abed3bd",
+    "data/minecraft/tags/functions/tick.json": "8622fd6320ede3a5c324ee002ec4ada10b5ce55557c2bee8c485a82872a9f26c",
+    "data/livequest_farm/advancements/breed.json": "aba7207b6ad91fedb09e4e67555ccc4fd19b166c1bde2f51229fdcb96df38815",
+    "data/livequest_farm/functions/breed.mcfunction": "ce4bc691bafe30d0f5ba6b307fdf6bb61b7ba0adb9920409dce3eb9e9f5f3de3",
+    "data/livequest_farm/functions/collect_child.mcfunction": "c65082e7e3072e4f7b7128762ac0383b56882008df00bd89b120c9bda36b467a",
+    "data/livequest_farm/functions/candidate.mcfunction": "fc5380e4c1314d74b8ba6b55d0e3adf7c2c730be210d8965acdacbadc358af18",
+    "data/livequest_farm/functions/tick.mcfunction": "3a77bd62274ced927ae07343503b1480ec3df369a466532b9b9579cb9359ce30"
+  }
+}

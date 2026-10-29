@@ -1,0 +1,23 @@
+{
+  "criteria": {
+    "offspring": {
+      "trigger": "minecraft:bred_animals",
+      "conditions": {
+        "parent": {
+          "type": "minecraft:sheep",
+          "nbt": "{Tags:[\"lqb_parent_a\"]}"
+        },
+        "partner": {
+          "type": "minecraft:sheep",
+          "nbt": "{Tags:[\"lqb_parent_b\"]}"
+        },
+        "child": {
+          "type": "minecraft:sheep"
+        }
+      }
+    }
+  },
+  "rewards": {
+    "function": "livequest_farm:breed"
+  }
+}

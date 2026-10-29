@@ -1,0 +1,97 @@
+id: farm_restocking_delivery
+game: minecraft
+task_type: structured_tool
+task: Reach the yellow marker in the red-roofed barn, roughly 25 blocks ahead from your initial facing beyond the
+  field and pen, with 2 bread and at least 6 wheat. Leave all 16 cells of the original wheat field planted at any
+  growth stage, and breed an offspring from the pen's two original adult sheep; that offspring must remain alive.
+  The mature field, reserve seeds and nearby crafting table supply the starting resources. Additional natural crop
+  growth is allowed; mature regrowth is not required. Finish with at least 1 HP, grounded and still.
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/farm_restocking_delivery
+  instance: 1.20.4
+  difficulty: easy
+  player_state:
+    position:
+    - 0.5
+    - 72
+    - 0.5
+    dimension: minecraft:overworld
+    yaw: 0
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+    - slot: 0
+      item: stone_hoe
+      count: 1
+    - slot: 1
+      item: wheat_seeds
+      count: 16
+evaluator:
+  name: farm
+  parameters:
+    position:
+      target:
+      - 0.5
+      - 72
+      - 28.5
+      horizontal_tolerance: 3
+      vertical_tolerance: 1
+      max_speed: 0.1
+    inventory:
+    - item: bread
+      min_count: 2
+    - item: wheat
+      min_count: 6
+    structure:
+      target:
+        structure:
+        - - - wheat
+            - wheat
+            - wheat
+            - wheat
+          - - wheat
+            - wheat
+            - wheat
+            - wheat
+          - - wheat
+            - wheat
+            - wheat
+            - wheat
+          - - wheat
+            - wheat
+            - wheat
+            - wheat
+      region:
+        min:
+        - -8
+        - 72
+        - 3
+        max:
+        - -5
+        - 72
+        - 6
+      match:
+        rotation_invariant: false
+        require_empty: true
+        require_new_blocks: false
+capabilities:
+  primary:
+  - planning_resources
+  secondary: []
+tools:
+- MoveTool
+- LookAtPositionTool
+- SelectTool
+- StopTool
+- JumpTool
+- DigTool
+- PlaceTool
+- UseHeldItemTool
+- RespawnTool
+- QueryCraftRecipeTool
+- CraftItemTool
