@@ -34,13 +34,14 @@ class MinecraftGame(BaseGame[MotorInterface | StructuredInterface]):
         difficulty: str = "normal", recording: bool = False, recording_fps: int = 10,
         startup_timeout: float = 120, track: str = "visual_motor",
         authentication: str = "offline", player_name: str = "LiveQuestBot",
-        headless: bool = True, recording_path: Path | None = None,
+        headless: bool = True, recording_path: Path | None = None, server_factory=None,
     ) -> None:
         if track not in ("visual_motor", "structured_tool"):
             raise ValueError("track must be visual_motor or structured_tool")
         if track == "structured_tool" and authentication != "offline":
             raise ValueError("ST supports local offline connections only")
         self.track = track
+        self.server_factory = server_factory
         self.world_path = Path(world_path)
         if authentication not in ("offline", "online"):
             raise ValueError("authentication must be offline or online")
@@ -135,6 +136,7 @@ class MinecraftGame(BaseGame[MotorInterface | StructuredInterface]):
                     config.display = await virtual.start(self.output_dir / "xvfb.log")
                 self._session = MinecraftSession(
                     self.output_dir, config, self.player_state, world=world,
+                    server_factory=self.server_factory,
                     shared_server=self.shared_owner._session.server if self.shared_owner else None,
                     max_players=max(1, len(self.team_states)),
                 )

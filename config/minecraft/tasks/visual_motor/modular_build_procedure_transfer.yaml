@@ -1,0 +1,69 @@
+id: modular_build_procedure_transfer
+game: minecraft
+task_type: visual_motor
+task: 'Discover the original hidden native reference circuit''s function and make
+
+  both construction-panel lamps implement it. Its function is AND or OR.
+
+  Probe the ordinary reference levers at (0,72,0) and (0,72,6); its lamp is at
+
+  (0,73,14), with a mechanical flag at (0,73,15).
+
+  At panel1, inputs are (-22,72,0) and (-22,72,6), output (-18,73,12);
+
+  the existing AND gate''s connection socket is (-11,72,3), OR is (-25,72,3).
+
+  At mirrored panel2, inputs are (-12,72,24) and (-12,72,30), output
+
+  (-16,73,36); AND socket (-23,72,27), OR socket (-9,72,27).
+
+  An ordinary conductive block can connect a gate at its socket.
+
+
+  You have twelve cobblestone blocks and a stone pickaxe, with at most six
+
+  successful player block removals over the whole episode. Ordinary controls,
+
+  construction and crafting remain legal. There is no prescribed construction
+
+  sequence, required exploration count, required initial failure, or reset.
+
+  Finish alive. Under your final unchanged construction, both outputs must
+
+  stably match the ORIGINAL reference for00,01,10,11. Private native verification
+
+  exercises those inputs only after controls close and the final measured save
+
+  is frozen; it does not repair your construction or require you to perform
+
+  any particular number of tests. Start with20health; no hidden health increase
+
+  requirement applies.
+
+  '
+time_limit_seconds: 1200
+fixture:
+  world_path: ../../fixtures/modular_build_procedure_transfer
+  instance: 1.20.4
+  difficulty: normal
+  player_state:
+    position:
+    - -2.5
+    - 72
+    - -2.5
+    health: 20
+    inventory:
+    - slot: 0
+      item: cobblestone
+      count: 12
+    - slot: 1
+      item: stone_pickaxe
+      count: 1
+evaluator:
+  name: function_replication
+  parameters: {}
+capabilities:
+  primary:
+  - within_episode_learning
+  secondary:
+  - spatial_interaction

@@ -1,0 +1,577 @@
+{
+  "schema": "livequest-main-family-admission/1",
+  "task": "MC-L05",
+  "version": 1,
+  "source_commit": "be505f45d5a30eced168520bc35d5d8fcc72eec5",
+  "integration_base": "780d9d0d80a29e2277b08340ff2d87845080c1f1",
+  "status": "qualified_pinned_historical_evidence_current_runtime_read_only_compatible",
+  "qualified": true,
+  "qualification_delta": 1,
+  "source_files": {
+    "game/minecraft/evaluators/function_replication.py": "e721624e9479f5f7d20e5e5b70258d1e4af08200ad88e9ed8d52ffac49531885",
+    "game/minecraft/fixtures/function_replication.py": "9a40918f6824af388eed8a2974907e6b67a1dbaec5ff61e645e38610f72e59d3",
+    "game/minecraft/runtime/observed_server.py": "3b31f402a52d40288ec42aba5859d3abf312992f173e944b548f9a034520e4e6",
+    "game/minecraft/game.py": "39235bbb14d459aba01c17e308fc9242315150324ffeddeea3e18d942e4aee43",
+    "game/minecraft/runtime/session.py": "5b9190261e5f1dcc65f9b4db2be7e4a9b39369d9d014514bcb899b0e2207677b",
+    "game/minecraft/evaluators/world.py": "6aa2ea272ab75c8ad5bc3af09d5a53683afd49c1e6f8849c8bdeb028a0398b13",
+    "scripts/author_function_replication.py": "bf8f981c6497c162ec4c7994d380c1119e2dcddca980c948094a2e3790abf2a9",
+    "scripts/prove_full_function_st.py": "c04354df486158d6debd8508cad2d2dad33c26bc551864ea97d758cfa48b1774",
+    "scripts/prove_function_replication.py": "e6a19d2f04bb3cabef8ccf6092dcfc6dd01180f65223c9098201b04acc7e14b1",
+    "tests/test_final_function.py": "3bde13fabc52e8f1810244a8fe3d7e01c4f0d5f87df60973b32d389005418fe4",
+    "tests/test_function_replication.py": "5a859daccddda636dbf25d3bcc5bf17431a9359a41d59ad92bb6ea3f0f5c2ec9",
+    "docs/native_hidden_function.md": "8927779caa57ec756b6637018637b5d0f76ac08b700a1b65bcc477bac2700e90",
+    "docs/passive_server_observer.md": "aaecee0cb3e6cdf2aff2bafba49b3f42c6c8997ff8e5a320404ac5b90ad6cfbc",
+    "config/minecraft/tasks/structured_tools/modular_build_procedure_transfer.yaml": "79ea40612959696c76a496d3aa1781cc5b2b919e91632106600ed6db636aaaf1",
+    "config/minecraft/tasks/visual_motor/modular_build_procedure_transfer.yaml": "a3c5d95aa0a9c5ba03ded284a2f1359f3571493bdc46c9764fff9eebee4cf1f6",
+    "game/minecraft/server_observer/.gitignore": "2afb3dd2a24cf757b45af81dfb40aea4c367b030a30fc9ce5f22fd7099c922f3",
+    "game/minecraft/server_observer/build.gradle": "30fbf044cc153127f5001fa2dbf548360dd0c5e20f66843960f017a32dda0ef0",
+    "game/minecraft/server_observer/settings.gradle": "cd35d2aea6f6a0638b6a1bf9d2cedf0577714d7cc67ec95ab9bf54a95ee5441b",
+    "game/minecraft/server_observer/src/main/java/org/livequestbench/observer/SuccessfulBreakMixin.java": "299c045302f01d282b3d8fc15ec14239ca6a0c7dd9c20b75baee106af0de6577",
+    "game/minecraft/server_observer/src/main/resources/fabric.mod.json": "ebca8464322a70bcf0c25ec5b7c175ec5aea1332699e94b5bb02e187ed4cf338",
+    "game/minecraft/server_observer/src/main/resources/livequest_break.mixins.json": "fde27712ce238c03ce2bd486aab9830fc50c5424d6cfa9c998c47407b935c0be",
+    "config/minecraft/fixtures/modular_build_procedure_transfer/DIM-1/data/raids.dat": "e3a68bc5971328b8887d184043c0e2419b23dbeec4d48bbb41679e532594e24e",
+    "config/minecraft/fixtures/modular_build_procedure_transfer/DIM1/data/raids_end.dat": "e3a68bc5971328b8887d184043c0e2419b23dbeec4d48bbb41679e532594e24e",
+    "config/minecraft/fixtures/modular_build_procedure_transfer/data/chunks.dat": "eb4d9d29d34dd6ab3a3a9eae42cc23d5898c7d71939c06b061dfd3884fc9c8bb",
+    "config/minecraft/fixtures/modular_build_procedure_transfer/data/command_storage_gameagent.dat": "fb1eb16442250428e220a4599eae0625b0cdbb9da70ae89c55448d2a16d7ba51",
+    "config/minecraft/fixtures/modular_build_procedure_transfer/data/command_storage_livequest.dat": "5e9b6116aadb2c27da6ad07dd82af8ff5b6bc71cb27d03c7d5ab0eed4374cc59",
+    "config/minecraft/fixtures/modular_build_procedure_transfer/data/raids.dat": "177075b859964af8bba6b4693bd28a4347b21a7b189c27eb95327261926f7e73",
+    "config/minecraft/fixtures/modular_build_procedure_transfer/data/scoreboard.dat": "fba7af9a796e1d9700a021e92c4eb64446d8ebabf4f7058b6060915750dc8915",
+    "config/minecraft/fixtures/modular_build_procedure_transfer/datapacks/livequest_function/data/livequest_function/functions/load.mcfunction": "e56475eeb3c0110280b5c72582de9f7387d7167e67e5dc934650d9de8475884c",
+    "config/minecraft/fixtures/modular_build_procedure_transfer/datapacks/livequest_function/data/livequest_function/functions/record_0.mcfunction": "11b9a66dbe6832882aff57b4985e9b627e6686fdbc5a88b3330ed58c4edd87e1",
+    "config/minecraft/fixtures/modular_build_procedure_transfer/datapacks/livequest_function/data/livequest_function/functions/record_1.mcfunction": "11b9a66dbe6832882aff57b4985e9b627e6686fdbc5a88b3330ed58c4edd87e1",
+    "config/minecraft/fixtures/modular_build_procedure_transfer/datapacks/livequest_function/data/livequest_function/functions/record_2.mcfunction": "11b9a66dbe6832882aff57b4985e9b627e6686fdbc5a88b3330ed58c4edd87e1",
+    "config/minecraft/fixtures/modular_build_procedure_transfer/datapacks/livequest_function/data/livequest_function/functions/sample.mcfunction": "e0a2e2555ae1db16878b42180053718bfa8c8a0baece6c47a1b049471e88e2f3",
+    "config/minecraft/fixtures/modular_build_procedure_transfer/datapacks/livequest_function/data/livequest_function/functions/station_0.mcfunction": "77a5e0d2d29b5e92a6eb5ef1c478839cef2a3db3aa807682afd5b23de9ad4550",
+    "config/minecraft/fixtures/modular_build_procedure_transfer/datapacks/livequest_function/data/livequest_function/functions/station_1.mcfunction": "1f3899b90a09fea557bea0cd31a6b1971d3417065465c5122dc296d659295b6b",
+    "config/minecraft/fixtures/modular_build_procedure_transfer/datapacks/livequest_function/data/livequest_function/functions/station_2.mcfunction": "99b9962aced1266311bae8637aa90411ca4d8ebcfe408a5a33501b73aa740483",
+    "config/minecraft/fixtures/modular_build_procedure_transfer/datapacks/livequest_function/data/livequest_function/functions/tick.mcfunction": "af48608e28981ec1a4a9e78944e2f20721e0d60a5cf7b880c5fbaaf86d95e513",
+    "config/minecraft/fixtures/modular_build_procedure_transfer/datapacks/livequest_function/data/minecraft/tags/functions/load.json": "aba9ce96e607b7b4963e2b7f3031e710cae5ad965a6d52c500fe522c1a928f31",
+    "config/minecraft/fixtures/modular_build_procedure_transfer/datapacks/livequest_function/data/minecraft/tags/functions/tick.json": "d257ff1aa7de8c5dbf6ba010d6b1732daf8b2817a707038a5c0681d3232a9f58",
+    "config/minecraft/fixtures/modular_build_procedure_transfer/datapacks/livequest_function/pack.mcmeta": "cb3c327013ad467da07bac37494c68e98cea4ec4493a119e63b622ff55241f3f",
+    "config/minecraft/fixtures/modular_build_procedure_transfer/entities/r.-1.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "config/minecraft/fixtures/modular_build_procedure_transfer/entities/r.-1.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "config/minecraft/fixtures/modular_build_procedure_transfer/entities/r.0.-1.mca": "53a1da8ddb5442f589014fbb669e678f77eb201d67e0823e7d4566686f0b1b4e",
+    "config/minecraft/fixtures/modular_build_procedure_transfer/entities/r.0.0.mca": "e39029237924c9a6b40d8ba3b77c0dc195cf74ac3587d4a5ac2828c2e1a1346e",
+    "config/minecraft/fixtures/modular_build_procedure_transfer/level.dat": "51db76f1149d59a2a26bdfd9d39ad8a024b107af2e5d6b4db70ebe9130178da8",
+    "config/minecraft/fixtures/modular_build_procedure_transfer/livequest-function-public.json": "a3e6f16d917abaf66a3ab5ad7fd056470d227e39bd2d69bfcc9e559b3d863f24",
+    "config/minecraft/fixtures/modular_build_procedure_transfer/livequest-modular-build.json": "e1e7c05aa3953def03f725e762ff09af63358d703ac47cc5ffac8c42d9e3775f",
+    "config/minecraft/fixtures/modular_build_procedure_transfer/native-function-variants.json": "ad27ddf6a13e367ebad41891048d92dc6850a6f2a420219110cc20d92c5f7743",
+    "config/minecraft/fixtures/modular_build_procedure_transfer/poi/r.-1.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "config/minecraft/fixtures/modular_build_procedure_transfer/poi/r.-1.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "config/minecraft/fixtures/modular_build_procedure_transfer/poi/r.0.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "config/minecraft/fixtures/modular_build_procedure_transfer/poi/r.0.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "config/minecraft/fixtures/modular_build_procedure_transfer/region/r.-1.-1.mca": "fa1d271b21d9b3bfa3e0e5a562b38ff475f51d95db4c1280590cbc6525aa19d1",
+    "config/minecraft/fixtures/modular_build_procedure_transfer/region/r.-1.0.mca": "d088a1a37ac4f186c15fe35e97acf5aa2ee630b59057bf0f8940191c97972b91",
+    "config/minecraft/fixtures/modular_build_procedure_transfer/region/r.0.-1.mca": "5e9477b997b2cf5726f1b8a27650b6c29c460f65924999afc12210a5d84a5660",
+    "config/minecraft/fixtures/modular_build_procedure_transfer/region/r.0.0.mca": "feaf5ef142c326ceac034ad8503a38861d2f1d3fa197fb187408a92632836f15",
+    "config/minecraft/fixtures/modular_build_procedure_transfer_variant_b/DIM-1/data/raids.dat": "517b7f840eb9408b807a600e38d5c104e64117b1dec0aad18f840f6be5f005d5",
+    "config/minecraft/fixtures/modular_build_procedure_transfer_variant_b/DIM1/data/raids_end.dat": "517b7f840eb9408b807a600e38d5c104e64117b1dec0aad18f840f6be5f005d5",
+    "config/minecraft/fixtures/modular_build_procedure_transfer_variant_b/data/chunks.dat": "eb4d9d29d34dd6ab3a3a9eae42cc23d5898c7d71939c06b061dfd3884fc9c8bb",
+    "config/minecraft/fixtures/modular_build_procedure_transfer_variant_b/data/command_storage_gameagent.dat": "efe1d63ddaeead1b94e32a964059f92cf720680e4d6578270690d4773bcacf05",
+    "config/minecraft/fixtures/modular_build_procedure_transfer_variant_b/data/command_storage_livequest.dat": "2c7d8fcc4c30fcc72fd9a58acf70e733be3dbf63c9441145a49fd2a4cbcaeb9a",
+    "config/minecraft/fixtures/modular_build_procedure_transfer_variant_b/data/raids.dat": "177075b859964af8bba6b4693bd28a4347b21a7b189c27eb95327261926f7e73",
+    "config/minecraft/fixtures/modular_build_procedure_transfer_variant_b/data/scoreboard.dat": "17f99a4b721a1bb809d8cfa509975902f51bb7db8df7bf32b093e4d5fd20173c",
+    "config/minecraft/fixtures/modular_build_procedure_transfer_variant_b/datapacks/livequest_function/data/livequest_function/functions/load.mcfunction": "e56475eeb3c0110280b5c72582de9f7387d7167e67e5dc934650d9de8475884c",
+    "config/minecraft/fixtures/modular_build_procedure_transfer_variant_b/datapacks/livequest_function/data/livequest_function/functions/record_0.mcfunction": "11b9a66dbe6832882aff57b4985e9b627e6686fdbc5a88b3330ed58c4edd87e1",
+    "config/minecraft/fixtures/modular_build_procedure_transfer_variant_b/datapacks/livequest_function/data/livequest_function/functions/record_1.mcfunction": "11b9a66dbe6832882aff57b4985e9b627e6686fdbc5a88b3330ed58c4edd87e1",
+    "config/minecraft/fixtures/modular_build_procedure_transfer_variant_b/datapacks/livequest_function/data/livequest_function/functions/record_2.mcfunction": "11b9a66dbe6832882aff57b4985e9b627e6686fdbc5a88b3330ed58c4edd87e1",
+    "config/minecraft/fixtures/modular_build_procedure_transfer_variant_b/datapacks/livequest_function/data/livequest_function/functions/sample.mcfunction": "e0a2e2555ae1db16878b42180053718bfa8c8a0baece6c47a1b049471e88e2f3",
+    "config/minecraft/fixtures/modular_build_procedure_transfer_variant_b/datapacks/livequest_function/data/livequest_function/functions/station_0.mcfunction": "77a5e0d2d29b5e92a6eb5ef1c478839cef2a3db3aa807682afd5b23de9ad4550",
+    "config/minecraft/fixtures/modular_build_procedure_transfer_variant_b/datapacks/livequest_function/data/livequest_function/functions/station_1.mcfunction": "1f3899b90a09fea557bea0cd31a6b1971d3417065465c5122dc296d659295b6b",
+    "config/minecraft/fixtures/modular_build_procedure_transfer_variant_b/datapacks/livequest_function/data/livequest_function/functions/station_2.mcfunction": "99b9962aced1266311bae8637aa90411ca4d8ebcfe408a5a33501b73aa740483",
+    "config/minecraft/fixtures/modular_build_procedure_transfer_variant_b/datapacks/livequest_function/data/livequest_function/functions/tick.mcfunction": "af48608e28981ec1a4a9e78944e2f20721e0d60a5cf7b880c5fbaaf86d95e513",
+    "config/minecraft/fixtures/modular_build_procedure_transfer_variant_b/datapacks/livequest_function/data/minecraft/tags/functions/load.json": "aba9ce96e607b7b4963e2b7f3031e710cae5ad965a6d52c500fe522c1a928f31",
+    "config/minecraft/fixtures/modular_build_procedure_transfer_variant_b/datapacks/livequest_function/data/minecraft/tags/functions/tick.json": "d257ff1aa7de8c5dbf6ba010d6b1732daf8b2817a707038a5c0681d3232a9f58",
+    "config/minecraft/fixtures/modular_build_procedure_transfer_variant_b/datapacks/livequest_function/pack.mcmeta": "cb3c327013ad467da07bac37494c68e98cea4ec4493a119e63b622ff55241f3f",
+    "config/minecraft/fixtures/modular_build_procedure_transfer_variant_b/entities/r.-1.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "config/minecraft/fixtures/modular_build_procedure_transfer_variant_b/entities/r.-1.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "config/minecraft/fixtures/modular_build_procedure_transfer_variant_b/entities/r.0.-1.mca": "53a1da8ddb5442f589014fbb669e678f77eb201d67e0823e7d4566686f0b1b4e",
+    "config/minecraft/fixtures/modular_build_procedure_transfer_variant_b/entities/r.0.0.mca": "e39029237924c9a6b40d8ba3b77c0dc195cf74ac3587d4a5ac2828c2e1a1346e",
+    "config/minecraft/fixtures/modular_build_procedure_transfer_variant_b/level.dat": "aeb00c4e960eee3fbb61186eb4e0c5a2e548ebb4095e575e552be9297a946414",
+    "config/minecraft/fixtures/modular_build_procedure_transfer_variant_b/livequest-function-public.json": "a3e6f16d917abaf66a3ab5ad7fd056470d227e39bd2d69bfcc9e559b3d863f24",
+    "config/minecraft/fixtures/modular_build_procedure_transfer_variant_b/livequest-modular-build.json": "e1e7c05aa3953def03f725e762ff09af63358d703ac47cc5ffac8c42d9e3775f",
+    "config/minecraft/fixtures/modular_build_procedure_transfer_variant_b/poi/r.-1.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "config/minecraft/fixtures/modular_build_procedure_transfer_variant_b/poi/r.-1.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "config/minecraft/fixtures/modular_build_procedure_transfer_variant_b/poi/r.0.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "config/minecraft/fixtures/modular_build_procedure_transfer_variant_b/poi/r.0.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "config/minecraft/fixtures/modular_build_procedure_transfer_variant_b/region/r.-1.-1.mca": "ba94ddada1aeb0417c0c70e67f0c2d6abf4621394bd59fb0f0751cce1bf1acf7",
+    "config/minecraft/fixtures/modular_build_procedure_transfer_variant_b/region/r.-1.0.mca": "33456c4690f0f4022c501687df9eb7f9e00065cb05eb97139691a1ec0f92cb3a",
+    "config/minecraft/fixtures/modular_build_procedure_transfer_variant_b/region/r.0.-1.mca": "577a1850fa38298d349c918edd0408d4b3f5baa949f30c3eaebde864568d987e",
+    "config/minecraft/fixtures/modular_build_procedure_transfer_variant_b/region/r.0.0.mca": "ba16d7011f1d1e744eb649ea25cd168244f02bfd0c9c13ab94df6ed55088729c"
+  },
+  "shared_source_delta": "Only additive function_replication binding and optional per-game/session server_factory; existing task branches and vanilla default retained.",
+  "distribution_manifest": {
+    "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/worktrees/MC-L05-main-admission/config/minecraft/fixtures/modular_build_procedure_transfer/native-function-variants.json",
+    "sha256": "ad27ddf6a13e367ebad41891048d92dc6850a6f2a420219110cc20d92c5f7743"
+  },
+  "instance_identity": "Commit + family manifest + private selected-world/instance fingerprint; identical public manifests. No outcome resampling.",
+  "client_runtime": {
+    "home": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/minecraft-runtime/MC-R05-main-vitals-placement-cart-v1",
+    "source_sha256": "39b0c2e0e5549fa3921071d844ad9e2b8f3c1ff9ae4499531ce61683aeb98f6b",
+    "unchanged_reuse": true
+  },
+  "actual_server_runtime": {
+    "schema": "livequest-isolated-native-observer-build/1",
+    "runtime": "Minecraft1.20.4 Fabric loader0.15.11 passive successful-break observer; NOT vanilla",
+    "runtime_home": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/minecraft-runtime/MC-L05-main-passive-observer-v1",
+    "source_commit": "be505f45d5a30eced168520bc35d5d8fcc72eec5",
+    "source_files": {
+      "main/java/org/livequestbench/observer/SuccessfulBreakMixin.java": "299c045302f01d282b3d8fc15ec14239ca6a0c7dd9c20b75baee106af0de6577",
+      "main/resources/fabric.mod.json": "ebca8464322a70bcf0c25ec5b7c175ec5aea1332699e94b5bb02e187ed4cf338",
+      "main/resources/livequest_break.mixins.json": "fde27712ce238c03ce2bd486aab9830fc50c5424d6cfa9c998c47407b935c0be"
+    },
+    "build_files": {
+      "build.gradle": "30fbf044cc153127f5001fa2dbf548360dd0c5e20f66843960f017a32dda0ef0",
+      "settings.gradle": "cd35d2aea6f6a0638b6a1bf9d2cedf0577714d7cc67ec95ab9bf54a95ee5441b"
+    },
+    "launch_descriptor": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/minecraft-runtime/MC-L05-main-passive-observer-v1/launch.json",
+    "launch_sha256": "f4205ae61458e357545a1c7d4e8c66a0354f2b4358fa3c33b03e571f7fdf9ecc",
+    "historical_launch_descriptor": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/worktrees/MC-L05/game/minecraft/server_observer/launch.json",
+    "historical_launch_sha256": "28c47dcb5f165d92782f06c6d7aea59ffda839c3885872bcd3bad219e0623947",
+    "observer_class_sha256": "b7a9cf35fe9313c4567da0099cb7ef7ed1dd2f8a67191d7a4d3734b5577eb7b2",
+    "classes": {
+      "org/livequestbench/observer/SuccessfulBreakMixin.class": "b7a9cf35fe9313c4567da0099cb7ef7ed1dd2f8a67191d7a4d3734b5577eb7b2"
+    },
+    "resources": {
+      "fabric.mod.json": "ebca8464322a70bcf0c25ec5b7c175ec5aea1332699e94b5bb02e187ed4cf338",
+      "livequest_break.mixins.json": "fde27712ce238c03ce2bd486aab9830fc50c5424d6cfa9c998c47407b935c0be"
+    },
+    "support": {
+      "launch.cfg": "4dc4522a1d618be2d50cb12d0c7604e528a1178018f5a3fe8b3f2377a9c1605a",
+      "log4j.xml": "d72fbd097c49f2acadc2309e589552085a6909025bf51166b0a8094e8f8e9355",
+      "remapClasspath.txt": "6513db9b38faa382e98f5a482857611f207b2245a9e1f1c2f2d5ed25a4fe48ce"
+    },
+    "dependencies": {
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/fabric-loom/1.20.4/net.fabricmc.yarn.1_20_4.1.20.4+build.3-v2/mappings.jar": "f223646eb2582bc5f0f14d411295a2b7a2234e32d5a670a30d82ad21e8956bb1",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.ow2.asm/asm/9.6/aa205cf0a06dbd8e04ece91c0b37c3f5d567546a/asm-9.6.jar": "3c6fac2424db3d4a853b669f4e3d1d9c3c552235e19a319673f887083c2303a1",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.ow2.asm/asm-analysis/9.6/9ce6c7b174bd997fc2552dff47964546bd7a5ec3/asm-analysis-9.6.jar": "d92832d7c37edc07c60e2559ac6118b31d642e337a6671edcb7ba9fae68edbbb",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.ow2.asm/asm-commons/9.6/f1a9e5508eff490744144565c47326c8648be309/asm-commons-9.6.jar": "7aefd0d5c0901701c69f7513feda765fb6be33af2ce7aa17c5781fc87657c511",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.ow2.asm/asm-tree/9.6/c0cdda9d211e965d2a4448aa3fd86110f2f8c2de/asm-tree-9.6.jar": "c43ecf17b539c777e15da7b5b86553b377e2d39a683de6285567d5283888e7ef",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.ow2.asm/asm-util/9.6/f77caf84eb93786a749b2baa40865b9613e3eaee/asm-util-9.6.jar": "c635a7402f4aa9bf66b2f4230cea62025a0fe1cd63e8729adefc9b1994fac4c3",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/net.fabricmc/sponge-mixin/0.13.3+mixin.0.8.5/9527e6b0d2449408958fd1302594dc65ec5ade9c/sponge-mixin-0.13.3+mixin.0.8.5.jar": "6cb35f932d7455afb5b5ec21c081590b109a723e7a9cef7efe070522da7e4607",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/io.github.llamalad7/mixinextras-fabric/0.3.5/3b577be20ea942610b3045e4f0cd909fa415a9d3/mixinextras-fabric-0.3.5.jar": "743bf47e4fa24642f843b9f85a5f1ba5125fb4b7e656e96b9c010a5043396047",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/net.fabricmc/dev-launch-injector/0.2.1+build.8/da8bef7e6e2f952da707f282bdb46882a0fce5e3/dev-launch-injector-0.2.1+build.8.jar": "63bebba2a134d891ac9ac1fec6746ae055cbb19a187e2e2e05a0b9ea857952d8",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/net.minecrell/terminalconsoleappender/1.3.0/b562e9bb61235c9520e26282cdee71f8f802d1fc/terminalconsoleappender-1.3.0.jar": "1afea1bca095068f7f4483f061feed94753be34233ddb0df9ec380fc14d5a985",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/com.github.oshi/oshi-core/6.4.5/943ba26de047eb6b28fff47f5ee939a34eb5fc8e/oshi-core-6.4.5.jar": "7e634fb57b8763b7803d5f9caaed46d19c3bdbe81ddd8a93e61528c700cdc09e",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/com.google.code.gson/gson/2.10.1/b3add478d4382b78ea20b1671390a858002feb6c/gson-2.10.1.jar": "4241c14a7727c34feea6507ec801318a3d4a90f070e4525681079fb94ee4c593",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/com.google.guava/failureaccess/1.0.1/1dcf1de382a0bf95a3d8b0849546c88bac1292c9/failureaccess-1.0.1.jar": "a171ee4c734dd2da837e4b16be9df4661afab72a41adaf31eb84dfdaf936ca26",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/com.google.guava/guava/32.1.2-jre/5e64ec7e056456bef3a4bc4c6fdaef71e8ab6318/guava-32.1.2-jre.jar": "bc65dea7cfd9e4dacf8419d8af0e741655857d27885bb35d943d7187fc3a8fce",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/com.mojang/authlib/6.0.52/65085e2eb921c4a3ebdde3d248637f1776e6d80d/authlib-6.0.52.jar": "6e64f328765bd7dc70eb66341e02f5d84cff978c19bebff38c774b8a22e77538",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/com.mojang/brigadier/1.2.9/73e324f2ee541493a5179abf367237faa782ed21/brigadier-1.2.9.jar": "1f46f6c679ad59ad5d6228e7b91962217a588f25bd259e0691bc9c5a54b68bcd",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/com.mojang/datafixerupper/6.0.8/3ba4a30557a9b057760af4011f909ba619fc5125/datafixerupper-6.0.8.jar": "6e38e9fc5404be7e45189aa14ca6058bc85df20d6760a212b6d48e666abf0fef",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/com.mojang/logging/1.1.1/832b8e6674a9b325a5175a3a6267dfaf34c85139/logging-1.1.1.jar": "c1756eaf0685da94142bacc84309bb7ccddf65e004638c3299ab645710b5938c",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/commons-io/commons-io/2.13.0/8bb2bc9b4df17e2411533a0708a69f983bf5e83b/commons-io-2.13.0.jar": "671eaa39688dac2ffaa4645b3c9980ae2d0ea2471e4ae6a5da199cd15ae23666",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/io.netty/netty-buffer/4.1.97.Final/f8f3d8644afa5e6e1a40a3a6aeb9d9aa970ecb4f/netty-buffer-4.1.97.Final.jar": "a4393f5b395486cc74d0325c9b41311abb9513ba0fd7ef8cf46e9345c3bffbea",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/io.netty/netty-codec/4.1.97.Final/384ba4d75670befbedb45c4d3b497a93639c206d/netty-codec-4.1.97.Final.jar": "bcc96737a0f912fcf031cf8c45ebda352a90a40437db0832caad3d5a63618b38",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/io.netty/netty-common/4.1.97.Final/7cceacaf11df8dc63f23d0fb58e9d4640fc88404/netty-common-4.1.97.Final.jar": "a8aca0c8e9347acc75c885ecc749195d9775369aa520b9276f2d1128210a6c17",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/io.netty/netty-handler/4.1.97.Final/abb86c6906bf512bf2b797a41cd7d2e8d3cd7c36/netty-handler-4.1.97.Final.jar": "bd4771d19149cbc9c7464ed2d58035d79cdfed7adb59d38718b0d8e7a3dcc2de",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/io.netty/netty-resolver/4.1.97.Final/cec8348108dc76c47cf87c669d514be52c922144/netty-resolver-4.1.97.Final.jar": "38a018c6d9fb2cb11b72881354782b45080bbd20b9a0ad6cde28b80d431ed0b1",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/io.netty/netty-transport-classes-epoll/4.1.97.Final/795da37ded759e862457a82d9d92c4d39ce8ecee/netty-transport-classes-epoll-4.1.97.Final.jar": "ee65fa17fe65f18fd22269f92bddad85bfb3a263cf65eba01e116a2f30b86ff5",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/io.netty/netty-transport-native-epoll/4.1.97.Final/5514744c588190ffda076b35a9b8c9f24946a960/netty-transport-native-epoll-4.1.97.Final-linux-aarch_64.jar": "93b5fe8f3829dcb5e033d8d40d59159366ff4cf8266c903bbd6a4aeed9e59bac",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/io.netty/netty-transport-native-epoll/4.1.97.Final/54188f271e388e7f313aea995e82f58ce2cdb809/netty-transport-native-epoll-4.1.97.Final-linux-x86_64.jar": "1e83fc9f82e5415cdbb688c6a5c6bbbd7d198e9fdd6fdf64b3dc5d54dd1acfd0",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/io.netty/netty-transport-native-unix-common/4.1.97.Final/d469d84265ab70095b01b40886cabdd433b6e664/netty-transport-native-unix-common-4.1.97.Final.jar": "412fe140257c2dda5a5e15bee911298bd61928d03ee6be4db588e82c196c5dc6",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/io.netty/netty-transport/4.1.97.Final/f37380d23c9bb079bc702910833b2fd532c9abd0/netty-transport-4.1.97.Final.jar": "197fd2d6c6b4afe677d9e95bf2e36b49a0bcabdfce0583683fb73f29a3f5a407",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/it.unimi.dsi/fastutil/8.5.12/c24946d46824bd528054bface3231d2ecb7e95e8/fastutil-8.5.12.jar": "b5543ee08d062d551cf0a5c9bc0fb70588b0382079029ba48941fa9c9be8a5d4",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/net.java.dev.jna/jna-platform/5.13.0/88e9a306715e9379f3122415ef4ae759a352640d/jna-platform-5.13.0.jar": "474d7b88f6e97009b6ec1d98c3024dd95c23187c65dabfbc35331bcac3d173dd",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/net.java.dev.jna/jna/5.13.0/1200e7ebeedbe0d10062093f32925a912020e747/jna-5.13.0.jar": "66d4f819a062a51a1d5627bffc23fac55d1677f0e0a1feba144aabdd670a64bb",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/net.sf.jopt-simple/jopt-simple/5.0.4/4fdac2fbe92dfad86aa6e9301736f6b4342a3f5c/jopt-simple-5.0.4.jar": "df26cc58f235f477db07f753ba5a3ab243ebe5789d9f89ecf68dd62ea9a66c28",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.apache.commons/commons-lang3/3.13.0/b7263237aa89c1f99b327197c41d0669707a462e/commons-lang3-3.13.0.jar": "82f528cf718c7a3c2f30fc5bc784e3c6a0a10b17605dadb9e16c82ede11e6064",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-core/2.19.0/3b6eeb4de4c49c0fe38a4ee27188ff5fee44d0bb/log4j-core-2.19.0.jar": "b4a1796fab7bfc36df015c1b4052459147997e8d215a7199d71d05f9e747e4f4",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-api/2.19.0/ea1b37f38c327596b216542bc636cfdc0b8036fa/log4j-api-2.19.0.jar": "5ccb24ad9f92e768d0bc456d3061a737951262df803e004d2cad096b75a88d60",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-slf4j2-impl/2.19.0/5c04bfdd63ce9dceb2e284b81e96b6a70010ee10/log4j-slf4j2-impl-2.19.0.jar": "825605eacb2d5605b105c53d4108c18125e0f82f62960d0be583278b9c524f3c",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.joml/joml/1.10.5/22566d58af70ad3d72308bab63b8339906deb649/joml-1.10.5.jar": "cac9f22f83a7aa33eebda73c16ff5261e3cb4911b6bafcf4c79ea486099d0c9a",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.lwjgl/lwjgl-glfw/3.3.2/766bb0e8e829598b1c8052fd8173c62af741c52/lwjgl-glfw-3.3.2-natives-linux.jar": "2a65e24cf41e120a66296c05092774d5864fbf8df05d6759085df2ce5c037794",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.lwjgl/lwjgl-jemalloc/3.3.2/2bc33176cdfabf34a63df154b80914e8f433316b/lwjgl-jemalloc-3.3.2-natives-linux.jar": "3c1d4d643fb595481fb9654dbdd63523f6f42ac993c28571c575ab1de78413c2",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.lwjgl/lwjgl-openal/3.3.2/650981780b8bbfb3ce43657b22ec8e77bfb1f37a/lwjgl-openal-3.3.2-natives-linux.jar": "7378eb675963247b2912251502646a206ed01ba64629c91d614a1c3b429f7abd",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.lwjgl/lwjgl-opengl/3.3.2/b8368430ef0d91a5acbc6fbfa47b20c3ec083aec/lwjgl-opengl-3.3.2-natives-linux.jar": "8956bca64d2851dc14ec6bfbfc55ce35fdff89270b5f2a3c9f70aea77f6d1e17",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.lwjgl/lwjgl-stb/3.3.2/5c987f43b342d722b54970159040af76f1c87403/lwjgl-stb-3.3.2-natives-linux.jar": "8b45045d90bbd49d202de35d4650f2450c2ed5aa7dc870f2ac5b7d3941719854",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.lwjgl/lwjgl-tinyfd/3.3.2/5d27fc67172b3fcd8400d61a7cfb75da881f609/lwjgl-tinyfd-3.3.2-natives-linux.jar": "7e1e74a67223a4c0103e2efee99d2fd3f513543eca1fcc860dbfc20e966f8c39",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.lwjgl/lwjgl/3.3.2/767684973f259d97e7dc66a125eb153986f177e7/lwjgl-3.3.2-natives-linux.jar": "89f53089a5f8a983db25140a1c94c72fe2a8f56feb6ddb597f55b8329ce5b400",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.slf4j/slf4j-api/2.0.7/41eb7184ea9d556f23e18b5cb99cad1f8581fc00/slf4j-api-2.0.7.jar": "5d6298b93a1905c32cda6478808ac14c2d4a47e91535e53c41f7feeb85d946f4",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/fabric-loom/minecraftMaven/net/minecraft/minecraft-merged/1.20.4-net.fabricmc.yarn.1_20_4.1.20.4+build.3-v2/minecraft-merged-1.20.4-net.fabricmc.yarn.1_20_4.1.20.4+build.3-v2.jar": "0da83e65c69f64f7ee33d40da88b82e8b98ad41ebe01489866d6e5231ca2800f",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/net.fabricmc/fabric-loader/0.15.11/9c2be53d84ec5c4fb58bb5b8d9c8a629047c9ee9/fabric-loader-0.15.11.jar": "f58fca271b5b48dd4f8faad792b09002439e8444d50af670b8493de3b2d85f08",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.jline/jline-reader/3.20.0/8f15415b022a25b473e8e16c28ae913186ffb9c4/jline-reader-3.20.0.jar": "acd1c94d1e228aa7b7962f69b21ed3a9fd828eb3a63e4baf9086954e626af1f0",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.jline/jline-terminal/3.20.0/d0ddcc708ddf527a3454c941b7b9225cc83a15ff/jline-terminal-3.20.0.jar": "12125170e795519ba6dc8010c070b53c76aae92b485c1e37530e54ab5dd08d43"
+    },
+    "command": [
+      "java",
+      "-Djava.io.tmpdir=/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/minecraft-runtime/MC-L05-main-passive-observer-v1/jvm-cache",
+      "-m",
+      "jdk.compiler/com.sun.tools.javac.Main",
+      "-g",
+      "-proc:none",
+      "-cp",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/minecraft-runtime/MC-L05-main-passive-observer-v1/build/classes/java/main:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/minecraft-runtime/MC-L05-main-passive-observer-v1/build/resources/main:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/fabric-loom/1.20.4/net.fabricmc.yarn.1_20_4.1.20.4+build.3-v2/mappings.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.ow2.asm/asm/9.6/aa205cf0a06dbd8e04ece91c0b37c3f5d567546a/asm-9.6.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.ow2.asm/asm-analysis/9.6/9ce6c7b174bd997fc2552dff47964546bd7a5ec3/asm-analysis-9.6.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.ow2.asm/asm-commons/9.6/f1a9e5508eff490744144565c47326c8648be309/asm-commons-9.6.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.ow2.asm/asm-tree/9.6/c0cdda9d211e965d2a4448aa3fd86110f2f8c2de/asm-tree-9.6.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.ow2.asm/asm-util/9.6/f77caf84eb93786a749b2baa40865b9613e3eaee/asm-util-9.6.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/net.fabricmc/sponge-mixin/0.13.3+mixin.0.8.5/9527e6b0d2449408958fd1302594dc65ec5ade9c/sponge-mixin-0.13.3+mixin.0.8.5.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/io.github.llamalad7/mixinextras-fabric/0.3.5/3b577be20ea942610b3045e4f0cd909fa415a9d3/mixinextras-fabric-0.3.5.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/net.fabricmc/dev-launch-injector/0.2.1+build.8/da8bef7e6e2f952da707f282bdb46882a0fce5e3/dev-launch-injector-0.2.1+build.8.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/net.minecrell/terminalconsoleappender/1.3.0/b562e9bb61235c9520e26282cdee71f8f802d1fc/terminalconsoleappender-1.3.0.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/com.github.oshi/oshi-core/6.4.5/943ba26de047eb6b28fff47f5ee939a34eb5fc8e/oshi-core-6.4.5.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/com.google.code.gson/gson/2.10.1/b3add478d4382b78ea20b1671390a858002feb6c/gson-2.10.1.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/com.google.guava/failureaccess/1.0.1/1dcf1de382a0bf95a3d8b0849546c88bac1292c9/failureaccess-1.0.1.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/com.google.guava/guava/32.1.2-jre/5e64ec7e056456bef3a4bc4c6fdaef71e8ab6318/guava-32.1.2-jre.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/com.mojang/authlib/6.0.52/65085e2eb921c4a3ebdde3d248637f1776e6d80d/authlib-6.0.52.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/com.mojang/brigadier/1.2.9/73e324f2ee541493a5179abf367237faa782ed21/brigadier-1.2.9.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/com.mojang/datafixerupper/6.0.8/3ba4a30557a9b057760af4011f909ba619fc5125/datafixerupper-6.0.8.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/com.mojang/logging/1.1.1/832b8e6674a9b325a5175a3a6267dfaf34c85139/logging-1.1.1.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/commons-io/commons-io/2.13.0/8bb2bc9b4df17e2411533a0708a69f983bf5e83b/commons-io-2.13.0.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/io.netty/netty-buffer/4.1.97.Final/f8f3d8644afa5e6e1a40a3a6aeb9d9aa970ecb4f/netty-buffer-4.1.97.Final.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/io.netty/netty-codec/4.1.97.Final/384ba4d75670befbedb45c4d3b497a93639c206d/netty-codec-4.1.97.Final.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/io.netty/netty-common/4.1.97.Final/7cceacaf11df8dc63f23d0fb58e9d4640fc88404/netty-common-4.1.97.Final.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/io.netty/netty-handler/4.1.97.Final/abb86c6906bf512bf2b797a41cd7d2e8d3cd7c36/netty-handler-4.1.97.Final.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/io.netty/netty-resolver/4.1.97.Final/cec8348108dc76c47cf87c669d514be52c922144/netty-resolver-4.1.97.Final.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/io.netty/netty-transport-classes-epoll/4.1.97.Final/795da37ded759e862457a82d9d92c4d39ce8ecee/netty-transport-classes-epoll-4.1.97.Final.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/io.netty/netty-transport-native-epoll/4.1.97.Final/5514744c588190ffda076b35a9b8c9f24946a960/netty-transport-native-epoll-4.1.97.Final-linux-aarch_64.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/io.netty/netty-transport-native-epoll/4.1.97.Final/54188f271e388e7f313aea995e82f58ce2cdb809/netty-transport-native-epoll-4.1.97.Final-linux-x86_64.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/io.netty/netty-transport-native-unix-common/4.1.97.Final/d469d84265ab70095b01b40886cabdd433b6e664/netty-transport-native-unix-common-4.1.97.Final.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/io.netty/netty-transport/4.1.97.Final/f37380d23c9bb079bc702910833b2fd532c9abd0/netty-transport-4.1.97.Final.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/it.unimi.dsi/fastutil/8.5.12/c24946d46824bd528054bface3231d2ecb7e95e8/fastutil-8.5.12.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/net.java.dev.jna/jna-platform/5.13.0/88e9a306715e9379f3122415ef4ae759a352640d/jna-platform-5.13.0.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/net.java.dev.jna/jna/5.13.0/1200e7ebeedbe0d10062093f32925a912020e747/jna-5.13.0.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/net.sf.jopt-simple/jopt-simple/5.0.4/4fdac2fbe92dfad86aa6e9301736f6b4342a3f5c/jopt-simple-5.0.4.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.apache.commons/commons-lang3/3.13.0/b7263237aa89c1f99b327197c41d0669707a462e/commons-lang3-3.13.0.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-core/2.19.0/3b6eeb4de4c49c0fe38a4ee27188ff5fee44d0bb/log4j-core-2.19.0.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-api/2.19.0/ea1b37f38c327596b216542bc636cfdc0b8036fa/log4j-api-2.19.0.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-slf4j2-impl/2.19.0/5c04bfdd63ce9dceb2e284b81e96b6a70010ee10/log4j-slf4j2-impl-2.19.0.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.joml/joml/1.10.5/22566d58af70ad3d72308bab63b8339906deb649/joml-1.10.5.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.lwjgl/lwjgl-glfw/3.3.2/766bb0e8e829598b1c8052fd8173c62af741c52/lwjgl-glfw-3.3.2-natives-linux.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.lwjgl/lwjgl-jemalloc/3.3.2/2bc33176cdfabf34a63df154b80914e8f433316b/lwjgl-jemalloc-3.3.2-natives-linux.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.lwjgl/lwjgl-openal/3.3.2/650981780b8bbfb3ce43657b22ec8e77bfb1f37a/lwjgl-openal-3.3.2-natives-linux.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.lwjgl/lwjgl-opengl/3.3.2/b8368430ef0d91a5acbc6fbfa47b20c3ec083aec/lwjgl-opengl-3.3.2-natives-linux.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.lwjgl/lwjgl-stb/3.3.2/5c987f43b342d722b54970159040af76f1c87403/lwjgl-stb-3.3.2-natives-linux.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.lwjgl/lwjgl-tinyfd/3.3.2/5d27fc67172b3fcd8400d61a7cfb75da881f609/lwjgl-tinyfd-3.3.2-natives-linux.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.lwjgl/lwjgl/3.3.2/767684973f259d97e7dc66a125eb153986f177e7/lwjgl-3.3.2-natives-linux.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.slf4j/slf4j-api/2.0.7/41eb7184ea9d556f23e18b5cb99cad1f8581fc00/slf4j-api-2.0.7.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/fabric-loom/minecraftMaven/net/minecraft/minecraft-merged/1.20.4-net.fabricmc.yarn.1_20_4.1.20.4+build.3-v2/minecraft-merged-1.20.4-net.fabricmc.yarn.1_20_4.1.20.4+build.3-v2.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/net.fabricmc/fabric-loader/0.15.11/9c2be53d84ec5c4fb58bb5b8d9c8a629047c9ee9/fabric-loader-0.15.11.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.jline/jline-reader/3.20.0/8f15415b022a25b473e8e16c28ae913186ffb9c4/jline-reader-3.20.0.jar:/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.jline/jline-terminal/3.20.0/d0ddcc708ddf527a3454c941b7b9225cc83a15ff/jline-terminal-3.20.0.jar",
+      "-d",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/minecraft-runtime/MC-L05-main-passive-observer-v1/build/classes/java/main",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/minecraft-runtime/MC-L05-main-passive-observer-v1/src/main/java/org/livequestbench/observer/SuccessfulBreakMixin.java"
+    ],
+    "compile_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "class_byte_identical_to_historical": true,
+    "live_runtime_support_and_dependencies_unchanged": true,
+    "new_native_or_model_jobs": 0,
+    "fresh_runtime_native_claim": false,
+    "selection": "LIVEQUEST_BREAK_SERVER_LAUNCH=/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/minecraft-runtime/MC-L05-main-passive-observer-v1/launch.json"
+  },
+  "generated_launch_descriptor": {
+    "main_class": "net.fabricmc.devlaunchinjector.Main",
+    "jvm_args": [
+      "-Dfabric.dli.config=/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/minecraft-runtime/MC-L05-main-passive-observer-v1/.gradle/loom-cache/launch.cfg",
+      "-Dfabric.dli.env=server",
+      "-Dfabric.dli.main=net.fabricmc.loader.impl.launch.knot.KnotServer"
+    ],
+    "program_args": [
+      "nogui"
+    ],
+    "classpath": [
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/minecraft-runtime/MC-L05-main-passive-observer-v1/build/classes/java/main",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/minecraft-runtime/MC-L05-main-passive-observer-v1/build/resources/main",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/fabric-loom/1.20.4/net.fabricmc.yarn.1_20_4.1.20.4+build.3-v2/mappings.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.ow2.asm/asm/9.6/aa205cf0a06dbd8e04ece91c0b37c3f5d567546a/asm-9.6.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.ow2.asm/asm-analysis/9.6/9ce6c7b174bd997fc2552dff47964546bd7a5ec3/asm-analysis-9.6.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.ow2.asm/asm-commons/9.6/f1a9e5508eff490744144565c47326c8648be309/asm-commons-9.6.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.ow2.asm/asm-tree/9.6/c0cdda9d211e965d2a4448aa3fd86110f2f8c2de/asm-tree-9.6.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.ow2.asm/asm-util/9.6/f77caf84eb93786a749b2baa40865b9613e3eaee/asm-util-9.6.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/net.fabricmc/sponge-mixin/0.13.3+mixin.0.8.5/9527e6b0d2449408958fd1302594dc65ec5ade9c/sponge-mixin-0.13.3+mixin.0.8.5.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/io.github.llamalad7/mixinextras-fabric/0.3.5/3b577be20ea942610b3045e4f0cd909fa415a9d3/mixinextras-fabric-0.3.5.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/net.fabricmc/dev-launch-injector/0.2.1+build.8/da8bef7e6e2f952da707f282bdb46882a0fce5e3/dev-launch-injector-0.2.1+build.8.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/net.minecrell/terminalconsoleappender/1.3.0/b562e9bb61235c9520e26282cdee71f8f802d1fc/terminalconsoleappender-1.3.0.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/com.github.oshi/oshi-core/6.4.5/943ba26de047eb6b28fff47f5ee939a34eb5fc8e/oshi-core-6.4.5.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/com.google.code.gson/gson/2.10.1/b3add478d4382b78ea20b1671390a858002feb6c/gson-2.10.1.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/com.google.guava/failureaccess/1.0.1/1dcf1de382a0bf95a3d8b0849546c88bac1292c9/failureaccess-1.0.1.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/com.google.guava/guava/32.1.2-jre/5e64ec7e056456bef3a4bc4c6fdaef71e8ab6318/guava-32.1.2-jre.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/com.mojang/authlib/6.0.52/65085e2eb921c4a3ebdde3d248637f1776e6d80d/authlib-6.0.52.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/com.mojang/brigadier/1.2.9/73e324f2ee541493a5179abf367237faa782ed21/brigadier-1.2.9.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/com.mojang/datafixerupper/6.0.8/3ba4a30557a9b057760af4011f909ba619fc5125/datafixerupper-6.0.8.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/com.mojang/logging/1.1.1/832b8e6674a9b325a5175a3a6267dfaf34c85139/logging-1.1.1.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/commons-io/commons-io/2.13.0/8bb2bc9b4df17e2411533a0708a69f983bf5e83b/commons-io-2.13.0.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/io.netty/netty-buffer/4.1.97.Final/f8f3d8644afa5e6e1a40a3a6aeb9d9aa970ecb4f/netty-buffer-4.1.97.Final.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/io.netty/netty-codec/4.1.97.Final/384ba4d75670befbedb45c4d3b497a93639c206d/netty-codec-4.1.97.Final.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/io.netty/netty-common/4.1.97.Final/7cceacaf11df8dc63f23d0fb58e9d4640fc88404/netty-common-4.1.97.Final.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/io.netty/netty-handler/4.1.97.Final/abb86c6906bf512bf2b797a41cd7d2e8d3cd7c36/netty-handler-4.1.97.Final.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/io.netty/netty-resolver/4.1.97.Final/cec8348108dc76c47cf87c669d514be52c922144/netty-resolver-4.1.97.Final.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/io.netty/netty-transport-classes-epoll/4.1.97.Final/795da37ded759e862457a82d9d92c4d39ce8ecee/netty-transport-classes-epoll-4.1.97.Final.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/io.netty/netty-transport-native-epoll/4.1.97.Final/5514744c588190ffda076b35a9b8c9f24946a960/netty-transport-native-epoll-4.1.97.Final-linux-aarch_64.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/io.netty/netty-transport-native-epoll/4.1.97.Final/54188f271e388e7f313aea995e82f58ce2cdb809/netty-transport-native-epoll-4.1.97.Final-linux-x86_64.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/io.netty/netty-transport-native-unix-common/4.1.97.Final/d469d84265ab70095b01b40886cabdd433b6e664/netty-transport-native-unix-common-4.1.97.Final.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/io.netty/netty-transport/4.1.97.Final/f37380d23c9bb079bc702910833b2fd532c9abd0/netty-transport-4.1.97.Final.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/it.unimi.dsi/fastutil/8.5.12/c24946d46824bd528054bface3231d2ecb7e95e8/fastutil-8.5.12.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/net.java.dev.jna/jna-platform/5.13.0/88e9a306715e9379f3122415ef4ae759a352640d/jna-platform-5.13.0.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/net.java.dev.jna/jna/5.13.0/1200e7ebeedbe0d10062093f32925a912020e747/jna-5.13.0.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/net.sf.jopt-simple/jopt-simple/5.0.4/4fdac2fbe92dfad86aa6e9301736f6b4342a3f5c/jopt-simple-5.0.4.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.apache.commons/commons-lang3/3.13.0/b7263237aa89c1f99b327197c41d0669707a462e/commons-lang3-3.13.0.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-core/2.19.0/3b6eeb4de4c49c0fe38a4ee27188ff5fee44d0bb/log4j-core-2.19.0.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-api/2.19.0/ea1b37f38c327596b216542bc636cfdc0b8036fa/log4j-api-2.19.0.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-slf4j2-impl/2.19.0/5c04bfdd63ce9dceb2e284b81e96b6a70010ee10/log4j-slf4j2-impl-2.19.0.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.joml/joml/1.10.5/22566d58af70ad3d72308bab63b8339906deb649/joml-1.10.5.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.lwjgl/lwjgl-glfw/3.3.2/766bb0e8e829598b1c8052fd8173c62af741c52/lwjgl-glfw-3.3.2-natives-linux.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.lwjgl/lwjgl-jemalloc/3.3.2/2bc33176cdfabf34a63df154b80914e8f433316b/lwjgl-jemalloc-3.3.2-natives-linux.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.lwjgl/lwjgl-openal/3.3.2/650981780b8bbfb3ce43657b22ec8e77bfb1f37a/lwjgl-openal-3.3.2-natives-linux.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.lwjgl/lwjgl-opengl/3.3.2/b8368430ef0d91a5acbc6fbfa47b20c3ec083aec/lwjgl-opengl-3.3.2-natives-linux.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.lwjgl/lwjgl-stb/3.3.2/5c987f43b342d722b54970159040af76f1c87403/lwjgl-stb-3.3.2-natives-linux.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.lwjgl/lwjgl-tinyfd/3.3.2/5d27fc67172b3fcd8400d61a7cfb75da881f609/lwjgl-tinyfd-3.3.2-natives-linux.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.lwjgl/lwjgl/3.3.2/767684973f259d97e7dc66a125eb153986f177e7/lwjgl-3.3.2-natives-linux.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.slf4j/slf4j-api/2.0.7/41eb7184ea9d556f23e18b5cb99cad1f8581fc00/slf4j-api-2.0.7.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/fabric-loom/minecraftMaven/net/minecraft/minecraft-merged/1.20.4-net.fabricmc.yarn.1_20_4.1.20.4+build.3-v2/minecraft-merged-1.20.4-net.fabricmc.yarn.1_20_4.1.20.4+build.3-v2.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/net.fabricmc/fabric-loader/0.15.11/9c2be53d84ec5c4fb58bb5b8d9c8a629047c9ee9/fabric-loader-0.15.11.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.jline/jline-reader/3.20.0/8f15415b022a25b473e8e16c28ae913186ffb9c4/jline-reader-3.20.0.jar",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-build-cache/caches/modules-2/files-2.1/org.jline/jline-terminal/3.20.0/d0ddcc708ddf527a3454c941b7b9225cc83a15ff/jline-terminal-3.20.0.jar"
+    ],
+    "environment": {}
+  },
+  "runtime_boundary": "Actual Fabric loader0.15.11 server with passive successful-break observer, NOT vanilla. Generated launch descriptor and all classpath/support files are required.",
+  "scientific": {
+    "verdict": {
+      "path": "output/temp/task_development/checks/MC-L05-family-independent-verdict.json",
+      "sha256": "3f7c27c07f6654ee3a3923dc7d5f8fba7ab1bdaff8535ac8e438d17f7d34d090"
+    },
+    "difficulty": {
+      "st": {
+        "reviewer_rating": 2,
+        "uncertainty": "high",
+        "plausible_range": [
+          1,
+          2
+        ]
+      },
+      "vm": {
+        "reviewer_rating": 2,
+        "uncertainty": "high",
+        "plausible_range": [
+          1,
+          3
+        ]
+      },
+      "basis": "One public distinguishing10 probe and two explicitly named construction sockets. Geometry/aiming may add VM execution cost but do not strengthen the one-bit learning construct. AND18.350s and OR194.047s authored witnesses are not calibrated population difficulty.",
+      "causal_learning_effect_established": false,
+      "calibrated": false
+    },
+    "scope": "Minimal one-bit identification/application; lawful cold success; no causal necessity or population calibration."
+  },
+  "retained_replays": [
+    {
+      "name": "MC-L05-full-public-st-v1",
+      "kind": "native",
+      "track": "st",
+      "result": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-full-public-st-v1/result.json",
+        "sha256": "fd7d6e90d6aa97252b8eeb7a502dfb6c7df49e9b62f9a183ec33d468643d1850"
+      },
+      "evaluation": {
+        "success": true,
+        "checks": {
+          "final_native_function": true,
+          "alive": true,
+          "successful_removals": 0,
+          "within_six_removal_budget": true
+        },
+        "private_verification": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-full-public-st-v1/game/final-function-verification.json"
+      },
+      "retained_native_verification": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-full-public-st-v1/game/final-function-verification.json",
+        "sha256": "5d4aa22badde5131575ab45bba7424829f9bbf20f65cfc6454700885907de0f7"
+      },
+      "observer": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-full-public-st-v1/game/observer-runtime.json",
+        "sha256": "b483729d02f95618e9d7c440c58e916b9df56833fc1895038203a31e06d54675"
+      },
+      "exact_retained_replay": true,
+      "immutable_evidence": true,
+      "native_commands": 0
+    },
+    {
+      "name": "MC-L05-full-public-vm-v1",
+      "kind": "native",
+      "track": "vm",
+      "result": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-full-public-vm-v1/result.json",
+        "sha256": "2acbcf8c0f976afdafbcbbc003d425ec68ee56f18bb4c30b546a0ec6754aa2f0"
+      },
+      "evaluation": {
+        "success": true,
+        "checks": {
+          "final_native_function": true,
+          "alive": true,
+          "successful_removals": 0,
+          "within_six_removal_budget": true
+        },
+        "private_verification": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-full-public-vm-v1/game/final-function-verification.json"
+      },
+      "retained_native_verification": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-full-public-vm-v1/game/final-function-verification.json",
+        "sha256": "e5de7be55e3d624b5a1182a7f153de05be4253715d096ef138de2db4373a3bf9"
+      },
+      "observer": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-full-public-vm-v1/game/observer-runtime.json",
+        "sha256": "b483729d02f95618e9d7c440c58e916b9df56833fc1895038203a31e06d54675"
+      },
+      "exact_retained_replay": true,
+      "immutable_evidence": true,
+      "native_commands": 0
+    },
+    {
+      "name": "MC-L05-native-OR-full-st-v1",
+      "kind": "native",
+      "track": "st",
+      "result": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-native-OR-full-st-v1/result.json",
+        "sha256": "946721f9124c4fd50a0831dffd21c9ec3d28c38d2550157cc5e2b33285d8b6a2"
+      },
+      "evaluation": {
+        "success": true,
+        "checks": {
+          "final_native_function": true,
+          "alive": true,
+          "successful_removals": 0,
+          "within_six_removal_budget": true
+        },
+        "private_verification": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-native-OR-full-st-v1/game/final-function-verification.json"
+      },
+      "retained_native_verification": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-native-OR-full-st-v1/game/final-function-verification.json",
+        "sha256": "f5ac3b634798ad71756cc00eb81b6bac5d05b9a104bc424e7dfbecb6391b5a5c"
+      },
+      "observer": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-native-OR-full-st-v1/game/observer-runtime.json",
+        "sha256": "b483729d02f95618e9d7c440c58e916b9df56833fc1895038203a31e06d54675"
+      },
+      "exact_retained_replay": true,
+      "immutable_evidence": true,
+      "native_commands": 0
+    },
+    {
+      "name": "MC-L05-native-OR-full-vm-v1",
+      "kind": "native",
+      "track": "vm",
+      "result": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-native-OR-full-vm-v1/result.json",
+        "sha256": "0c297a80f25098d6554130b3bc21923dc33c881bc8a994cb9167de4e00d94161"
+      },
+      "evaluation": {
+        "success": false,
+        "checks": {
+          "final_native_function": false,
+          "alive": true,
+          "successful_removals": 0,
+          "within_six_removal_budget": true
+        },
+        "private_verification": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-native-OR-full-vm-v1/game/final-function-verification.json"
+      },
+      "retained_native_verification": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-native-OR-full-vm-v1/game/final-function-verification.json",
+        "sha256": "39c213ccec55716b594af34b2fbf8074c44d4bc7a2a0f6c6109fdaea7e817b9b"
+      },
+      "observer": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-native-OR-full-vm-v1/game/observer-runtime.json",
+        "sha256": "b483729d02f95618e9d7c440c58e916b9df56833fc1895038203a31e06d54675"
+      },
+      "exact_retained_replay": true,
+      "immutable_evidence": true,
+      "native_commands": 0
+    },
+    {
+      "name": "MC-L05-native-OR-full-vm-v2",
+      "kind": "native",
+      "track": "vm",
+      "result": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-native-OR-full-vm-v2/result.json",
+        "sha256": "076cbde21a7ac31a7ba48b292f5208b61357ac3d5f0caefced469a2e7f189560"
+      },
+      "evaluation": {
+        "success": true,
+        "checks": {
+          "final_native_function": true,
+          "alive": true,
+          "successful_removals": 0,
+          "within_six_removal_budget": true
+        },
+        "private_verification": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-native-OR-full-vm-v2/game/final-function-verification.json"
+      },
+      "retained_native_verification": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-native-OR-full-vm-v2/game/final-function-verification.json",
+        "sha256": "f204180ffad12b45abf8ba85fd84591c076b7f6ef6f41f90b429ce8a4ab8228c"
+      },
+      "observer": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-native-OR-full-vm-v2/game/observer-runtime.json",
+        "sha256": "b483729d02f95618e9d7c440c58e916b9df56833fc1895038203a31e06d54675"
+      },
+      "exact_retained_replay": true,
+      "immutable_evidence": true,
+      "native_commands": 0
+    },
+    {
+      "name": "first-formal-st",
+      "kind": "formal",
+      "track": "st",
+      "result": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-formal-st-development-pair-be505f4/results/baseline/modular_build_procedure_transfer.structured_tool/episode_1/results/result.json",
+        "sha256": "0736b2bde0d43495efc49ff9f3099e452048fff59771039b82dfd3f2a050c067"
+      },
+      "evaluation": {
+        "success": true,
+        "checks": {
+          "final_native_function": true,
+          "alive": true,
+          "successful_removals": 0,
+          "within_six_removal_budget": true
+        },
+        "private_verification": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-formal-st-development-pair-be505f4/results/baseline/modular_build_procedure_transfer.structured_tool/episode_1/game/final-function-verification.json"
+      },
+      "retained_native_verification": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-formal-st-development-pair-be505f4/results/baseline/modular_build_procedure_transfer.structured_tool/episode_1/game/final-function-verification.json",
+        "sha256": "283866c82d31379ca062c0e9738d3348f273697f5d69d97cec035e39f96174c6"
+      },
+      "observer": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-formal-st-development-pair-be505f4/results/baseline/modular_build_procedure_transfer.structured_tool/episode_1/game/observer-runtime.json",
+        "sha256": "b483729d02f95618e9d7c440c58e916b9df56833fc1895038203a31e06d54675"
+      },
+      "exact_retained_replay": true,
+      "immutable_evidence": true,
+      "native_commands": 0
+    },
+    {
+      "name": "first-formal-vm",
+      "kind": "formal",
+      "track": "vm",
+      "result": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-formal-vm-development-pair-be505f4/results/baseline/modular_build_procedure_transfer.visual_motor/episode_1/results/result.json",
+        "sha256": "ced6e6c3c80a699bdcf56b5c8ba296c43d1dcd2b5ddbf72d182ee0a3b3a19883"
+      },
+      "evaluation": {
+        "success": false,
+        "checks": {
+          "final_native_function": false,
+          "alive": true,
+          "successful_removals": 1,
+          "within_six_removal_budget": true
+        },
+        "private_verification": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-formal-vm-development-pair-be505f4/results/baseline/modular_build_procedure_transfer.visual_motor/episode_1/game/final-function-verification.json"
+      },
+      "retained_native_verification": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-formal-vm-development-pair-be505f4/results/baseline/modular_build_procedure_transfer.visual_motor/episode_1/game/final-function-verification.json",
+        "sha256": "5985ca7b0d9acdb740750f59b860480b17d1c88e3c5b50fe57a2dd7be36700c3"
+      },
+      "observer": {
+        "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-L05-formal-vm-development-pair-be505f4/results/baseline/modular_build_procedure_transfer.visual_motor/episode_1/game/observer-runtime.json",
+        "sha256": "b483729d02f95618e9d7c440c58e916b9df56833fc1895038203a31e06d54675"
+      },
+      "exact_retained_replay": true,
+      "immutable_evidence": true,
+      "native_commands": 0
+    }
+  ],
+  "admission": {
+    "published_main_definitions": 56,
+    "family_variant_rows": 4,
+    "total_read_only_rows": 58,
+    "verification": {
+      "path": "output/temp/task_development/checks/MC-L05-final-candidate-read-only-admission-v2.json",
+      "sha256": "3e65f5747721267d22e2110d5bc690dda09a35d19ee5fb1395c2b354cb65ae6b"
+    },
+    "refreshed_base_preserves_two_unrelated_Veloren_commits": true,
+    "minimal_shared_source_delta": "Additive function_replication and optional per-game/session server_factory only."
+  },
+  "tests": {
+    "result": "35 passed, 5 opt-in native games skipped",
+    "log": {
+      "path": "output/temp/task_development/checks/MC-L05-final-candidate-tests.log",
+      "sha256": "5149600ca187ba4af7b6e30616cfce529b95ecfb10fe06d60fd09c6868739d7d"
+    },
+    "validation_environment": {
+      "path": "output/temp/task_development/checks/MC-L05-validation-environment.json",
+      "sha256": "ab2bc34612b85e910aa8131a22bde567d1832691ee74e1507d330e9872e46936"
+    }
+  },
+  "formal": {
+    "st": "valid_success_verified",
+    "vm": "valid_failure_verified",
+    "both_first_finals": true,
+    "same_private_instance": true,
+    "fresh_histories_no_initial_private_identity_fields": true,
+    "VM_only_request_error_deadline_cancellation": true,
+    "pair_closure": {
+      "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/checks/MC-L05-reviewed-development-pair-closure.json",
+      "sha256": "1e21e385ce4d9cf4a54604f69823e5285dea77ef5c39235aaa556a0d7a271fb9"
+    }
+  },
+  "pair_pin": {
+    "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/checks/MC-L05-approved-development-pair-be505f4.json",
+    "sha256": "6123d52d30fe28076bd30e127f91cd2bb04b92a35540b5f664d49fda17af88e4"
+  },
+  "remaining_gate": null,
+  "new_native_or_model_jobs": 0,
+  "limits": [
+    "The first formal ST success and VM failure remain unchanged; neither is rerun.",
+    "Frozen measurements used historical client9af8c6ae plus Fabric observerb7a9cf35, not the combined39b0c2e client.",
+    "Current39b0c2e client and independently compiled byte-identical Fabric observer are read-only compatible, not fresh native gameplay evidence.",
+    "The old fixed-AND blocked condition and failed OR native witness remain preserved at their own source versions.",
+    "One-bit identification/application, ST2/VM2 provisional. Correct cold guesses remain legal; no causal necessity or population success-rate claim.",
+    "Two settled samples for four cases do not exhaust temporal/reference-copying counterpolicies.",
+    "Dependency loss in the shared Python environment occurred after frozen measurements; isolated lock-matched validation restoration does not change those outcomes."
+  ],
+  "validation_environment": {
+    "path": "output/temp/task_development/checks/MC-L05-validation-environment.json",
+    "sha256": "ab2bc34612b85e910aa8131a22bde567d1832691ee74e1507d330e9872e46936"
+  },
+  "accepted_condition": "Exact be505f45 family/task/scorer/observer source plus manifest/private instance identity; historical AND-compatible and current-family OR whole-native ST/VM proofs; independent bounded construct review; both first final measurements valid on one prior uniform instance; integrated current-runtime read-only compatibility with actual Fabric observer."
+}

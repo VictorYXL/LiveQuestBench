@@ -1,0 +1,4 @@
+{
+  "selection": "uniform_once_before_episode",
+  "worlds": [".", "../modular_build_procedure_transfer_variant_b"]
+}

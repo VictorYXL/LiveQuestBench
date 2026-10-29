@@ -163,6 +163,51 @@ All 54 published definitions pass read-only admission; no new native or model
 episode was run. See the [versioned archery admission receipt](../../docs/evidence/minecraft-archery-calibration-admission-v1.json).
 L05 remains separate and is not qualified by this admission.
 
+### Hidden-function family admission (version 1)
+
+The paired `modular_build_procedure_transfer` task retains reviewed source
+`be505f45d5a30eced168520bc35d5d8fcc72eec5`: a one-time uniform AND/OR native
+fixture selection with identical public manifests. The distribution manifest
+and selected-world fingerprint are private provenance; YAML alone does not
+identify the measured condition. Correct cold solutions remain legal.
+
+This task requires an actual **Minecraft 1.20.4 Fabric server with the passive
+successful-break observer**, not the ordinary vanilla server. The optional
+per-game server factory leaves other tasks unchanged. Both runtime selections
+are necessary on the development host:
+
+```bash
+export LIVEQUEST_MINECRAFT_HOME="$PWD/output/temp/task_development/minecraft-runtime/MC-R05-main-vitals-placement-cart-v1"
+export LIVEQUEST_BREAK_SERVER_LAUNCH="$PWD/output/temp/task_development/minecraft-runtime/MC-L05-main-passive-observer-v1/launch.json"
+```
+
+The server descriptor is generated, local build output, not a tracked
+`server_observer/launch.json` supplied by checkout. Its absolute classpath,
+support files and compiled observer are pinned in the
+[versioned runtime handoff](../../docs/evidence/minecraft-function-family-integration-v1.json).
+The separately compiled observer is byte-identical to the historical
+`b7a9cf35…` class. Do not edit or rebuild installations serving frozen episodes,
+or call a generic server-JAR check sufficient admission for this Fabric task.
+Other hosts must build the exact observer sources and provision matching
+dependencies; copying receipts does not establish compatibility.
+
+Read-only admission covers all 56 published definitions, including both family
+variants (58 rows). Five retained native verification receipts and both first
+formal results replay unchanged, with native commands forbidden: **ST valid
+success, VM valid failure**. Both used the same prior one-time uniform draw
+with fresh agents, no initial private identity disclosure and no resampling.
+The VM failure retained one removal, a living player and nonfunctional panels
+under all four native input cases; its last request was cancelled at deadline,
+not an evaluator or credential error.
+
+The bounded claim is minimal one-bit identification/application, provisionally
+ST2/VM2. The ST public probe informed its construction, but does not establish
+causal necessity. Historical fixed-AND blocked evidence and the failed OR
+native witness remain preserved. The separately restored validation Python
+environment is pinned in the handoff; dependency loss after the frozen runs
+is not a model outcome. Compatibility checks do not claim new native gameplay,
+causal learning benefit, or calibrated success rates.
+
 ## Run an experiment
 
 Choose a configuration from

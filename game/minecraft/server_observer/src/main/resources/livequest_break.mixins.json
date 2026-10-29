@@ -1,0 +1,7 @@
+{
+  "required": true,
+  "package": "org.livequestbench.observer",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": ["SuccessfulBreakMixin"],
+  "injectors": {"defaultRequire": 1}
+}

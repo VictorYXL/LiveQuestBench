@@ -173,7 +173,8 @@ def prism_instances() -> list[str]:
 
 class MinecraftSession:
     def __init__(self, output: Path, config: SessionConfig, state: PlayerState, *, world: Path,
-                 shared_server: MinecraftServer | None = None, max_players: int = 1):
+                 shared_server: MinecraftServer | None = None, max_players: int = 1,
+                 server_factory=None):
         if type(max_players) is not int or max_players < 1:
             raise ValueError("max_players must be a positive integer")
         self.output, self.config, self.state = output, config, state
@@ -182,6 +183,7 @@ class MinecraftSession:
                 or not re.fullmatch(r"[A-Za-z0-9_.-]+", self.world.name)):
             raise ValueError("The running world must be a named directory directly inside output_dir")
         self.server = shared_server
+        self.server_factory = server_factory or MinecraftServer
         self.shared_server = shared_server is not None
         self.max_players = max_players
         self.capture: WindowCapture | None = None
@@ -312,7 +314,7 @@ class MinecraftSession:
     async def start(self) -> None:
         if not self.shared_server:
             port = self._prepare_server()
-            self.server = MinecraftServer(
+            self.server = self.server_factory(
                 self.output, self._jar, self._java, self.config.memory_mb, port,
                 self.config.startup_timeout, self.config.stop_timeout,
             )

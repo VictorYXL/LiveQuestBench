@@ -1,6 +1,7 @@
 """Minecraft fixture admission, public bindings and native private scoring."""
 
 from collections.abc import Callable
+import asyncio
 import inspect
 from pathlib import Path
 
@@ -33,6 +34,10 @@ def create_binding(
     if not isinstance(path, str) or not path.strip():
         raise ValueError("world_path must be nonempty text")
     world_path = Path(path)
+    instance_selection = None
+    if evaluator == "function_replication":
+        from game.minecraft.evaluators.function_replication import select_world
+        world_path, instance_selection = select_world(world_path)
     validate_world(world_path)
     expedition = None
     if evaluator == "expedition":
@@ -42,10 +47,16 @@ def create_binding(
     if instance != "1.20.4" or difficulty not in ("peaceful", "easy", "normal", "hard"):
         raise ValueError("Unsupported Minecraft instance or difficulty")
     assert isinstance(instance, str) and isinstance(difficulty, str)
+    server_factory = None
+    evaluation_loop = None
+    if evaluator == "function_replication":
+        from game.minecraft.runtime.observed_server import ObservedServer
+        server_factory = ObservedServer
     game = MinecraftGame(
         output_dir=output_dir, track=task_type, world_path=world_path,
         instance=instance, difficulty=difficulty, player_state=state,
         headless=headless, recording=recording, recording_fps=recording_fps, recording_path=recording_path,
+        server_factory=server_factory,
     )
     if task_type == "structured_tool":
         if tools is None:
@@ -60,7 +71,13 @@ def create_binding(
             tools = (*tools, "RespawnTool")
     elif tools is not None:
         raise ValueError("Tool allowlists are only supported for structured_tool tasks")
-    if evaluator == "target_lock":
+    if evaluator == "function_replication":
+        from game.minecraft.evaluators.function_replication import initial_function, evaluate_function
+        if parameters:
+            raise ValueError("Hidden circuit selection is native fixture state, not public parameters")
+        initial_function(world_path)
+        score = evaluate_function
+    elif evaluator == "target_lock":
         from game.minecraft.evaluators.target_lock import evaluate_lock
         if parameters:
             raise ValueError("The hidden acceptance window is native fixture state, not public parameters")
@@ -179,6 +196,7 @@ def create_binding(
         raise ValueError(f"Unknown Minecraft evaluator: {evaluator}")
 
     def verify_initial(before: Path) -> None:
+        nonlocal evaluation_loop
         assert game.player_uuid is not None
         expected: dict[str, int] = {}
         for item in state.inventory:
@@ -186,6 +204,12 @@ def create_binding(
             expected[name] = expected.get(name, 0) + item["count"]
         if inventory(before, game.player_uuid) != expected:
             raise RuntimeError("Initial native inventory differs from task initialization")
+        if evaluator == "function_replication":
+            initial_function(before)
+            evaluation_loop = asyncio.get_running_loop()
+            import json
+            (game.output_dir / "native-function-instance.json").write_text(
+                json.dumps(instance_selection, indent=2) + "\n")
         if evaluator == "timed_routing":
             verify_routing(before)
         if evaluator == "shielded_cargo":
@@ -222,6 +246,9 @@ def create_binding(
         return bind_controls(public, st.agent_observation, st.agent_tools(), tools)
 
     def evaluate(before: Path, after: Path) -> dict:
+        if evaluator == "function_replication":
+            assert game.player_uuid is not None
+            return score(before, after, game.player_uuid, game=game, loop=evaluation_loop)
         if evaluator == "structure":
             return score(before, after, **parameters)
         assert game.player_uuid is not None
