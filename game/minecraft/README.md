@@ -105,10 +105,9 @@ was relaxed.
 All 50 then-published ST/VM definitions passed read-only binding and
 installation admission against this selection. The nine-case Fabric producer
 regression exits before client/world creation. These checks do **not** establish
-fresh gameplay reliability. I03 v3 remains an isolated engineering candidate:
-its historical corrected-runtime ST/VM witnesses and independent bounded
-construct review do not transfer the old task's formal measurements or add a
-qualified task.
+fresh gameplay reliability. This producer-only receipt predates the separately
+versioned [I03 v3 task admission](#feedback-circuit-v3-i03); it does not transfer
+the old task's formal measurements.
 
 ### Cart inspection runtime and rail junction admission (version 1)
 
@@ -280,6 +279,31 @@ in each task.
 The bundled [fixtures](../../config/minecraft/fixtures/) are starting worlds,
 not writable play sessions. Every Episode uses a copy. Do not launch Minecraft
 directly against a source fixture or modify it in place.
+
+### Feedback circuit v3 (I03)
+
+The published ST/VM definitions use the explicit ID
+`workshop_circuit_feedback_v3`. They are byte-identical copies of the retained
+`config/minecraft/prototypes/` definitions, including the public final-test
+protocol and budgets. This is **not** a rename of `workshop_circuit_diagnosis`;
+that original condition's measurements are excluded.
+
+The admission combines exact v3 native ST/VM whole-task witnesses, independent
+bounded scorer/construct review, and its actual first final pair: ST valid
+success (19 calls, 90.589 seconds) and VM valid failure (418 calls, no errors).
+All four archived evaluations and death metrics replay exactly with the
+integrated scorer. A first-try solution is legal; these results do not prove
+that feedback or diagnosis was necessary. Provisional difficulty is ST 2 / VM 2
+with wide uncertainty, not a calibrated success rate.
+
+The measured native client remains the historical `a1bf410…` source, not the
+current client. Current read-only admission uses
+`MC-R05-main-vitals-placement-cart-v1` (`39b0c2e0…`); I03 keeps the ordinary
+vanilla server, not the optional L05 Fabric observer factory. No archived
+runtime identity has been substituted and no fresh-main game was run.
+Use the [versioned evidence and explicit runtime bridge](../../docs/evidence/minecraft-feedback-circuit-v3-integration.json)
+to distinguish measurement from compatibility. The frozen fixture manifest's
+original prototype-status wording is historical provenance, retained unchanged.
 
 ### Add a task
 

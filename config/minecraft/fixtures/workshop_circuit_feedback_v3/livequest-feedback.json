@@ -1,0 +1,20 @@
+{
+  "schema": "minecraft-circuit-feedback/3",
+  "sha256": {
+    "data/livequest_feedback/functions/initialize.mcfunction": "be90477924c305a48d7dd929f217a650c1353c88e93506ed47d6791afb729944",
+    "data/livequest_feedback/functions/tick.mcfunction": "62331b8ba84edf4a1eb5b0fe04c34e908a88f9f15d221a67fa0429cb86668bdb",
+    "data/livequest_feedback/functions/clock.mcfunction": "0cec8327409232eead88ecc44e6b5f5a8bfededd2123eb6f46abe1adf9bf4fbd",
+    "data/livequest_feedback/functions/sample.mcfunction": "bfd3b270edc4d4ef4d609c1913cf9c4483be87bbe1583b9c23705754d160abf9",
+    "data/livequest_feedback/functions/count_mined.mcfunction": "92a931760246f7d24b977ab6cd27c5684f2851d6a8e9d7c8fafe751f4ac90bf4",
+    "data/livequest_feedback/functions/start.mcfunction": "3a248833fc15101b90b37c1827e27df75d47df537070ea0cf2fda2f8fd4d1860",
+    "data/livequest_feedback/functions/finish.mcfunction": "50b162de145383207b471531b8661f8fd518395d5ff17c502f1b3798c5752de6",
+    "data/livequest_feedback/functions/record.mcfunction": "678d34b6bc086f2588dc37648e559c99096cc8b7b6bf0e18e62c155161aec733",
+    "data/livequest_feedback/functions/edit.mcfunction": "60346d8179d26a8d2bd7fbe10a98d8670b28c08243493a9221b0d00177d3be0e",
+    "data/livequest_feedback/functions/placed.mcfunction": "4111d017e3fbac04199ed1e22e0cbb258e9064a29c0001f550c84ac440e02aca",
+    "data/livequest_feedback/functions/interacted.mcfunction": "1c95983a805d330eef286f9aaf1ea6a468d47657b09701610622ff10cefe4a1b",
+    "pack.mcmeta": "5eebede9c948c43648329c6c99471a37104fa9d2df007670586b7c633e91f411",
+    "data/minecraft/tags/functions/tick.json": "368271b337d1af262747748a71091362527689e471e8a05f84a7cb5abcb785a7",
+    "data/livequest_feedback/advancements/placed.json": "9c2a22f105951b0f4a270e52f3962c1f77b8ae9de5cf2084f1ec9c9519138f0c",
+    "data/livequest_feedback/advancements/interacted.json": "9254477ec5eb5b040dc5d9de08f8839634972d39135eae8c69caa8f20fa9f804"
+  }
+}

@@ -90,6 +90,11 @@ def create_binding(
             raise ValueError("Timed routing has no public hidden-state parameters")
         verify_routing(world_path)
         score = evaluate_routing
+    elif evaluator == "circuit_feedback":
+        from game.minecraft.evaluators.circuit_feedback import evaluate_feedback, evidence, verify_initial as verify_feedback
+        validate_state(**parameters)
+        evidence(world_path)
+        score = evaluate_feedback
     elif evaluator == "inventory":
         inspect.signature(evaluate_inventory).bind(Path(), Path(), None, **parameters)
         validate_requirements(parameters["requirements"])
@@ -204,6 +209,8 @@ def create_binding(
             expected[name] = expected.get(name, 0) + item["count"]
         if inventory(before, game.player_uuid) != expected:
             raise RuntimeError("Initial native inventory differs from task initialization")
+        if evaluator == "circuit_feedback":
+            verify_feedback(before, game.player_uuid)
         if evaluator == "function_replication":
             initial_function(before)
             evaluation_loop = asyncio.get_running_loop()

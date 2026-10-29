@@ -1,0 +1,11 @@
+{
+  "schema": "minecraft-circuit-behavior/1",
+  "sha256": {
+    "pack.mcmeta": "adc81d17844fd95a325acd34cb01dc9bee970ac15f5a689002f57d7d29d817d9",
+    "data/minecraft/tags/functions/tick.json": "281cf8585217c4fdf424275921374d05bd80c47dfed43e0dc278532feaced7c9",
+    "data/livequest_circuit/functions/tick.mcfunction": "d99e6e95d82edccf1965e41d9fd375328bf0a2f0ae4a0c7ad5d0095474e9c2d0",
+    "data/livequest_circuit/functions/clock.mcfunction": "bb24e42ba7271d87ce852196448831196fb6d87d9f00bbfd75ee9644056c38dc",
+    "data/livequest_circuit/functions/sample.mcfunction": "8924607c81b933d87e9605cf0bf04eb8e28f38f40c637f454f1b46dfd5d083f9",
+    "data/livequest_circuit/functions/record.mcfunction": "031bb1b92fc55f2f311492532082f6e0eef1d439968ee3bd682069227591c301"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "criteria": {
+    "interacted": {
+      "trigger": "minecraft:item_used_on_block",
+      "conditions": {
+        "location": [
+          {
+            "condition": "minecraft:inverted",
+            "term": {
+              "condition": "minecraft:location_check",
+              "predicate": {
+                "position": {
+                  "x": {
+                    "min": 0,
+                    "max": 0.999999
+                  },
+                  "y": {
+                    "min": 72,
+                    "max": 72.999999
+                  },
+                  "z": {
+                    "min": 5,
+                    "max": 5.999999
+                  }
+                },
+                "block": {
+                  "blocks": [
+                    "minecraft:lever"
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "rewards": {
+    "function": "livequest_feedback:interacted"
+  }
+}

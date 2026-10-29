@@ -1,0 +1,459 @@
+{
+  "schema": "livequest-i03-v3-main-admission/1",
+  "task": "MC-I03",
+  "condition_id": "workshop_circuit_feedback_v3",
+  "version": "workshop-feedback-relay/3",
+  "status": "qualified_pinned_historical_evidence_current_runtime_read_only_compatible",
+  "qualified": true,
+  "qualification_delta": 1,
+  "measured_code_commit": "acd6100ed3aba29d218e192b2a4f23e20068f3d6",
+  "frozen_handoff_commit": "58727868dcac99cf7378f42b1ebab1a19e145461",
+  "integration_base": "7d2bbc5769b5046563da8a0523819f5d3a7c764e",
+  "publication_identity": {
+    "frozen_paths": "config/minecraft/prototypes/{structured_tools,visual_motor}/workshop_circuit_feedback_v3.yaml",
+    "published_paths": "config/minecraft/tasks/{structured_tools,visual_motor}/workshop_circuit_feedback_v3.yaml",
+    "byte_identical": true,
+    "task_id_unchanged": true,
+    "original_condition": "workshop_circuit_diagnosis",
+    "original_condition_measurements_transferred": false,
+    "fixture_manifest_prototype_status_retained_as_historical_provenance": true
+  },
+  "source_files": {
+    "game/minecraft/evaluators/circuit.py": "31f2ba7b3fee857f4f0e2c33151b98e6621912c7cabf5379e8cb58b36db8e425",
+    "game/minecraft/evaluators/circuit_feedback.py": "ff8c85400f0668e15b3018abff9d5d89baed02c7b94c973712066c3ae59fc41b",
+    "game/minecraft/fixtures/circuit.py": "e466afe69e1c56090d1ab2f62580369eb8c2c3409c40d57dc9f16cf60d80b76c",
+    "game/minecraft/fixtures/circuit_feedback_observer.py": "19531d9e4933de204ce5452cae4e0ad35efd3b537225a5aee66aa1bcccf4a73c",
+    "game/minecraft/fixtures/circuit_feedback_blocks.json": "c0550073841ce7f54eac0c08710b85fd40765685eabb7ee06380f6caf06e4507",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3.source.json": "e008880a906635e8222d3a7bfeab480609ff84eaf4113d9a5d2f376272866fb7",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/DIM-1/data/raids.dat": "712c4447845b95e5432bcee6579a936d5aaed230de617bf5bc2cf422f2525df7",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/DIM1/data/raids_end.dat": "712c4447845b95e5432bcee6579a936d5aaed230de617bf5bc2cf422f2525df7",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/data/chunks.dat": "403911e755e0852a5338546744dc6beaae1ddb48e9629d90e378eb73aa6c42c0",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/data/command_storage_gameagent.dat": "b7c46403569c9f81b7a0f637f26b3744edc64832ffe64164892c2bd82733b0e4",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/data/command_storage_livequest.dat": "8ea89822c9b5fc39c191b41216f7fbef49f994c6a3d2d8f28339c8f447e28f8f",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/data/raids.dat": "712c4447845b95e5432bcee6579a936d5aaed230de617bf5bc2cf422f2525df7",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/data/scoreboard.dat": "89effb848e33881147ea812fddc615e0f6c5e491b5974d8e5716bbdd45febd8b",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/datapacks/livequest_circuit/data/livequest_circuit/functions/clock.mcfunction": "bb24e42ba7271d87ce852196448831196fb6d87d9f00bbfd75ee9644056c38dc",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/datapacks/livequest_circuit/data/livequest_circuit/functions/record.mcfunction": "031bb1b92fc55f2f311492532082f6e0eef1d439968ee3bd682069227591c301",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/datapacks/livequest_circuit/data/livequest_circuit/functions/sample.mcfunction": "8924607c81b933d87e9605cf0bf04eb8e28f38f40c637f454f1b46dfd5d083f9",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/datapacks/livequest_circuit/data/livequest_circuit/functions/tick.mcfunction": "d99e6e95d82edccf1965e41d9fd375328bf0a2f0ae4a0c7ad5d0095474e9c2d0",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/datapacks/livequest_circuit/data/minecraft/tags/functions/tick.json": "281cf8585217c4fdf424275921374d05bd80c47dfed43e0dc278532feaced7c9",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/datapacks/livequest_circuit/pack.mcmeta": "adc81d17844fd95a325acd34cb01dc9bee970ac15f5a689002f57d7d29d817d9",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/datapacks/livequest_feedback/data/livequest_feedback/advancements/interacted.json": "9254477ec5eb5b040dc5d9de08f8839634972d39135eae8c69caa8f20fa9f804",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/datapacks/livequest_feedback/data/livequest_feedback/advancements/placed.json": "9c2a22f105951b0f4a270e52f3962c1f77b8ae9de5cf2084f1ec9c9519138f0c",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/datapacks/livequest_feedback/data/livequest_feedback/functions/clock.mcfunction": "0cec8327409232eead88ecc44e6b5f5a8bfededd2123eb6f46abe1adf9bf4fbd",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/datapacks/livequest_feedback/data/livequest_feedback/functions/count_mined.mcfunction": "92a931760246f7d24b977ab6cd27c5684f2851d6a8e9d7c8fafe751f4ac90bf4",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/datapacks/livequest_feedback/data/livequest_feedback/functions/edit.mcfunction": "60346d8179d26a8d2bd7fbe10a98d8670b28c08243493a9221b0d00177d3be0e",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/datapacks/livequest_feedback/data/livequest_feedback/functions/finish.mcfunction": "50b162de145383207b471531b8661f8fd518395d5ff17c502f1b3798c5752de6",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/datapacks/livequest_feedback/data/livequest_feedback/functions/initialize.mcfunction": "be90477924c305a48d7dd929f217a650c1353c88e93506ed47d6791afb729944",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/datapacks/livequest_feedback/data/livequest_feedback/functions/interacted.mcfunction": "1c95983a805d330eef286f9aaf1ea6a468d47657b09701610622ff10cefe4a1b",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/datapacks/livequest_feedback/data/livequest_feedback/functions/placed.mcfunction": "4111d017e3fbac04199ed1e22e0cbb258e9064a29c0001f550c84ac440e02aca",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/datapacks/livequest_feedback/data/livequest_feedback/functions/record.mcfunction": "678d34b6bc086f2588dc37648e559c99096cc8b7b6bf0e18e62c155161aec733",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/datapacks/livequest_feedback/data/livequest_feedback/functions/sample.mcfunction": "bfd3b270edc4d4ef4d609c1913cf9c4483be87bbe1583b9c23705754d160abf9",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/datapacks/livequest_feedback/data/livequest_feedback/functions/start.mcfunction": "3a248833fc15101b90b37c1827e27df75d47df537070ea0cf2fda2f8fd4d1860",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/datapacks/livequest_feedback/data/livequest_feedback/functions/tick.mcfunction": "62331b8ba84edf4a1eb5b0fe04c34e908a88f9f15d221a67fa0429cb86668bdb",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/datapacks/livequest_feedback/data/minecraft/tags/functions/tick.json": "368271b337d1af262747748a71091362527689e471e8a05f84a7cb5abcb785a7",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/datapacks/livequest_feedback/pack.mcmeta": "5eebede9c948c43648329c6c99471a37104fa9d2df007670586b7c633e91f411",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/entities/r.-1.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/entities/r.-1.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/entities/r.0.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/entities/r.0.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/level.dat": "db16e47ee4f5c9054cf6211c5ba04abc93243e3641e0da67337150f0c0855584",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/livequest-circuit.json": "4d5650dbdaabdf79af5bd4dce7ca95cb76a5a280ba918e2df7096b3397df3501",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/livequest-feedback.json": "14b590abb8f802d38ebb44a7c046abf0d35b5bf5630622c4777208979dcbd804",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/poi/r.-1.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/poi/r.-1.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/poi/r.0.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/poi/r.0.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/region/r.-1.-1.mca": "2dd04308c2742cc438c4da8a9a72ed88098462232e4d92a5d995c9f34293a803",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/region/r.-1.0.mca": "26ed7a2634702b73b5eef05d6a4289a1929aa703c2531da9e32e52d2d82d32d3",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/region/r.0.-1.mca": "c0ddc536b25c69ae13541b8f424d6ee3dac809b5c6f7450d841edf4fbf7f536b",
+    "config/minecraft/fixtures/workshop_circuit_feedback_v3/region/r.0.0.mca": "b45d601543a37eba72d27783e69f2c2b3f91f60f4bed3054908e18b3837a3962",
+    "config/minecraft/prototypes/structured_tools/workshop_circuit_feedback_v3.yaml": "7e4ae350c423f6e2eeb9fad160e035de00cceb68bcdf3f51fe1de24ce785fd0e",
+    "config/minecraft/tasks/structured_tools/workshop_circuit_feedback_v3.yaml": "7e4ae350c423f6e2eeb9fad160e035de00cceb68bcdf3f51fe1de24ce785fd0e",
+    "config/minecraft/prototypes/visual_motor/workshop_circuit_feedback_v3.yaml": "c9a82b7fefbd17329adaace0d34fe77c85bbb14c047bed3caf8f9ddbbad8cb55",
+    "config/minecraft/tasks/visual_motor/workshop_circuit_feedback_v3.yaml": "c9a82b7fefbd17329adaace0d34fe77c85bbb14c047bed3caf8f9ddbbad8cb55"
+  },
+  "native_feasibility": {
+    "st": {
+      "result": "output/temp/task_development/minecraft-spi/MC-I03/feedback-v3-st-fixed-producer-whole-path/native/result.json",
+      "result_sha256": "d29071e77d4a9f430431d75b491ecc726aa98610e2de9008c75d67fb1dc7085c",
+      "task_sha256": "7e4ae350c423f6e2eeb9fad160e035de00cceb68bcdf3f51fe1de24ce785fd0e",
+      "source_commit": "acd6100ed3aba29d218e192b2a4f23e20068f3d6",
+      "full_evaluation_replay_equal": true,
+      "initial_goal_false": true,
+      "success": true,
+      "health": 20.0,
+      "deaths": 0,
+      "elapsed_seconds": 149.22117008455098,
+      "checks": [
+        {
+          "kind": "health",
+          "actual": 20.0,
+          "minimum": 1,
+          "passed": true
+        },
+        {
+          "kind": "position",
+          "horizontal_error": 0.10642135617580792,
+          "vertical_error": 0.0,
+          "motion_blocks_per_tick": 0.0784000015258789,
+          "on_ground": true,
+          "passed": true
+        },
+        {
+          "kind": "native_on_and_off_demonstrated",
+          "passed": true
+        },
+        {
+          "kind": "native_controls_and_outputs_retained",
+          "passed": true
+        },
+        {
+          "kind": "door_approaches_clear",
+          "passed": true
+        },
+        {
+          "kind": "settled_modes_after_final_repair",
+          "passed": true,
+          "modes": [
+            0,
+            1
+          ],
+          "final_revision": {
+            "mined": 2,
+            "edits": 6
+          }
+        }
+      ],
+      "formal": false,
+      "runtime_environment": "output/temp/task_development/minecraft-spi/MC-I03/feedback-v3-st-fixed-producer-whole-path/native/game/environment.json",
+      "public_tool_calls": 364,
+      "placement_responses_all_true": true,
+      "legacy_workaround_used": false,
+      "actual_repair_both_counterexample_retained": true
+    },
+    "vm": {
+      "result": "output/temp/task_development/minecraft-spi/MC-I03/feedback-v3-vm-public-lamp-isolation/result.json",
+      "result_sha256": "c21ede313d31142c7ea9c27755989cae317342c8c7da0706065c405e90ecb307",
+      "task_sha256": "c9a82b7fefbd17329adaace0d34fe77c85bbb14c047bed3caf8f9ddbbad8cb55",
+      "source_commit": "acd6100ed3aba29d218e192b2a4f23e20068f3d6",
+      "full_evaluation_replay_equal": true,
+      "initial_goal_false": true,
+      "success": true,
+      "health": 20.0,
+      "deaths": 0,
+      "elapsed_seconds": 30.06322548352182,
+      "checks": [
+        {
+          "kind": "health",
+          "actual": 20.0,
+          "minimum": 1,
+          "passed": true
+        },
+        {
+          "kind": "position",
+          "horizontal_error": 0.42796316722490074,
+          "vertical_error": 0.0,
+          "motion_blocks_per_tick": 0.0784000015258789,
+          "on_ground": true,
+          "passed": true
+        },
+        {
+          "kind": "native_on_and_off_demonstrated",
+          "passed": true
+        },
+        {
+          "kind": "native_controls_and_outputs_retained",
+          "passed": true
+        },
+        {
+          "kind": "door_approaches_clear",
+          "passed": true
+        },
+        {
+          "kind": "settled_modes_after_final_repair",
+          "passed": true,
+          "modes": [
+            0,
+            1
+          ],
+          "final_revision": {
+            "mined": 0,
+            "edits": 2
+          }
+        }
+      ],
+      "formal": false,
+      "runtime_environment": "output/temp/task_development/minecraft-spi/MC-I03/feedback-v3-vm-public-lamp-isolation/game/environment.json",
+      "recorded_policy_batches": 42,
+      "recorded_policy_commands": 105,
+      "additional_harness_release_all": 1,
+      "public_frame_timing_and_video_verified": true,
+      "limitation": "Authored first-try service-B hypothesis and motor waypoints establish full legal VM feasibility, not spontaneous diagnosis or difficulty."
+    }
+  },
+  "first_formals": {
+    "st": {
+      "task": "MC-I03",
+      "condition_id": "workshop_circuit_feedback_v3",
+      "track": "st",
+      "status": "completed",
+      "measurement": "valid",
+      "task_outcome": "success",
+      "admitted_as_final_measurement": true,
+      "formal": true,
+      "source_commit": "acd6100ed3aba29d218e192b2a4f23e20068f3d6",
+      "handoff_head": "58727868dcac99cf7378f42b1ebab1a19e145461",
+      "runtime_source_sha256": "a1bf410fe4aa0ffe99a2d984e1288a528b628b8da25a5ab5ed5493bbd325805d",
+      "task_sha256": "7e4ae350c423f6e2eeb9fad160e035de00cceb68bcdf3f51fe1de24ce785fd0e",
+      "result": "output/temp/task_development/MC-I03-feedback-v3-final-st-acd6100-a1bf410/results/baseline/workshop_circuit_feedback_v3.structured_tool/episode_1/results/result.json",
+      "result_sha256": "ba334179e2bc5e3a98120369295002dc225b046e50c369deb5a49e17869b2022",
+      "evaluation": "output/temp/task_development/MC-I03-feedback-v3-final-st-acd6100-a1bf410/results/baseline/workshop_circuit_feedback_v3.structured_tool/episode_1/results/evaluation.json",
+      "evaluation_sha256": "3ffae9e82ba4687bb18f3aefd566606de3f603898c0cd061c18776faec862456",
+      "configuration_sha256": "813f4ba7aa6bfbc3a0c7c552172845bdf8195f10cb49fb14f455ea97e797d2fa",
+      "full_evaluation_replay_equal": true,
+      "initial_goal_false": true,
+      "public_task_prompt_exact": true,
+      "initial_message_roles": [
+        "system",
+        "user"
+      ],
+      "all_tool_names_admitted": true,
+      "public_tool_calls": 19,
+      "request_attempts": 20,
+      "errors": [],
+      "deaths": 0,
+      "active_wall_seconds": 90.589036607,
+      "deadline_reached": false,
+      "checks": [
+        {
+          "kind": "health",
+          "actual": 20.0,
+          "minimum": 1,
+          "passed": true
+        },
+        {
+          "kind": "position",
+          "horizontal_error": 0.15270410914480478,
+          "vertical_error": 0.0,
+          "motion_blocks_per_tick": 0.0784000015258789,
+          "on_ground": true,
+          "passed": true
+        },
+        {
+          "kind": "native_on_and_off_demonstrated",
+          "passed": true
+        },
+        {
+          "kind": "native_controls_and_outputs_retained",
+          "passed": true
+        },
+        {
+          "kind": "door_approaches_clear",
+          "passed": true
+        },
+        {
+          "kind": "settled_modes_after_final_repair",
+          "passed": true,
+          "modes": [
+            0,
+            1
+          ],
+          "final_revision": {
+            "mined": 0,
+            "edits": 2
+          }
+        }
+      ],
+      "source_configuration_identity_verified": true,
+      "original_condition_formals_unchanged": true,
+      "automatic_retry_allowed": false,
+      "main_runtime_qualification_transferred": false
+    },
+    "vm": {
+      "task": "MC-I03",
+      "condition_id": "workshop_circuit_feedback_v3",
+      "track": "vm",
+      "status": "completed",
+      "measurement": "valid",
+      "task_outcome": "failure",
+      "admitted_as_final_measurement": true,
+      "formal": true,
+      "source_commit": "acd6100ed3aba29d218e192b2a4f23e20068f3d6",
+      "handoff_head": "58727868dcac99cf7378f42b1ebab1a19e145461",
+      "runtime_source_sha256": "a1bf410fe4aa0ffe99a2d984e1288a528b628b8da25a5ab5ed5493bbd325805d",
+      "task_sha256": "c9a82b7fefbd17329adaace0d34fe77c85bbb14c047bed3caf8f9ddbbad8cb55",
+      "result": "output/temp/task_development/MC-I03-feedback-v3-final-vm-acd6100-a1bf410/results/baseline/workshop_circuit_feedback_v3.visual_motor/episode_1/results/result.json",
+      "result_sha256": "d42989e7cbc5753713c35b0b93eb1bead46da7bf01d3dbfb330b4c621cef98ca",
+      "evaluation": "output/temp/task_development/MC-I03-feedback-v3-final-vm-acd6100-a1bf410/results/baseline/workshop_circuit_feedback_v3.visual_motor/episode_1/results/evaluation.json",
+      "evaluation_sha256": "12856c3129a025aeee6a74dbd31afe1a20729e16accd8abb1c4864d30a82605d",
+      "configuration_sha256": "bd6311c04718c2510b521ab283f0cd106112f0ebbf376070ae234bb9636c4f6a",
+      "full_evaluation_replay_equal": true,
+      "initial_goal_false": true,
+      "public_task_prompt_exact": true,
+      "initial_message_roles": [
+        "system",
+        "user"
+      ],
+      "all_tool_names_admitted": true,
+      "public_tool_calls": 418,
+      "request_attempts": 419,
+      "errors": [],
+      "deaths": 0,
+      "active_wall_seconds": 2697.803862873,
+      "deadline_reached": false,
+      "checks": [
+        {
+          "kind": "health",
+          "actual": 20.0,
+          "minimum": 1,
+          "passed": true
+        },
+        {
+          "kind": "position",
+          "horizontal_error": 9.16181678946642,
+          "vertical_error": 0.125,
+          "motion_blocks_per_tick": 0.0784000015258789,
+          "on_ground": true,
+          "passed": false
+        },
+        {
+          "kind": "native_on_and_off_demonstrated",
+          "passed": false
+        },
+        {
+          "kind": "native_controls_and_outputs_retained",
+          "passed": true
+        },
+        {
+          "kind": "door_approaches_clear",
+          "passed": true
+        },
+        {
+          "kind": "settled_modes_after_final_repair",
+          "passed": false,
+          "modes": [],
+          "final_revision": {
+            "mined": 1,
+            "edits": 25
+          }
+        }
+      ],
+      "source_configuration_identity_verified": true,
+      "original_condition_formals_unchanged": true,
+      "automatic_retry_allowed": false,
+      "main_runtime_qualification_transferred": false
+    }
+  },
+  "independent_scientific_review": {
+    "reviewer": "c971474d-7b80-465c-b8b2-899a05cc2ea3",
+    "status": "reviewed_pass",
+    "snapshot": "output/temp/task_development/checks/MC-I03-producer-independent-verdict.json",
+    "sha256": "042c2f8cb93de4ae72873cc704f9f460b7ed5a8e8ce63a7c2e8d4fb288bc4a04",
+    "construct_boundary": "VM policy source explicitly chooses B first using authored waypoints, then uses public screenshot lamp brightness for lever aiming and ON/OFF confirmation. No active native-state read in the reviewed driver. This proves allowed whole motor feasibility, not spontaneous polarity diagnosis or a causal advantage from feedback. First-try success is legal; prior feedback-based construct pass remains bounded to information_adaptation, not a claim that every successful policy must diagnose.",
+    "difficulty": {
+      "st": {
+        "reviewer_rating": 2,
+        "plausible_range": [
+          2,
+          3
+        ],
+        "uncertainty": "moderate_to_high"
+      },
+      "vm": {
+        "reviewer_rating": 2,
+        "plausible_range": [
+          1,
+          3
+        ],
+        "uncertainty": "high"
+      },
+      "basis": "Two native lead hypotheses, short repair and disclosed stable final tests. Authored cold B shortcut keeps the current instance modest;30seconds and one guided success are not a population calibration. No learning-necessity or difficulty3 claim.",
+      "calibrated": false
+    },
+    "remaining_first_final_gate_closed_by": "Actual exact-v3 first ST valid success and VM valid failure, not original-condition formals or retries."
+  },
+  "runtime_bridge": {
+    "measured_source_sha256": "a1bf410fe4aa0ffe99a2d984e1288a528b628b8da25a5ab5ed5493bbd325805d",
+    "current_source_sha256": "39b0c2e0e5549fa3921071d844ad9e2b8f3c1ff9ae4499531ce61683aeb98f6b",
+    "current_home": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/minecraft-runtime/MC-R05-main-vitals-placement-cart-v1",
+    "current_provenance_sha256": "b8a060086346a0b16210beb1a89ed2cb9161d547a82dcda5168efbe4f740a949",
+    "current_source_classes_dependencies_verified": true,
+    "historical_runtime_does_not_match_current_source": true,
+    "historical_records_and_runtime_unchanged": true,
+    "i03_server": "ordinary vanilla default; L05 optional Fabric factory not selected",
+    "native_delta_review": "Existing vitals RPC and chest-cart inspection support only. Exact placement producer unchanged; I03 ST allowlist does not expose container inspection. Current client is NOT the measured client.",
+    "optional_factory_review": "Current binding selects Fabric only for function_replication. Both I03 bindings assert server_factory=None; session retains vanilla default.",
+    "state_scorer_review": "Only optional gamemode predicate added, absent in I03 position-only evaluator call. Complete four-endpoint evaluations and death metrics equal.",
+    "fresh_main_native_game_claim": false,
+    "launch_selection": "LIVEQUEST_MINECRAFT_HOME=\"$PWD/output/temp/task_development/minecraft-runtime/MC-R05-main-vitals-placement-cart-v1\" output/temp/task_development/MC-final-admission-python/bin/python -m game.minecraft.runtime.install check --track all"
+  },
+  "read_only_verification": {
+    "candidate_receipt": "output/temp/task_development/checks/MC-I03-final-candidate-version-bridge.json",
+    "candidate_receipt_sha256": "1f65552d3481835178215c894189187ea83f1fc792b2acc99c50235579d4b949",
+    "published_definitions": 58,
+    "all_admitted": true,
+    "complete_evaluation_and_death_replays": 4,
+    "initial_goals_false": true,
+    "native_start_methods_forbidden": true,
+    "runtime_and_snapshots_unchanged": true,
+    "reproduction": [
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-final-admission-python/bin/python",
+      "checks/minecraft_i03_v3_admission.py",
+      "--development",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development",
+      "--output",
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/checks/MC-I03-final-candidate-version-bridge.json"
+    ],
+    "main_receipt": "output/temp/task_development/checks/MC-I03-final-main-version-bridge.json",
+    "main_receipt_sha256": "555a18373302d7c6e8e0bdcab601268874366377ed037e1902ea761a3b68eaa9"
+  },
+  "tests": {
+    "candidate": "36 passed, 1 skipped",
+    "log": "output/temp/task_development/checks/MC-I03-final-candidate-tests.log",
+    "log_sha256": "968bc81ecd60c19d204bb7163475df13490633bca469cdcdcc7d9df02fc7b788",
+    "native_tests_not_run": true,
+    "setup_failure_preserved": "output/temp/task_development/checks/MC-I03-final-candidate-basetemp-missing.log",
+    "main": "....................................s                                    [100%]\n36 passed, 1 skipped in 0.31s",
+    "main_command": [
+      "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-final-admission-python/bin/python",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/test_game/minecraft/test_circuit.py",
+      "tests/test_game/minecraft/test_circuit_feedback_observer.py",
+      "tests/test_game/minecraft/test_install.py",
+      "tests/test_game/minecraft/test_game.py",
+      "--basetemp=output/temp/task_development/checks/MC-I03-final-main-pytest"
+    ],
+    "main_log_sha256": "64061706171015ca366c6f45f39946aec8050dc82dadc043702ecc6d7787ca59"
+  },
+  "validation_environment": {
+    "reused_existing_isolated_python": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/MC-final-admission-python/bin/python",
+    "receipt": "output/temp/task_development/checks/MC-L05-validation-environment.json",
+    "receipt_sha256": "ab2bc34612b85e910aa8131a22bde567d1832691ee74e1507d330e9872e46936",
+    "reason": "Shared .venv import nbtlib failed with ModuleNotFoundError. Reused existing declared/lock-matched isolated environment; no install or shared environment mutation.",
+    "pyproject_sha256": "f125b47e981beba525ee3bf5b28a1e722eb6878439a73d22e9fcb8a25f3b6ebd",
+    "uv_lock_sha256": "9e2cce3556e5ddaafa41fd92a46776340d6dcd7e69f60105266f4b9a67e0e005"
+  },
+  "new_native_model_azure_or_formal_jobs": 0,
+  "remaining_limits": [
+    "One final pair does not calibrate population difficulty or adaptation benefit.",
+    "First-try success is legal; no claim that diagnosis/learning is necessary.",
+    "Current-main compatibility is read-only and replay-based, not fresh-main native reliability.",
+    "Historical original-condition and controller failures remain retained; no outcome replacement or automatic retry."
+  ],
+  "owner_closure": {
+    "MC-I03-v3-final-pair-handoff.json": {
+      "path": "output/temp/task_development/checks/MC-I03-v3-final-pair-handoff.json",
+      "sha256": "87ec188827b6ff8f5c983cb6d5d6228920596eed085579f7fb7da397b918d029"
+    },
+    "MC-I03-canonical-publication-agreement.json": {
+      "path": "output/temp/task_development/checks/MC-I03-canonical-publication-agreement.json",
+      "sha256": "0f5ea2553db3c1d9430e8c40cea714484f1cb3bfa740b6c0e25b67d780158f3a"
+    }
+  },
+  "acceptance_scope": "Parent-directed guarded admission accepts exact frozen v3 evidence plus current-source read-only/native-version bridge, not fresh-main gameplay. One MC-I03 slot only; assessment and inventory reconciliation are separately owned.",
+  "refreshed_integration_base": "8ee56e064c852cd515c04d9ceff99fbcbc7f4cc0",
+  "candidate_commit": "5aae46367e74d80612f928cec970ab6e1ed08eb3"
+}
