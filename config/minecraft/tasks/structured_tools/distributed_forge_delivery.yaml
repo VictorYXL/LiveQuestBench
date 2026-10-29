@@ -7,7 +7,7 @@ capabilities:
   secondary:
   - planning_resources
 task: Together finish at the yellow forge pad carrying, across your inventories, at least two iron pickaxes,
-  one shield, four oak planks and one coal. Both players must finish alive and standing still there. Alpha
+  one shield, four oak planks and one coal. Both players must finish with at least 1 health point each and standing still there. Alpha
   starts with raw iron; Beta starts with coal and logs. The two starting stations and forge form a roughly
   30-block triangle. Two furnaces and a crafting table are at the forge; an exchange chest is near the
   middle. Native furnace interfaces allow bounded individual slot clicks while production continues. Choose
