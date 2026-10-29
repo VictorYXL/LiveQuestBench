@@ -38,6 +38,9 @@ def create_binding(
     if evaluator == "function_replication":
         from game.minecraft.evaluators.function_replication import select_world
         world_path, instance_selection = select_world(world_path)
+    if evaluator == "camel_delivery_flush_v4":
+        from game.minecraft.fixtures.camel_delivery_registration import select_world
+        world_path, instance_selection = select_world(world_path)
     validate_world(world_path)
     expedition = None
     if evaluator == "expedition":
@@ -77,6 +80,12 @@ def create_binding(
             raise ValueError("Hidden circuit selection is native fixture state, not public parameters")
         initial_function(world_path)
         score = evaluate_function
+    elif evaluator == "camel_delivery_flush_v4":
+        from game.minecraft.fixtures.camel_delivery_flush_v4 import evaluate as evaluate_courier
+        from game.minecraft.fixtures.camel_delivery_registration import verify_initial as verify_courier, SPEEDS
+        if parameters:
+            raise ValueError("Native courier response selection is private fixture state, not public parameters")
+        score = evaluate_courier
     elif evaluator == "target_lock":
         from game.minecraft.evaluators.target_lock import evaluate_lock
         if parameters:
@@ -219,6 +228,13 @@ def create_binding(
                 json.dumps(instance_selection, indent=2) + "\n")
         if evaluator == "timed_routing":
             verify_routing(before)
+        if evaluator == "camel_delivery_flush_v4":
+            assert instance_selection is not None
+            if verify_courier(before, game.player_uuid) != SPEEDS[instance_selection["instance_index"]]:
+                raise RuntimeError("Initial native courier response differs from the selected instance")
+            import json
+            (game.output_dir / "native-camel-instance.json").write_text(
+                json.dumps(instance_selection, indent=2) + "\n")
         if evaluator == "shielded_cargo":
             verify_initial_shielded_cargo(before, game.player_uuid, **parameters)
         if evaluator == "expedition":

@@ -1,0 +1,61 @@
+{
+  "schema": "livequest-native-camel-variants/4",
+  "condition": "courier-v4-flush-destination-furnaces",
+  "selection": "uniform_once_before_episode",
+  "worlds": [
+    {
+      "path": "instance_0",
+      "movement_speed": 0.05,
+      "recipe_sha256": "1ced3f239f72111ef41359de03bb983c126b697baf791f278861dfcc0828a4b3",
+      "files": {
+        "DIM-1/data/raids.dat": "824f66b4281bc56829395bdc7c54460bd619b4852882c6bf442e210f407c826d",
+        "DIM1/data/raids_end.dat": "824f66b4281bc56829395bdc7c54460bd619b4852882c6bf442e210f407c826d",
+        "data/chunks.dat": "de9f1f3c82333329d7fc1a3b959be779d19c93ce2e62810a11573d1c1966e6f5",
+        "data/command_storage_gameagent.dat": "c07c0689f0680ccdcf974b634f507dde4866739c20329fab415a509cea915737",
+        "data/raids.dat": "bec563aa76ffb60a69c0b1f3e86c5ccf7d3112de475f0f9c6586593e11af9602",
+        "entities/r.-1.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "entities/r.-1.0.mca": "124be5f10a4fe94dcd9a2764d8665e2f9fd3fb7d9699bae8ac4c879aff7f6a7f",
+        "entities/r.0.-1.mca": "fdff4e559d84e5d4c328e6295ac2a6c01918f0801e93299318c82ff99dba5edd",
+        "entities/r.0.0.mca": "852fee43a2389ea29862808cf242abd0159657a67dc3ba49276a1147833c9b73",
+        "level.dat": "aee8a129fa7ce99160d53816ce7a22fa9c655389ed10764936ca5024c377f556",
+        "poi/r.-1.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "poi/r.-1.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "poi/r.0.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "poi/r.0.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "region/r.-1.-1.mca": "2e894f7c5255d639b846567d093d5ddc38da32d4fefbfa64041f0d7253619592",
+        "region/r.-1.0.mca": "0131967f14a3ce1b2d276df879272c742899625dbfe560ae005639ca1470e2d7",
+        "region/r.0.-1.mca": "ae94e24c176fef4afc5ded6927950c6d0e70f4de1f361e5db4f5e83325a4f256",
+        "region/r.0.0.mca": "36ea7accddea413b36fde5f386521512c974a3d2a5873b533a85474c8ee68c16"
+      }
+    },
+    {
+      "path": "instance_1",
+      "movement_speed": 0.2,
+      "recipe_sha256": "c625e79cf10db69a5ef475879a977b1bfdcf661e6021b97bc2a648f8aefcd06d",
+      "files": {
+        "DIM-1/data/raids.dat": "824f66b4281bc56829395bdc7c54460bd619b4852882c6bf442e210f407c826d",
+        "DIM1/data/raids_end.dat": "824f66b4281bc56829395bdc7c54460bd619b4852882c6bf442e210f407c826d",
+        "data/chunks.dat": "de9f1f3c82333329d7fc1a3b959be779d19c93ce2e62810a11573d1c1966e6f5",
+        "data/command_storage_gameagent.dat": "c07c0689f0680ccdcf974b634f507dde4866739c20329fab415a509cea915737",
+        "data/raids.dat": "bec563aa76ffb60a69c0b1f3e86c5ccf7d3112de475f0f9c6586593e11af9602",
+        "entities/r.-1.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "entities/r.-1.0.mca": "8a2fc0f0b2398291d0438c3dd3d5d8f43df737d937ccbdeda31a1e2cffa46e0a",
+        "entities/r.0.-1.mca": "fdff4e559d84e5d4c328e6295ac2a6c01918f0801e93299318c82ff99dba5edd",
+        "entities/r.0.0.mca": "852fee43a2389ea29862808cf242abd0159657a67dc3ba49276a1147833c9b73",
+        "level.dat": "aee8a129fa7ce99160d53816ce7a22fa9c655389ed10764936ca5024c377f556",
+        "poi/r.-1.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "poi/r.-1.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "poi/r.0.-1.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "poi/r.0.0.mca": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "region/r.-1.-1.mca": "2e894f7c5255d639b846567d093d5ddc38da32d4fefbfa64041f0d7253619592",
+        "region/r.-1.0.mca": "0131967f14a3ce1b2d276df879272c742899625dbfe560ae005639ca1470e2d7",
+        "region/r.0.-1.mca": "ae94e24c176fef4afc5ded6927950c6d0e70f4de1f361e5db4f5e83325a4f256",
+        "region/r.0.0.mca": "36ea7accddea413b36fde5f386521512c974a3d2a5873b533a85474c8ee68c16"
+      }
+    }
+  ],
+  "source_snapshot_manifest_sha256": "f905962b767dcbdb9825bd9a710db19b3f618cb3c8e1f2a7972c22fcb6fcfdbc",
+  "source_snapshot": "../../MC-L02-flush-v4-mounted-A-ui-transfer-v2/before",
+  "exporter_sha256": "022e1d069debb926c58c02a8505a636cc1a51249712817faecfca73441eaef24",
+  "method": "Player-free native v4 before snapshot; variant1 differs only in the stored original camel movement attribute, matching reviewed commands(1). Offline export, not a new native execution."
+}

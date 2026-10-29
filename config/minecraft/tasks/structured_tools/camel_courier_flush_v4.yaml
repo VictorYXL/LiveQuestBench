@@ -1,0 +1,62 @@
+id: camel_courier_flush_v4
+game: minecraft
+task_type: structured_tool
+capabilities:
+  primary:
+  - within_episode_learning
+  secondary:
+  - spatial_interaction
+task: Deliver the two original marked clay parcels from the depot furnace to the matching
+  A and B furnace INPUT slots. Finish alive with the original courier camel alive,
+  grounded and stopped on pad B. Each gold/emerald pad is four blocks square. The
+  same camel's native dash response applies throughout this episode. The marked practice
+  lanes are optional; discover a useful response by any legal means. All ordinary
+  actions, dismounting, recovery and shortcuts are allowed. Do not smelt the parcels.
+  No prescribed probe or initial failure. The destination furnace tops are flush with
+  the pad surfaces.
+time_limit_seconds: 1200
+fixture:
+  world_path: ../../fixtures/camel_courier_flush_v4
+  instance: 1.20.4
+  difficulty: normal
+  player_state:
+    position:
+    - -42.5
+    - 72
+    - 1.5
+    dimension: minecraft:overworld
+    yaw: -90
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory: []
+    effects: []
+evaluator:
+  name: camel_delivery_flush_v4
+  parameters: {}
+tools:
+- MoveTool
+- LookAtPositionTool
+- SelectTool
+- StopTool
+- RespawnTool
+- JumpTool
+- GoToPositionTool
+- DigTool
+- PlaceTool
+- QueryCraftRecipeTool
+- CraftItemTool
+- SmeltItemTool
+- InspectContainerTool
+- TakeContainerItemTool
+- StrikeTool
+- AttackTool
+- UseHeldItemTool
+- InspectMerchantTool
+- TradeTool
+- InspectVitalsTool
+- InspectFurnaceTool
+- FurnaceClickTool
