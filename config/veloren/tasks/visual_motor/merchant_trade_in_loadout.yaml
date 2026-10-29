@@ -1,0 +1,174 @@
+id: merchant_trade_in_loadout
+game: veloren
+task_type: visual_motor
+task: Produce or purchase a rawhide chestpiece and finish at the starting stone arch wearing it, with
+  at least 75 health, two mushroom sticks, one raw mushroom, one twig, one apple, one minor potion and
+  five coins. Keep your replaced worker shirt in your bag. A nearby native merchant trades armor and goods
+  at ordinary prices; a tanning rack and crafting bench are farther into the courtyard. More mushrooms
+  are on its far side; loose supplies expire after about five minutes and are not replenished. Choose
+  how to fund equipment and healing while preserving provisions. You know the relevant recipes. Finish
+  alive, standing still on the ground. Death does not restore spent resources.
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/veloren_0_18_0_0.bin
+  world_seed: 130626853
+  time_of_day: '12:00'
+  day_length: 30
+  calendar: none
+  respawn_at_start: true
+  platform:
+    origin:
+    - 18700
+    - 10800
+    - 500
+    size:
+    - 28
+    - 24
+    block: Rock
+  blocks:
+  - origin:
+    - 18707
+    - 10804
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18707
+    - 10808
+    - 501
+    size:
+    - 1
+    - 1
+    - 3
+  - origin:
+    - 18707
+    - 10804
+    - 504
+    size:
+    - 1
+    - 5
+    - 1
+  - origin:
+    - 18700
+    - 10800
+    - 501
+    size:
+    - 28
+    - 1
+    - 4
+  - origin:
+    - 18700
+    - 10823
+    - 501
+    size:
+    - 28
+    - 1
+    - 4
+  - origin:
+    - 18700
+    - 10801
+    - 501
+    size:
+    - 1
+    - 22
+    - 4
+  - origin:
+    - 18727
+    - 10801
+    - 501
+    size:
+    - 1
+    - 22
+    - 4
+  player_state:
+    position: &id001
+    - 18708.5
+    - 10806.5
+    - 501
+    look:
+    - 0
+    - 1
+    - 0
+    health: 65
+    inventory:
+      common.items.consumable.potion_minor: 2
+      common.items.crafting_ing.hide.animal_hide: 5
+      common.items.crafting_ing.twigs: 3
+      common.items.food.mushroom: 3
+      common.items.food.apple: 1
+      common.items.utility.coins: 5
+    equipment:
+      active_mainhand: common.items.weapons.sword.starter
+      chest: common.items.armor.misc.chest.worker_purple_brown
+      feet: common.items.armor.misc.foot.sandals
+      glider: common.items.glider.basic_white
+      lantern: common.items.lantern.black_0
+      legs: common.items.armor.misc.pants.worker_brown
+  merchant:
+    position:
+    - 18710.5
+    - 10809.5
+    - 501
+    stock_item: common.items.armor.hide.rawhide.chest
+    stock_amount: 1
+    payment_item: common.items.consumable.potion_minor
+    payment_reserve: 1
+    coin_reserve: 5
+  recipes:
+    mushroom_stick: true
+    simple_leather: true
+    rawhide_chest: true
+  stations:
+  - position:
+    - 18719.5
+    - 10804.5
+    - 501
+    sprite: TanningRack
+  - position:
+    - 18722.5
+    - 10814.5
+    - 501
+    sprite: CraftingBench
+  supplies:
+  - position:
+    - 18723.5
+    - 10818.5
+    - 501
+    item: common.items.food.mushroom
+    amount: 4
+  recipe_groups:
+  - common.items.recipes.food
+evaluator:
+  name: state
+  parameters:
+    equipment:
+      chest: common.items.armor.hide.rawhide.chest
+    inventory:
+    - item: common.items.food.mushroom_stick
+      min_count: 2
+      min_delta: 2
+    - item: common.items.crafting_ing.twigs
+      min_count: 1
+    - item: common.items.food.mushroom
+      min_count: 1
+    - item: common.items.food.apple
+      min_count: 1
+    - item: common.items.consumable.potion_minor
+      min_count: 1
+    - item: common.items.utility.coins
+      min_count: 5
+    - item: common.items.armor.misc.chest.worker_purple_brown
+      min_count: 1
+    min_health: 75
+    position:
+      target: *id001
+      horizontal_tolerance: 3
+      vertical_tolerance: 1
+      max_speed: 0.1
+capabilities:
+  primary:
+  - planning_resources
+  secondary:
+  - spatial_interaction

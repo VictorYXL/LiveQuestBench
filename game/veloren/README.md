@@ -135,6 +135,18 @@ verify a working runtime.
 Levels organize the development catalog, not calibrated difficulty guarantees.
 Each task declares its exact budget, starting state, permitted tools and goal.
 
+**Basic loadout provisioning** (legacy ID `merchant_trade_in_loadout`) is an
+introductory planning/resources addition, rated ST 2 / VM 2. Its unchanged
+objective permits production **or** purchase: supplied-stock manufacture is the
+demonstrated dominant route, and trading is not indispensable. The armor,
+retained-shirt and provision chains overlap substantively with P04's recipe and
+reserve planning; this is not a distinct mandatory-barter or hard-scarcity test.
+Both native reference successes and both valid model failures are retained.
+The [admission record](../../docs/evidence/merchant_loadout_admission.json)
+pins the supported historical runtime and distinguishes offline source
+compatibility from new native execution. It does not qualify a fresh route/2
+runtime or the exceptional merchant fallback/reopen branches.
+
 Private merchant preparation checks the final quote against the same living
 resident and lifecycle after provisioning. It may reposition only the setup
 administrator using the existing authoring `goto`, then reopen once after a

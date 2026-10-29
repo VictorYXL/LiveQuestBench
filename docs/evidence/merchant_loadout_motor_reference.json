@@ -1,0 +1,14 @@
+{
+  "scope": "One first bounded observed public-GUI native VM witness, not a model Baseline",
+  "task_condition": "Unchanged merchant_trade_in_loadout paired task and scorer; bounded readiness repair94663051 retained. The final model VM failure and repaired ST failure remain final.",
+  "grounding": "Existing P04 observed-motor success proves native inventory right-click and crafting GUI operation, not P05 completion. P05's separate complete native ST trace supplies known route/material planning only.",
+  "reference_sources": [
+    "VE-P04-observed-motor-reference-vm/reference.json",
+    "VE-P05-first-public-reference-st/reference.json"
+  ],
+  "planned_public_actions": "Use spare potion, walk to tanning rack, open its native E-selected station menu, manufacture five simple leather, walk to bench and manufacture/equip one rawhide chest, retain removed workshirt, collect nearby mushrooms and manufacture exactly two sticks at the cooking station, then return to the arch. Verify through public images, not private state.",
+  "access": "Only the reference server's VM keyboard/mouse action endpoint and returned images during gameplay. No structured tools, private/native state feedback, teleport, native patch, AI protection or synthetic items/events.",
+  "bound": "Archived observer exits on an operator-finished marker or raises after540s of gameplay control; outer helper retains600s controller cap. Marker does not claim success. Native terminal evaluation must independently establish every unchanged goal predicate.",
+  "measurement_boundary": "No benchmark model/provider requests. An assistant-guided public GUI development witness is explicitly not an autonomous model performance measurement or a predeclared open-loop policy.",
+  "completed": "Whole native success in237.448905s/18 public batches145 primitives. Food was ordinary station-free hand crafting, not a required cooking station. Exact evidence and remaining source/runtime/review boundaries are recorded in merchant_loadout_engineering.json."
+}

@@ -1,0 +1,118 @@
+{
+  "schema": "livequest-task-source-admission/1",
+  "slot": "VE-P05",
+  "task_id": "merchant_trade_in_loadout",
+  "display_scope": "Basic loadout provisioning; legacy ID is not a mandatory-trade claim",
+  "review_date": "2026-10-29",
+  "status": "isolated_source_compatibility_verified_for_pinned_historical_condition",
+  "integration_base": "7bbc6fddce8ee7c9471209a78ecc5fbaed614ef4",
+  "frozen_handoff": {
+    "branch": "veloren-p05-merchant-readiness-fix",
+    "commit": "24e9afa",
+    "document": "docs/evidence/merchant_loadout_engineering.json",
+    "interpretation": "Preserved verbatim as the historical pre-admission handoff, including its then-current current_main_final_ready=false. This separate record closes source compatibility, not a new native execution.",
+    "task_definition": "bc39a53ae646348f556bc764e536315e3dd616fb",
+    "controller": "f3af09224b89f9dcb79cf364c8f4bf6c6994b007",
+    "engineering": "524e402",
+    "task_sha256": {
+      "structured_tools": "26bcec09801f981bcff794f7885578660812d737ebf089a922f10608aa29ac06",
+      "visual_motor": "db77cff4b06a600899d77d2302fa1ba0e7c9ef764de23254fe27d68f569377aa"
+    }
+  },
+  "qualification_delta": {
+    "before": "Engineering and independent basic planning 2/2 review complete; current-main dependency compatibility pending.",
+    "after": "Paired task source is compatible on the isolated main-based candidate and all four frozen rows replay exactly; admission is restricted to the unchanged public contract and explicitly pinned historical runtime.",
+    "difficulty": {"st": 2, "vm": 2},
+    "construct": "Produce OR purchase; supplied-stock manufacture is the demonstrated dominant legal route. Armor processing, equipment replacement and retained provisions support basic planning. Substantive P04 recipe/reserve overlap remains.",
+    "not_credited": [
+      "Indispensable trade, novel barter optimization, hard scarcity or higher planning difficulty",
+      "Autonomous reference performance, success rates or statistical difficulty",
+      "Fresh runtime execution or native exceptional-branch qualification"
+    ],
+    "independent_review": {
+      "reviewer": "454628fc-72af-4f1c-87c1-4effa1199334",
+      "artifact": "output/temp/task_development/checks/veloren-independent-quality.json",
+      "scope": "Accept basic planning 2/2 with no-trade dominance and P04 overlap disclosed; do not silently substitute a new core construct."
+    }
+  },
+  "source_dependency_resolution": {
+    "imports": [
+      "Exact paired task definitions from bc39a53",
+      "Bounded public-GUI controller and its focused tests from f3af092",
+      "Frozen engineering/controller provenance through 24e9afa"
+    ],
+    "shared_dependencies_reused": {
+      "opening_currency": "4c9b26e behavior already integrated as bcd76702faea8175aee66d8ac5d448ac16fc1eec; not reimported",
+      "final_quote_readiness": "94663051 behavior already integrated quote-only as f56ae265 with evidence7bbc6fd; not reimported"
+    },
+    "excluded_initial_fallback": {
+      "commit": "a846293",
+      "decision": "Do not import the inherited merchant,sell wares retry or its selection-attempt metadata. All four archived rows have exactly one ordinary merchant selection. Main retains the same ordinary lookup, native target, invite, stock provisioning and currency/quote checks.",
+      "exact_diff": "The only settlement.py difference against the frozen handoff is initial lookup refactoring, fallback retry and associated selection_attempts metadata. No whole-file identity is claimed.",
+      "failure_boundary": "If ordinary selection cannot establish trade, main continues to fail setup rather than using the unqualified fallback. This does not turn an initialization error into a measured failure."
+    },
+    "other_current_main_changes": [
+      "Binding adds other evaluator dispatches; this task still dispatches the byte-identical state scorer.",
+      "Fixture authoring order groups the same exact voxel set. Supply initialization/binding was extracted without changing single-player operations. The conservative remote-supply clock check passes all four archived openings.",
+      "Peer/group, deferred-team supply/encounter, harvest, pickup, public-energy, sword and route evidence paths are not enabled by these task files.",
+      "Public ST projections match frozen source on every initial/final snapshot. All declared ST native action names and argument schemas match; InviteTradeTool wording broadens NPC to native actor without changing this task's action.",
+      "VM motor interface, snapshot scorer, death metric, session RPC, fixture record writer, server fixture, benchmark runner and public control binding files are byte-identical.",
+      "Game begin/end, public gate, cancellation, VM action and snapshot methods are AST-identical. Current setup bridge creation is unchanged for a single non-attached administrator. Xvfb -noreset changes display lifetime, not inputs, physics or clock.",
+      "Runtime selection retains the original upstream server for this unextended runtime; new route/2 checks are conditional and not requested here."
+    ],
+    "active_P03_S05_sources_modified": false,
+    "frozen_reference_experiments_modified": false
+  },
+  "supported_runtime": {
+    "selection": "Set LIVEQUEST_VELOREN_RUNTIME to the exact runtime.json below; a default or rebuilt runtime is not inferred equivalent.",
+    "path": "output/temp/veloren-native-route-20261027/runtime.json",
+    "sha256": "387e3485fb1fa1edcfb810e36ed2f1cef4d07bfeb487f73d8be433fd82e653d7",
+    "renderer_sha256": "478b0addc202cb37aaa5543cf369fa59e4f4cb3031deb56bb6544d49fc9a4897",
+    "source_manifest_sha256": "f303e8aa0d93c19089db8b070ecefe04dc2afea1e84d1ccf3dee522bd4141ba1",
+    "route_capability": "native-client-route/1",
+    "route_requested": false,
+    "validation": "All eight runtime constituent pins and upstream runtime hash verified; upstream renderer loader and main original-server selection pass offline. Native protection remains explicitly disabled.",
+    "boundary": "Historical ST/VM native witnesses remain bound to their archived source manifests and this renderer. Main source compatibility is not a claim that the historical episodes executed on main or that a route/2 build has been played."
+  },
+  "retained_evidence": {
+    "replay_order": [
+      "VE-P05-first-public-reference-st",
+      "VE-P05-observed-loadout-reference-vm",
+      "VE-P05-quote-readiness-st",
+      "VE-P05-formal-vm"
+    ],
+    "terminal_results": [true, true, false, false],
+    "all_initial_results": false,
+    "vm_reference": {
+      "active_seconds": 237.44890522398055,
+      "public_batches": 18,
+      "public_primitives": 145,
+      "terminal_health": 100,
+      "arch_error_m": 0.2764292940374641,
+      "classification": "Whole assistant-guided public GUI feasibility, not autonomous model performance"
+    },
+    "final_measurements": {"st": "valid_failure", "vm": "valid_failure"},
+    "separate_initialization_failure": "VE-P05-formal-st had zero model calls and remains unavailable, not a game failure; the authorized repaired ST recovery is consumed.",
+    "exceptional_branches": "Neither initial resident fallback nor final decline-reopen is native-qualified by this task's ordinary-selection VM success. Shared mocked readiness tests are not native coverage.",
+    "qualification_limits": "No new game/model episodes, credentials, Azure requests, full benchmark or reconstructed deleted logs."
+  },
+  "validation": {
+    "candidate_replay": "output/temp/task_development/checks/VE-P05-candidate-replay.json",
+    "integration_receipt": "output/temp/task_development/checks/VE-P05-main-admission.json",
+    "replay_checks": [
+      "Exact frozen YAML hashes and paired admission",
+      "Full evaluation equality, not merely success booleans",
+      "Private snapshot checksums, identities, phases and chronological public gates",
+      "Native fixture and source-world byte equality",
+      "Current strict player opening and supply-age validation",
+      "Public permissions, historical projection equality and unchanged clock/gate methods",
+      "Exact pinned runtime constituent integrity and original server selection"
+    ],
+    "focused_tests": "90 passed, 8 native checks deselected",
+    "test_log": "output/temp/task_development/checks/VE-P05-candidate-tests.log",
+    "test_scope": "Merchant budget/readiness, bounded reference controller, endpoint scorers, initialization, records, public lifecycle, voxel ordering, paired catalog admission and benchmark runner cutoff.",
+    "initial_validation_hiccups": "Missing output/test parent caused 18 artifact-directory errors, corrected before the 90-pass run. A script-entrypoint import failure was avoided with the existing environment's runpy invocation; no dependency or gameplay change was made.",
+    "new_game_or_model_episodes": 0
+  },
+  "main_write_policy": "Integration and final assessment/receipt publication require the shared integration.lock, refreshed main HEAD, clean index, no git operation, exact-path staging and preservation of all five unrelated dirty files. See the separate main receipt for actual commit and before/after hashes."
+}
