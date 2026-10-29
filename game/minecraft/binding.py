@@ -2,6 +2,7 @@
 
 from collections.abc import Callable
 import asyncio
+from functools import partial
 import inspect
 from pathlib import Path
 
@@ -55,6 +56,9 @@ def create_binding(
     if evaluator == "function_replication":
         from game.minecraft.runtime.observed_server import ObservedServer
         server_factory = ObservedServer
+    if evaluator == "camel_delivery_flush_v4":
+        from game.minecraft.fixtures.camel_delivery_start import CourierInitializationServer
+        server_factory = partial(CourierInitializationServer, template=world_path)
     game = MinecraftGame(
         output_dir=output_dir, track=task_type, world_path=world_path,
         instance=instance, difficulty=difficulty, player_state=state,

@@ -37,3 +37,12 @@ The historical default client cache is stale against current main and must not
 be silently reused or rewritten. Current vitals, placement and observer
 semantics are retained. The standalone prototype runner still defaults to
 historical v3; use `--condition courier-v4-flush-destination-furnaces` for v4.
+
+The static world contains forceloaded chunks, so its original camel can tick
+before the normal server-ready/freeze barrier. The versioned registration uses
+the existing private server-factory hook to freeze immediately after native
+startup and restore only that original UUID's declared template NBT, before any
+client connects or public readiness is reached. Private before/after receipts
+record this initialization-only repair. Strict canonical pose, zero Motion,
+health, native attributes and ordinary dynamics remain required; no tolerance,
+in-episode reset, invulnerability or modified geometry is introduced.

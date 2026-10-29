@@ -1,4 +1,5 @@
 import copy
+import asyncio
 import json
 from pathlib import Path
 from unittest.mock import Mock
@@ -11,6 +12,7 @@ from benchmark.factory import make_game
 from game.minecraft.fixtures import camel_delivery_flush_v4 as condition
 from game.minecraft.fixtures import camel_delivery_registration as registration
 from game.minecraft.runtime.session import copy_world
+from game.minecraft.fixtures.camel_delivery_start import CourierInitializationServer
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -35,6 +37,8 @@ def test_both_tracks_bind_the_original_hidden_v4_instance_and_explicit_scorer(mo
     assert task.evaluator == "camel_delivery_flush_v4"
     assert not task.evaluator_parameters
     assert not never.exists()
+    assert binding.game.server_factory.func is CourierInitializationServer
+    assert binding.game.server_factory.keywords["template"] == ASSETS / f"instance_{index}"
     if track == "structured_tools":
         assert {"InspectFurnaceTool", "FurnaceClickTool", "InspectVitalsTool",
                 "GoToPositionTool", "DigTool", "PlaceTool", "RespawnTool"} <= set(task.tools)
@@ -86,3 +90,63 @@ def test_native_readiness_records_private_selection_and_rejects_another_instance
     copy_world(ASSETS / f"instance_{1 - index}", other, binding.game.player_state, uuid)
     with pytest.raises(RuntimeError, match="differs from the selected instance"):
         binding.verify_initial(other)
+
+
+@pytest.mark.parametrize("index", (0, 1))
+def test_start_restores_only_original_native_courier_after_freeze(monkeypatch, tmp_path, index):
+    from game.minecraft.runtime.server import MinecraftServer
+    from game.minecraft.evaluators.camel_delivery import original_camel
+    _, original = original_camel(ASSETS / f"instance_{index}")
+    expected = registration.nbtlib.parse_nbt(original.snbt())
+    expected.pop("id", None)
+    drifted = registration.nbtlib.parse_nbt(expected.snbt())
+    drifted["Pos"][0] = registration.nbtlib.Double(-40.25)
+    drifted["Motion"][1] = registration.nbtlib.Double(-.0784)
+    drifted["Brain"]["memories"]["startup_memory"] = registration.nbtlib.Compound()
+    drifted["startup_extra"] = registration.nbtlib.Int(1)
+    calls = []
+
+    async def start(server):
+        calls.append("native_start")
+
+    async def command(server, text):
+        calls.append(text)
+        if text == "tick freeze":
+            return ["[Server thread/INFO]: The game is frozen"]
+        if text.startswith("data merge"):
+            assert original["UUID"].snbt() in text
+            assert text.endswith(expected.snbt())
+            def merge(target, source):
+                for key, value in source.items():
+                    if isinstance(value, registration.nbtlib.Compound) and key in target:
+                        merge(target[key], value)
+                    else:
+                        target[key] = registration.nbtlib.parse_nbt(value.snbt())
+            merge(drifted, expected)
+            return ["Modified entity data"]
+        if text.startswith("data modify"):
+            field, value = text.split("] ", 1)[1].split(" set value ", 1)
+            drifted[json.loads(field)] = registration.nbtlib.parse_nbt(value)
+            return ["Modified entity data"]
+        if text.startswith("data remove"):
+            del drifted[json.loads(text.split("] ", 1)[1])]
+            return ["Modified entity data"]
+        console = drifted.snbt().replace("0.08500000089406967f", "0.085f")
+        return ["[Server thread/INFO]: Camel has the following entity data: " + console]
+
+    monkeypatch.setattr(MinecraftServer, "start", start)
+    monkeypatch.setattr(MinecraftServer, "command", command)
+    server = CourierInitializationServer(tmp_path, Path("server.jar"), "java", 512, 0, 120, 30,
+                                         template=ASSETS / f"instance_{index}")
+    asyncio.run(server.start())
+    assert calls[:2] == ["native_start", "tick freeze"]
+    assert any(' "Brain" set value ' in call for call in calls)
+    assert calls[-2].startswith("data remove")
+    result = json.loads((tmp_path / "courier-startup-restoration.json").read_text())
+    assert result["restoration_verified"] and result["initialization_only"]
+    after = registration.nbtlib.parse_nbt(result["native_after_snbt"])
+    assert after["Pos"] == expected["Pos"] and after["Brain"] == expected["Brain"]
+    assert "startup_extra" not in after
+    assert result["full_native_nbt_verified"]
+    with pytest.raises(RuntimeError, match="only once"):
+        asyncio.run(server.start())
