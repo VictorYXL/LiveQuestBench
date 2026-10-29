@@ -152,6 +152,7 @@ seconds or evidence that a teammate causally prevented damage.
 | --- | --- | --- |
 | `inventory` | Final item counts or net increases | Possession does not prove crafting or a particular pickup |
 | `structure` | A declared block blueprint in a bounded region | Does not establish functional mechanisms or visual quality |
+| `replica` | Copy an observed model into a separate empty region without changing the original | Requires the initial visible model to match every declared target cell; completion alone does not prove information use |
 | `state` | Position, health, food, equipment and supported native effects | Endpoint state does not prove a route or full action history |
 | `shielded_cargo` | Original chest cargo, living settled return and an actual skeleton-arrow shield block | Requires the passive native advancement observer; raising a shield alone is insufficient |
 | `firebreak` | Native fire-free dwell, original roof/support retention and settled safe-pad arrival | Observed original-type losses remain lost after rebuilding; passive evidence has native-tick resolution |
@@ -169,6 +170,10 @@ Structure blueprints use `[y][z][x]` order. Define an explicit scoring region,
 materials, air requirements and matching thresholds. Ensure all required
 chunks exist in the source world. State every relevant condition in the public
 objective, including any prohibition on extra construction.
+
+Replica admission also checks the actual initial model and empty build pad.
+The target must cover the entire model, including air cells; a mismatched model
+or prefilled pad is invalid task evidence, not an agent failure.
 
 For goals requiring a kill, trade or ordered preparation, use the appropriate
 event-backed task pattern. Do not infer the event from final inventory alone.

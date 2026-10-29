@@ -132,6 +132,10 @@ def create_binding(
         from game.minecraft.evaluators.workshop import evaluate_workshop, order_events
         validate_state(**parameters)
         score = evaluate_workshop
+    elif evaluator == "replica":
+        from game.minecraft.evaluators.replica import evaluate_replica, validate_replica, verify_initial_replica
+        validate_replica(**parameters)
+        score = evaluate_replica
     elif evaluator == "raid":
         from game.minecraft.evaluators.raid import evaluate_raid, verify_initial_raid
         validate_state(**parameters)
@@ -159,6 +163,8 @@ def create_binding(
             verify_initial_switch(before, game.player_uuid, **parameters)
         if evaluator == "route_transfer":
             verify_layout(before, **parameters)
+        if evaluator == "replica":
+            verify_initial_replica(before, **parameters)
         if evaluator == "workshop" and order_events(before):
             raise RuntimeError("Workshop milestone history was not empty before measured play")
         if evaluator == "dispatch" and furnace_evidence(before)["events"]:

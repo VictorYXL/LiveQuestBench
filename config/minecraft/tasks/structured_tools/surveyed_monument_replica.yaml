@@ -1,0 +1,111 @@
+id: surveyed_monument_replica
+game: minecraft
+task_type: structured_tool
+task: Reproduce the small mixed-block monument from the inspection courtyard on the empty replica pad about 40 blocks
+  to the east (left from your initial facing), beside the tall white marker. Match every occupied cell, material
+  and opening. Build immediately behind the gold corner marker; match the model's orientation and blue front edge.
+  The model fits a 3-by-3-by-3 space. Raised viewing galleries offer complementary views; returning to inspect is
+  allowed. Do not alter the original model. Use the supplied materials, with spares for corrections. Finish with at least 1 HP.
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/surveyed_monument_replica
+  instance: 1.20.4
+  difficulty: easy
+  player_state:
+    position:
+    - 0.5
+    - 72
+    - 0.5
+    dimension: minecraft:overworld
+    yaw: 0
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+    - slot: 0
+      item: stone_pickaxe
+      count: 1
+    - slot: 1
+      item: cobblestone
+      count: 8
+    - slot: 2
+      item: oak_planks
+      count: 8
+    - slot: 3
+      item: bread
+      count: 8
+evaluator:
+  name: replica
+  parameters:
+    structure:
+      target:
+        structure:
+        - - - cobblestone
+            - air
+            - cobblestone
+          - - oak_planks
+            - air
+            - oak_planks
+          - - cobblestone
+            - cobblestone
+            - cobblestone
+        - - - oak_planks
+            - air
+            - oak_planks
+          - - air
+            - air
+            - air
+          - - air
+            - oak_planks
+            - air
+        - - - air
+            - cobblestone
+            - air
+          - - air
+            - air
+            - air
+          - - air
+            - oak_planks
+            - air
+      region:
+        min:
+        - 40
+        - 72
+        - 4
+        max:
+        - 42
+        - 74
+        - 6
+      match:
+        rotation_invariant: false
+        require_empty: true
+        require_new_blocks: true
+    model_region:
+      min:
+      - 0
+      - 72
+      - 4
+      max:
+      - 2
+      - 74
+      - 6
+capabilities:
+  primary:
+  - information_adaptation
+  secondary:
+  - spatial_interaction
+tools:
+- MoveTool
+- LookAtPositionTool
+- SelectTool
+- StopTool
+- JumpTool
+- DigTool
+- PlaceTool
+- UseHeldItemTool
+- RespawnTool
+- QueryCraftRecipeTool
+- CraftItemTool
