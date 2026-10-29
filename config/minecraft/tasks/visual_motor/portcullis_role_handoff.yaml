@@ -1,0 +1,82 @@
+id: portcullis_role_handoff
+game: minecraft
+task_type: visual_motor
+capabilities:
+  primary:
+  - peer_cooperation
+  secondary:
+  - spatial_interaction
+task: Together open both gate routes, retrieve the original Gate Parcel and bring both players alive,
+  standing still, to the yellow final chamber with the parcel. The two short gate corridors are enclosed
+  by bedrock. You are both in native Adventure mode without block-breaking or placement permissions. Each
+  near-side stone pressure station temporarily opens its gate; the far-side lever can keep that route
+  open. Ordinary movement, interaction and peer chat are available. Native respawn returns to the entrance
+  without replacing lost items. Choose your own legal coordination
+  and release controls before finishing.
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/portcullis_role_handoff
+  instance: 1.20.4
+  difficulty: normal
+participants:
+- id: Alpha
+  player_state:
+    position:
+    - 0.5
+    - 72
+    - 0.4
+    dimension: minecraft:overworld
+    respawn_position:
+    - 0
+    - 72
+    - 0
+    yaw: -90
+    pitch: 0
+    gamemode: adventure
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory: []
+- id: Beta
+  player_state:
+    position:
+    - 0.5
+    - 72
+    - 1.4
+    dimension: minecraft:overworld
+    respawn_position:
+    - 0
+    - 72
+    - 0
+    yaw: -90
+    pitch: 0
+    gamemode: adventure
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory: []
+evaluator:
+  name: team
+  parameters:
+    all:
+      position: &id001
+        target:
+        - 52.5
+        - 72
+        - 0.5
+        horizontal_tolerance: 3
+        vertical_tolerance: 0.5
+        max_speed: 0.1
+      gamemode: adventure
+    cargo:
+      cargo:
+      - id: gate_parcel
+        item: minecraft:paper
+        chest:
+        - 52
+        - 72
+        - 0
+      position: *id001
+    native_efficiency: true

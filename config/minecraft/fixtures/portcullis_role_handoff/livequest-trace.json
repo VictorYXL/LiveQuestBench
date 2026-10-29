@@ -1,0 +1,9 @@
+{
+  "schema": "minecraft-passive-player-trace/1",
+  "pack_sha256": {
+    "pack.mcmeta": "4f01e262b1dfdfb16d1d83ac0e12126e17f024267c90458fddd5fd1a955f0153",
+    "data/minecraft/tags/functions/tick.json": "03e730b764312fd0edf9cb398860cf80d2832b866ed3550acce0dbf3e43d8886",
+    "data/livequest_trace/functions/tick.mcfunction": "4510c7ccc99d07803e30da1b09cc11cf82ad6e8763c949e0fb050b79036d8cc8",
+    "data/livequest_trace/functions/sample.mcfunction": "8df9e42c0572bfe352c462b968b52a2b35d9a73a8da98e6576e93a8d285b056e"
+  }
+}
