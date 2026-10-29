@@ -79,12 +79,17 @@ def validate_fixture(value: object) -> dict:
         raise ValueError(f"Veloren fixture requires exactly {sorted(required)} plus optional {sorted(optional)}")
     fixture = value
     if "runtime_profile" in fixture:
+        from game.veloren.runtime.workstation import PROFILE
         if fixture["runtime_profile"] not in (
             "native-contract-settlement/1", "hostile-route-supply-recovery/1", "self-funded-expedition/1",
+            PROFILE,
         ):
             raise ValueError("Unsupported original-task runtime profile")
+        workstation = fixture["runtime_profile"] == PROFILE
+        if workstation and fixture.get("route_evidence") is not True:
+            raise ValueError("Workstation profile requires its original route evidence")
         if ({"message_contract", "market", "route_observation", "camera_observation", "scene_observation"} & fixture.keys()
-                or fixture.get("route_evidence") or fixture.get("pickup_evidence")):
+                or (fixture.get("route_evidence") and not workstation) or fixture.get("pickup_evidence")):
             raise ValueError("Original-task runtime profiles cannot qualify newer native evidence")
     if "route_observation" in fixture and (
         fixture["route_observation"] != "native-route-local-view/1"

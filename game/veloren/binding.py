@@ -25,6 +25,9 @@ def create_binding(
         output_dir=output_dir, track=task_type, fixture=fixture,
         headless=headless, recording=recording, recording_fps=recording_fps, recording_path=recording_path,
     )
+    from game.veloren.runtime.workstation import PROFILE
+    if (fixture.get("runtime_profile") == PROFILE) != (evaluator == "workstation"):
+        raise ValueError("Original workstation runtime profile and evaluator must match")
     if task_type == "structured_tool":
         if tools is None:
             tools = (st.EXPEDITION_TOOLS if evaluator == "expedition" else
@@ -84,6 +87,10 @@ def create_binding(
         expected |= solid_voxels({**fixture, "blocks": []})
         if not fixture.get("route_evidence") or solid_voxels(fixture) != expected:
             raise ValueError("Route-transfer fixture must match the scored layout and enable native evidence")
+    elif evaluator == "workstation":
+        from game.veloren.evaluators.workstation import evaluate_workstation, validate_workstation
+        evaluators[evaluator] = evaluate_workstation
+        validators[evaluator] = validate_workstation
     elif evaluator == "itinerary":
         from game.veloren.evaluators.itinerary import evaluate_itinerary, validate_itinerary
         evaluators[evaluator] = evaluate_itinerary
@@ -154,7 +161,7 @@ def create_binding(
     def verify_initial(before: Path) -> None:
         if not (before / "observation.json").is_file():
             raise RuntimeError("Missing initial Veloren observation")
-        if parameters.get("marker_arrival") is not None and json.loads(
+        if (parameters.get("marker_arrival") is not None or evaluator == "workstation") and json.loads(
             (before / "observation.json").read_text()
         )["dialogue_markers"]:
             raise RuntimeError("Dialogue marker task must start without received directions")

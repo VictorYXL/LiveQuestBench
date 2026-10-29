@@ -1,0 +1,127 @@
+{
+  "schema": "livequest-workstation-exact-main-bridge/1",
+  "candidate_base": "128461f239e6b699cb88b67984fd27eac663592a",
+  "task": "VE-I02",
+  "quality_review": {
+    "path": "output/temp/task_development/checks/veloren-acceptance-policy-audit-20261029.json",
+    "addendum": 52,
+    "sha256": "5df297a7f15dbbdbe5541b036776d4bf8a48ec6c5caa68f7ceaaeca14cebcd77"
+  },
+  "configurations": {
+    "st": {
+      "path": "config/veloren/tasks/structured_tools/directions_to_workstation.yaml",
+      "sha256": "5e3491f7825b9d8501d337aba65d7ce31d9a5cdf3642140c998b391b7804da81",
+      "archived_task": "output/temp/task_development/experiments/VE-I02-original-guide-whole-reference-st/task.yaml",
+      "archived_before": "output/temp/task_development/experiments/VE-I02-original-guide-whole-reference-st/before",
+      "difference_from_signed_task": "Only explicit runtime_profile; worktree-specific world_path is normalized."
+    },
+    "vm": {
+      "path": "config/veloren/tasks/visual_motor/directions_to_workstation.yaml",
+      "sha256": "bb0649e53b61f883c682891e655abb12b6470ed2d022d1dc085b2559fa32836a",
+      "archived_task": "output/temp/task_development/experiments/VE-I02-map-breadcrumb-whole-reference-vm/task.yaml",
+      "archived_before": "output/temp/task_development/experiments/VE-I02-map-breadcrumb-whole-reference-vm/before",
+      "difference_from_signed_task": "Only explicit runtime_profile; worktree-specific world_path is normalized."
+    }
+  },
+  "original_adapter": "output/temp/task_development/experiments/VE-I02-original-guide-whole-reference-st/python-source",
+  "integration_files_sha256": {
+    "checks/veloren_workstation_main_admission.py": "58418742758fd7a4367cc5b81ac45841dc9e25a4bef122d81c3af974cb9c8263",
+    "config/veloren/tasks/structured_tools/directions_to_workstation.yaml": "5e3491f7825b9d8501d337aba65d7ce31d9a5cdf3642140c998b391b7804da81",
+    "config/veloren/tasks/visual_motor/directions_to_workstation.yaml": "bb0649e53b61f883c682891e655abb12b6470ed2d022d1dc085b2559fa32836a",
+    "game/veloren/README.md": "6b8d3edc83ea74a5a748fa1158242afb1826318921168e62c66738f9aab5f30b",
+    "game/veloren/binding.py": "e75ed0e856da667d1303a03da77f555b40b5d3333377dbaffbf6537f5902eabb",
+    "game/veloren/evaluators/workstation.py": "aeca2883848471bc6f24687947c3f4b718c1bfd571569a004b496950328866f4",
+    "game/veloren/evaluators/workstation_route.py": "f4443af49319c1457e257bfc210e1cc3a40a7e87916c7f1eab0d275eed1a4b45",
+    "game/veloren/fixture.py": "00adc7b9ec334dfdfd33e62a57d681bc15aab05a42516f12cf93ab0848cd8ac2",
+    "game/veloren/runtime/session.py": "238afbcece6ab27db8d7c24d1c1b4c299d3f076e518a2839f67463c2800529ea",
+    "game/veloren/runtime/worker.py": "45ee8716bb3795df28fe7bf7fabe249f9dc4e1499f23aea655256e9457fd658e",
+    "game/veloren/runtime/workstation.py": "290da97b39d2f17f2c0eee67ab387818e413290fc6ca2e2c65585e9a3f0e2182",
+    "tests/test_game/veloren/test_workstation.py": "e75491d5d0cb557e0150b8ce3914ec2516fecefa691c210b2b94b5972df22d9c",
+    "tests/test_game/veloren/test_workstation_runtime_selection.py": "97aa4343e3114097fd9efd26a5ed7a5751f54021e5d6fed1ad162cf542d1949a"
+  },
+  "inherited_main_dependencies_unchanged": {
+    "game/veloren/native_bindings.py": "9f8c8c4feb1b7f6b6cf3b4e519387db80d45e105fb4b3de5554c32387d3dd862",
+    "game/veloren/runtime/records.py": "f4aeed2682ccc7334aa3347a8e7087dd3c47e7fdb705eb9f47677bdf896f2bc7",
+    "game/veloren/evaluators/endpoints.py": "ca445973cf0a7295f8801f8667e413da1d4f92e2d146d710d560ceb5bec1fc9c",
+    "game/veloren/runtime/journal.py": "a30bf051c734e49f82591c5fb4419d0d548f3a730f835c175e3865b144fd6818",
+    "game/veloren/structured_tools/interface.py": "cb53fabd08b08167aaa30f06f2413ac88e8accfb8b706ab38efd530bb40111fc",
+    "game/veloren/runtime/server_extension.py": "eb8961a8c24af1ece20873c1fd964afb2edf0a3590b7009fdc451526752b9830",
+    "game/veloren/evaluators/itinerary.py": "80211f112c5f10d6a2e969fe7389d108377fa27d1592e1c2eed5f053ad1a80d4",
+    "game/route_transfer.py": "2019501c84aeaaa02b7e2e626b306af017671a0635666005e58c0b0935fc2ece",
+    "game/veloren/game.py": "b22626b5d15a72071db19348253ce7562dc14ccaa21802e6c1badfca0fa58182",
+    "game/veloren/runtime/server.py": "6bc343604dd4eedf1f19319be0d692ff8409913c3964e75a716e442404df1e03",
+    "game/veloren/runtime/startup.py": "2eded18810e550cfb39e121db292610879a49a47bffbe54722ce6f0e31f65083",
+    "game/veloren/visual_motor/interface.py": "89479670c13073a7b7dfb409b3768d7f502fdad90750585191885598ea6d1052"
+  },
+  "evidence_sha256": {
+    "output/temp/task_development/checks/VE-I02-public-reacquisition-feasibility-20261030.json": "0c10439b8214009dcb0375c14c57018b627819b8a9b98b4345bc8df02d5e9dcf",
+    "output/temp/task_development/experiments/VE-I02-original-guide-whole-reference-st/reference.json": "eca64c35b4914f48388cb2c706e047f0dd5ad61e83384966170d516750020d6a",
+    "output/temp/task_development/experiments/VE-I02-original-guide-whole-reference-st/task.yaml": "9fb488a4869559ba18c8a9151c882d20f9b730fd7550d63e72a3b2cc012e7ce2",
+    "output/temp/task_development/experiments/VE-I02-original-guide-whole-reference-st/source-manifest.json": "03fc58a29ab5a9a5aabf9dd4bb975b79b74eab2d22a1123f32d50a71f9a2a7d1",
+    "output/temp/task_development/experiments/VE-I02-original-guide-whole-reference-st/before/observation.json": "0f7828df7091d4d060e1001c3af52c474dbfbbff49f3d48b081c5844e5cd953e",
+    "output/temp/task_development/experiments/VE-I02-original-guide-whole-reference-st/after/observation.json": "09d917bca69651712570fa71c786790cedda9b379d9db686d9499304dc9b4257",
+    "output/temp/task_development/experiments/VE-I02-map-breadcrumb-whole-reference-vm/reference.json": "12a403faee279dc714e681b562267919c2f0ed5ae454d97f2a9216963b1991b7",
+    "output/temp/task_development/experiments/VE-I02-map-breadcrumb-whole-reference-vm/task.yaml": "b1190ba998b65e457d63397f1d14d27d5172b08ab04d7789ada95783cbdf15da",
+    "output/temp/task_development/experiments/VE-I02-map-breadcrumb-whole-reference-vm/source-manifest.json": "762a9d9cd51d42166ce2bc36393b21074ebb382d5368f2ce922e6520d62e1433",
+    "output/temp/task_development/experiments/VE-I02-map-breadcrumb-whole-reference-vm/before/observation.json": "e5b5de39decc86e3511ccbf2d468286b439a27f15dee7789546da29585c7ea9b",
+    "output/temp/task_development/experiments/VE-I02-map-breadcrumb-whole-reference-vm/after/observation.json": "00fe6dfbfabce8551a74840801b4f90a118be7d016d0eb49174349023e37ecdf",
+    "output/temp/task_development/experiments/VE-I02-forward-breadcrumb-whole-reference-vm/reference.json": "9b0cbbbb3fa3806d241a8418bae01ec6f3bfb57cdfc3fe984042de379c635906",
+    "output/temp/task_development/experiments/VE-I02-forward-breadcrumb-whole-reference-vm/task.yaml": "b1190ba998b65e457d63397f1d14d27d5172b08ab04d7789ada95783cbdf15da",
+    "output/temp/task_development/experiments/VE-I02-forward-breadcrumb-whole-reference-vm/source-manifest.json": "fe88e5020eb5a23c75bc8cde720aa916348a6d3b583c85ed9a10b998b48f01e3",
+    "output/temp/task_development/experiments/VE-I02-forward-breadcrumb-whole-reference-vm/before/observation.json": "2153e6c7910d97e28c0a4250b0fd3397c94bed03d8c4b7e12eb7d6ae69f105de",
+    "output/temp/task_development/experiments/VE-I02-forward-breadcrumb-whole-reference-vm/after/observation.json": "967b9b94592418548373af60fa71fbc109b46b1961aa1dc41e74e80a361051a7",
+    "output/temp/task_development/experiments/VE-I02-public-original-guide-reacquisition-vm/reference.json": "e946e18a4719a19c3cf168a1c75293c84e266251d86c131180e9d01c771c8c11",
+    "output/temp/task_development/experiments/VE-I02-public-original-guide-reacquisition-vm/task.yaml": "b1190ba998b65e457d63397f1d14d27d5172b08ab04d7789ada95783cbdf15da",
+    "output/temp/task_development/experiments/VE-I02-public-original-guide-reacquisition-vm/source-manifest.json": "b9df41c101f471085904bce860941869cd43a3dc2efda76da4bcecee8be522bf",
+    "output/temp/task_development/experiments/VE-I02-public-original-guide-reacquisition-vm/before/observation.json": "d9b8ddf456a27a796643e0d330e2a082615f403fce8efc38c4cf9c4022e938ba",
+    "output/temp/task_development/experiments/VE-I02-public-original-guide-reacquisition-vm/after/observation.json": "d613f273a62a138ada7fe17528c398dc28f7ce0f3f56163aacf0909b9eca5888",
+    "output/temp/task_development/experiments/VE-I02-original-guide-whole-reference-st/python-source/game/veloren/evaluators/workstation.py": "11b5a79d9e6672c12994eda858f981167bf8a36785effd2a759cd44d70e79510",
+    "output/temp/task_development/experiments/VE-I02-original-guide-whole-reference-st/python-source/game/veloren/evaluators/itinerary.py": "f4443af49319c1457e257bfc210e1cc3a40a7e87916c7f1eab0d275eed1a4b45",
+    "output/temp/task_development/experiments/VE-I02-original-guide-whole-reference-st/python-source/game/veloren/evaluators/endpoints.py": "67433487082e51dd6f87074af57be1450ae19a848dc7ae1c82520caa3b50892e"
+  },
+  "runtime": {
+    "path": "output/temp/veloren-native-route-20261027/runtime.json",
+    "sha256": "387e3485fb1fa1edcfb810e36ed2f1cef4d07bfeb487f73d8be433fd82e653d7",
+    "environment_key": "LIVEQUEST_VELOREN_WORKSTATION_RUNTIME",
+    "profile": "directions-to-workstation/1",
+    "route_evidence": "native-client-route/1",
+    "task_requests_route_evidence": true,
+    "source_manifest_sha256": "f303e8aa0d93c19089db8b070ecefe04dc2afea1e84d1ccf3dee522bd4141ba1",
+    "renderer_sha256": "478b0addc202cb37aaa5543cf369fa59e4f4cb3031deb56bb6544d49fc9a4897",
+    "route2_qualification_claimed": false
+  },
+  "compatibility_changes": [
+    "Exactly reviewed workstation scorer with ONLY its itinerary import redirected to a task-specific legacy route consumer.",
+    "workstation_route.py is byte-identical to the signed archived itinerary.py; generic itinerary.py and game.route_transfer remain current and unchanged.",
+    "Both task declarations add only the explicit runtime profile; original task goal, resources,2700s, native site and both tracks remain unchanged.",
+    "Fixture admits this profile only with original route evidence and disallows newer observation/pickup/mixed information profiles. Binding requires profile iff evaluator=workstation.",
+    "Session selects a task-specific override (or exact generic fallback), hashes the entire raw runtime descriptor before worker creation and verifies its canonical configuration. Worker repeats canonical validation before native startup; generic route/2 requirements remain.",
+    "Current-main alive/downed endpoint guard, NativeBindingCursor, deferred readiness, native-site initialization, structured projection, public VM restrictions and snapshot machinery are retained rather than bulk-importing an old adapter.",
+    "Early binding validation rejects preexisting workshop directions in addition to the signed evaluator's check. No fixture producer, NPC movement/identity, renderer, native source, dialogue range or clock changes."
+  ],
+  "frozen_replays": [
+    {
+      "run": "output/temp/task_development/experiments/VE-I02-original-guide-whole-reference-st",
+      "success": true
+    },
+    {
+      "run": "output/temp/task_development/experiments/VE-I02-map-breadcrumb-whole-reference-vm",
+      "success": false
+    },
+    {
+      "run": "output/temp/task_development/experiments/VE-I02-forward-breadcrumb-whole-reference-vm",
+      "success": false
+    },
+    {
+      "run": "output/temp/task_development/experiments/VE-I02-public-original-guide-reacquisition-vm",
+      "success": false
+    }
+  ],
+  "tests": {
+    "candidate_focused": "43passed; workstation scoring/profile, generic route separation, originals/information selectors, native binding and fixture records.",
+    "log": "output/i02-focused-tests.log",
+    "log_sha256": "431d916ec4647bf643333415b776f27dad64d0b5270fb5a6e6efa4892efec5a2",
+    "initial_attempt": "Repository-local pytest scratch parent was absent; created candidate/output and reran. No source or dependency failure; no dependency installation."
+  },
+  "qualification_boundary": "Quality authority is independent audit52: original ST whole success and VM bounded constructive feasibility, not measured VM reacquisition or victory. All three retained VM failures remain false.930s is a construction allowance, not empirical cold-Agent time. Difficulty2-4 remains provisional/high-uncertainty. No NPC pin/locator/private coordinates/through-wall visibility, no remote dialogue hold, no route/2 claim, no native/model run. Exact bridge review and ledger event are separate from this source manifest."
+}

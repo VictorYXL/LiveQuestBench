@@ -1,0 +1,67 @@
+id: directions_to_workstation
+game: veloren
+task_type: visual_motor
+task: Obtain workshop directions from a local resident in Liron, reach the crafting-bench area inside
+  the actual street-level workshop, and finish beside the same resident alive with a newly obtained rawhide
+  chestpiece in your bag. Standing on the workshop roof does not count as entering it. You have prepared
+  leather and know the recipe; a native crafting bench is inside. Finish standing still on the ground
+  within about three metres of your original guide. Residents retain ordinary movement; death does not
+  restore resources.
+time_limit_seconds: 2700
+fixture:
+  runtime_profile: directions-to-workstation/1
+  world_path: ../../fixtures/veloren_0_18_0_0.bin
+  world_seed: 130626853
+  time_of_day: '12:00'
+  day_length: 30
+  calendar: none
+  player_state:
+    position:
+    - 26624.5
+    - 4918.5
+    - 145
+    look:
+    - 0
+    - 1
+    - 0
+    health: 100
+    inventory:
+      common.items.crafting_ing.leather.simple_leather: 5
+      common.items.consumable.potion_minor: 2
+      common.items.food.apple: 3
+    equipment:
+      active_mainhand: common.items.weapons.sword.starter
+      chest: common.items.armor.misc.chest.worker_purple_brown
+      feet: common.items.armor.misc.foot.sandals
+      glider: common.items.glider.basic_white
+      lantern: common.items.lantern.black_0
+      legs: common.items.armor.misc.pants.worker_brown
+  native_site: Liron
+  route_evidence: true
+  recipes:
+    rawhide_chest: true
+  respawn_at_start: true
+evaluator:
+  name: workstation
+  parameters:
+    min_health: 0
+    workshop_marker:
+    - 26659
+    - 4921
+    guide_distance: 3
+    visits:
+    - target:
+      - 26650
+      - 4918
+      - 144
+      horizontal_tolerance: 4
+      vertical_tolerance: 0.5
+    inventory:
+    - item: common.items.armor.hide.rawhide.chest
+      min_count: 1
+      min_delta: 1
+capabilities:
+  primary:
+  - information_adaptation
+  secondary:
+  - spatial_interaction

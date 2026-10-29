@@ -8,6 +8,7 @@ from pathlib import Path
 import time
 from uuid import uuid4
 from game.veloren.fixture import solid_voxels
+from game.veloren.runtime import workstation
 
 
 ORIGINAL_RUNTIME_ENVIRONMENTS = {
@@ -32,9 +33,11 @@ def runtime_configuration(fixture: dict) -> tuple[Path, dict]:
         override = "LIVEQUEST_VELOREN_MARKET_RUNTIME"
     profile = fixture.get("runtime_profile")
     if profile is not None:
-        if profile not in ORIGINAL_RUNTIME_ENVIRONMENTS or protocol is not None or "market" in fixture:
+        if (profile not in (*ORIGINAL_RUNTIME_ENVIRONMENTS, workstation.PROFILE)
+                or protocol is not None or "market" in fixture):
             raise ValueError("Unsupported or conflicting original-task runtime profile")
-        override = ORIGINAL_RUNTIME_ENVIRONMENTS[profile]
+        override = (workstation.ENVIRONMENT if profile == workstation.PROFILE
+                    else ORIGINAL_RUNTIME_ENVIRONMENTS[profile])
     solid = fixture.get("scene_observation")
     if "scene_observation" in fixture:
         if solid != "native-solid-scene/1":
@@ -49,8 +52,12 @@ def runtime_configuration(fixture: dict) -> tuple[Path, dict]:
     runtime = json.loads(encoded)
     if solid is not None and hashlib.sha256(encoded).hexdigest() != LOCAL_SOLID_RUNTIME_SHA256:
         raise ValueError(f"{solid} requires its exact independently qualified runtime; configure {override}")
-    if profile is not None and hashlib.sha256(encoded).hexdigest() != ORIGINAL_RUNTIME_SHA256:
+    expected = workstation.RUNTIME_SHA256 if profile == workstation.PROFILE else ORIGINAL_RUNTIME_SHA256
+    if profile is not None and hashlib.sha256(encoded).hexdigest() != expected:
         raise ValueError(f"{profile} requires its exact independently qualified runtime; configure {override}")
+    if profile == workstation.PROFILE:
+        if runtime.get("route_evidence") != workstation.expected_route_schema(fixture, runtime):
+            raise ValueError("Workstation requires its original native route evidence")
     if protocol is not None and runtime.get("initial_message_protocol") != protocol:
         raise ValueError(f"{protocol} requires its matching native runtime; configure {override}")
     return path, runtime

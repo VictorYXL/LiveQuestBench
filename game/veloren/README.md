@@ -46,6 +46,25 @@ measurements, not new route/2 model results. Earlier open-court references are
 historical only. Read-only endpoint replays preserve those outcomes; route/1
 efficiency uses its original consumer, never relabeled route/2 evidence.
 
+### Original-guide workshop task
+
+`directions_to_workstation` retains both ST and VM, ordinary resident movement,
+the original first-guide reunion, five leather and the 2700-second budget.
+Select its exact reviewed runtime with `LIVEQUEST_VELOREN_WORKSTATION_RUNTIME`
+(`387e3485…`). Its `directions-to-workstation/1` runtime profile is verified
+before worker creation and again before native startup. Only this evaluator uses
+the preserved route/1 visit consumer; generic itinerary and route/2 requirements
+remain unchanged. No native renderer, locator or NPC behavior is modified.
+
+The [source bridge](../../docs/evidence/VE-I02-main-integration-bridge-20261030.json)
+binds independent quality review[52]. ST has a real whole-task success; VM has
+genuine directions/crafting and an independently supported finite public-search
+construction, **not** a measured post-craft reunion or whole-task victory.
+Historical VM failures remain failures. The 930-second construction is not a
+cold-agent timing measurement; provisional difficulty2–4 has high uncertainty.
+Private retrospective positions are not Agent knowledge and 40m nametags do not
+see through walls. Ordinary brief E-Talk is not a persistent dialogue freeze.
+
 ## Installation
 
 First prepare a [VelorenBench](https://github.com/wyaaaattwho/VelorenBench)

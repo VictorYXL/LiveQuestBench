@@ -20,6 +20,7 @@ from scripts.rpg_benchmark.renderer import RendererBridge
 sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
 from game.veloren.fixture import initialize_fixture, recipe_observation, validate_fixture, verify_player
 from game.veloren.runtime.server import fixture_server
+from game.veloren.runtime.workstation import expected_route_schema
 
 
 async def protect_administrator(admin: NativeBridge) -> dict:
@@ -108,6 +109,7 @@ class Session:
             raise RuntimeError("Session is single-use")
         self.started = True
         cfg = self.config
+        route_schema = expected_route_schema(self.fixture, cfg)
         if cfg.get("experimental_item_use_admission") not in (None, "combo-consumable-preflight-v1"):
             raise ValueError("Unknown experimental item-use admission version")
         if cfg.get("native_protection") != "disabled by explicit renderer launch environment":
@@ -116,7 +118,7 @@ class Session:
             raise ValueError("Fixture requires passive native motion evidence; rerun Veloren setup")
         if self.fixture.get("glide_evidence") and cfg.get("glide_evidence") != "native-client-glide/1":
             raise ValueError("Fixture requires passive native glide evidence; rerun Veloren setup")
-        if self.fixture.get("route_evidence") and cfg.get("route_evidence") != "native-client-route/2":
+        if self.fixture.get("route_evidence") and cfg.get("route_evidence") != route_schema:
             raise ValueError("Fixture requires passive native route evidence; rerun Veloren setup")
         if self.fixture.get("route_observation") and cfg.get("route_observation") != self.fixture["route_observation"]:
             raise ValueError("Fixture requires a renderer with the declared route observation contract")
