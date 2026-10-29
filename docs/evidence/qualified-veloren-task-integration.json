@@ -4,8 +4,24 @@
   "base_commit": "8325849a108cf7d9184e5a47411a33942a520b28",
   "task_assembly_commit": "aa9fb6f",
   "task_admission_and_provenance_commit": "b247bb2",
-  "status": "isolated_shared_composition_verified_parent_main_integration_pending",
+  "status": "main_integrated_offline_verified_original_qualification_unchanged",
   "isolated_composition_commit": "3ae0abbb1681642203f458cfa9bd1653810b2741",
+  "main_integration": {
+    "base_commit": "aa091e51c6928cbc662982c188c083a3f1115ce3",
+    "selected_parent_delta_commit": "416d8ef780752f57f79bf28ff2bf6c085a98cf8c",
+    "selected_parent_delta_sha256": "8a27d3d171854857f504875e7b9659f0db42a99137507659c0d6b4a2cae5fdf0",
+    "shared_dependency_tip": "03fbbea62e53437086fe8065c79889f3e69e6547",
+    "task_assembly_commit": "e56d894f041506de37459ab1ad4b09f36e262845",
+    "task_tests_commit": "c4f711391975f508aa81df96ded537ab9ce106b8",
+    "isolated_report_import_commit": "22c12b6477138951a692d03a035d5f5c334f6ae5",
+    "lock": "output/temp/task_development/locks/integration.lock",
+    "provenance": "output/temp/task_development/shared-task-integration/main-integration-report.json",
+    "unrelated_dirty_files_preserved": true,
+    "unrelated_divider_test_hunk_preserved": true,
+    "native_route_patch_committed": "game/veloren/patches/0008-native-physics-route-evidence.patch",
+    "existing_minecraft_prompt_commits_preserved": true,
+    "scope": "Shared source and exact I05/R02 task integration only. No native build, native/model episode, qualification promotion or change to running old worktrees."
+  },
   "tasks": {
     "VE-I05": {
       "source_commit": "f826a89e04c4d1e56138fb7eaef545c765f31f48",
@@ -97,14 +113,14 @@
     ]
   },
   "validation": {
-    "completed": "Composed I05/R02 ST/VM admission/scorer, original harvest tests and existing pickup/server-extension tests: 60 passed.",
-    "pending": "Parent main integration only; no native/model requalification was performed or claimed.",
+    "completed": "Isolated task composition: 60 passed. Resulting main: 181 focused offline lifecycle, team, journal, native-binding, route, task admission/scorer, harvest, pickup and server-extension checks passed; 8 native checks deselected. Main count includes two preserved, uncommitted contract-divider regressions.",
+    "pending": "No native/model requalification was performed or claimed. C02/C04 lifecycle changes still need native checks; route-v2 tasks require an appropriately rebuilt runtime and native validation before use. Existing I05/R02 qualification evidence remains tied to its original source.",
     "focused_command": "mkdir -p output/test && python -m pytest -q tests/test_game/veloren/test_qualified_tasks.py tests/test_game/veloren/test_harvest.py tests/test_game/veloren/test_pickups.py tests/test_game/veloren/test_server_extension.py --basetemp=output/test/qualified-integration",
     "all_four_task_files_byte_identical_to_source": true,
     "harvest_evaluator_byte_identical_to_source": true,
     "shared_harvest_module_byte_identical_to_source": true,
     "new_native_or_model_episodes": 0,
-    "main_modified": false,
+    "main_modified": true,
     "existing_task_worktrees_or_evidence_modified": false
   },
   "evidence_policy": "Paths refer to the original repository evidence, not this isolated worktree. Checksums anchor the review-time files; source commits permanently anchor task YAMLs and scorer. Native references remain references and final formal failures remain failures. No semantic change, budget adjustment or health-goal adaptation is made here. Any later semantic change requires explicit invalidation of the old qualification for that changed condition, not silent reuse. Offline synthetic tests are integration checks, never native qualification."
