@@ -5827,6 +5827,7 @@
       "game/veloren/README.md"
     ],
     "preserved_unrelated_dirty_sha256": {
+      "agent_framework/agents/deepseek_harness/setup.py": "fd2500a54808a4d8659536007ecde0c36284823f77a815558813d69060e3bf4c",
       "config/veloren/tasks/structured_tools/native_contract_settlement.yaml": "f2108d92b0e0dc9be41fac1bd662a7366d4053042e64f1cc9fbbf056d28d9372",
       "config/veloren/tasks/visual_motor/native_contract_settlement.yaml": "cfb366cfc456936d9036d7aeaae239c875abbaffa2b05b95cc4a555ad8f93774",
       "tests/test_game/veloren/test_initialization.py": "f52108ad4d1981079051e62253fb55261f6b6c28e212f1fc835893dc6749b150",
