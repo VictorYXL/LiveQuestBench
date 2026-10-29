@@ -1,0 +1,9 @@
+{
+  "schema": "minecraft-air-salvage/1",
+  "pack_sha256": {
+    "pack.mcmeta": "46d118419fabbe19143f6a346467daa74d0708fa8a0780667583d508da843d19",
+    "data/minecraft/tags/functions/tick.json": "81223ce09cf2ad7b25fd9c1976975e0013721ad4a1dda0f6c33b4cf1fc233a01",
+    "data/livequest_air/functions/tick.mcfunction": "43d7b3fc8a56b3601fdd393a6a9f0b7481498db3c51fb3b1b1c51185f18ced91",
+    "data/livequest_air/functions/sample.mcfunction": "43d87260a7259ea572f063e871571f854b19adb9f962f4365c7b68072c6581bf"
+  }
+}

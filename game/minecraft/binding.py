@@ -64,6 +64,11 @@ def create_binding(
         inspect.signature(evaluate_inventory).bind(Path(), Path(), None, **parameters)
         validate_requirements(parameters["requirements"])
         score: Callable[..., dict] = evaluate_inventory
+    elif evaluator == "air_salvage":
+        from game.minecraft.evaluators.air_salvage import evaluate_air_salvage, verify_initial_air_salvage
+        inspect.signature(evaluate_air_salvage).bind(Path(), Path(), None, **parameters)
+        validate_cargo(**parameters)
+        score = evaluate_air_salvage
     elif evaluator == "state":
         inspect.signature(evaluate_state).bind(Path(), Path(), None, **parameters)
         validate_state(**parameters)
@@ -144,6 +149,8 @@ def create_binding(
             raise RuntimeError("Furnace production history must start empty")
         if evaluator == "raid":
             verify_initial_raid(before, game.player_uuid)
+        if evaluator == "air_salvage":
+            verify_initial_air_salvage(before, game.player_uuid, **parameters)
         if evaluator == "state" and parameters.get("action_sequence") is not None and action_events(before):
             raise RuntimeError("Native action evidence was not empty before measured play")
         if evaluator == "firebreak":

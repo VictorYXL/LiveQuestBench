@@ -1,0 +1,77 @@
+id: air_bell_salvage
+game: minecraft
+task_type: structured_tool
+capabilities:
+  primary:
+  - realtime_execution
+  secondary:
+  - spatial_interaction
+  - planning_resources
+task: Recover both original Salvage Samples from two side alcoves in this roughly 35-block flooded passage,
+  then return alive and standing still to the yellow surface platform without dying. The bedrock-roofed
+  passage is about six blocks deep. Two large air bells contain dry standing shelves and remain usable
+  after your initial three-minute water-breathing effect expires. Safe waiting, digging ordinary blocks
+  and any legal route are allowed. Release controls before finishing.
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/air_bell_salvage
+  instance: 1.20.4
+  difficulty: normal
+  player_state:
+    position:
+    - -8.5
+    - 78
+    - 0.5
+    dimension: minecraft:overworld
+    yaw: -90
+    pitch: 0
+    gamemode: survival
+    health: 20
+    food: 20
+    saturation: 5
+    experience_level: 0
+    inventory:
+    - slot: 0
+      item: iron_pickaxe
+      count: 1
+    effects:
+    - id: minecraft:water_breathing
+      amplifier: 0
+      duration: 3600
+evaluator:
+  name: air_salvage
+  parameters:
+    cargo:
+    - id: salvage_east
+      item: minecraft:echo_shard
+      chest:
+      - 16
+      - 72
+      - 4
+    - id: salvage_west
+      item: minecraft:disc_fragment_5
+      chest:
+      - 32
+      - 72
+      - -4
+    position:
+      target:
+      - -8.5
+      - 78
+      - 0.5
+      horizontal_tolerance: 3
+      vertical_tolerance: 0.5
+      max_speed: 0.1
+tools:
+- MoveTool
+- LookAtPositionTool
+- SelectTool
+- StopTool
+- JumpTool
+- DigTool
+- PlaceTool
+- UseHeldItemTool
+- InspectContainerTool
+- TakeContainerItemTool
+- InspectVitalsTool
+- RespawnTool
