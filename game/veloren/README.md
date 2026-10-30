@@ -33,30 +33,13 @@ from the benchmark.
 
 ## Runtime profiles
 
-Some tasks require separately prepared, version-matched profiles:
+The default installer does not prepare every task-specific profile. If
+initialization requests another runtime setting, point it to the matching
+prepared profile. Do not substitute an incompatible runtime.
 
-| Task/profile | Runtime setting |
-| --- | --- |
-| Ordinary tasks | `LIVEQUEST_VELOREN_RUNTIME` |
-| Local solid scene/camera | `LIVEQUEST_VELOREN_LOCAL_SOLID_RUNTIME` |
-| Original contract settlement | `LIVEQUEST_VELOREN_NATIVE_CONTRACT_RUNTIME` |
-| Original hostile recovery | `LIVEQUEST_VELOREN_HOSTILE_RECOVERY_RUNTIME` |
-| Original self-funded expedition | `LIVEQUEST_VELOREN_SELF_FUNDED_RUNTIME` |
-| Workstation directions | `LIVEQUEST_VELOREN_WORKSTATION_RUNTIME` |
-| Initial-message v3 | `LIVEQUEST_VELOREN_INITIAL_MESSAGE_V3_RUNTIME` |
-| Market reconciliation | `LIVEQUEST_VELOREN_MARKET_RUNTIME` |
-| Combat-response family | `LIVEQUEST_VELOREN_COMBAT_RESPONSE_RUNTIME_ROOT` |
-
-Settings point to prepared `runtime.json` manifests, except the combat-response
-setting, which points to a directory containing its four versioned runtime
-variants. Configure it explicitly; no developer-machine directory is assumed.
-Both response variants are validated before sampling.
-
-The default installer does not create every specialized profile. Versioned
-Message builds can be packaged with `scripts/veloren_initial_message_runtime.py`.
-Task-specific runtime and asset checks remain strict: a missing, relocated or
-changed manifest is not automatically equivalent to a qualified runtime.
-Do not edit hashes or silently substitute another profile to bypass admission.
+Runtime settings take a `runtime.json` manifest, except
+`LIVEQUEST_VELOREN_COMBAT_RESPONSE_RUNTIME_ROOT`, which takes the directory
+containing the prepared combat-response profiles.
 
 ## Run
 

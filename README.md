@@ -4,7 +4,7 @@ LiveQuestBench evaluates agents pursuing long-term goals in real-time 3D games.
 The world continues while the agent thinks: timing, resources and earlier choices
 affect what remains possible.
 
-The development suite contains **60 tasks** across Minecraft and Veloren:
+The suite contains **60 tasks** across Minecraft and Veloren:
 spatial interaction, planning/resources, real-time execution,
 information/adaptation, cooperation and within-episode learning. Each dimension
 contains five tasks per game. Difficulty ratings are provisional.
@@ -96,13 +96,12 @@ needed. Use a fresh results destination after changing code, tasks or runtimes.
 
 ### Optional storage reduction
 
-`--storage-profile compact` deduplicates recorded payloads without changing Agent
-inputs; `legacy` remains the default. Compact requires chat recording. Read its
-logs with `benchmark.compact.read_records`, keeping `objects/` and `images/`
-alongside the streams. Long-task/team timing equivalence is not yet qualified.
+The experimental `--storage-profile compact` reduces duplicate logs and requires
+chat recording; `legacy` remains the default. Keep the whole episode directory
+together and use the same storage profile for compared runs.
 
-Compact episodes are sealed after acknowledged cleanup. For a sealed episode,
-set `EPISODE_DIR` to its directory and run archive operations **serially**:
+After a compact episode finishes and cleanup succeeds, set `EPISODE_DIR` to its
+directory and run archive operations **serially**:
 
 ```bash
 uv run --locked python -m benchmark.archive create "$EPISODE_DIR"
@@ -112,11 +111,9 @@ uv run --locked python -m benchmark.archive retire "$EPISODE_DIR"
 uv run --locked python -m benchmark.archive restore "$EPISODE_DIR"
 ```
 
-Creation retains originals; only explicit retirement deletes verified raw logs.
-Restore them before using readers that require raw filenames. Results, snapshots,
-images and content objects remain untouched. Compression is not automatic,
-needs temporary disk space and should run outside live evaluations. Interrupted
-creation requires manual inspection; automatic recovery is not implemented.
+`create` retains originals; `retire` deletes only verified raw logs. Use `restore`
+before analysis that requires them. Archiving needs temporary disk space and
+should run outside live evaluations. Inspect interrupted archives before retrying.
 
 ## Extending the benchmark
 

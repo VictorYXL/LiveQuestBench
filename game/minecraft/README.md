@@ -30,13 +30,12 @@ Game binaries and assets are downloaded, not bundled.
 
 | Variable | Purpose |
 | --- | --- |
-| `LIVEQUEST_MINECRAFT_HOME` | Dedicated runtime installation; defaults to `~/.local/share/livequestbench/minecraft` |
+| `LIVEQUEST_MINECRAFT_HOME` | Dedicated runtime installation directory |
 | `MINECRAFT_JAVA` | Java 21 executable |
 | `MINECRAFT_SERVER_JAR` | Server JAR override |
 
-Use the same settings for setup and evaluation. After native-source changes,
-prepare a matching runtime rather than editing provenance receipts or rebuilding
-an installation used by another process.
+Use the same settings for setup and evaluation. Do not rebuild an installation
+while it is in use.
 
 ## Run
 

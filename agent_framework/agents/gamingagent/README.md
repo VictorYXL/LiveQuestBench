@@ -2,7 +2,6 @@
 
 Experiment agent name: `gamingagent`. The profile retains upstream perception,
 text memory, reflection and reasoning, using the benchmark's public game tools.
-It is not a reproduction of an upstream published score.
 
 Install Git and uv, then set `AGENT_RUNTIME_DIR` to a dedicated destination:
 
