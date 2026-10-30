@@ -16,11 +16,13 @@ def main() -> int:
     parser.add_argument("--recording", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--recording-fps", type=int, default=10)
     parser.add_argument("--record-chat", action=argparse.BooleanOptionalAction, default=True)
+    parser.add_argument("--storage-profile", choices=("legacy", "compact"), default="legacy")
     args = parser.parse_args()
     try:
         summary = asyncio.run(run_experiment(
             args.config, args.output, headless=args.headless,
             recording=args.recording, recording_fps=args.recording_fps, record_chat=args.record_chat,
+            storage_profile=args.storage_profile,
         ))
     except KeyboardInterrupt:
         print("Benchmark interrupted; completed evidence and cancellation status were preserved.", file=sys.stderr)

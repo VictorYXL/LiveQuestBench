@@ -11,6 +11,8 @@ from agent_framework.agents.base_agent import AgentContext
 from agent_framework.agents.process_agent import IntegrationIncompatible, ProcessAgent
 from agent_framework.llm_client.responses import ResponsesClient
 from agent_framework.utils.tools import Tool
+from benchmark.compact import read_records
+from benchmark.results import EpisodeLog
 
 
 class BridgeAgent(ProcessAgent):
@@ -24,7 +26,8 @@ class BridgeAgent(ProcessAgent):
 
 @pytest.mark.parametrize("model", ["gpt-6-astra", "gpt-5.6-sol", "gpt-5.4-nano"])
 @pytest.mark.parametrize("role", ["system", "developer", "unapproved"])
-def test_native_instruction_roles_preserved_end_to_end(tmp_path, model, role):
+@pytest.mark.parametrize("storage_profile", ["legacy", "compact"])
+def test_native_instruction_roles_preserved_end_to_end(tmp_path, model, role, storage_profile):
     bodies = []
 
     def handler(request):
@@ -50,6 +53,9 @@ def test_native_instruction_roles_preserved_end_to_end(tmp_path, model, role):
             tool = Tool("move", "Move", {"type": "object", "properties": {}}, execute)
             agent = BridgeAgent(client, output_dir=tmp_path, tools=[tool], observe=observe,
                                 model=model, reasoning_effort="low", max_output_tokens=4096)
+            log = EpisodeLog(tmp_path / "evidence", storage_profile=storage_profile)
+            if storage_profile == "compact":
+                agent.on_native_request = log.native_request
             request = {
                 "model": model, "messages": [{"role": role, "content": "Keep this instruction"},
                                             {"role": "user", "content": "Observe"}],
@@ -68,5 +74,10 @@ def test_native_instruction_roles_preserved_end_to_end(tmp_path, model, role):
                 }
                 assert bodies[0]["input"][-1]["role"] == "user"
                 assert request["messages"][0]["role"] == role
+                path = (log.directory / "native.compact.jsonl" if storage_profile == "compact"
+                        else tmp_path / "requests.jsonl")
+                rows = list(read_records(path))
+                assert rows[0]["native"] == request
+                assert rows[0]["effective"]["model"] == model
 
     asyncio.run(scenario())

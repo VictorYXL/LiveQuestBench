@@ -132,9 +132,10 @@ def test_baseline_long_history_preserves_actions_and_omits_old_observations(visu
     assert requests[0][1] is agent.messages[1]
 
 
-@pytest.mark.parametrize("enabled", [True, False])
-def test_chat_recording_preserves_inputs_retries_and_cancellation(tmp_path, enabled):
-    log = EpisodeLog(tmp_path, record_chat=enabled)
+@pytest.mark.parametrize("enabled,storage_profile", [(True, "legacy"), (False, "legacy"), (True, "compact")])
+def test_chat_recording_preserves_inputs_retries_and_cancellation(tmp_path, enabled, storage_profile):
+    from benchmark.compact import read_records
+    log = EpisodeLog(tmp_path, record_chat=enabled, storage_profile=storage_profile)
     image = b"\x89PNG\r\n\x1a\nrecording-probe"
     message = Message("user", [{"type": "text", "text": "Inspect this frame"},
                                {"type": "image", "mime_type": "image/png", "data": image}])
@@ -175,7 +176,8 @@ def test_chat_recording_preserves_inputs_retries_and_cancellation(tmp_path, enab
         assert not (tmp_path / "recording").exists()
         return
     directory = tmp_path / "recording/chat"
-    rows = [json.loads(line) for line in (directory / "query.jsonl").read_text().splitlines()]
+    suffix = ".compact.jsonl" if storage_profile == "compact" else ".jsonl"
+    rows = list(read_records(directory / ("query" + suffix)))
     assert [(row["query_id"], row["attempt"], row["event"]) for row in rows] == [
         (1, 1, "prompt"), (1, 1, "error"), (1, 2, "prompt"), (1, 2, "response"),
         (2, 1, "prompt"), (2, 1, "error"),
@@ -185,10 +187,15 @@ def test_chat_recording_preserves_inputs_retries_and_cancellation(tmp_path, enab
     images = list((directory / "images").iterdir())
     assert len(images) == 1 and images[0].read_bytes() == image
     marker = "{image: images/" + images[0].name + "}"
+    agent = list(read_records(directory / ("agent" + suffix)))
+    assert [row["event"] for row in agent] == ["message", "observation", "message", "tool_error", "end"]
+    if storage_profile == "compact":
+        assert marker in json.dumps(rows) and marker in json.dumps(agent)
+        assert agent[-2]["message"] == "tool failure detail"
+        assert not list(directory.glob("*.log"))
+        return
     for name in ("agent.jsonl", "agent.log", "query.jsonl", "query.log"):
         assert marker in (directory / name).read_text()
-    agent = [json.loads(line) for line in (directory / "agent.jsonl").read_text().splitlines()]
-    assert [row["event"] for row in agent] == ["message", "observation", "message", "tool_error", "end"]
     assert "tool failure detail" in (directory / "agent.log").read_text()
 
 

@@ -131,11 +131,12 @@ def logged_controls(public: Controls, log: EpisodeLog) -> Controls:
 async def run_episode(
     agent_config: AgentConfig, task: TaskConfig, root: Path, result: dict, *,
     headless: bool, recording: bool, recording_fps: int, record_chat: bool = True,
+    storage_profile: str = "legacy",
 ) -> dict:
     root.mkdir(parents=True)
     results = root / "results"
     results.mkdir()
-    log = EpisodeLog(root, record_chat=record_chat)
+    log = EpisodeLog(root, record_chat=record_chat, storage_profile=storage_profile)
     binding = None
     agent: BaseAgent[Controls] | None = None
     client: BaseLLMClient | None = None
@@ -143,6 +144,8 @@ async def run_episode(
     cancelled = False
     begun = False
     result.update(status="running", measurement="unavailable", task_outcome="unknown", errors=[])
+    if storage_profile != "legacy":
+        result["storage_profile"] = storage_profile
     write_json(results / "result.json", result)
 
     def record_error(error: BaseException, failed_stage: str) -> None:
@@ -180,6 +183,8 @@ async def run_episode(
             agent = make_agent(agent_config, client, tools, root / "agent", log.message)
         if isinstance(agent, ProcessAgent):
             result["agent_source"] = agent.source
+            if log.compact is not None:
+                agent.on_native_request = log.native_request
         stage = "execution"
         started = time.monotonic_ns()
         deadline = started + int(task.time_limit_seconds * 1e9)
@@ -283,6 +288,12 @@ async def run_episode(
             if not cancelled:
                 result["status"] = "error"
         write_json(results / "result.json", result)
+        if storage_profile == "compact" and not any(
+            error["stage"] in {"end", "agent_cleanup", "game_cleanup", "client_cleanup"}
+            for error in result["errors"]
+        ):
+            from benchmark.archive import seal_episode
+            seal_episode(root)
     if cancelled:
         raise asyncio.CancelledError
     return result
@@ -355,22 +366,24 @@ def prepare_episode(output: Path, row: dict) -> bool:
 
 async def run_experiment(
     config: Path, output: Path, *, headless: bool = True, recording: bool = True, recording_fps: int = 10,
-    record_chat: bool = True,
+    record_chat: bool = True, storage_profile: str = "legacy",
 ) -> dict:
     output = output.resolve()
     with output_lock(output):
         return await _run_experiment(
             config, output, headless=headless, recording=recording, recording_fps=recording_fps,
-            record_chat=record_chat,
+            record_chat=record_chat, storage_profile=storage_profile,
         )
 
 
 async def _run_experiment(
     config: Path, output: Path, *, headless: bool = True, recording: bool = True, recording_fps: int = 10,
-    record_chat: bool = True,
+    record_chat: bool = True, storage_profile: str = "legacy",
 ) -> dict:
     if type(record_chat) is not bool:
         raise ValueError("record_chat must be a boolean")
+    if storage_profile not in {"legacy", "compact"} or storage_profile == "compact" and not record_chat:
+        raise ValueError("Select legacy or compact storage; compact requires chat recording")
     if type(recording_fps) is not int or not 1 <= recording_fps <= 60:
         raise ValueError("recording_fps must be an integer in [1, 60]")
     output = output.resolve()
@@ -401,6 +414,7 @@ async def _run_experiment(
             "record_chat": record_chat,
             "config": str(config.resolve()), "output": str(output),
         }
+        launch["storage_profile"] = storage_profile
         write_json(output / "launch.json", launch)
         write_json(launch_root / "launch.json", launch)
         for agent_config in experiment.agents:
@@ -417,6 +431,8 @@ async def _run_experiment(
                         "headless": headless, "recording": recording, "recording_fps": recording_fps,
                         "record_chat": record_chat,
                     }
+                    if storage_profile != "legacy":
+                        configuration["storage_profile"] = storage_profile
                     fingerprint = hashlib.sha256(
                         json.dumps(configuration, sort_keys=True, allow_nan=False).encode()
                     ).hexdigest()
@@ -440,7 +456,7 @@ async def _run_experiment(
             save_summary()
             await run_episode(agent_config, task, output / row["output_path"], row,
                               headless=headless, recording=recording, recording_fps=recording_fps,
-                              record_chat=record_chat)
+                              record_chat=record_chat, storage_profile=storage_profile)
             if row["status"] != "completed":
                 break
         summary.update(status="completed" if all(row["status"] == "completed" for row in rows) else "error")

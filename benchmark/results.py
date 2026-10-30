@@ -22,15 +22,24 @@ def write_json(path: Path, value: object) -> None:
 
 
 class EpisodeLog:
-    def __init__(self, root: Path, *, record_chat: bool = True):
+    def __init__(self, root: Path, *, record_chat: bool = True, storage_profile: str = "legacy"):
+        if storage_profile not in {"legacy", "compact"}:
+            raise ValueError("Unknown storage profile")
+        if storage_profile == "compact" and not record_chat:
+            raise ValueError("Compact evidence requires chat recording")
         self.directory = root / "recording" / "chat"
         self.record_chat = record_chat
+        self.storage_profile = storage_profile
+        from benchmark.compact import CompactLog
+        self.compact = CompactLog(self.directory) if storage_profile == "compact" else None
         self.requests: list[RequestEvent] = []
         self.tool_calls = 0
         self.observations = 0
         if record_chat:
             self.directory.mkdir(parents=True)
-            for name in ("agent.jsonl", "agent.log", "query.jsonl", "query.log"):
+            names = (("agent.compact.jsonl", "query.compact.jsonl") if self.compact else
+                     ("agent.jsonl", "agent.log", "query.jsonl", "query.log"))
+            for name in names:
                 (self.directory / name).touch()
 
     def encode(self, value: object) -> object:
@@ -75,6 +84,9 @@ class EpisodeLog:
             "timestamp": datetime.now(timezone.utc).isoformat(),
             **{key: self.encode(value) for key, value in data.items()},
         }
+        if self.compact is not None:
+            self.compact.write(name, row)
+            return
         with (self.directory / f"{name}.jsonl").open("a", encoding="utf-8") as stream:
             stream.write(json.dumps(row, allow_nan=False) + "\n")
         text = f"--- [{kind.upper()}] {row['timestamp']} at_ns={row['at_ns']} ---\n"
@@ -110,6 +122,11 @@ class EpisodeLog:
 
     def request(self, event: RequestEvent) -> None:
         self.requests.append(event)
+
+    def native_request(self, row: dict) -> None:
+        if self.compact is None:
+            raise ValueError("Native request redirection requires compact evidence")
+        self.compact.write("native", row)
 
     def accounting(self) -> dict:
         known: Counter[str] = Counter()

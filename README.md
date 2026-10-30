@@ -94,6 +94,30 @@ Repeating a command reuses completed valid episodes. Incomplete episodes restart
 from scratch and their partial artifacts are removed; archive them first if
 needed. Use a fresh results destination after changing code, tasks or runtimes.
 
+### Optional storage reduction
+
+`--storage-profile compact` deduplicates recorded payloads without changing Agent
+inputs; `legacy` remains the default. Compact requires chat recording. Read its
+logs with `benchmark.compact.read_records`, keeping `objects/` and `images/`
+alongside the streams. Long-task/team timing equivalence is not yet qualified.
+
+Compact episodes are sealed after acknowledged cleanup. For a sealed episode,
+set `EPISODE_DIR` to its directory and run archive operations **serially**:
+
+```bash
+uv run --locked python -m benchmark.archive create "$EPISODE_DIR"
+uv run --locked python -m benchmark.archive verify "$EPISODE_DIR"
+# Recheck applicable offline scoring/metrics before retiring originals.
+uv run --locked python -m benchmark.archive retire "$EPISODE_DIR"
+uv run --locked python -m benchmark.archive restore "$EPISODE_DIR"
+```
+
+Creation retains originals; only explicit retirement deletes verified raw logs.
+Restore them before using readers that require raw filenames. Results, snapshots,
+images and content objects remain untouched. Compression is not automatic,
+needs temporary disk space and should run outside live evaluations. Interrupted
+creation requires manual inspection; automatic recovery is not implemented.
+
 ## Extending the benchmark
 
 | Add | Integration steps |

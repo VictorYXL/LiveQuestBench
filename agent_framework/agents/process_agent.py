@@ -85,6 +85,7 @@ class ProcessAgent(BaseAgent[InterfaceT], Generic[InterfaceT]):
         self.observe = observe
         self.model, self.reasoning_effort, self.max_output_tokens = model, reasoning_effort, max_output_tokens
         self.on_message = on_message
+        self.on_native_request: Callable[[dict], None] | None = None
         self.messages: list[Message] = []
         self.stop_reason: StopReason | None = None
         self.forced_termination = False
@@ -300,11 +301,15 @@ class ProcessAgent(BaseAgent[InterfaceT], Generic[InterfaceT]):
             current = Message("user", observation)
             messages.append(current)
             self._record(current)
-        with (self.output_dir / "requests.jsonl").open("a", encoding="utf-8") as log:
-            log.write(json.dumps({"at_ns": time.monotonic_ns(), "native": request, "effective": {
-                "model": self.model, "reasoning_effort": self.reasoning_effort,
-                "max_output_tokens": self.max_output_tokens,
-            }}) + "\n")
+        request_record = {"at_ns": time.monotonic_ns(), "native": request, "effective": {
+            "model": self.model, "reasoning_effort": self.reasoning_effort,
+            "max_output_tokens": self.max_output_tokens,
+        }}
+        if self.on_native_request is not None:
+            self.on_native_request(request_record)
+        else:
+            with (self.output_dir / "requests.jsonl").open("a", encoding="utf-8") as log:
+                log.write(json.dumps(request_record) + "\n")
         choice = request.get("tool_choice", "auto")
         if choice not in ("auto", "required", "none"):
             raise IntegrationIncompatible(f"Unsupported native tool choice: {choice}")

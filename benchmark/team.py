@@ -32,7 +32,8 @@ class TeamAgent(BaseAgent[Controls]):
         for role in self.game.members:
             output = self.root / "participants" / role
             output.mkdir(parents=True, exist_ok=True)
-            log = EpisodeLog(output, record_chat=self.record_chat)
+            log = EpisodeLog(output, record_chat=self.record_chat,
+                             storage_profile=self.aggregate.storage_profile)
             self.logs[role] = log
             client = make_client(self.config.model, log.request)
             self.clients[role] = client
@@ -40,6 +41,8 @@ class TeamAgent(BaseAgent[Controls]):
             public, tools = self.game.controls(role)
             public = logged_controls(public, log)
             agent = make_agent(self.config, client, tools, output / "agent", log.message)
+            if isinstance(agent, ProcessAgent) and log.compact is not None:
+                agent.on_native_request = log.native_request
             self.agents[role] = agent
             instructions = self.game.instructions(role) + RECOVERY_INSTRUCTIONS + (
                 "\nCall final_answer when your participation is finished."
