@@ -1,15 +1,11 @@
 # DeepSeek Harness
 
-Use `deepseek_harness` as the Agent name in an experiment. This integration
-uses DeepSeek Harness with the benchmark's public observations and fixed game
-tools. Shell, filesystem, generated-code, subagent and telemetry features are
-not enabled.
+Experiment agent name: `deepseek_harness`. This profile exposes public game
+observations and tools, not shell, filesystem, generated-code, subagent or
+telemetry capabilities.
 
-## Installation
-
-Install Git, uv and Node.js compatible with `^22.19.0 || >=24.0.0`, including
-npm/npx. Set `AGENT_RUNTIME_DIR` to a dedicated installation destination, then
-run from the benchmark repository root:
+Install Git, uv and Node.js `^22.19.0 || >=24.0.0` with npm/npx. Set
+`AGENT_RUNTIME_DIR` to a dedicated installation destination:
 
 ```bash
 uv run --locked python -m agent_framework.agents.deepseek_harness.setup \
@@ -17,52 +13,20 @@ uv run --locked python -m agent_framework.agents.deepseek_harness.setup \
 export LIVEQUEST_DEEPSEEK_ROOT="$AGENT_RUNTIME_DIR"
 ```
 
-Setup prepares the pinned upstream runtime and its dependencies. Keep the
-environment variable set for tests and experiments. Do not use an unrelated
-working checkout as the installation destination.
-
-## Experiment configuration
-
-Add an entry to your experiment:
+In your experiment:
 
 ```yaml
 agents:
   - id: deepseek
     name: deepseek_harness
     model:
-      provider: github_copilot
-      name: gpt-6-astra
+      provider: openai
+      name: YOUR_MODEL
       reasoning_effort: low
       max_output_tokens: 4096
 ```
 
-Choose a model available to your account. The profile requires tool calling,
-a supported Responses provider and explicit `reasoning_effort`; VM also
-requires image support. Follow the
-[experiment guide](../../../README.md#running-an-experiment) for tasks, budgets
-and credentials.
-
-## Tests
-
-Prepare Minecraft and authorized Copilot credentials, then run:
-
-```bash
-LIVEQUEST_MINECRAFT_TEST=1 LIVEQUEST_LIVE_COPILOT=1 \
-uv run --locked --extra minecraft --group test python -m pytest \
-  tests/test_agent/test_agents_minecraft.py -k deepseek \
-  --headless --recording -q -s
-```
-
-These tests use real games and models and consume quota. For Veloren, follow
-its [test guide](../../../game/veloren/README.md#tests) with the same selector.
-Check interaction and stopping as well as the independent task outcome.
-
-## Extending the integration
-
-Follow the [Agent integration guide](../../../README.md#agent-integration) when
-adding features or changing the profile. Keep game permissions explicit and
-validate each supported mode. Additional upstream features are not enabled
-merely by installing their dependencies.
-
-The pinned source and MIT license information are declared in
-[source.json](source.json). Game and asset licenses remain separate.
+Choose a supported Responses provider and a tool-capable model; VM also requires
+image support. Keep the environment variable set during runs.
+See [usage and integration](../../../README.md).
+The pinned upstream source and MIT license are declared in [source.json](source.json).

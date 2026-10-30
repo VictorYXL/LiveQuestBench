@@ -25,12 +25,10 @@ Both: read the Minecraft EULA and explicitly accept it before running a game.
 
 Setup needs internet access and can take several minutes on a fresh machine.
 Prepared tests run on an isolated Xvfb display, including from SSH.
-Use pytest --no-headless to show the window on an existing desktop DISPLAY.
+Use run_benchmark.py --no-headless to show the game on an existing desktop DISPLAY.
 Offline authentication does not waive Minecraft's usage/distribution terms.
-Tests generate a small flat world automatically; an external fixture is optional.
 Existing accounts and worlds are kept. No game or LLM test runs automatically.
-See game/minecraft/README.md for model setup, test commands and result files.
-An end-to-end Agent/Benchmark launcher is not implemented yet.
+See game/minecraft/README.md for setup and experiment commands.
 EOF
 }
 

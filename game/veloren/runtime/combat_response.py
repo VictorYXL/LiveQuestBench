@@ -36,9 +36,10 @@ def select_runtime(fixture: dict, track: str) -> tuple[Path, dict]:
     validate_profile(fixture)
     if track not in RUNTIMES:
         raise ValueError("C1 requires an explicit supported track")
-    default = (Path(__file__).resolve().parents[3] /
-               "output/temp/task_development/worktrees/dedicated-ve-l03-20261029/output/checks")
-    root = Path(os.environ.get(ENVIRONMENT, str(default))).resolve()
+    selected = os.environ.get(ENVIRONMENT)
+    if not selected:
+        raise RuntimeError(f"Set {ENVIRONMENT} to the directory containing the prepared runtime variants")
+    root = Path(selected).expanduser().resolve()
     # Validate both options before drawing: unavailable A must never become B-only.
     choices = []
     for selection, (directory, expected) in enumerate(RUNTIMES[track]):

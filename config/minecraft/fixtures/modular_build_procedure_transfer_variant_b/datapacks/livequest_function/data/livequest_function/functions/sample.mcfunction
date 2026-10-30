@@ -1,3 +1,0 @@
-function livequest_function:station_0
-function livequest_function:station_1
-function livequest_function:station_2
