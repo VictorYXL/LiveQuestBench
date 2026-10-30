@@ -1,0 +1,43 @@
+id: minecraft_full_visual_motor
+game: minecraft
+tasks:
+- path: ../tasks/visual_motor/abandoned_mine_cargo.yaml
+- path: ../tasks/visual_motor/air_bell_salvage.yaml
+- path: ../tasks/visual_motor/archery_calibration_transfer.yaml
+- path: ../tasks/visual_motor/camel_courier.yaml
+- path: ../tasks/visual_motor/cover_and_cargo_team.yaml
+- path: ../tasks/visual_motor/distributed_forge_delivery.yaml
+- path: ../tasks/visual_motor/expedition_record_reconstruction.yaml
+- path: ../tasks/visual_motor/farm_restocking_delivery.yaml
+- path: ../tasks/visual_motor/irrigation_reconnection.yaml
+- path: ../tasks/visual_motor/lookout_and_pathfinder.yaml
+- path: ../tasks/visual_motor/market_loadout_budget.yaml
+- path: ../tasks/visual_motor/mining_workshop_restart.yaml
+- path: ../tasks/visual_motor/modular_build_procedure_transfer.yaml
+- path: ../tasks/visual_motor/occluded_target_gallery.yaml
+- path: ../tasks/visual_motor/portcullis_role_handoff.yaml
+- path: ../tasks/visual_motor/prepared_village_defense.yaml
+- path: ../tasks/visual_motor/quarry_clue_triangulation.yaml
+- path: ../tasks/visual_motor/rail_junction_interception.yaml
+- path: ../tasks/visual_motor/revised_supply_order.yaml
+- path: ../tasks/visual_motor/route_schema_transfer.yaml
+- path: ../tasks/visual_motor/service_shaft_reconnection.yaml
+- path: ../tasks/visual_motor/shared_crossing_camp.yaml
+- path: ../tasks/visual_motor/shared_fuel_dispatch.yaml
+- path: ../tasks/visual_motor/shielded_cache_extraction.yaml
+- path: ../tasks/visual_motor/surveyed_monument_replica.yaml
+- path: ../tasks/visual_motor/switch_network_transfer.yaml
+- path: ../tasks/visual_motor/terraced_mixed_material_shelter.yaml
+- path: ../tasks/visual_motor/tool_wear_extraction.yaml
+- path: ../tasks/visual_motor/village_firebreak.yaml
+- path: ../tasks/visual_motor/workshop_circuit_feedback.yaml
+repetitions: 1
+agents:
+- id: baseline
+  name: tool_calling
+  model:
+    provider: github_copilot
+    name: gpt-6-astra
+    reasoning_effort: low
+    max_output_tokens: 4096
+    max_attempts: 3

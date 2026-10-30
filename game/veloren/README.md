@@ -56,6 +56,18 @@ Select `config/veloren/experiments/structured_tools.yaml` or
 [experiment instructions](../../README.md#running-an-experiment).
 Select only tasks supported by the installed profiles.
 
+`covered_support_forks` supports both tracks with the same two randomized native
+geometries, 600-second budget and final endpoint (including at least one health
+point). ST uses bounded movement, looking, jumping, gliding and local terrain
+inspection; it receives no sampled-side label or route answer. Its terrain query
+is limited to ten horizontal and two vertical metres and is not line-of-sight
+filtered. The sample and route choice remain the agent's responsibility.
+ST uses the standard prepared runtime. VM retains `native-local-camera/1` and
+`native-solid-scene/1` and requires its matching
+`LIVEQUEST_VELOREN_LOCAL_SOLID_RUNTIME`; these image restrictions are not ST
+observation permissions. The paired experiment is
+`config/veloren/experiments/covered_support_forks.yaml`.
+
 VM receives actual game frames, not a transcription of hidden state. ST uses its
 declared tools and field whitelist. Private native events supply scoring and
 measurement checks, not agent guidance. A valid task failure remains a result;

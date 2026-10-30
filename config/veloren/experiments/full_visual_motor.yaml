@@ -1,0 +1,43 @@
+id: veloren_full_visual_motor
+game: veloren
+tasks:
+- path: ../tasks/visual_motor/caravan_protection_team_sheltered.yaml
+- path: ../tasks/visual_motor/cliff_ledge_ascent.yaml
+- path: ../tasks/visual_motor/coordinated_route_hunt.yaml
+- path: ../tasks/visual_motor/covered_support_forks.yaml
+- path: ../tasks/visual_motor/directions_to_workstation.yaml
+- path: ../tasks/visual_motor/finite_active_build.yaml
+- path: ../tasks/visual_motor/hostile_route_supply_recovery.yaml
+- path: ../tasks/visual_motor/landmark_resource_survey.yaml
+- path: ../tasks/visual_motor/leather_outfit_allocation.yaml
+- path: ../tasks/visual_motor/market_stock_reconciliation.yaml
+- path: ../tasks/visual_motor/melee_ranged_crossfire.yaml
+- path: ../tasks/visual_motor/merchant_trade_in_loadout.yaml
+- path: ../tasks/visual_motor/mountain_workshop_circuit.yaml
+- path: ../tasks/visual_motor/moving_target_bow_hunt.yaml
+- path: ../tasks/visual_motor/native_combat_response_transfer.yaml
+- path: ../tasks/visual_motor/native_companion_triage.yaml
+- path: ../tasks/visual_motor/native_contract_settlement.yaml
+- path: ../tasks/visual_motor/native_message_courier.yaml
+- path: ../tasks/visual_motor/provisioning_reserve_circuit.yaml
+- path: ../tasks/visual_motor/ranged_firing_positions.yaml
+- path: ../tasks/visual_motor/regeneration_procedure_transfer.yaml
+- path: ../tasks/visual_motor/ridge_glide_delivery.yaml
+- path: ../tasks/visual_motor/ridge_scout_ground_team.yaml
+- path: ../tasks/visual_motor/route_schema_transfer.yaml
+- path: ../tasks/visual_motor/sceptre_and_sword_team.yaml
+- path: ../tasks/visual_motor/self_funded_expedition.yaml
+- path: ../tasks/visual_motor/shared_workshop_exchange.yaml
+- path: ../tasks/visual_motor/staggered_expiring_supplies.yaml
+- path: ../tasks/visual_motor/subterranean_switchback.yaml
+- path: ../tasks/visual_motor/three_choice_ballistic_path_reuse.yaml
+repetitions: 1
+agents:
+- id: baseline
+  name: tool_calling
+  model:
+    provider: github_copilot
+    name: gpt-6-astra
+    reasoning_effort: low
+    max_output_tokens: 4096
+    max_attempts: 3

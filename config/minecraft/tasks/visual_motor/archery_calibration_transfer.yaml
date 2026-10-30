@@ -6,6 +6,8 @@ task: 'Open two native target locks, retrieve both original released paper token
   and return alive within three horizontal blocks of (0.5,72,0.5) on the same
 
   floor. You have one ordinary bow and twelve arrows in total.
+  At most twelve bow launches are allowed across the whole episode, including
+  misses and any recovered arrows fired again.
 
 
   Both locks share one initially unknown native acceptance window of four
@@ -20,7 +22,7 @@ task: 'Open two native target locks, retrieve both original released paper token
 
   The first target can supply useful experience for the second in this same
 
-  episode. Exploration is optional; no failure or attempt count is required.
+  episode. Exploration is optional; no failure or minimum attempt count is required.
 
 
   Targets are (18,73,0) and (28,77,0). Ordinary full-charge nominal aiming points

@@ -1,0 +1,43 @@
+id: minecraft_full_structured_tools
+game: minecraft
+tasks:
+- path: ../tasks/structured_tools/abandoned_mine_cargo.yaml
+- path: ../tasks/structured_tools/air_bell_salvage.yaml
+- path: ../tasks/structured_tools/archery_calibration_transfer.yaml
+- path: ../tasks/structured_tools/camel_courier.yaml
+- path: ../tasks/structured_tools/cover_and_cargo_team.yaml
+- path: ../tasks/structured_tools/distributed_forge_delivery.yaml
+- path: ../tasks/structured_tools/expedition_record_reconstruction.yaml
+- path: ../tasks/structured_tools/farm_restocking_delivery.yaml
+- path: ../tasks/structured_tools/irrigation_reconnection.yaml
+- path: ../tasks/structured_tools/lookout_and_pathfinder.yaml
+- path: ../tasks/structured_tools/market_loadout_budget.yaml
+- path: ../tasks/structured_tools/mining_workshop_restart.yaml
+- path: ../tasks/structured_tools/modular_build_procedure_transfer.yaml
+- path: ../tasks/structured_tools/occluded_target_gallery.yaml
+- path: ../tasks/structured_tools/portcullis_role_handoff.yaml
+- path: ../tasks/structured_tools/prepared_village_defense.yaml
+- path: ../tasks/structured_tools/quarry_clue_triangulation.yaml
+- path: ../tasks/structured_tools/rail_junction_interception.yaml
+- path: ../tasks/structured_tools/revised_supply_order.yaml
+- path: ../tasks/structured_tools/route_schema_transfer.yaml
+- path: ../tasks/structured_tools/service_shaft_reconnection.yaml
+- path: ../tasks/structured_tools/shared_crossing_camp.yaml
+- path: ../tasks/structured_tools/shared_fuel_dispatch.yaml
+- path: ../tasks/structured_tools/shielded_cache_extraction.yaml
+- path: ../tasks/structured_tools/surveyed_monument_replica.yaml
+- path: ../tasks/structured_tools/switch_network_transfer.yaml
+- path: ../tasks/structured_tools/terraced_mixed_material_shelter.yaml
+- path: ../tasks/structured_tools/tool_wear_extraction.yaml
+- path: ../tasks/structured_tools/village_firebreak.yaml
+- path: ../tasks/structured_tools/workshop_circuit_feedback.yaml
+repetitions: 1
+agents:
+- id: baseline
+  name: tool_calling
+  model:
+    provider: github_copilot
+    name: gpt-6-astra
+    reasoning_effort: low
+    max_output_tokens: 4096
+    max_attempts: 3

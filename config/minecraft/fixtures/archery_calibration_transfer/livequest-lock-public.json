@@ -1,5 +1,5 @@
 {
-  "kind": "native_hidden_analog_lock_prototype",
+  "kind": "native_hidden_analog_lock",
   "targets": [
     {
       "position": [
@@ -64,8 +64,8 @@
   "feedback": "Count differences, not old nonempty counters, identify the latest hit. Misses release nothing.",
   "goal": "Retrieve both original released tokens and return alive to the starting marker.",
   "budgets": {
-    "practice_arrows": 24,
-    "application_arrows": 12
+    "episode_arrows": 12,
+    "maximum_bow_launches": 12
   },
-  "limits": "Application-only mechanism proof; optional practice station and full phase accounting are not yet implemented."
+  "limits": "One continuous episode; misses and recovered arrows fired again count toward the launch limit. No practice completion or learning score."
 }

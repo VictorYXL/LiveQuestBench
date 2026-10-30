@@ -1,0 +1,43 @@
+id: veloren_full_structured_tools
+game: veloren
+tasks:
+- path: ../tasks/structured_tools/caravan_protection_team_sheltered.yaml
+- path: ../tasks/structured_tools/cliff_ledge_ascent.yaml
+- path: ../tasks/structured_tools/coordinated_route_hunt.yaml
+- path: ../tasks/structured_tools/covered_support_forks.yaml
+- path: ../tasks/structured_tools/directions_to_workstation.yaml
+- path: ../tasks/structured_tools/finite_active_build.yaml
+- path: ../tasks/structured_tools/hostile_route_supply_recovery.yaml
+- path: ../tasks/structured_tools/landmark_resource_survey.yaml
+- path: ../tasks/structured_tools/leather_outfit_allocation.yaml
+- path: ../tasks/structured_tools/market_stock_reconciliation.yaml
+- path: ../tasks/structured_tools/melee_ranged_crossfire.yaml
+- path: ../tasks/structured_tools/merchant_trade_in_loadout.yaml
+- path: ../tasks/structured_tools/mountain_workshop_circuit.yaml
+- path: ../tasks/structured_tools/moving_target_bow_hunt.yaml
+- path: ../tasks/structured_tools/native_combat_response_transfer.yaml
+- path: ../tasks/structured_tools/native_companion_triage.yaml
+- path: ../tasks/structured_tools/native_contract_settlement.yaml
+- path: ../tasks/structured_tools/native_message_courier.yaml
+- path: ../tasks/structured_tools/provisioning_reserve_circuit.yaml
+- path: ../tasks/structured_tools/ranged_firing_positions.yaml
+- path: ../tasks/structured_tools/regeneration_procedure_transfer.yaml
+- path: ../tasks/structured_tools/ridge_glide_delivery.yaml
+- path: ../tasks/structured_tools/ridge_scout_ground_team.yaml
+- path: ../tasks/structured_tools/route_schema_transfer.yaml
+- path: ../tasks/structured_tools/sceptre_and_sword_team.yaml
+- path: ../tasks/structured_tools/self_funded_expedition.yaml
+- path: ../tasks/structured_tools/shared_workshop_exchange.yaml
+- path: ../tasks/structured_tools/staggered_expiring_supplies.yaml
+- path: ../tasks/structured_tools/subterranean_switchback.yaml
+- path: ../tasks/structured_tools/three_choice_ballistic_path_reuse.yaml
+repetitions: 1
+agents:
+- id: baseline
+  name: tool_calling
+  model:
+    provider: github_copilot
+    name: gpt-6-astra
+    reasoning_effort: low
+    max_output_tokens: 4096
+    max_attempts: 3

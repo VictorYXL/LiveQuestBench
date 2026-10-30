@@ -1,0 +1,15 @@
+id: veloren_native_combat_response_transfer
+game: veloren
+tasks:
+  - path: ../tasks/structured_tools/native_combat_response_transfer.yaml
+  - path: ../tasks/visual_motor/native_combat_response_transfer.yaml
+repetitions: 1
+agents:
+  - id: baseline
+    name: tool_calling
+    model:
+      provider: github_copilot
+      name: gpt-6-astra
+      reasoning_effort: low
+      max_output_tokens: 4096
+      max_attempts: 3

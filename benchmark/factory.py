@@ -31,9 +31,10 @@ def make_game(
     recording_path: Path | None = None,
 ) -> GameBinding:
     fixture = task.fixture
-    if task.game == "veloren" and task.id == "covered_support_forks_local_solid_v2":
-        from game.veloren.support_forks import prepare_episode_fixture
-        fixture = prepare_episode_fixture(task)
+    if task.game == "veloren":
+        from game.veloren.support_forks import TASK_ID, prepare_episode_fixture
+        if task.id == TASK_ID:
+            fixture = prepare_episode_fixture(task)
     if task.participants:
         from game.team import create_team_binding
         return create_team_binding(

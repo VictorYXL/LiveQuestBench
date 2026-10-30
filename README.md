@@ -12,7 +12,9 @@ contains five tasks per game. Difficulty ratings are provisional.
 - **VM (`visual_motor`)**: game images and bounded keyboard/mouse actions.
 - **ST (`structured_tool`)**: permitted game state and fixed game-specific tools.
 
-Compare the modes separately. Not every task supports both modes.
+All 60 tasks have both modes: **120 task-mode combinations**, with five tasks
+in every game/mode/dimension cell. Compare the modes separately. Catalog support
+does not imply that every required native runtime is installed on your machine.
 
 ## Installation
 
@@ -82,6 +84,17 @@ agents:
       max_output_tokens: 4096
 ```
 
+The existing `structured_tools.yaml` and `visual_motor.yaml` experiment files
+are six-task reference subsets. To cover the complete matrix, use
+`full_structured_tools.yaml` and `full_visual_motor.yaml` under each game's
+`experiments/` directory: four configurations, 30 tasks each, one repetition.
+These files do not submit jobs automatically. Prepare every required runtime
+profile before a full run; do not treat initialization failures as task defeats.
+
+Current task IDs are stable names shared by both modes. Older development IDs
+remain in historical results with their original source hashes; do not relabel
+those runs. Use a fresh results directory after updating task definitions.
+
 Paths are relative to the declaring YAML. Use `--no-headless` for an existing
 desktop, `--no-recording` to disable video, or `--no-record-chat` to omit detailed
 model transcripts. Never interact with the controlled display during evaluation.
@@ -133,3 +146,9 @@ Run the reusable offline tests without game or paid-model calls:
 uv run --locked --extra minecraft --extra veloren --group test \
   python -m pytest -m "not live and not game" -q
 ```
+
+The catalog regression checks all 120 combinations, five tasks in each of the
+24 game/mode/dimension cells, paired identities and full-suite registrations.
+It calls the actual game factory, including indirect fixture admission such as
+both native function-replication worlds. This offline gate does not replace
+native startup, gameplay or model evaluation.

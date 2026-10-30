@@ -1,0 +1,111 @@
+{
+  "kind": "native_function_replication_prototype",
+  "family": [
+    "AND",
+    "OR"
+  ],
+  "reference": {
+    "inputs": [
+      [
+        0,
+        72,
+        0
+      ],
+      [
+        0,
+        72,
+        6
+      ]
+    ],
+    "output": [
+      0,
+      73,
+      14
+    ],
+    "indicator": [
+      0,
+      73,
+      15
+    ]
+  },
+  "panels": [
+    {
+      "inputs": [
+        [
+          -22,
+          72,
+          0
+        ],
+        [
+          -22,
+          72,
+          6
+        ]
+      ],
+      "output": [
+        -18,
+        73,
+        12
+      ],
+      "indicator": [
+        -17,
+        73,
+        12
+      ],
+      "sockets": {
+        "AND": [
+          -11,
+          72,
+          3
+        ],
+        "OR": [
+          -25,
+          72,
+          3
+        ]
+      }
+    },
+    {
+      "inputs": [
+        [
+          -12,
+          72,
+          24
+        ],
+        [
+          -12,
+          72,
+          30
+        ]
+      ],
+      "output": [
+        -16,
+        73,
+        36
+      ],
+      "indicator": [
+        -17,
+        73,
+        36
+      ],
+      "sockets": {
+        "AND": [
+          -23,
+          72,
+          27
+        ],
+        "OR": [
+          -9,
+          72,
+          27
+        ]
+      }
+    }
+  ],
+  "goal": "Both constructed outputs must match the reference for 00,01,10,11 with one unchanged final construction.",
+  "resources": {
+    "cobblestone": 12,
+    "maximum_successful_removals": 6
+  },
+  "limits": "Initial native feasibility family AND/OR only; no XOR implementation or learning claim."
+}

@@ -13,7 +13,7 @@ from game.veloren.fixtures.support_fork_proposal import build_proposal_geometry
 
 
 CAMERA_PROFILE = "native-local-camera/1"
-PUBLIC_TASK = """Reach the far end of the second covered gallery. Finish alive, grounded and
+PUBLIC_TASK = """Reach the far end of the second covered gallery. Finish with at least one health, grounded and
 stationary near (18738.5, 10813.5, 501), with horizontal tolerance 1.2 metres,
 vertical tolerance 0.5 metres and speed at most 0.1 metres/second.
 
@@ -32,17 +32,19 @@ retreat, rest, jump, glide, climb, recover from a fall or take any lawful route.
 There is no required probe, mistake, checkpoint, side choice or sample visit.
 The endpoint score does not check learning or the route used.
 
-This isolated condition uses native-local-camera/1: camera distance is capped
+Ordinary native collision, falling, energy expenditure and recovery apply.
+There is no task-time teleport, refill, reset or added protection. Native time
+and resources continue during reasoning. The entire episode allows 600 seconds.
+"""
+
+CAMERA_DISCLOSURE = """
+The visual interface uses native-local-camera/1: camera distance is capped
 at 10 metres and its path from the actual player eye cannot cross solid or
 unloaded terrain, including near-wall fallback, zoom or mode changes. Freefly
 is unavailable. If a safe local world view cannot be established, the world is
 withheld rather than showing through walls; the ordinary HUD remains available.
 First/third-person viewing, the native voxel minimap and world map remain legal.
 
-Ordinary native collision, falling, energy expenditure and recovery apply.
-There is no task-time teleport, refill, reset or added protection. Native time
-and resources continue during reasoning. The entire episode allows 600 seconds.
-This is a versioned development candidate, not an admitted benchmark task.
 """
 
 
@@ -54,7 +56,7 @@ def build_candidate(world_path: Path, seed: int) -> tuple[dict, dict]:
         "id": "covered_support_forks_local_camera_v1",
         "game": "veloren",
         "task_type": "visual_motor",
-        "task": PUBLIC_TASK,
+        "task": PUBLIC_TASK + CAMERA_DISCLOSURE,
         "time_limit_seconds": 600,
         "fixture": fixture,
         "evaluator": {"name": "state", "parameters": {
@@ -92,7 +94,7 @@ def write_candidate(output: Path, world_path: Path) -> Path:
     task_path = output / "task.yaml"
     task_path.write_text(yaml.safe_dump(task, sort_keys=False))
     (output / "private-instance.json").write_text(json.dumps(private, indent=2) + "\n")
-    (output / "public-instructions.txt").write_text(PUBLIC_TASK)
+    (output / "public-instructions.txt").write_text(task["task"])
     return task_path
 
 

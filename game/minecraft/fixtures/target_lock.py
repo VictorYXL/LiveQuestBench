@@ -115,7 +115,7 @@ def circuit(x0, y, z0, lower):
 
 def public_manifest():
     return {
-        "kind": "native_hidden_analog_lock_prototype",
+        "kind": "native_hidden_analog_lock",
         "targets": [
             {"position": [18, 73, 0], "nominal_aim": [18.5, 74.4, .5],
              "feedback_chests": {"low": [17, 73, -5], "high": [17, 73, 5], "accepted": [17, 73, 8]}},
@@ -125,8 +125,8 @@ def public_manifest():
         "mechanism": "One shared unknown four-strength native comparator window. Native low/high counters retain outcome history; an accepted pulse releases the original token into the accepted chest.",
         "feedback": "Count differences, not old nonempty counters, identify the latest hit. Misses release nothing.",
         "goal": "Retrieve both original released tokens and return alive to the starting marker.",
-        "budgets": {"practice_arrows": 24, "application_arrows": 12},
-        "limits": "Application-only mechanism proof; optional practice station and full phase accounting are not yet implemented.",
+        "budgets": {"episode_arrows": 12, "maximum_bow_launches": 12},
+        "limits": "One continuous episode; misses and recovered arrows fired again count toward the launch limit. No practice completion or learning score.",
     }
 
 
