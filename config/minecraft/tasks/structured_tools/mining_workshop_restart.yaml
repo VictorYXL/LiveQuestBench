@@ -4,7 +4,7 @@ task_type: structured_tool
 task: |-
   Return alive to the yellow camp marker carrying a diamond, an iron pickaxe, a shield, four cooked beef, at least one coal and two oak planks.
   The diamond outcrop is about 50 blocks forward from camp, relative to your initial facing.
-  Finish standing still on the ground at the marker.
+  Finish standing still on the ground at the marker, with at least 1 health point.
 time_limit_seconds: 2700
 fixture:
   world_path: ../../fixtures/mining_workshop_restart

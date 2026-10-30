@@ -9,7 +9,7 @@ capabilities:
 task: |-
   Recover the three original named cargo samples from the abandoned mine and return with them to the yellow entrance marker.
   Relative to the entrance and your initial facing, Upper Gallery Cargo is about 40 blocks ahead on a higher level; Lower Excavation Cargo is about 30 blocks right on a lower level; Service Chamber Cargo is about 25 blocks ahead and 20 blocks right.
-  Finish alive and standing still on the ground in the yellow entrance area.
+  Finish alive (at least 1 health point) and standing still on the ground in the yellow entrance area.
 time_limit_seconds: 2700
 fixture:
   world_path: ../../fixtures/abandoned_mine_cargo

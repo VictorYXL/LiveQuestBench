@@ -44,6 +44,11 @@ containing the prepared combat-response profiles.
 For separately built Message runtimes, see
 `python -m game.veloren.runtime.initial_message --help`.
 
+Glide-distance tasks require `native-client-glide/2` in both the runtime manifest
+and native evidence. Rerun setup into a new directory and select its runtime
+manifest. Keep the upstream installation available; do not relabel legacy `/1`
+binaries or recorded distances as `/2`. Other tasks may keep compatible runtimes.
+
 ## Run
 
 Select `config/veloren/experiments/structured_tools.yaml` or

@@ -2,8 +2,8 @@ id: route_schema_transfer
 game: minecraft
 task_type: visual_motor
 task: 'Explore the first three-module wing, then traverse two application wings and
-  finish alive and stationary at the centre of the final enlarged chamber. Complete
-  the route without dying or respawning.
+  finish alive (with at least 1 health point) and stationary at the centre of the
+  final enlarged chamber. Complete the route without dying or respawning.
 
   Each module has one, two or three shallow niches in the wall beside its entrance.
   Within this instance, a given niche pattern always has the same continuing exit

@@ -10,7 +10,7 @@ capabilities:
 task: |-
   Recover the three original expedition records: Route Survey, Mineral Survey and Archive Ledger. Return alive with all three to the yellow camp marker.
   Begin your search at the white-roofed field office, roughly 25 blocks forward from camp in your initial facing direction.
-  Finish standing still on the ground at the marker.
+  Finish standing still on the ground at the marker with at least 1 health point.
 time_limit_seconds: 2700
 fixture:
   world_path: ../../fixtures/expedition_record_reconstruction

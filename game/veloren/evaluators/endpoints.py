@@ -316,8 +316,8 @@ def state_checks(
                            "minimum": minimum, "passed": delta >= minimum})
         if glide_landing is not None:
             for evidence in (first, last):
-                if evidence.get("glide_schema") != "native-client-glide/1":
-                    raise ValueError("Native glide evidence is unavailable; upgrade the prepared runtime")
+                if evidence.get("glide_schema") != "native-client-glide/2":
+                    raise ValueError("Gap-excluding native glide evidence /2 is required; upgrade the runtime")
                 landings = evidence["glide_landings"]
                 if not isinstance(landings, list) or len(landings) > 128:
                     raise ValueError("Invalid native glide landing list")
@@ -434,7 +434,8 @@ def state_checks(
             "semantics": "simultaneous terminal state; no action attribution or continuous-survival claim"
             + ("; requested passive client-sampled upward takeoff/landing or native Roll Movement deltas, "
                "not input receipts or server-atomic event counts" if motion else "")
-            + ("; actual sampled airborne Glide displacement followed by a landing in the stated zone, "
+            + ("; summed horizontal displacement between consecutive airborne Glide samples, "
+               "excluding folded intervals, followed by a landing in the stated zone; "
                "not drawing a glider or walking into the zone after another landing" if glide_landing else "")
             + ("; grounded horizontal arrival at a newly received native dialogue marker; "
                "no height or workshop-interior claim" if marker_arrival else "")}

@@ -46,6 +46,7 @@ def main() -> None:
     camera_patch = patch.with_name("0011-native-local-camera.patch")
     camera_contract_patch = patch.with_name("0012-native-camera-observation-contract.patch")
     scene_patch = patch.with_name("0013-native-solid-scene-observation.patch")
+    glide_distance_patch = patch.with_name("0014-native-glide-distance-v2.patch")
     changed = ("voxygen/src/native_agent.rs", "voxygen/src/session/mod.rs",
                "client/src/agent_protocol/continuous_control.rs", "client/src/agent_protocol/mod.rs",
                "common/src/comp/phys.rs", "common/src/comp/mod.rs",
@@ -81,6 +82,9 @@ def main() -> None:
         subprocess.run(["patch", "--batch", "-p1", "-i", str(camera_contract_patch.resolve())], cwd=expected, check=True)
         without_scene = hashes | {name: digest(expected / name) for name in changed}
         subprocess.run(["patch", "--batch", "-p1", "-i", str(scene_patch.resolve())], cwd=expected, check=True)
+        without_glide_distance = hashes | {name: digest(expected / name) for name in changed}
+        subprocess.run(["patch", "--batch", "-p1", "-i", str(glide_distance_patch.resolve())],
+                       cwd=expected, check=True)
         patched = hashes | {name: digest(expected / name) for name in changed}
     if not root.exists():
         shutil.copytree(cache, root, symlinks=False)
@@ -127,6 +131,10 @@ def main() -> None:
     if current == without_scene:
         subprocess.run(["patch", "--batch", "-p1", "-i", str(scene_patch.resolve())],
                        cwd=root / "source", check=True)
+        current = without_glide_distance
+    if current == without_glide_distance:
+        subprocess.run(["patch", "--batch", "-p1", "-i", str(glide_distance_patch.resolve())],
+                       cwd=root / "source", check=True)
     elif current != patched:
         raise ValueError("Build source differs from the selected source plus declared patch")
     if {name: digest(root / "source" / name) for name in hashes} != patched:
@@ -151,7 +159,8 @@ def main() -> None:
         "source_manifest_sha256": digest(source_manifest), "patch_sha256": digest(patch),
         "protection_patch_sha256": digest(protection_patch),
         "motion_patch_sha256": digest(motion_patch), "motion_evidence": "native-client-motion/1",
-        "glide_patch_sha256": digest(glide_patch), "glide_evidence": "native-client-glide/1",
+        "glide_patch_sha256": digest(glide_patch), "glide_evidence": "native-client-glide/2",
+        "glide_distance_patch_sha256": digest(glide_distance_patch),
         "auxiliary_patch_sha256": digest(auxiliary_patch), "auxiliary_input": "native-client-auxiliary/1",
         "route_patch_sha256": digest(route_patch), "route_evidence": "native-client-route/2",
         "physics_route_patch_sha256": digest(physics_route_patch),
@@ -169,7 +178,7 @@ def main() -> None:
         "sha256": {str(path.resolve()): digest(path)
                    for path in (executable, patch, protection_patch, motion_patch, glide_patch,
                                 auxiliary_patch, route_patch, physics_route_patch, route_observation_patch,
-                                camera_patch, camera_contract_patch, scene_patch,
+                                camera_patch, camera_contract_patch, scene_patch, glide_distance_patch,
                                 source_manifest)},
     }
     pending = root / ".runtime.json.tmp"

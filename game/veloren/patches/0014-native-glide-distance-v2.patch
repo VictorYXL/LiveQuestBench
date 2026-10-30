@@ -1,0 +1,99 @@
+--- a/voxygen/src/native_agent.rs
++++ b/voxygen/src/native_agent.rs
+@@ -27,7 +27,8 @@
+     jump_landings: u64,
+     roll_movement: bool,
+     roll_entries: u64,
+-    glide_flight: Option<([f32; 3], f32)>,
++    glide_flight: Option<f32>,
++    glide_previous: Option<[f32; 3]>,
+     glide_landings: Vec<([f32; 3], f32)>,
+     glide_overflow: bool,
+     route_samples: Vec<(u64, [f32; 3])>,
+@@ -62,14 +63,24 @@
+             return;
+         }
+         if gliding && !grounded {
+-            let (start, distance) = self.glide_flight.get_or_insert((point, 0.0));
+-            *distance = distance.max((point[0] - start[0]).hypot(point[1] - start[1]));
++            let distance = self.glide_flight.get_or_insert(0.0);
++            if let Some(previous) = self.glide_previous {
++                *distance += (point[0] - previous[0]).hypot(point[1] - previous[1]);
++                if !distance.is_finite() {
++                    self.invalid = true;
++                    return;
++                }
++            }
++            self.glide_previous = Some(point);
++        } else {
++            // Folding ends a measured segment, not the flight awaiting its landing.
++            self.glide_previous = None;
+         }
+         if grounded && let Some(flight) = self.glide_flight.take() {
+             if self.glide_landings.len() >= 128 {
+                 self.glide_overflow = true;
+             } else {
+-                self.glide_landings.push((point, flight.1));
++                self.glide_landings.push((point, flight));
+             }
+         }
+     }
+@@ -368,7 +379,7 @@
+                             "semantics": "Passive client-update samples: grounded upward takeoff above 0.5m then landing; native Roll Movement entries. Not input receipts or server-atomic event counts.",
+                         });
+                         if request.cmd == "glide_evidence" {
+-                            result["glide_schema"] = json!("native-client-glide/1");
++                            result["glide_schema"] = json!("native-client-glide/2");
+                             result["glide_landings"] = json!(
+                                 self.motion.glide_landings.iter().map(|(point, distance)|
+                                     json!({"position": point, "glide_distance": distance})
+@@ -601,6 +612,49 @@
+         assert!(motion.invalid);
+     }
+ 
++    #[test]
++    fn glide_samples_exclude_folded_gaps_and_keep_the_landing() {
++        let mut motion = MotionEvidence::default();
++        motion.sample_glide(false, [0.0, 0.0, 40.0], true);
++        motion.sample_glide(false, [0.0, 1.0, 39.0], true);
++        motion.sample_glide(false, [0.0, 29.0, 20.0], false);
++        motion.sample_glide(false, [0.0, 30.0, 19.0], true);
++        motion.sample_glide(false, [0.0, 31.0, 18.0], true);
++        motion.sample_glide(false, [0.0, 40.0, 2.0], false);
++        motion.sample_glide(true, [0.0, 40.0, 0.0], false);
++        assert_eq!(motion.glide_landings, vec![([0.0, 40.0, 0.0], 2.0)]);
++    }
++
++    #[test]
++    fn glide_samples_sum_segments_without_carrying_into_the_next_flight() {
++        let mut motion = MotionEvidence::default();
++        motion.sample_glide(false, [0.0, 0.0, 40.0], true);
++        motion.sample_glide(false, [0.0, 10.0, 30.0], true);
++        motion.sample_glide(false, [0.0, 30.0, 25.0], false);
++        motion.sample_glide(false, [0.0, 40.0, 20.0], true);
++        motion.sample_glide(false, [0.0, 55.0, 10.0], true);
++        motion.sample_glide(true, [0.0, 60.0, 0.0], false);
++        assert_eq!(motion.glide_landings, vec![([0.0, 60.0, 0.0], 25.0)]);
++        motion.sample_glide(true, [0.0, 70.0, 0.0], true);
++        motion.sample_glide(false, [0.0, 80.0, 4.0], true);
++        motion.sample_glide(false, [0.0, 81.0, 2.0], true);
++        motion.sample_glide(true, [0.0, 82.0, 0.0], false);
++        assert_eq!(motion.glide_landings[1], ([0.0, 82.0, 0.0], 1.0));
++    }
++
++    #[test]
++    fn glide_samples_count_horizontal_travel_and_reject_overflow() {
++        let mut motion = MotionEvidence::default();
++        motion.sample_glide(false, [0.0, 0.0, 50.0], true);
++        motion.sample_glide(false, [3.0, 4.0, 40.0], true);
++        motion.sample_glide(false, [0.0, 0.0, 30.0], true);
++        motion.sample_glide(true, [0.0, 0.0, 0.0], false);
++        assert_eq!(motion.glide_landings, vec![([0.0, 0.0, 0.0], 10.0)]);
++        motion.sample_glide(false, [f32::MAX, 0.0, 10.0], true);
++        motion.sample_glide(false, [-f32::MAX, 0.0, 9.0], true);
++        assert!(motion.invalid);
++    }
++
+     #[test]
+     fn glide_samples_require_airborne_glide_and_landing() {
+         let mut motion = MotionEvidence::default();

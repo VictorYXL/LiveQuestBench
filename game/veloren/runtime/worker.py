@@ -116,8 +116,8 @@ class Session:
             raise ValueError("Prepared runtime lacks the native-protection opt-out patch; rerun Veloren setup")
         if self.fixture.get("motion_evidence") and cfg.get("motion_evidence") != "native-client-motion/1":
             raise ValueError("Fixture requires passive native motion evidence; rerun Veloren setup")
-        if self.fixture.get("glide_evidence") and cfg.get("glide_evidence") != "native-client-glide/1":
-            raise ValueError("Fixture requires passive native glide evidence; rerun Veloren setup")
+        if self.fixture.get("glide_evidence") and cfg.get("glide_evidence") != "native-client-glide/2":
+            raise ValueError("Fixture requires gap-excluding native glide evidence /2; rerun Veloren setup")
         if self.fixture.get("route_evidence") and cfg.get("route_evidence") != route_schema:
             raise ValueError("Fixture requires passive native route evidence; rerun Veloren setup")
         if self.fixture.get("route_observation") and cfg.get("route_observation") != self.fixture["route_observation"]:

@@ -11,7 +11,7 @@ task: |-
   Together restore a walkable crossing of the channel east of camp, build the far-bank shelter, and reunite at the yellow marker beside it. Finish alive with at least four bread across the team's inventories.
   The crossing must connect the two yellow bank markers inside the marked construction strip. Use a continuous level deck of oak planks, cobblestone, stone or stone bricks, with two clear blocks of headroom.
   The shelter's marked 3 by 3 footprint is beyond the eastern bank. Build a two-block-high perimeter: cobblestone in the lower layer and oak planks in the upper layer. Leave a two-block-high doorway at the centre of the north wall and keep the interior empty. Cover it with a full 3 by 3 oak-plank roof. Timber is near the northern start; stone is near the southern start. Choose your own division of work.
-  Both players must finish standing still on the ground at the far-bank yellow marker.
+  Both players must finish with at least 1 health point each, standing still on the ground at the far-bank yellow marker.
 time_limit_seconds: 2700
 fixture:
   world_path: ../../fixtures/shared_crossing_camp

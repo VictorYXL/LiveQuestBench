@@ -11,7 +11,7 @@ task: |-
   Defend the village east of your starting marker and win its native raid. You begin with Bad Omen I; entering the village triggers the raid under Minecraft Java 1.20.4 rules.
   The village is roughly 80 blocks ahead in your initial facing direction. Keep the village from falling, defeat the raiders, and earn the native Hero of the Village advancement. Choose your own approach, defenses and recovery timing. Not every resident must survive.
   You start with diamond armor and a diamond sword. Death keeps your inventory and respawns you in the small shelter west of the village; the raid and villagers do not reset.
-  Finish alive and standing still on the ground at the village's yellow central marker after victory.
+  Finish with at least 1 health point and standing still on the ground at the village's yellow central marker after victory.
   Two northern houses have iron doors sheltering their residents; other residents remain exposed. The raid must still be defeated through ordinary play.
 time_limit_seconds: 2700
 fixture:
