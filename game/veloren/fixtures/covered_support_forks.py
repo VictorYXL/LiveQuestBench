@@ -9,7 +9,7 @@ import secrets
 import yaml
 
 from game.veloren.fixture import solid_voxels, validate_fixture
-from game.veloren.prototypes.support_fork_proposal import build_proposal_geometry
+from game.veloren.fixtures.support_fork_proposal import build_proposal_geometry
 
 
 CAMERA_PROFILE = "native-local-camera/1"

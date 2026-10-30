@@ -8,7 +8,7 @@ import secrets
 import yaml
 
 from game.veloren.fixture import validate_fixture
-from game.veloren.prototypes.covered_support_forks import build_candidate
+from game.veloren.fixtures.covered_support_forks import build_candidate
 
 
 SCENE_PROFILE = "native-solid-scene/1"

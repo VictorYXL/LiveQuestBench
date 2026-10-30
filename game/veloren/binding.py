@@ -12,8 +12,8 @@ from game.veloren.evaluators.endpoints import validate_displacement, validate_he
 from game.veloren.evaluators.endpoints import evaluate_state, validate_state
 from game.veloren.evaluators.deaths import evaluate_deaths
 from game.veloren.game import VelorenGame
-from game.veloren.structured_tools import interface as st
-from game.veloren.visual_motor import interface as vm
+from game.veloren import structured_tools as st
+from game.backends.x11 import interface as vm
 
 
 def create_binding(

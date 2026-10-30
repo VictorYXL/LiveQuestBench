@@ -18,7 +18,7 @@ from game.backends.x11.recording import WindowRecording
 from game.base_game import AgentAccessClosed, BaseGame
 from game.veloren.runtime.session import VelorenSession
 from game.veloren.fixture import validate_fixture
-from game.veloren.structured_tools.interface import StructuredInterface, project, validate_tool
+from game.veloren.structured_tools import StructuredInterface, project, validate_tool
 
 
 class VelorenGame(BaseGame[MotorInterface | StructuredInterface]):

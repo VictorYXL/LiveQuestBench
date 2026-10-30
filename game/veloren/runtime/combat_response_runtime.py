@@ -7,8 +7,8 @@ from pathlib import Path
 import random
 import shutil
 
-from game.veloren.prototypes.combat_response_assets import ABILITY_PATH, build_candidate, render_response
-from game.veloren.prototypes.combat_source_binding import digest, relative_path
+from game.veloren.runtime.combat_response_assets import ABILITY_PATH, build_candidate, render_response
+from game.veloren.runtime.combat_source_binding import digest, relative_path
 
 
 SCHEMA = "veloren-experimental-combat-response-assets/1"

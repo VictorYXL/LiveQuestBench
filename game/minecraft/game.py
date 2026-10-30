@@ -18,10 +18,10 @@ from game.minecraft.runtime.install import check_installation
 from game.minecraft.init_player_state import PlayerState
 from game.minecraft.runtime.session import MinecraftSession, SessionConfig, copy_world
 from game.backends.x11.capture import CapturedFrame
-from game.minecraft.visual_motor.interface import MotorInterface, execute_actions
+from game.backends.x11.interface import MotorInterface, execute_actions
 from game.backends.x11.recording import WindowRecording
 from game.backends.x11.actions import ActionResult
-from game.minecraft.structured_tools.interface import (
+from game.minecraft.structured_tools import (
     PROFILE_ID, StructuredInterface, execute_tool, observe, tool_schemas, validate_tool,
 )
 

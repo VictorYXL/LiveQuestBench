@@ -41,6 +41,9 @@ Runtime settings take a `runtime.json` manifest, except
 `LIVEQUEST_VELOREN_COMBAT_RESPONSE_RUNTIME_ROOT`, which takes the directory
 containing the prepared combat-response profiles.
 
+For separately built Message runtimes, see
+`python -m game.veloren.runtime.initial_message --help`.
+
 ## Run
 
 Select `config/veloren/experiments/structured_tools.yaml` or

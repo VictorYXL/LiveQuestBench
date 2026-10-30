@@ -4,7 +4,7 @@ from copy import deepcopy
 from pathlib import Path
 
 from game.veloren.fixture import solid_voxels, validate_fixture
-from game.veloren.prototypes.rest_support import build_instance
+from game.veloren.fixtures.rest_support import build_instance
 
 
 def _rectangle(x, y, width, depth):

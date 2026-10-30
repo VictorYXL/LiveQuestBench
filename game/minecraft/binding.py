@@ -15,8 +15,8 @@ from game.minecraft.evaluators.cargo import evaluate_cargo, validate_cargo, veri
 from game.minecraft.game import MinecraftGame
 from game.minecraft.init_player_state import PlayerState
 from game.minecraft.runtime.session import validate_world
-from game.minecraft.structured_tools import interface as st
-from game.minecraft.visual_motor import interface as vm
+from game.minecraft import structured_tools as st
+from game.backends.x11 import interface as vm
 
 
 def create_binding(

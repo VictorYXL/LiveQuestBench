@@ -62,7 +62,7 @@ def bind_assets(config: dict, fixture: dict, paths: dict, output: Path) -> None:
     if not requested:
         return
     validate_profile(fixture)
-    from game.veloren.prototypes.combat_response_runtime import admit_response_assets
+    from game.veloren.runtime.combat_response_runtime import admit_response_assets
     admission = admit_response_assets(
         config["experimental_combat_response_assets"], Path(paths["assets"]),
         Path(paths["assets_manifest"]),

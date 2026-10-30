@@ -46,7 +46,7 @@ def main():
     tree_hash = hashlib.sha256(
         json.dumps(hashes, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
     output.mkdir(parents=True, exist_ok=False)
-    patches = Path(__file__).resolve().parents[1] / "game/veloren/patches"
+    patches = Path(__file__).resolve().parents[1] / "patches"
     base_patch = patches / "0009-initial-message-v2.patch"
     patch = base_patch if args.protocol == "initial-message-v2" else patches / "0010-initial-message-v3.patch"
     source.update(files_sha256=hashes, source_tree_sha256=tree_hash,

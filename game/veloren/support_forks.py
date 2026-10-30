@@ -4,7 +4,7 @@ from pathlib import Path
 import secrets
 
 from benchmark.config import TaskConfig
-from game.veloren.prototypes.covered_support_forks_solid import build_solid_candidate
+from game.veloren.fixtures.covered_support_forks_solid import build_solid_candidate
 
 
 TASK_ID = "covered_support_forks_local_solid_v2"

@@ -28,11 +28,11 @@ ROOT = Path(__file__).resolve().parents[2]
 @pytest.mark.parametrize("game_name", ["minecraft", "veloren"])
 def test_structured_tool_invalid_arguments_can_be_corrected(game_name):
     if game_name == "minecraft":
-        from game.minecraft.structured_tools import interface as api
+        from game.minecraft import structured_tools as api
         valid = {"direction": "forward", "duration": 0.1}
         invalid = {"direction": "forward", "duration": 11}
     else:
-        from game.veloren.structured_tools import interface as api
+        from game.veloren import structured_tools as api
         valid = {"direction": "forward", "duration_ticks": 1}
         invalid = {"direction": "forward", "duration_ticks": 121}
     calls = []
