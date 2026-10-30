@@ -1,0 +1,114 @@
+id: regeneration_procedure_transfer
+game: veloren
+task_type: structured_tool
+task: |-
+  Restore all three original sheep with your own sceptre regeneration, defeat all
+  three original wolves after personally damaging each, and return alive to the
+  central stone arch. Each sheep must survive and finish at least ninety percent
+  healthy, still owned by you and in your native Group, within thirty-two metres
+  of you. Finish standing still on the ground. Do not die.
+
+  The sheep just south of you starts slightly injured, at ninety-six percent
+  health. Its nearby wolf is already injured. The western and eastern sheep in
+  the northern court start at sixty percent health; the eastern sheep stands on
+  a raised stone terrace. Two healthy wolves start beyond the northern divider.
+  The southern court offers an initial experience before the larger northern
+  recovery, but you may choose any order. Every sheep needs actual restoration
+  from you, including the slightly injured one.
+
+  All sheep initially have the ordinary Stay command and remain living native
+  pets, not frozen or protected objects. You may command them normally. Your
+  walking stick, enemies, health, energy and combo use ordinary game rules.
+  Supplies and enemies are finite. Death does not restore animals, resources,
+  equipment or time. Normal HUD information and tooltips remain available.
+time_limit_seconds: 2700
+fixture:
+  world_path: ../../fixtures/veloren_0_18_0_0.bin
+  world_seed: 130626853
+  time_of_day: '12:00'
+  day_length: 30
+  calendar: none
+  platform: {origin: [18700, 10800, 500], size: [64, 48], block: Rock}
+  blocks:
+  - {origin: [18700, 10800, 501], size: [64, 1, 8]}
+  - {origin: [18700, 10847, 501], size: [64, 1, 8]}
+  - {origin: [18700, 10801, 501], size: [1, 46, 8]}
+  - {origin: [18763, 10801, 501], size: [1, 46, 8]}
+  - {origin: [18726, 10806, 501], size: [15, 1, 4]}
+  - {origin: [18740, 10801, 501], size: [1, 5, 4]}
+  - {origin: [18726, 10801, 501], size: [1, 1, 4]}
+  - {origin: [18701, 10835, 501], size: [29, 1, 4]}
+  - {origin: [18735, 10835, 501], size: [28, 1, 4]}
+  - {origin: [18747, 10827, 501], size: [9, 8, 2]}
+  - {origin: [18747, 10826, 501], size: [9, 1, 1]}
+  - {origin: [18730, 10823, 501], size: [1, 1, 3]}
+  - {origin: [18734, 10823, 501], size: [1, 1, 3]}
+  - {origin: [18730, 10823, 504], size: [5, 1, 1]}
+  player_state:
+    position: [18732.5, 10812.5, 501]
+    look: [0, 1, 0]
+    health: 100
+    inventory:
+      common.items.consumable.potion_minor: 2
+      common.items.food.apple: 3
+    equipment:
+      active_mainhand: common.items.weapons.sceptre.starter_sceptre
+      chest: common.items.armor.hide.rawhide.chest
+      feet: common.items.armor.misc.foot.sandals
+      glider: common.items.glider.basic_white
+      lantern: common.items.lantern.black_0
+      legs: common.items.armor.misc.pants.worker_brown
+  encounters:
+  - role: practice_wolf
+    asset: common.entity.benchmark.male_wolf
+    position: [18732.5, 10802.5, 501]
+    initial_health: 55
+  - role: west_wolf
+    asset: common.entity.benchmark.male_wolf
+    position: [18724.5, 10840.5, 501]
+  - role: east_wolf
+    asset: common.entity.benchmark.male_wolf
+    position: [18740.5, 10840.5, 501]
+  companions:
+    practice:
+      species: sheep
+      position: [18732.5, 10808.5, 501]
+      initial_health_fraction: 0.96
+    west:
+      species: sheep
+      position: [18714.5, 10830.5, 501]
+      initial_health_fraction: 0.6
+    east:
+      species: sheep
+      position: [18750.5, 10830.5, 503]
+      initial_health_fraction: 0.6
+evaluator:
+  name: encounter
+  parameters:
+    roles: [practice_wolf, west_wolf, east_wolf]
+    no_death: true
+    min_health: 0
+    position:
+      target: [18732.5, 10824.5, 501]
+      horizontal_tolerance: 2
+      vertical_tolerance: 0.5
+      max_speed: 0.1
+    companions:
+      practice: {max_distance: 32, min_health: 0, min_health_fraction: 0.9, healing_required: true}
+      west: {max_distance: 32, min_health: 0, min_health_fraction: 0.9, healing_required: true}
+      east: {max_distance: 32, min_health: 0, min_health_fraction: 0.9, healing_required: true}
+tools:
+- MoveTool
+- TurnTool
+- JumpTool
+- LookTool
+- WieldTool
+- AttackTool
+- StrikeTool
+- RollTool
+- StopTool
+- PetStayTool
+- UseItemTool
+capabilities:
+  primary: [within_episode_learning]
+  secondary: [planning_resources, spatial_interaction, realtime_execution]

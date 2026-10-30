@@ -71,7 +71,7 @@ def validate_fixture(value: object) -> dict:
     required = {"world_path", "world_seed", "time_of_day", "day_length", "calendar", "player_state"}
     optional = {"blocks", "stations", "supplies", "recipe_groups", "recipes", "encounters",
                 "motion_evidence", "glide_evidence", "platform", "native_site", "merchant",
-                "sword_skill_points", "companion", "contract", "respawn_at_start", "route_evidence",
+                "sword_skill_points", "companion", "companions", "contract", "respawn_at_start", "route_evidence",
                 "public_energy", "pickup_evidence", "peer_group", "harvest_sites",
                 "message_contract", "market", "runtime_profile", "route_observation",
                 "camera_observation", "scene_observation", "experimental_combat_response"}
@@ -119,7 +119,7 @@ def validate_fixture(value: object) -> dict:
     ):
         raise ValueError("sword_skill_points must be an integer in [1, 16]")
     if "harvest_sites" in fixture and (
-        fixture.get("encounters") or any(key in fixture for key in ("merchant", "companion", "contract"))
+        fixture.get("encounters") or any(key in fixture for key in ("merchant", "companion", "companions", "contract"))
     ):
         raise ValueError("Native harvest evidence requires a separate authored plot without injected actors")
     if not isinstance(fixture["world_path"], str) or not fixture["world_path"].strip():
@@ -192,7 +192,7 @@ def validate_fixture(value: object) -> dict:
     if not isinstance(encounters, list) or len(encounters) > 4:
         raise ValueError("encounters must contain at most four designated native enemies")
     if "message_contract" in fixture:
-        if "platform" not in fixture or encounters or {"merchant", "contract", "companion"} & fixture.keys():
+        if "platform" not in fixture or encounters or {"merchant", "contract", "companion", "companions"} & fixture.keys():
             raise ValueError("Message contracts require a separate authored scene without injected encounters")
         if not isinstance(fixture["message_contract"], dict):
             raise ValueError("message_contract must be a mapping")
@@ -221,7 +221,7 @@ def validate_fixture(value: object) -> dict:
         from game.veloren.market import validate_market
         validate_market(fixture, occupied, require_standing_point)
     if "contract" in fixture:
-        if "platform" not in fixture or encounters or "merchant" in fixture or "companion" in fixture:
+        if "platform" not in fixture or encounters or {"merchant", "companion", "companions"} & fixture.keys():
             raise ValueError("Native Slay contracts require a separate authored scene without injected encounters")
         contract = fixture["contract"]
         if not isinstance(contract, dict):
@@ -267,8 +267,17 @@ def validate_fixture(value: object) -> dict:
         not encounters or any(row["asset"] != "common.entity.benchmark.male_green_legoom" for row in encounters)
     ):
         raise ValueError("Experimental response fixtures require the declared Green Legoom family")
-    if "companion" in fixture:
-        companion = fixture["companion"]
+    if "companion" in fixture and "companions" in fixture:
+        raise ValueError("Declare companion or companions, not both")
+    companions = fixture.get("companions")
+    if "companions" in fixture and (
+        not isinstance(companions, dict) or not 1 <= len(companions) <= 3
+        or any(not isinstance(role, str) or not re.fullmatch(r"[a-z][a-z0-9_]{0,63}", role)
+               for role in companions)
+    ):
+        raise ValueError("companions requires one to three uniquely named native sheep")
+    pet_positions = set()
+    for companion in ([fixture["companion"]] if "companion" in fixture else (companions or {}).values()):
         if not isinstance(companion, dict):
             raise ValueError("companion requires species and position")
         fields({key: value for key, value in companion.items() if key != "initial_health_fraction"},
@@ -280,8 +289,14 @@ def validate_fixture(value: object) -> dict:
             raise ValueError("Companion fixtures require a native sheep and a designated encounter")
         spawn = vector(companion["position"], "companion.position")
         require_standing_point(spawn, occupied, "Companion")
-        if not 2 <= math.dist(spawn, point) <= 4:
-            raise ValueError("Companion must start 2-4 metres from its owner")
+        maximum_distance = 32 if companions is not None else 4
+        if not 2 <= math.dist(spawn, point) <= maximum_distance:
+            raise ValueError(f"Companion must start 2-{maximum_distance} metres from its owner")
+        if tuple(spawn) in pet_positions:
+            raise ValueError("Companions require distinct starting positions")
+        pet_positions.add(tuple(spawn))
+        if companions is not None:
+            require_standing_point([spawn[0] + 3, spawn[1], spawn[2]], occupied, "Companion setup approach")
     for supply in fixture.get("supplies", []):
         if not isinstance(supply, dict):
             raise ValueError("Supply must be a mapping")
@@ -611,9 +626,49 @@ async def initialize_companion(admin, actor, fixture: dict) -> dict:
                 if abs(binding["health"] - initial_health) < .01:
                     break
                 await asyncio.sleep(.1)
-    return {"binding": binding, "initial_health": initial_health,
+    return {"binding": binding, "initial_health": binding["health"],
             "player_target": pet["control_target"], "spawn_receipt": receipt,
             "initial_public": pet, "native_ai": True, "tethered": False}
+
+
+async def initialize_companions(admin, actor, fixture: dict) -> dict[str, dict]:
+    """Prepare separate ordinary pets before enemies or measured controls exist."""
+    from scripts.rpg_benchmark import setup
+
+    companions = {}
+    for role, specification in fixture["companions"].items():
+        target = specification["position"]
+        await setup.goto(admin, actor, [target[0] + 3, target[1], target[2]])
+        pet = await initialize_companion(admin, actor, {"companion": specification})
+        await setup.action(actor, "companion_action", operation="pet_stay",
+                           target=pet["player_target"], stay=True)
+        await setup.wait_observation(actor, lambda observation: any(
+            row["control_target"] == pet["player_target"]
+            and row["companion"]["pet_staying"] is True
+            for row in observation["nearby_entities"]
+        ), "declared native companion Stay")
+        companions[role] = pet
+    await setup.goto(admin, actor, fixture["player_state"]["position"])
+    return companions
+
+
+def bind_companion_opening(prepared: dict, observation: dict, bindings: list[dict], source: dict) -> dict:
+    expected = prepared["binding"]
+    public = [row for row in observation["nearby_entities"] if row["uid"] == expected["uid"]]
+    native = [row for row in bindings if row["uid"] == expected["uid"]]
+    health = prepared.get("initial_health", expected["maximum_health"])
+    if (len(public) != 1 or len(native) != 1
+            or public[0]["control_target"] != prepared["player_target"]
+            or public[0]["companion"]["owned_by_actor"] is not True
+            or public[0]["same_native_group"] is not True
+            or public[0]["health"]["current"] != health or public[0]["health"]["dead"]
+            or native[0]["server_entity"] != expected["server_entity"]
+            or native[0]["alignment"] != {"Owned": source["uid"]}
+            or native[0]["group"] != source["group"] or source["group"] is None
+            or native[0]["health"] != health or native[0]["dead"]):
+        raise RuntimeError("Owned companion unavailable, replaced or injured before measured play")
+    return {key: prepared[key] for key in ("binding", "player_target", "initial_health")
+            if key in prepared}
 
 
 async def initialize_equipment(admin, actor, equipment: dict[str, str]) -> None:
@@ -770,6 +825,9 @@ async def initialize_fixture(admin, actor, fixture: dict, *, shared_world: bool 
     if "companion" in fixture and not shared_world:
         companion = await initialize_companion(admin, actor, fixture)
         await setup.goto(admin, actor, fixture["player_state"]["position"])
+    companions = None
+    if "companions" in fixture and not shared_world:
+        companions = await initialize_companions(admin, actor, fixture)
     await setup.command(admin, "time", fixture["time_of_day"])
     await setup.command(admin, "sudo", actor.name, "health", fixture["player_state"]["health"])
     opening = await wait_player(actor, fixture, await setup.ready_observation(actor))
@@ -791,6 +849,8 @@ async def initialize_fixture(admin, actor, fixture: dict, *, shared_world: bool 
             "encounters": [], "source_binding": None, "merchant": merchant,
             "message_contract": message, "market": market,
             "companion": companion, "contract": contract, "initial_waypoint_receipt": waypoint}
+    if companions is not None:
+        result["companions"] = companions
     if not shared_world and (fixture.get("encounters") or contract is not None):
         if defer_encounters:
             result["encounters_pending"] = True

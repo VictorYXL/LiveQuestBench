@@ -21,6 +21,7 @@ def player_damage(event: dict, source: dict, target: dict) -> bool:
 
 
 def validate_encounter(*, roles: list[str], companion: dict | None = None,
+                       companions: dict[str, dict] | None = None,
                        no_death: bool = True, required_attack: dict | None = None, **state) -> None:
     if required_attack is not None:
         if (not isinstance(required_attack, dict)
@@ -36,7 +37,14 @@ def validate_encounter(*, roles: list[str], companion: dict | None = None,
             or any(not isinstance(role, str) or not role for role in roles)
             or len(set(roles)) != len(roles)):
         raise ValueError("Encounter roles must be unique nonempty names")
-    if companion is not None:
+    if companion is not None and companions is not None:
+        raise ValueError("Score companion or companions, not both")
+    if companions is not None and (
+        not isinstance(companions, dict) or not 1 <= len(companions) <= 3
+        or any(not isinstance(role, str) or not role for role in companions)
+    ):
+        raise ValueError("companions requires one to three named companion requirements")
+    for companion in ([companion] if companion is not None else (companions or {}).values()):
         if (not isinstance(companion, dict)
                 or {"max_distance", "min_health"} - companion.keys()
                 or companion.keys() - {"max_distance", "min_health", "min_health_fraction", "healing_required",
@@ -58,11 +66,11 @@ def validate_encounter(*, roles: list[str], companion: dict | None = None,
 
 def _combat_checks(
     initial: dict, final: dict, *, roles: list[str], require_death: bool,
-    companion: dict | None = None, no_death: bool = True,
+    companion: dict | None = None, companions: dict[str, dict] | None = None, no_death: bool = True,
     required_attack: dict | None = None,
     _contributors: list[dict] | None = None, **state,
 ) -> dict:
-    validate_encounter(roles=roles, companion=companion, no_death=no_death,
+    validate_encounter(roles=roles, companion=companion, companions=companions, no_death=no_death,
                        required_attack=required_attack, **state)
     first, last = (row["private_encounter_evidence"] for row in (initial, final))
     registry = first["registry"]
@@ -135,8 +143,23 @@ def _combat_checks(
                 "requirement": required_attack,
                 "passed": bool(qualified) and (not required_attack["lethal"] or bool(killed) and bool(lethal)),
             })
-    if companion is not None:
-        registered = registry["companion"]
+    pet_requirements = []
+    if companions is not None:
+        registered_pets = registry.get("companions")
+        current_pets = last.get("companion_bindings")
+        if (not isinstance(registered_pets, dict) or set(registered_pets) != set(companions)
+                or not isinstance(current_pets, dict) or set(current_pets) != set(companions)
+                or "companion" in registry):
+            raise ValueError("Companion registry and terminal bindings must match all declared roles")
+        pet_identities = [row["binding"] for row in registered_pets.values()]
+        if (len({row["uid"] for row in pet_identities}) != len(pet_identities)
+                or len({row["server_entity"] for row in pet_identities}) != len(pet_identities)):
+            raise ValueError("Companion roles must bind distinct original native identities")
+        pet_requirements = [(role, requirement, registered_pets[role], current_pets[role])
+                            for role, requirement in companions.items()]
+    elif companion is not None:
+        pet_requirements = [(None, companion, registry["companion"], last["companion_binding"])]
+    for role, requirement, registered, current in pet_requirements:
         pet = registered["binding"]
         if (pet["alignment"] != {"Owned": source["uid"]} or source["group"] is None
                 or pet["group"] != source["group"] or pet["dead"] is not False
@@ -145,9 +168,8 @@ def _combat_checks(
                 or pet["uid"] == source["uid"]):
             raise ValueError("Companion opening lacks a distinct native owned group member at its declared health")
         public = next((row for row in final["nearby_entities"] if row["uid"] == pet["uid"]), None)
-        current = last["companion_binding"]
-        companion = {**companion, "min_health": max(
-            companion["min_health"], pet["maximum_health"] * companion.get("min_health_fraction", 0))}
+        requirement = {**requirement, "min_health": max(
+            requirement["min_health"], pet["maximum_health"] * requirement.get("min_health_fraction", 0))}
         distance = None
         visible_alive = False
         if public is not None:
@@ -159,21 +181,22 @@ def _combat_checks(
                 public["control_target"] == registered["player_target"]
                 and public["companion"]["owned_by_actor"] is True and public["same_native_group"] is True
                 and public["health"] is not None and public["health"]["dead"] is False
-                and 0 < finite(public["health"]["current"], "companion health") >= companion["min_health"]
-                and distance <= companion["max_distance"]
+                and 0 < finite(public["health"]["current"], "companion health") >= requirement["min_health"]
+                and distance <= requirement["max_distance"]
             )
         native_alive = (
             current is not None and current["uid"] == pet["uid"] and current["server_entity"] == pet["server_entity"]
             and current["alignment"] == {"Owned": source["uid"]} and current["dead"] is False
-            and 0 < finite(current["health"], "native companion health") >= companion["min_health"]
+            and 0 < finite(current["health"], "native companion health") >= requirement["min_health"]
             and public is not None and current["group"] == public["group"]
         )
         killed = bool(deaths(pet))
         checks.append({"kind": "companion_preserved", "uid": pet["uid"], "native_death": killed,
-                       "distance": distance, "minimum_health": companion["min_health"],
-                       "maximum_distance": companion["max_distance"],
+                       **({"role": role} if role is not None else {}),
+                       "distance": distance, "minimum_health": requirement["min_health"],
+                       "maximum_distance": requirement["max_distance"],
                        "passed": visible_alive and native_alive and not killed})
-        if companion.get("healing_required"):
+        if requirement.get("healing_required"):
             heals = []
             for event in events:
                 if event["event"] != "health_effect_applied":
@@ -189,13 +212,14 @@ def _combat_checks(
                         and group is not None and group == data.get("target_group")
                         and contributor["Group"]["group"] == group
                         and data.get("cause") == {"Buff": "Regeneration"}):
-                    if companion.get("heal_while_target_alive") and not any(
+                    if requirement.get("heal_while_target_alive") and not any(
                         alive_before(target["binding"], event["sequence"]) for target in targets
                     ):
                         continue
                     heals.append(event)
             checks.append({"kind": "player_sourced_companion_healing", "events": heals,
-                           "while_original_target_alive": companion.get("heal_while_target_alive", False),
+                           **({"role": role} if role is not None else {}),
+                           "while_original_target_alive": requirement.get("heal_while_target_alive", False),
                            "health_restored": sum(row["data"]["after"] - row["data"]["before"] for row in heals),
                            "passed": bool(heals)})
     if no_death:
@@ -218,7 +242,9 @@ def _combat_checks(
                          + (" Original owned companion must never die and remain alive, owned, grouped and "
                             "within the declared terminal distance." if companion else "")
                          + (" Actual player-sourced regeneration must restore companion health."
-                            if companion and companion.get("healing_required") else "")}
+                            if companion and companion.get("healing_required") else "")
+                         + (" Every named original companion must independently satisfy preservation and "
+                            "its declared actual player-sourced healing requirement." if companions else "")}
 
 
 def team_encounter_checks(initial: dict[str, dict], final: dict[str, dict], *, roles: list[str],

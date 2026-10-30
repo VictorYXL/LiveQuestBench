@@ -146,6 +146,10 @@ def create_binding(
         raise ValueError("Skill scoring requires declared native Sword points")
     if parameters.get("companion") is not None and "companion" not in fixture:
         raise ValueError("Companion scoring requires a declared native owned companion")
+    if parameters.get("companions") is not None and (
+        "companions" not in fixture or set(parameters["companions"]) != set(fixture["companions"])
+    ):
+        raise ValueError("Scored companion roles must match the declared native owned companions")
     if evaluator == "contract" and "contract" not in fixture:
         raise ValueError("Contract scoring requires a declared native Slay fixture")
 

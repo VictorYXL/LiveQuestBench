@@ -444,19 +444,34 @@ class Session:
                         "targets": [{"role": target["role"], "asset": target["asset"],
                                      "binding": target["binding"]} for target in targets],
                     }
-                    if self.initialized.get("companion") is not None:
-                        companion = self.initialized["companion"]
+                    companions = self.initialized.get("companions")
+                    prepared_pets = (companions.items() if companions is not None else
+                                     [(None, self.initialized["companion"])]
+                                     if self.initialized.get("companion") is not None else [])
+                    if companions is not None:
+                        self.encounter_registry["companions"] = {}
+                        from game.veloren.fixture import bind_companion_opening
+                        opening_bindings = next(row["data"]["bindings"] for row in reversed(rows)
+                                                if row["event"] == "combat_entity_bindings")
+                    seen_pets = set()
+                    for role, companion in prepared_pets:
                         pet = current.get(companion["binding"]["uid"])
                         if (pet is None or pet["control_target"] != companion["player_target"]
                                 or pet["companion"]["owned_by_actor"] is not True
                                 or pet["same_native_group"] is not True
                                 or pet["health"]["current"] != companion.get("initial_health", companion["binding"]["maximum_health"])
-                                or pet["health"]["dead"]):
+                                or pet["health"]["dead"] or pet["uid"] in seen_pets):
                             raise RuntimeError("Owned companion unavailable or injured before measured play")
-                        self.encounter_registry["companion"] = {
+                        seen_pets.add(pet["uid"])
+                        registered = {
                             key: companion[key] for key in ("binding", "player_target", "initial_health")
                             if key in companion
                         }
+                        if role is None:
+                            self.encounter_registry["companion"] = registered
+                        else:
+                            self.encounter_registry["companions"][role] = bind_companion_opening(
+                                companion, observation, opening_bindings, self.encounter_registry["source"])
                 equipment_samples = []
                 previous_equipment = self.encounter_registry["source"]["equipment"]
                 for row in rows:
@@ -479,13 +494,24 @@ class Session:
                                and row["event"] in ("health_effect_applied", "native_entity_death",
                                                     "attack_health_effect_queued")],
                 }
-                if "companion" in self.encounter_registry:
+                if {"companion", "companions"} & self.encounter_registry.keys():
                     bindings = next(row["data"]["bindings"] for row in reversed(rows)
                                     if row["event"] == "combat_entity_bindings")
-                    observation["private_encounter_evidence"]["companion_binding"] = next(
-                        (row for row in bindings
-                         if row["uid"] == self.encounter_registry["companion"]["binding"]["uid"]), None,
-                    )
+                    def current_pet(registered):
+                        matches = [row for row in bindings if (
+                            row["uid"] == registered["binding"]["uid"]
+                            and row["server_entity"] == registered["binding"]["server_entity"])]
+                        if len(matches) > 1:
+                            raise RuntimeError("Ambiguous native companion binding")
+                        return matches[0] if matches else None
+                    if "companion" in self.encounter_registry:
+                        observation["private_encounter_evidence"]["companion_binding"] = current_pet(
+                            self.encounter_registry["companion"])
+                    else:
+                        observation["private_encounter_evidence"]["companion_bindings"] = {
+                            role: current_pet(registered)
+                            for role, registered in self.encounter_registry["companions"].items()
+                        }
                 if self.initialized.get("contract") is not None:
                     from game.veloren.contracts import contract_registry, contract_snapshot
                     if not hasattr(self, "contract_registry"):

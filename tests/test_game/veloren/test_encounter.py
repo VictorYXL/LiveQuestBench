@@ -373,6 +373,153 @@ def test_injured_companion_needs_sourced_healing_before_target_lethal_damage():
         assert not encounter_checks(initial, changed, **parameters)["success"]
 
 
+def three_companion_evidence():
+    initial, final = companion_evidence()
+    original = initial["private_encounter_evidence"]["registry"].pop("companion")
+    final["private_encounter_evidence"]["registry"].pop("companion")
+    for boundary in (initial, final):
+        boundary["private_encounter_evidence"].pop("companion_binding")
+        boundary["private_encounter_evidence"]["registry"]["companions"] = {}
+        boundary["private_encounter_evidence"]["companion_bindings"] = {}
+        boundary["nearby_entities"] = []
+    requirements = {}
+    for index, role in enumerate(("practice", "west", "east")):
+        uid, entity = 3 + index, f"sheep-{index}"
+        initial_health = 38.3984375 if index == 0 else 24
+        registered = deepcopy(original)
+        registered["binding"].update(uid=uid, server_entity=entity, health=initial_health)
+        registered["initial_health"] = initial_health
+        registered["player_target"] = {"uid": uid, "lifecycle": entity}
+        for boundary, health in ((initial, initial_health), (final, 40)):
+            evidence = boundary["private_encounter_evidence"]
+            evidence["registry"]["companions"][role] = deepcopy(registered)
+            evidence["companion_bindings"][role] = {**registered["binding"], "health": health}
+            boundary["nearby_entities"].append({
+                "uid": uid, "control_target": registered["player_target"], "position": [3, index, 0],
+                "group": 7, "same_native_group": True, "companion": {"owned_by_actor": True},
+                "health": {"current": health, "dead": False},
+            })
+        final["private_encounter_evidence"]["events"].append({
+            "schema": "rpg-native-oracle", "version": "1.1", "private": True,
+            "event": "health_effect_applied", "sequence": 13 + index,
+            "data": {
+                "changed": True, "requested_amount": 40 - initial_health,
+                "before": initial_health, "after": 40,
+                "contributor": {"Group": {"entity_uid": 1, "group": 7}},
+                "contributor_entity": "player-generation-1", "contributor_group": 7,
+                "target_group": 7, "cause": {"Buff": "Regeneration"},
+                "target_uid": uid, "target_entity": entity,
+            },
+        })
+        requirements[role] = {"max_distance": 5, "min_health": 0,
+                              "min_health_fraction": .9, "healing_required": True}
+    final["private_encounter_evidence"]["through_sequence"] = 15
+    return initial, final, {"roles": ["enemy"], "companions": requirements}
+
+
+def test_three_companions_require_each_actual_heal_including_untouched_96_percent_sample():
+    initial, final, parameters = three_companion_evidence()
+    result = encounter_checks(initial, final, **parameters)
+    assert result["success"]
+    assert {row["role"] for row in result["checks"] if row["kind"] == "companion_preserved"} == {
+        "practice", "west", "east"}
+    for index, role in enumerate(parameters["companions"]):
+        changed = deepcopy(final)
+        changed["private_encounter_evidence"]["events"].pop(2 + index)
+        if role == "practice":
+            changed["nearby_entities"][index]["health"]["current"] = 38.3984375
+            changed["private_encounter_evidence"]["companion_bindings"][role]["health"] = 38.3984375
+        assert not encounter_checks(initial, changed, **parameters)["success"]
+    for field, value in (("contributor_entity", "foreign-player"), ("target_entity", "replacement"),
+                         ("target_group", 8), ("cause", {"Buff": "RestingHeal"}),
+                         ("contributor", {"Group": {"entity_uid": 99, "group": 7}})):
+        changed = deepcopy(final)
+        changed["private_encounter_evidence"]["events"][3]["data"][field] = value
+        assert not encounter_checks(initial, changed, **parameters)["success"]
+
+
+def test_three_companion_identity_death_and_terminal_conjunction_fail_closed():
+    initial, final, parameters = three_companion_evidence()
+    for change in (
+        lambda row: row["private_encounter_evidence"]["companion_bindings"]["east"].update(server_entity="new"),
+        lambda row: row["private_encounter_evidence"]["companion_bindings"].update(east=None),
+        lambda row: row["nearby_entities"][1]["companion"].update(owned_by_actor=False),
+        lambda row: row["nearby_entities"][1]["health"].update(current=35),
+        lambda row: row["nearby_entities"].pop(),
+    ):
+        changed = deepcopy(final)
+        change(changed)
+        assert not encounter_checks(initial, changed, **parameters)["success"]
+    final["private_encounter_evidence"]["events"].append({
+        "schema": "rpg-native-oracle", "version": "1.1", "private": True,
+        "event": "native_entity_death", "sequence": 16,
+        "data": {"uid": 4, "entity": "sheep-1"},
+    })
+    final["private_encounter_evidence"]["through_sequence"] = 16
+    assert not encounter_checks(initial, final, **parameters)["success"]
+    for boundary in (initial, final):
+        registry = boundary["private_encounter_evidence"]["registry"]["companions"]
+        registry["east"] = deepcopy(registry["west"])
+    with pytest.raises(ValueError, match="distinct original"):
+        encounter_checks(initial, final, **parameters)
+
+
+def test_regeneration_pair_geometry_public_controls_and_binding(tmp_path):
+    from game.veloren.binding import create_binding
+    from game.veloren.fixture import solid_voxels
+
+    root = Path(__file__).resolve().parents[3] / "config/veloren/tasks"
+    tasks = [load_task(root / track / "regeneration_procedure_transfer.yaml")
+             for track in ("structured_tools", "visual_motor")]
+    assert tasks[0].fixture == tasks[1].fixture
+    assert tasks[0].task == tasks[1].task
+    for task in tasks:
+        create_binding(fixture=task.fixture, task_type=task.task_type, evaluator=task.evaluator,
+                       parameters=task.evaluator_parameters, tools=task.tools, output_dir=tmp_path,
+                       headless=True, recording=False, recording_fps=10)
+    fixture = tasks[0].fixture
+    voxels = solid_voxels(fixture)
+
+    def supported(point, radius, height):
+        x, y, z = point
+        columns = [(cx, cy) for cx in range(math.floor(x - radius), math.floor(x + radius) + 1)
+                   for cy in range(math.floor(y - radius), math.floor(y + radius) + 1)]
+        return all((cx, cy, int(z) - 1) in voxels
+                   and all((cx, cy, cz) not in voxels for cz in range(int(z), math.ceil(z + height)))
+                   for cx, cy in columns)
+
+    for pet in fixture["companions"].values():
+        assert supported(pet["position"], .6, 1)
+        x, y, z = pet["position"]
+        assert supported([x + 3, y, z], .45, 7 / 3)
+        assert math.dist(pet["position"], fixture["player_state"]["position"]) <= 32
+    practice_cast = [18732.5, 10803.5, 501]
+    application_cast = [18732.5, 10830.5, 501]
+    terminal = tasks[0].evaluator_parameters["position"]["target"]
+    for point in (practice_cast, application_cast, terminal, fixture["player_state"]["position"]):
+        assert supported(point, .45, 7 / 3)
+    pets = fixture["companions"]
+    assert math.dist(practice_cast, pets["practice"]["position"]) < 23.75
+    for role in ("west", "east"):
+        assert math.dist(practice_cast, pets[role]["position"]) > 23.75
+        assert math.dist(application_cast, pets[role]["position"]) < 23.75
+    assert math.dist(pets["west"]["position"], pets["east"]["position"]) > 23.75
+    assert all(math.dist(terminal, pet["position"]) < 30 for pet in pets.values())
+    walkable = {(x, y) for x, y, z in voxels if z == 500
+                and supported([x + .5, y + .5, 501], .45, 7 / 3)}
+    start = tuple(int(value) for value in fixture["player_state"]["position"][:2])
+    reached, queue = {start}, deque([start])
+    while queue:
+        x, y = queue.popleft()
+        for point in ((x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)):
+            if point in walkable and point not in reached:
+                reached.add(point)
+                queue.append(point)
+    assert all(tuple(int(v) for v in point[:2]) in reached
+               for point in (practice_cast, application_cast, terminal,
+                             *[enemy["position"] for enemy in fixture["encounters"]]))
+
+
 def test_native_contract_requires_activation_then_bound_kill_and_actual_reward_chain():
     from game.veloren.evaluators.contract import contract_checks
 

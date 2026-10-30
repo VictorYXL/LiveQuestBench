@@ -104,7 +104,8 @@ def upstream(monkeypatch, setup, combat=None):
         monkeypatch.setattr("game.veloren.native_bindings.combat_binding", combat.native_binding)
 
 
-def test_injured_companion_waits_for_post_injury_native_binding(monkeypatch):
+@pytest.mark.parametrize(("fraction", "native_health"), [(.4, 16), (.96, 38.3984375)])
+def test_injured_companion_waits_for_post_injury_native_binding(monkeypatch, fraction, native_health):
     scene = {"self_identity": {"uid": 1}, "nearby_entities": []}
     pet = {"uid": 2, "position": [3, 0, 1], "control_target": {"uid": 2, "lifecycle": "pet"},
            "companion": {"owned_by_actor": True}, "same_native_group": True,
@@ -122,8 +123,8 @@ def test_injured_companion_waits_for_post_injury_native_binding(monkeypatch):
         if args[2] == "spawn":
             scene["nearby_entities"] = [pet]
         elif args[2] == "health":
-            assert args[-1] == 16
-            pet["health"]["current"] = 16
+            assert args[-1] == 40 * fraction
+            pet["health"]["current"] = native_health
         return {"status": "completed"}
 
     async def wait(actor, predicate, reason):
@@ -131,19 +132,78 @@ def test_injured_companion_waits_for_post_injury_native_binding(monkeypatch):
         return deepcopy(scene)
 
     async def native_binding(actor, uid):
+        if uid == 1:
+            return {"uid": 1}
         assert uid == 2
         reads.append(uid)
         return {"uid": uid, "server_entity": "sheep", "alignment": {"Owned": 1},
-                "health": 40 if len(reads) < 3 else 16, "maximum_health": 40, "dead": False}
+                "health": 40 if len(reads) < 3 else native_health, "maximum_health": 40, "dead": False}
 
     upstream(monkeypatch, SimpleNamespace(command=command, wait_observation=wait),
              SimpleNamespace(native_binding=native_binding))
     result = asyncio.run(fixtures.initialize_companion(
-        object(), Actor(), {"companion": {"position": [3, 0, 1], "initial_health_fraction": .4}},
+        object(), Actor(), {"companion": {"position": [3, 0, 1], "initial_health_fraction": fraction}},
     ))
-    assert result["initial_health"] == result["binding"]["health"] == 16
-    assert result["initial_public"]["health"]["current"] == 16
+    assert result["initial_health"] == result["binding"]["health"] == native_health
+    assert result["initial_public"]["health"]["current"] == native_health
     assert len(reads) == 3
+
+
+def test_multiple_companions_prepare_once_with_native_stay_and_return_owner(monkeypatch):
+    calls = []
+    scene = {"nearby_entities": []}
+    specifications = {
+        role: {"species": "sheep", "position": [index * 10, 0, 1], "initial_health_fraction": .6}
+        for index, role in enumerate(("practice", "west", "east"))
+    }
+
+    async def goto(admin, actor, point):
+        calls.append(("goto", point))
+
+    async def initialize(admin, actor, fixture):
+        uid = len(scene["nearby_entities"]) + 1
+        target = {"uid": uid, "lifecycle": str(uid)}
+        scene["nearby_entities"].append({"control_target": target, "companion": {"pet_staying": False}})
+        calls.append(("spawn", fixture["companion"]))
+        return {"binding": {"uid": uid}, "player_target": target}
+
+    async def action(actor, name, **arguments):
+        assert name == "companion_action"
+        assert arguments["operation"] == "pet_stay" and arguments["stay"] is True
+        scene["nearby_entities"][-1]["companion"]["pet_staying"] = True
+        calls.append(("stay", arguments["target"]))
+
+    async def wait(actor, predicate, reason):
+        assert predicate(scene)
+
+    upstream(monkeypatch, SimpleNamespace(goto=goto, action=action, wait_observation=wait))
+    monkeypatch.setattr(fixtures, "initialize_companion", initialize)
+    result = asyncio.run(fixtures.initialize_companions(object(), object(), {
+        "companions": specifications, "player_state": {"position": [5, 5, 1]},
+    }))
+    assert set(result) == set(specifications)
+    assert [call[0] for call in calls] == ["goto", "spawn", "stay"] * 3 + ["goto"]
+    assert calls[-1] == ("goto", [5, 5, 1])
+
+
+def test_companion_opening_rejects_stale_generation_group_and_damage():
+    prepared = {
+        "binding": {"uid": 3, "server_entity": "sheep", "maximum_health": 30},
+        "player_target": {"uid": 3, "lifecycle": "sheep-client"}, "initial_health": 28.80078125,
+    }
+    public = {"uid": 3, "control_target": prepared["player_target"],
+              "companion": {"owned_by_actor": True}, "same_native_group": True,
+              "health": {"current": 28.80078125, "dead": False}}
+    native = {"uid": 3, "server_entity": "sheep", "alignment": {"Owned": 1}, "group": 7,
+              "health": 28.80078125, "dead": False}
+    scene, source = {"nearby_entities": [public]}, {"uid": 1, "group": 7}
+    assert fixtures.bind_companion_opening(prepared, scene, [native], source) == prepared
+    for field, value in (("server_entity", "replacement"), ("group", 8), ("health", 28),
+                         ("alignment", {"Owned": 99}), ("dead", True)):
+        with pytest.raises(RuntimeError, match="before measured play"):
+            fixtures.bind_companion_opening(prepared, scene, [{**native, field: value}], source)
+    with pytest.raises(RuntimeError, match="before measured play"):
+        fixtures.bind_companion_opening(prepared, scene, [native, native], source)
 
 
 @pytest.mark.parametrize(("health", "stale_health"), [(35, 100), (100, 99.98828125)])
