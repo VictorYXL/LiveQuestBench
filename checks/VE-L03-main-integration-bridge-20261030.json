@@ -1,0 +1,804 @@
+{
+  "schema": "VE-L03-main-C1-bridge/1",
+  "integration_base_head": "74b4774d7decda618cfee7b7c180322d55ebdb23",
+  "isolated_quality_source": "0cd7db2e88afd8cdb8dd77ff2620be4768fd8d10",
+  "review93_canonical_sha256": "906eed607ae2a8afebbb9b991a5afcadc26fb2f5ef3a47b3cbb00f737ed4075d",
+  "actual_main_review": "Pending immutable commit/tree review; not admission.",
+  "claim": "Optional same-episode response reuse; provisional learning2/high uncertainty; native-observed ST versus task-level constructive VM.",
+  "exact_copied_sources": {
+    "game/veloren/prototypes/combat_family.py": "becd34a7d3140bb057346948de11d20332bb823f2d19e9d4a169c5642820aee0",
+    "game/veloren/prototypes/combat_response_assets.py": "a94e517340ba1979f6ebed218ac891b7599884b7726aa842ec09f1e7c662e832",
+    "game/veloren/prototypes/combat_response_runtime.py": "816163c811570e4529c359a6a06a2abb10225220c1a77ebf5e4950e9c853d440",
+    "game/veloren/prototypes/combat_response_transfer.py": "1e982e067c55cb81553037755ff3e76663534e18b2f9784593f73fc95e3a2013",
+    "game/veloren/prototypes/combat_source_binding.py": "15667996a006baaf78d4497ec5c8e0b746a3ad26e85dfe007382d6875b8c2aec"
+  },
+  "unchanged_shared_sources": {
+    "benchmark/factory.py": "9859ad1f3df126b9e390ac50fce362f1994fb758df89f9bec0e0120a5b767046",
+    "game/veloren/binding.py": "e75ed0e856da667d1303a03da77f555b40b5d3333377dbaffbf6537f5902eabb",
+    "game/veloren/native_bindings.py": "9f8c8c4feb1b7f6b6cf3b4e519387db80d45e105fb4b3de5554c32387d3dd862",
+    "game/veloren/runtime/journal.py": "a30bf051c734e49f82591c5fb4419d0d548f3a730f835c175e3865b144fd6818",
+    "game/veloren/runtime/item_use.py": "a6f743711bcb6834d195eb2577209b005b65686232244a5e63908d4a60630314",
+    "game/veloren/evaluators/encounter.py": "4e7dfb4132ddfb5a0331f30f77971b8e9126d33033dae9ad4fe3fe690be4a923",
+    "game/veloren/evaluators/deaths.py": "144d424a3e9efe8196cc54c78700be2f32d63ecb784586b285032869baa38724",
+    "game/veloren/structured_tools/interface.py": "cb53fabd08b08167aaa30f06f2413ac88e8accfb8b706ab38efd530bb40111fc",
+    "game/veloren/visual_motor/interface.py": "89479670c13073a7b7dfb409b3768d7f502fdad90750585191885598ea6d1052"
+  },
+  "task_semantic_mappings": {
+    "structured_tool": {
+      "historical_sha256": "9a80c61bf0a5ee7b1d74e57da1a3131d90e0bd5c65fb9ad1f29ad37995a54dfa",
+      "registered_path": "config/veloren/tasks/structured_tools/native_combat_response_transfer_c1.yaml",
+      "registered_sha256": "0745de582267233903bf956c27d529615064f05eebdee92a694e8c0cb047e76b",
+      "world_sha256": "2560ecb22feccc642aaf75addfaf22e3066defe8668ca052770ef902a2c5e2da",
+      "changes_only": [
+        "status/claim wording, exact replacements checked",
+        "equivalent world path"
+      ]
+    },
+    "visual_motor": {
+      "historical_sha256": "2664fe6aceb82799a611315f9f5a325c3d08acbb60a427e719863b9f8aec26fd",
+      "registered_path": "config/veloren/tasks/visual_motor/native_combat_response_transfer_c1.yaml",
+      "registered_sha256": "593fc967d20c7478cde3b231e97f8634f4a49854b468684c3c781782b1825717",
+      "world_sha256": "2560ecb22feccc642aaf75addfaf22e3066defe8668ca052770ef902a2c5e2da",
+      "changes_only": [
+        "status/claim wording, exact replacements checked",
+        "equivalent world path"
+      ]
+    }
+  },
+  "exact_runtime_mappings": {
+    "visual_motor_0": {
+      "path": "output/temp/task_development/worktrees/dedicated-ve-l03-20261029/output/checks/native-runtime-parameter-a/runtime.json",
+      "sha256": "243e4a823839837cdc68388cc7a95639104f5f1b013086f9475fe3530f52be33",
+      "all_declared_pins_verified": true,
+      "selection": 0,
+      "asset_manifest_sha256": "632a795a62fcf8377bb4bfb22aec31906ba30554cd2dd4c816fe86b0d0bf08f3"
+    },
+    "visual_motor_1": {
+      "path": "output/temp/task_development/worktrees/dedicated-ve-l03-20261029/output/checks/native-runtime-parameter-b/runtime.json",
+      "sha256": "40e55d0af98a45c2c485c4725e7ed8b525609e0e8d0285c06e2002e06b0dcb92",
+      "all_declared_pins_verified": true,
+      "selection": 1,
+      "asset_manifest_sha256": "dbb41b45f8499c0c5fcc70af94e91cef77e03c75177bda34979a8090d4509ee0"
+    },
+    "structured_tool_0": {
+      "path": "output/temp/task_development/worktrees/dedicated-ve-l03-20261029/output/checks/native-runtime-parameter-a-item-preflight-v1/runtime.json",
+      "sha256": "72490955c65c013e21ea3ffbe6a39ba9cdcd1a37a4c0e6de8b2874d9107b5cff",
+      "all_declared_pins_verified": true,
+      "selection": 0,
+      "asset_manifest_sha256": "632a795a62fcf8377bb4bfb22aec31906ba30554cd2dd4c816fe86b0d0bf08f3"
+    },
+    "structured_tool_1": {
+      "path": "output/temp/task_development/worktrees/dedicated-ve-l03-20261029/output/checks/native-runtime-parameter-b-item-preflight-v1/runtime.json",
+      "sha256": "625dd75da3d0ecbf2fed4ad5db1badb21eda648c71719a4f67baaeb17da19fb3",
+      "all_declared_pins_verified": true,
+      "selection": 1,
+      "asset_manifest_sha256": "dbb41b45f8499c0c5fcc70af94e91cef77e03c75177bda34979a8090d4509ee0"
+    }
+  },
+  "complete_asset_admissions": {
+    "0": {
+      "schema": "veloren-experimental-combat-response-assets/1",
+      "assets": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/worktrees/dedicated-ve-l03-20261029/output/checks/native-runtime-parameter-a/assets",
+      "manifest_sha256": "632a795a62fcf8377bb4bfb22aec31906ba30554cd2dd4c816fe86b0d0bf08f3",
+      "assets_tree_sha256": "401b32bc551afccecdc97aada191fb03c67d9e8cf9fd63c1595fd9a4d11a050b",
+      "ability_sha256": "530f9b60bf6b3850464a086f3b32bfa86f7d1d82ebd7c1ac41506cabb8468959",
+      "baseline_assets": "/home/msra/GameAgent/velorenbench-auto-525af64d/assets/assets",
+      "selection": 0,
+      "scope": "Private configured-input admission, not observed native response or learning evidence"
+    },
+    "1": {
+      "schema": "veloren-experimental-combat-response-assets/1",
+      "assets": "/home/msra/GameAgent/LiveQuestBench/output/temp/task_development/worktrees/dedicated-ve-l03-20261029/output/checks/native-runtime-parameter-b/assets",
+      "manifest_sha256": "dbb41b45f8499c0c5fcc70af94e91cef77e03c75177bda34979a8090d4509ee0",
+      "assets_tree_sha256": "ef1b485881ba5b7d6d4af827578d06f99f3d559bef12f219f19a9e38237a0447",
+      "ability_sha256": "0fa685ecb9efeb70beb4d0255889bbbe98eecfba2037fdd38618e399ff358d2f",
+      "baseline_assets": "/home/msra/GameAgent/velorenbench-auto-525af64d/assets/assets",
+      "selection": 1,
+      "scope": "Private configured-input admission, not observed native response or learning evidence"
+    }
+  },
+  "binary_pins": {
+    "server": {
+      "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/binding-95145618/native/binaries/veloren-server-cli",
+      "sha256": "f2100bec7ace29a3a44256dce255a435697774551953cd8ee2a834507f7ef6be",
+      "source_tree_sha256": "20bc8489d1acc07086a6525e64f100c4117e1080aacaf0739b94edb3fd905cf4"
+    },
+    "fixture_helper": {
+      "path": "/home/msra/GameAgent/velorenbench-auto-525af64d/binding-95145618/native/binaries/examples/agent_bridge",
+      "sha256": "bf98e9653ddd04ee9ae0ba50e0400532f851ec8d2f0a71b1cc880513773f73ba",
+      "source_tree_sha256": "20bc8489d1acc07086a6525e64f100c4117e1080aacaf0739b94edb3fd905cf4"
+    },
+    "selected_patched_renderer": {
+      "path": "/home/msra/GameAgent/LiveQuestBench/output/temp/veloren-native-route-20261027/target/debug/veloren-voxygen",
+      "sha256": "478b0addc202cb37aaa5543cf369fa59e4f4cb3031deb56bb6544d49fc9a4897",
+      "source_tree_sha256": "6bef0fc7144416316a7be918a5caca5f09b61226581cce8584992fee86807484"
+    }
+  },
+  "composed_native_source": {
+    "files": 1160,
+    "sha256": "6bef0fc7144416316a7be918a5caca5f09b61226581cce8584992fee86807484"
+  },
+  "runtime_selection": "One secrets.randbelow(2) draw at each single-use session startup; both exact options checked first; no public selection/seed or global environment mutation; common private assets root for all native roles.",
+  "replays": [
+    {
+      "episode": "native-application-b-conditioned-v1",
+      "inputs": {
+        "before/observation.json": "8a90906c625f6e38ebf77055458439a30e85cdee4608f0f16591cc18fa82ae1b",
+        "after/observation.json": "31b58799acb67c3874a1905f4f038de69ed8c163a89c739d58e2f07a72840579",
+        "result.json": "44765347b77799c7c9233e101995d511454c1e5fee0dae4cc212e954e4a1505e"
+      },
+      "complete_score": {
+        "success": false,
+        "checks": [
+          {
+            "kind": "encounter",
+            "role": "near_west",
+            "uid": 660,
+            "native_death": true,
+            "player_damage_events": 8,
+            "damage": 25.0,
+            "passed": true
+          },
+          {
+            "kind": "encounter",
+            "role": "near_east",
+            "uid": 661,
+            "native_death": true,
+            "player_damage_events": 8,
+            "damage": 25.0,
+            "passed": true
+          },
+          {
+            "kind": "encounter",
+            "role": "far_west",
+            "uid": 662,
+            "native_death": false,
+            "player_damage_events": 5,
+            "damage": 15.953125,
+            "passed": false
+          },
+          {
+            "kind": "encounter",
+            "role": "far_east",
+            "uid": 663,
+            "native_death": true,
+            "player_damage_events": 9,
+            "damage": 25.0,
+            "passed": true
+          },
+          {
+            "kind": "player_never_died",
+            "passed": true
+          },
+          {
+            "kind": "health",
+            "actual": 12.74609375,
+            "minimum": 1,
+            "passed": true
+          }
+        ],
+        "semantics": "Designated native UID/entity-generation death, real player damaging contribution before death, no player death, and simultaneous terminal requirements. No last-blow requirement. Disappearance and loot do not prove death. Evidence ends at post-gate client snapshot, not an atomic server pause."
+      },
+      "complete_metrics": {
+        "deaths": {
+          "count": 0,
+          "source": "native_entity_death",
+          "events": [],
+          "semantics": "Original player UID/server generation; opening to terminal private snapshot. Native host_unix_ns timestamps are server wall-clock times, not runner monotonic times. Respawn does not reset the count; this metric does not change task success."
+        }
+      },
+      "isolated_full_replay_equal_except_documented_semantics_punctuation": true,
+      "persisted_score_keys_equal_except_documented_semantics_punctuation": [
+        "original_native_score"
+      ],
+      "scope": "Original/simplified/component conditions remain distinct; no new native evidence."
+    },
+    {
+      "episode": "native-application-b-conditioned-v2",
+      "inputs": {
+        "before/observation.json": "c8549a70ff7c90f4b43301a5b85c87e14fce70dbbf2209bc3a46704ce8141078",
+        "after/observation.json": "dacf8826de346f19eb8f63e2e82bc21d7f6453019411244d6641ff382863d436",
+        "result.json": "838baf9c7562e190eb66f29685e044b801a42d8ca285df7b2c26cdf469dd7693"
+      },
+      "complete_score": {
+        "success": false,
+        "checks": [
+          {
+            "kind": "encounter",
+            "role": "near_west",
+            "uid": 261,
+            "native_death": true,
+            "player_damage_events": 8,
+            "damage": 25.0,
+            "passed": true
+          },
+          {
+            "kind": "encounter",
+            "role": "near_east",
+            "uid": 262,
+            "native_death": true,
+            "player_damage_events": 13,
+            "damage": 25.0,
+            "passed": true
+          },
+          {
+            "kind": "encounter",
+            "role": "far_west",
+            "uid": 264,
+            "native_death": false,
+            "player_damage_events": 0,
+            "damage": 0,
+            "passed": false
+          },
+          {
+            "kind": "encounter",
+            "role": "far_east",
+            "uid": 265,
+            "native_death": false,
+            "player_damage_events": 0,
+            "damage": 0,
+            "passed": false
+          },
+          {
+            "kind": "player_never_died",
+            "passed": true
+          },
+          {
+            "kind": "health",
+            "actual": 76.359375,
+            "minimum": 1,
+            "passed": true
+          }
+        ],
+        "semantics": "Designated native UID/entity-generation death, real player damaging contribution before death, no player death, and simultaneous terminal requirements. No last-blow requirement. Disappearance and loot do not prove death. Evidence ends at post-gate client snapshot, not an atomic server pause."
+      },
+      "complete_metrics": {
+        "deaths": {
+          "count": 0,
+          "source": "native_entity_death",
+          "events": [],
+          "semantics": "Original player UID/server generation; opening to terminal private snapshot. Native host_unix_ns timestamps are server wall-clock times, not runner monotonic times. Respawn does not reset the count; this metric does not change task success."
+        }
+      },
+      "isolated_full_replay_equal_except_documented_semantics_punctuation": true,
+      "persisted_score_keys_equal_except_documented_semantics_punctuation": [
+        "original_native_score"
+      ],
+      "scope": "Original/simplified/component conditions remain distinct; no new native evidence."
+    },
+    {
+      "episode": "native-application-b-conditioned-v3",
+      "inputs": {
+        "before/observation.json": "2e8a30365e1c8202f9725aa26e475de53d3939bd6ddf5c44ced071046c9a2ea0",
+        "after/observation.json": "577bcf5eba8dd68a77b1efb525be609939ae135e7a80f47db65c64f5dcf61d5e",
+        "result.json": "e654da65c1b0bd299d55b7d6a30f081c3dabf617e5750475921e502446d09401"
+      },
+      "complete_score": {
+        "success": false,
+        "checks": [
+          {
+            "kind": "encounter",
+            "role": "near_west",
+            "uid": 242,
+            "native_death": true,
+            "player_damage_events": 11,
+            "damage": 25.0,
+            "passed": true
+          },
+          {
+            "kind": "encounter",
+            "role": "near_east",
+            "uid": 243,
+            "native_death": true,
+            "player_damage_events": 8,
+            "damage": 25.0,
+            "passed": true
+          },
+          {
+            "kind": "encounter",
+            "role": "far_west",
+            "uid": 244,
+            "native_death": false,
+            "player_damage_events": 10,
+            "damage": 12.734375,
+            "passed": false
+          },
+          {
+            "kind": "encounter",
+            "role": "far_east",
+            "uid": 245,
+            "native_death": false,
+            "player_damage_events": 0,
+            "damage": 0,
+            "passed": false
+          },
+          {
+            "kind": "player_never_died",
+            "passed": true
+          },
+          {
+            "kind": "health",
+            "actual": 71.8125,
+            "minimum": 1,
+            "passed": true
+          }
+        ],
+        "semantics": "Designated native UID/entity-generation death, real player damaging contribution before death, no player death, and simultaneous terminal requirements. No last-blow requirement. Disappearance and loot do not prove death. Evidence ends at post-gate client snapshot, not an atomic server pause."
+      },
+      "complete_metrics": {
+        "deaths": {
+          "count": 0,
+          "source": "native_entity_death",
+          "events": [],
+          "semantics": "Original player UID/server generation; opening to terminal private snapshot. Native host_unix_ns timestamps are server wall-clock times, not runner monotonic times. Respawn does not reset the count; this metric does not change task success."
+        }
+      },
+      "isolated_full_replay_equal_except_documented_semantics_punctuation": true,
+      "persisted_score_keys_equal_except_documented_semantics_punctuation": [
+        "original_native_score"
+      ],
+      "scope": "Original/simplified/component conditions remain distinct; no new native evidence."
+    },
+    {
+      "episode": "native-dispatch-a-v2",
+      "inputs": {
+        "before/observation.json": "74b1b7f6b51e25a29e1b972bab5f51ec8cfc4f956a7cb6d5a9eced7a9229374b",
+        "after/observation.json": "85c8da9433b5d4abc8c68b7858d99c083002a6f5167e41dc83ab64c802ea6865",
+        "result.json": "322ee0ce1624164ab14c04fd5ad3b14f691fb8fdaeb77ca1475df2117063f9f4"
+      },
+      "complete_score": {
+        "success": false,
+        "checks": [
+          {
+            "kind": "encounter",
+            "role": "response_target",
+            "uid": 135,
+            "native_death": false,
+            "player_damage_events": 0,
+            "damage": 0,
+            "passed": false
+          },
+          {
+            "kind": "player_never_died",
+            "passed": true
+          },
+          {
+            "kind": "health",
+            "actual": 59.9921875,
+            "minimum": 1,
+            "passed": true
+          }
+        ],
+        "semantics": "Designated native UID/entity-generation death, real player damaging contribution before death, no player death, and simultaneous terminal requirements. No last-blow requirement. Disappearance and loot do not prove death. Evidence ends at post-gate client snapshot, not an atomic server pause."
+      },
+      "complete_metrics": {
+        "deaths": {
+          "count": 0,
+          "source": "native_entity_death",
+          "events": [],
+          "semantics": "Original player UID/server generation; opening to terminal private snapshot. Native host_unix_ns timestamps are server wall-clock times, not runner monotonic times. Respawn does not reset the count; this metric does not change task success."
+        }
+      },
+      "isolated_full_replay_equal_except_documented_semantics_punctuation": true,
+      "persisted_score_keys_equal_except_documented_semantics_punctuation": [],
+      "scope": "Original/simplified/component conditions remain distinct; no new native evidence."
+    },
+    {
+      "episode": "native-dispatch-b-v1",
+      "inputs": {
+        "before/observation.json": "5ffc59b866a68683348aa9bf4120654f48388681c16668315b214fe772d53064",
+        "after/observation.json": "3ac417308275d61de1b6d0f3331948482fb1aa7909851c26bd6dfeb7d1c73dab",
+        "result.json": "3e0c51a1dbedbe64546e4573302b803b4fae417ab65ae86a21fd3033c84380f1"
+      },
+      "complete_score": {
+        "success": false,
+        "checks": [
+          {
+            "kind": "encounter",
+            "role": "response_target",
+            "uid": 214,
+            "native_death": false,
+            "player_damage_events": 0,
+            "damage": 0,
+            "passed": false
+          },
+          {
+            "kind": "player_never_died",
+            "passed": true
+          },
+          {
+            "kind": "health",
+            "actual": 64.5390625,
+            "minimum": 1,
+            "passed": true
+          }
+        ],
+        "semantics": "Designated native UID/entity-generation death, real player damaging contribution before death, no player death, and simultaneous terminal requirements. No last-blow requirement. Disappearance and loot do not prove death. Evidence ends at post-gate client snapshot, not an atomic server pause."
+      },
+      "complete_metrics": {
+        "deaths": {
+          "count": 0,
+          "source": "native_entity_death",
+          "events": [],
+          "semantics": "Original player UID/server generation; opening to terminal private snapshot. Native host_unix_ns timestamps are server wall-clock times, not runner monotonic times. Respawn does not reset the count; this metric does not change task success."
+        }
+      },
+      "isolated_full_replay_equal_except_documented_semantics_punctuation": true,
+      "persisted_score_keys_equal_except_documented_semantics_punctuation": [],
+      "scope": "Original/simplified/component conditions remain distinct; no new native evidence."
+    },
+    {
+      "episode": "native-generic-a-full-v2",
+      "inputs": {
+        "before/observation.json": "a16c5605c33285ed5f37ee3f02b3d167970bbeb644fbca79b09dcf52ce8366f4",
+        "after/observation.json": "d288d17ab8c2a4575f346674b87eea6fc286d43a8d09368edff49729d43fab4e",
+        "result.json": "5075fa42a6e864965b04d067c778fcc6dda0fb71a40dc472b730b071af78c1bd"
+      },
+      "complete_score": {
+        "success": false,
+        "checks": [
+          {
+            "kind": "encounter",
+            "role": "near_west",
+            "uid": 268,
+            "native_death": true,
+            "player_damage_events": 8,
+            "damage": 25.0,
+            "passed": true
+          },
+          {
+            "kind": "encounter",
+            "role": "near_east",
+            "uid": 269,
+            "native_death": true,
+            "player_damage_events": 8,
+            "damage": 25.0,
+            "passed": true
+          },
+          {
+            "kind": "encounter",
+            "role": "far_west",
+            "uid": 270,
+            "native_death": false,
+            "player_damage_events": 3,
+            "damage": 9.3515625,
+            "passed": false
+          },
+          {
+            "kind": "encounter",
+            "role": "far_east",
+            "uid": 271,
+            "native_death": false,
+            "player_damage_events": 0,
+            "damage": 0,
+            "passed": false
+          },
+          {
+            "kind": "player_never_died",
+            "passed": false
+          },
+          {
+            "kind": "health",
+            "actual": 0.0,
+            "minimum": 1,
+            "passed": false
+          }
+        ],
+        "semantics": "Designated native UID/entity-generation death, real player damaging contribution before death, no player death, and simultaneous terminal requirements. No last-blow requirement. Disappearance and loot do not prove death. Evidence ends at post-gate client snapshot, not an atomic server pause."
+      },
+      "complete_metrics": {
+        "deaths": {
+          "count": 1,
+          "source": "native_entity_death",
+          "events": [
+            {
+              "data": {
+                "cause": {
+                  "amount": -6.164772033691406,
+                  "by": {
+                    "Group": {
+                      "entity_uid": 270,
+                      "group": 4294967295
+                    }
+                  },
+                  "cause": {
+                    "Attack": "Melee"
+                  },
+                  "instance": 12828284276204310421,
+                  "precise": true,
+                  "time": 661.5015330559951
+                },
+                "entity": "Entity(4, Generation(2))",
+                "scope": "actual_native_DestroyEvent_first_dead_transition;not_disappearance",
+                "uid": 116
+              },
+              "event": "native_entity_death",
+              "host_unix_ns": "1793284638592977445",
+              "private": true,
+              "schema": "rpg-native-oracle",
+              "sequence": 20899,
+              "server_tick": null,
+              "version": "1.1"
+            }
+          ],
+          "semantics": "Original player UID/server generation; opening to terminal private snapshot. Native host_unix_ns timestamps are server wall-clock times, not runner monotonic times. Respawn does not reset the count; this metric does not change task success."
+        }
+      },
+      "isolated_full_replay_equal_except_documented_semantics_punctuation": true,
+      "persisted_score_keys_equal_except_documented_semantics_punctuation": [
+        "original_native_score"
+      ],
+      "scope": "Original/simplified/component conditions remain distinct; no new native evidence."
+    },
+    {
+      "episode": "native-item-component-v1",
+      "inputs": {
+        "before/observation.json": "64c0b10425cd4853bd57a34ba9148ac23bd0637bd82f071ab7f4c50188e65ef7",
+        "after/observation.json": "d65bc16885db240235facd9a35e335bcd22d8358872844512b1ec7cf5e3dca23",
+        "result.json": "4d6a5209330afc83c5c624a12a377a71074479c071d153f57d8106cc80f555ad"
+      },
+      "complete_score": null,
+      "complete_metrics": {
+        "deaths": {
+          "count": 0,
+          "source": "native_entity_death",
+          "events": [],
+          "semantics": "Original player UID/server generation; opening to terminal private snapshot. Native host_unix_ns timestamps are server wall-clock times, not runner monotonic times. Respawn does not reset the count; this metric does not change task success."
+        }
+      },
+      "isolated_full_replay_equal_except_documented_semantics_punctuation": true,
+      "persisted_score_keys_equal_except_documented_semantics_punctuation": [],
+      "scope": "Original/simplified/component conditions remain distinct; no new native evidence."
+    },
+    {
+      "episode": "native-vm-conditioned-component-v2",
+      "inputs": {
+        "before/observation.json": "12168df6db20e2d4c76919ee89964b29c50d51b7feab8137035a013b0845f339",
+        "after/observation.json": "ec3d88b25b54d2a6e65d4663f07b9bd3e02c8367b07332f2dc110c6fb2f7b56d",
+        "result.json": "a13e4e81ec412f96d9d29eee746f65f0b3d900397896afd7ebb7c4136be07a4f"
+      },
+      "complete_score": {
+        "success": false,
+        "checks": [
+          {
+            "kind": "encounter",
+            "role": "far_west",
+            "uid": 413,
+            "native_death": false,
+            "player_damage_events": 0,
+            "damage": 0,
+            "passed": false
+          },
+          {
+            "kind": "player_never_died",
+            "passed": true
+          },
+          {
+            "kind": "health",
+            "actual": 33.66015625,
+            "minimum": 1,
+            "passed": true
+          }
+        ],
+        "semantics": "Designated native UID/entity-generation death, real player damaging contribution before death, no player death, and simultaneous terminal requirements. No last-blow requirement. Disappearance and loot do not prove death. Evidence ends at post-gate client snapshot, not an atomic server pause."
+      },
+      "complete_metrics": {
+        "deaths": {
+          "count": 0,
+          "source": "native_entity_death",
+          "events": [],
+          "semantics": "Original player UID/server generation; opening to terminal private snapshot. Native host_unix_ns timestamps are server wall-clock times, not runner monotonic times. Respawn does not reset the count; this metric does not change task success."
+        }
+      },
+      "isolated_full_replay_equal_except_documented_semantics_punctuation": true,
+      "persisted_score_keys_equal_except_documented_semantics_punctuation": [
+        "native_one_enemy_score"
+      ],
+      "scope": "Original/simplified/component conditions remain distinct; no new native evidence."
+    },
+    {
+      "episode": "native-vm-conditioned-component-v3",
+      "inputs": {
+        "before/observation.json": "15be16a29d0409fcf299144d76137906fe4a3147174cd6627e27d6a698405501",
+        "after/observation.json": "3deeeb8f43c7d5837d3d998fd0b8e65be5813ce01243608ebbb2395cdb89bb37",
+        "result.json": "e127ac6bcb75bc89ac035a13334c1f89958ce2dd0708c022ed149ca58b96a322"
+      },
+      "complete_score": {
+        "success": false,
+        "checks": [
+          {
+            "kind": "encounter",
+            "role": "far_west",
+            "uid": 2470,
+            "native_death": false,
+            "player_damage_events": 2,
+            "damage": 6.6015625,
+            "passed": false
+          },
+          {
+            "kind": "player_never_died",
+            "passed": true
+          },
+          {
+            "kind": "health",
+            "actual": 47.640625,
+            "minimum": 1,
+            "passed": true
+          }
+        ],
+        "semantics": "Designated native UID/entity-generation death, real player damaging contribution before death, no player death, and simultaneous terminal requirements. No last-blow requirement. Disappearance and loot do not prove death. Evidence ends at post-gate client snapshot, not an atomic server pause."
+      },
+      "complete_metrics": {
+        "deaths": {
+          "count": 0,
+          "source": "native_entity_death",
+          "events": [],
+          "semantics": "Original player UID/server generation; opening to terminal private snapshot. Native host_unix_ns timestamps are server wall-clock times, not runner monotonic times. Respawn does not reset the count; this metric does not change task success."
+        }
+      },
+      "isolated_full_replay_equal_except_documented_semantics_punctuation": true,
+      "persisted_score_keys_equal_except_documented_semantics_punctuation": [
+        "native_one_enemy_score"
+      ],
+      "scope": "Original/simplified/component conditions remain distinct; no new native evidence."
+    },
+    {
+      "episode": "native-vm-full-flow-v4",
+      "inputs": {
+        "before/observation.json": "31dda3cff4ec243093f21c3fe41ec76f6ff5efe507c982e8a745efda18b20a25",
+        "after/observation.json": "c249356434eba52fc820815ab06f0408e73cda77b5bc31c930f12fcd82d8f114",
+        "result.json": "2a207e5b3d66f79642a15f7133c8ebf5fdd9f0011f2c6ba0b292248986e692ef"
+      },
+      "complete_score": {
+        "success": false,
+        "checks": [
+          {
+            "kind": "encounter",
+            "role": "near_west",
+            "uid": 291,
+            "native_death": false,
+            "player_damage_events": 0,
+            "damage": 0,
+            "passed": false
+          },
+          {
+            "kind": "encounter",
+            "role": "near_east",
+            "uid": 292,
+            "native_death": false,
+            "player_damage_events": 0,
+            "damage": 0,
+            "passed": false
+          },
+          {
+            "kind": "encounter",
+            "role": "far_west",
+            "uid": 293,
+            "native_death": false,
+            "player_damage_events": 0,
+            "damage": 0,
+            "passed": false
+          },
+          {
+            "kind": "encounter",
+            "role": "far_east",
+            "uid": 294,
+            "native_death": false,
+            "player_damage_events": 0,
+            "damage": 0,
+            "passed": false
+          },
+          {
+            "kind": "player_never_died",
+            "passed": true
+          },
+          {
+            "kind": "health",
+            "actual": 43.76171875,
+            "minimum": 1,
+            "passed": true
+          }
+        ],
+        "semantics": "Designated native UID/entity-generation death, real player damaging contribution before death, no player death, and simultaneous terminal requirements. No last-blow requirement. Disappearance and loot do not prove death. Evidence ends at post-gate client snapshot, not an atomic server pause."
+      },
+      "complete_metrics": {
+        "deaths": {
+          "count": 0,
+          "source": "native_entity_death",
+          "events": [],
+          "semantics": "Original player UID/server generation; opening to terminal private snapshot. Native host_unix_ns timestamps are server wall-clock times, not runner monotonic times. Respawn does not reset the count; this metric does not change task success."
+        }
+      },
+      "isolated_full_replay_equal_except_documented_semantics_punctuation": true,
+      "persisted_score_keys_equal_except_documented_semantics_punctuation": [
+        "native_four_enemy_score"
+      ],
+      "scope": "Original/simplified/component conditions remain distinct; no new native evidence."
+    },
+    {
+      "episode": "native-vm-input-component-v1",
+      "inputs": {
+        "before/observation.json": "99a6e7e955a8c537dcf06bfae68119988cc3e986af7dbc4c7362d039a8c8c076",
+        "after/observation.json": "863baecb8bd6fd15e05d037c47ff0af84647bfd15f7f4cba72ee771f38de1a64",
+        "result.json": "a86e7f868f71ab5a5f915eb3d57861bb63ad5d3e89e79d96ee09e536f7ada620"
+      },
+      "complete_score": {
+        "success": false,
+        "checks": [
+          {
+            "kind": "encounter",
+            "role": "near_west",
+            "uid": 2012,
+            "native_death": false,
+            "player_damage_events": 0,
+            "damage": 0,
+            "passed": false
+          },
+          {
+            "kind": "encounter",
+            "role": "near_east",
+            "uid": 2013,
+            "native_death": false,
+            "player_damage_events": 0,
+            "damage": 0,
+            "passed": false
+          },
+          {
+            "kind": "encounter",
+            "role": "far_west",
+            "uid": 2014,
+            "native_death": false,
+            "player_damage_events": 0,
+            "damage": 0,
+            "passed": false
+          },
+          {
+            "kind": "encounter",
+            "role": "far_east",
+            "uid": 2015,
+            "native_death": false,
+            "player_damage_events": 0,
+            "damage": 0,
+            "passed": false
+          },
+          {
+            "kind": "player_never_died",
+            "passed": true
+          },
+          {
+            "kind": "health",
+            "actual": 100.0,
+            "minimum": 1,
+            "passed": true
+          }
+        ],
+        "semantics": "Designated native UID/entity-generation death, real player damaging contribution before death, no player death, and simultaneous terminal requirements. No last-blow requirement. Disappearance and loot do not prove death. Evidence ends at post-gate client snapshot, not an atomic server pause."
+      },
+      "complete_metrics": {
+        "deaths": {
+          "count": 0,
+          "source": "native_entity_death",
+          "events": [],
+          "semantics": "Original player UID/server generation; opening to terminal private snapshot. Native host_unix_ns timestamps are server wall-clock times, not runner monotonic times. Respawn does not reset the count; this metric does not change task success."
+        }
+      },
+      "isolated_full_replay_equal_except_documented_semantics_punctuation": true,
+      "persisted_score_keys_equal_except_documented_semantics_punctuation": [],
+      "scope": "Original/simplified/component conditions remain distinct; no new native evidence."
+    }
+  ],
+  "shared_fix_policy": "Reused current native binding cursor, lifecycle, server selector, item wrapper and scorer; no old whole-file imports.",
+  "focused_checks": {
+    "integration_selectors_assets_public_projection_scorer": "100 passed; no native/model launch.",
+    "existing_initialization_suite": "31 passed,6 skipped,1 pre-existing failure in test_injured_companion_waits_for_post_injury_native_binding: its stub requires UID2 but shared warm-up first requests player UID1. Same exact failure reproduced with pre-integration74b4774 fixture module loaded in memory; no companion code or dirty test was changed.",
+    "initial_validation_corrections": "Missing pytest-basetemp parent and incorrect task-relative world path were diagnosed and corrected before the final100pass checks.",
+    "logs": {
+      "L03-main-focused-tests-20261030.txt": "0d5c02cc673fc431de4dbad1c18d85911df00286967fe0101512382e203f6ec3",
+      "L03-main-initialization-tests-20261030.txt": "e1cb7aa0236984c160331a483572c2192291fbb72cbd3909ff1dcaa868e6a932",
+      "L03-main-baseline-initialization-check-20261030.txt": "b8008d43334e553b52b1cfdd00a541aac07a698f513c58698a1dfdca5710d2e5"
+    }
+  },
+  "historical_preservation": "675/46d3dbe/a3429b2 and all earlier outcomes remain unchanged; no four-kill endpoint invented. C2, .90 controller, navigation repair and stronger-sword diagnostic not registered.",
+  "unrelated_files_and_ledger_verified_unchanged": true,
+  "new_native_or_model_episodes": 0
+}

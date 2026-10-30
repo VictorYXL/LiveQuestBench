@@ -74,10 +74,13 @@ def validate_fixture(value: object) -> dict:
                 "sword_skill_points", "companion", "contract", "respawn_at_start", "route_evidence",
                 "public_energy", "pickup_evidence", "peer_group", "harvest_sites",
                 "message_contract", "market", "runtime_profile", "route_observation",
-                "camera_observation", "scene_observation"}
+                "camera_observation", "scene_observation", "experimental_combat_response"}
     if not isinstance(value, dict) or required - value.keys() or value.keys() - required - optional:
         raise ValueError(f"Veloren fixture requires exactly {sorted(required)} plus optional {sorted(optional)}")
     fixture = value
+    if "experimental_combat_response" in fixture:
+        from game.veloren.runtime.combat_response import validate_profile
+        validate_profile(fixture)
     if "runtime_profile" in fixture:
         from game.veloren.runtime.workstation import PROFILE
         if fixture["runtime_profile"] not in (
@@ -260,6 +263,10 @@ def validate_fixture(value: object) -> dict:
             raise ValueError("Enemies must have distinct spawn points 10-96 metres from the player")
         roles.add(role)
         positions.add(tuple(spawn))
+    if "experimental_combat_response" in fixture and (
+        not encounters or any(row["asset"] != "common.entity.benchmark.male_green_legoom" for row in encounters)
+    ):
+        raise ValueError("Experimental response fixtures require the declared Green Legoom family")
     if "companion" in fixture:
         companion = fixture["companion"]
         if not isinstance(companion, dict):

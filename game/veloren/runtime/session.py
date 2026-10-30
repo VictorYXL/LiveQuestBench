@@ -20,7 +20,10 @@ ORIGINAL_RUNTIME_SHA256 = "71de989307966e8d984d7be651823844985d0c0c0c39cdd14e609
 LOCAL_SOLID_RUNTIME_SHA256 = "2f95878023ca912f04a15209a4121558251a01e58ff5127288499fc567cd943b"
 
 
-def runtime_configuration(fixture: dict) -> tuple[Path, dict]:
+def runtime_configuration(fixture: dict, *, track: str | None = None) -> tuple[Path, dict]:
+    if "experimental_combat_response" in fixture:
+        from game.veloren.runtime.combat_response import select_runtime
+        return select_runtime(fixture, track)
     observations = {"route_observation", "camera_observation", "scene_observation"} & fixture.keys()
     if observations and {"runtime_profile", "message_contract", "market"} & fixture.keys():
         raise ValueError("Observation profiles cannot share a task-specific runtime profile")
@@ -74,7 +77,7 @@ class VelorenSession:
         self.attachment: dict | None = None
 
     async def start(self) -> dict:
-        runtime_path, runtime = runtime_configuration(self.fixture)
+        runtime_path, runtime = runtime_configuration(self.fixture, track=self.track)
         environment = {key: os.environ[key] for key in (
             "PATH", "LANG", "LC_ALL", "XAUTHORITY", "VK_ICD_FILENAMES", "VK_DRIVER_FILES",
             "LD_LIBRARY_PATH", "NVIDIA_VISIBLE_DEVICES", "NVIDIA_DRIVER_CAPABILITIES",

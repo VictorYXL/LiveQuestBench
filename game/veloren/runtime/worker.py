@@ -143,6 +143,8 @@ class Session:
         renderer = selected["renderer"]
         renderer["paths"]["executable"] = cfg["renderer"]
         paths = renderer["paths"]
+        from game.veloren.runtime.combat_response import bind_assets
+        bind_assets(cfg, self.fixture, paths, self.output)
         native = NativeConfig(
             server=server, bridge=Path(selected["renderer_fixture_helper"]["executable"]),
             assets=Path(paths["assets"]), root=Path(paths["source_root"]),

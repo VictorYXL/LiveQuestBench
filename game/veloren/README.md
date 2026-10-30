@@ -534,3 +534,37 @@ alternatives, not global cold-policy bounds. Actual native whole-task scores
 remain false; no new second-gallery/whole VM victory is inferred.
 See the [integration bridge](../../docs/evidence/VE-L05-main-integration-bridge-20261030.json)
 and the unchanged [four-gate packet](../../docs/evidence/VE-L05-four-gate-packet-v2.json).
+
+### C1 optional combat-response reuse (VE-L03)
+
+`native_combat_response_transfer_c1.yaml` registers both ST and VM with the
+original four 25HP Green Legooms, starter sword, three minor potions, arena,
+900-second limit and native identity/contribution/death scorer. C1 is a new
+native ability distribution, not stock combat: the second strike commits,
+with episode-fixed buildup/recovery either 0.4/0.4 or 1.2/1.2 seconds.
+
+The private session selector draws once at startup, validates **both** pinned
+audit93 runtimes for the chosen track, and passes only the selected runtime to
+the single-use worker. It does not change the public task or global runtime
+environment. `LIVEQUEST_VELOREN_COMBAT_RESPONSE_RUNTIME_ROOT` may point to a
+directory containing the four original runtime directories; by default the
+retained dedicated L03 worktree's `output/checks` directory is used. Runtime
+bytes must remain exact, including their absolute asset/binary paths.
+Relocated runtime contents require a separately reviewed pin/semantic mapping;
+the override does not permit arbitrary configurations or a B-only fallback.
+Full selected-asset inventory admission binds server, helper and renderer to
+the same private root before native startup. ST uses the reviewed item
+preflight wrapper; VM retains its original physical-control runtime.
+
+Audit93 supports developmental optional within-episode response reuse,
+provisionally learning2 with high uncertainty. ST application is native-observed;
+VM is supported by task-level constructive composition, not a complete observed
+original-condition VM learning/application episode. Generic pressure, luring,
+spacing and healing remain legal; their strength and population net learning
+benefit/difficulty need ordinary calibration. No fixed damage increment,
+certified timing margin, reference victory, compulsory learning or C2 is
+claimed. Earlier failures and simplified diagnostics remain separate evidence.
+Historical authoring helpers retain their original proposal labels; the
+registered task changes only status wording and the equivalent world path.
+See `checks/VE-L03-main-integration-bridge-20261030.json` for exact mappings,
+preserved endpoint/metric replays and independent-review continuity.
