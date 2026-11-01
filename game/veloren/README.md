@@ -27,9 +27,7 @@ export LIVEQUEST_VELOREN_RUNTIME="$VELOREN_RUNTIME_DIR/runtime.json"
 ```
 
 Keep the upstream installation available. Never rebuild a runtime in use.
-Automatic protection is disabled; ordinary native damage, enemy AI and
-downed/death mechanics remain active. Game and asset licenses remain separate
-from the benchmark.
+Game and asset licenses remain separate from the benchmark.
 
 ## Runtime profiles
 
@@ -44,10 +42,8 @@ containing the prepared combat-response profiles.
 For separately built Message runtimes, see
 `python -m game.veloren.runtime.initial_message --help`.
 
-Glide-distance tasks require `native-client-glide/2` in both the runtime manifest
-and native evidence. Rerun setup into a new directory and select its runtime
-manifest. Keep the upstream installation available; do not relabel legacy `/1`
-binaries or recorded distances as `/2`. Other tasks may keep compatible runtimes.
+Glide-distance tasks require a `native-client-glide/2` runtime; rerun setup into a
+new directory if yours is older.
 
 ## Run
 
@@ -55,20 +51,3 @@ Select `config/veloren/experiments/structured_tools.yaml` or
 `config/veloren/experiments/visual_motor.yaml`, then follow the
 [experiment instructions](../../README.md#running-an-experiment).
 Select only tasks supported by the installed profiles.
-
-`covered_support_forks` supports both tracks with the same two randomized native
-geometries, 600-second budget and final endpoint (including at least one health
-point). ST uses bounded movement, looking, jumping, gliding and local terrain
-inspection; it receives no sampled-side label or route answer. Its terrain query
-is limited to ten horizontal and two vertical metres and is not line-of-sight
-filtered. The sample and route choice remain the agent's responsibility.
-ST uses the standard prepared runtime. VM retains `native-local-camera/1` and
-`native-solid-scene/1` and requires its matching
-`LIVEQUEST_VELOREN_LOCAL_SOLID_RUNTIME`; these image restrictions are not ST
-observation permissions. The paired experiment is
-`config/veloren/experiments/covered_support_forks.yaml`.
-
-VM receives actual game frames, not a transcription of hidden state. ST uses its
-declared tools and field whitelist. Private native events supply scoring and
-measurement checks, not agent guidance. A valid task failure remains a result;
-unsupported profiles and invalid measurements are reported separately.

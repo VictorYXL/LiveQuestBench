@@ -46,5 +46,4 @@ Select `config/minecraft/experiments/structured_tools.yaml` or
 Edit the task list for smaller runs.
 
 Both modes require graphics support; headless mode uses Xvfb.
-The server continues during model calls and actions. Task scoring is private;
-inventory, event order, deaths and return conditions depend on the selected task.
+The server continues during model calls and actions.
