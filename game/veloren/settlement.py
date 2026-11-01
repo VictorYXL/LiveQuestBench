@@ -46,7 +46,31 @@ def purchase_funded(inventory: dict, spec: dict, *, product_value: float,
 
 def nearby_merchants(observation: dict) -> list[dict]:
     return [row for row in observation["nearby_entities"]
-            if isinstance(row.get("name_text"), str) and "(Merchant)" in row["name_text"] and row["distance"] < 4]
+            if isinstance(row.get("name_text"), str) and "(Merchant)" in row["name_text"]
+            and row["health"]["current"] > 0 and not row["health"]["dead"]]
+
+
+async def approach_merchant(admin, commands: list[dict]) -> tuple[dict, dict]:
+    target = None
+    try:
+        async with asyncio.timeout(60):
+            while True:
+                observed = await admin.request("observe")
+                if observed["current_site"]["loaded_chunk"] is True:
+                    candidates = nearby_merchants(observed)
+                    if target is None and candidates:
+                        target = min(candidates, key=lambda row: row["distance"])["control_target"]
+                    if target is not None:
+                        npc = observed_merchant(observed, target["uid"])
+                        if npc["control_target"] != target:
+                            raise RuntimeError("Prepared merchant lifecycle changed during approach")
+                        if npc["distance"] < 3:
+                            return observed, target
+                        # RT-sim merchants keep walking after the initial teleport.
+                        await native_command_text(admin, commands, "goto", *npc["position"])
+                await asyncio.sleep(.1)
+    except TimeoutError as error:
+        raise RuntimeError("native setup did not establish loaded merchant trade range within60s") from error
 
 
 async def native_command_text(admin, commands: list[dict], name: str, *arguments) -> str:
@@ -141,14 +165,9 @@ async def initialize_merchant(admin, actor, fixture: dict) -> dict:
         raise RuntimeError("Native merchant lookup did not identify exactly one existing resident")
     await command("rtsim_info", identifiers[0])
     await command("rtsim_tp", identifiers[0])
-    observed = await setup.wait_observation(
-        admin, lambda row: row["current_site"]["loaded_chunk"] is True
-        and bool(nearby_merchants(row)), "native merchant and source terrain loaded nearby", timeout=60,
-    )
+    observed, target = await approach_merchant(admin, commands)
     if "native_site" in fixture and observed["current_site"]["location_name"] != fixture["native_site"]:
         raise RuntimeError("Nearest native merchant is not in the declared settlement")
-    npc = min(nearby_merchants(observed), key=lambda row: row["distance"])
-    target = npc["control_target"]
 
     async def invite():
         await setup.action(admin, "social_action", operation="invite_trade", target=target)

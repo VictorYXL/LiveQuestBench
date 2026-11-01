@@ -7,6 +7,7 @@ from pathlib import Path
 import re
 
 from game.minecraft.runtime.server import MinecraftServer
+from game.minecraft.runtime.observer import check_observer, launch_path
 
 
 class ObservedServer(MinecraftServer):
@@ -31,11 +32,8 @@ class ObservedServer(MinecraftServer):
                 self._pending.put_nowait(None)
 
     async def start(self):
-        launch_path = Path(os.environ.get(
-            "LIVEQUEST_BREAK_SERVER_LAUNCH",
-            str(Path(__file__).resolve().parents[1] / "server_observer/launch.json"),
-        )).resolve()
-        launch = json.loads(launch_path.read_text())
+        path = launch_path()
+        launch = check_observer()
         observer_classes = [
             Path(entry) / "org/livequestbench/observer/SuccessfulBreakMixin.class"
             for entry in launch["classpath"]
@@ -44,7 +42,7 @@ class ObservedServer(MinecraftServer):
         if len(observer_classes) != 1:
             raise RuntimeError("Expected exactly one compiled passive break observer")
         (self.directory / "observer-runtime.json").write_text(json.dumps({
-            "launch_sha256": hashlib.sha256(launch_path.read_bytes()).hexdigest(),
+            "launch_sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
             "observer_class_sha256": hashlib.sha256(observer_classes[0].read_bytes()).hexdigest(),
             "events": "successful-breaks.jsonl",
             "gameplay_mutations": False,

@@ -216,6 +216,8 @@ def install(root: Path, track: str = "visual_motor") -> None:
     from game.minecraft.runtime.client import install_client
     install_client()
     install_server(root)
+    from game.minecraft.runtime.observer import install_observer
+    install_observer()
     print(
         f"Minecraft {MINECRAFT_VERSION} server artifact is ready.\n"
         f"Selected setup: {track}.\n"
@@ -263,6 +265,9 @@ def check_installation(
         for name in ("accounts.json", "prismlauncher.cfg", "metacache"):
             if not (prism_root() / name).is_file():
                 raise FileNotFoundError(f"Prism setup incomplete: missing {name}")
+    if track == "all":
+        from game.minecraft.runtime.observer import check_observer
+        check_observer()
     return {
         "version": MINECRAFT_VERSION, "java": java, "server_jar": str(jar),
         "server_sha256": file_digest(jar, "sha256"), "verified_with_mojang": verify_server,

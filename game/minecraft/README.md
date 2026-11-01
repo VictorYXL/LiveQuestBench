@@ -33,6 +33,7 @@ Game binaries and assets are downloaded, not bundled.
 | `LIVEQUEST_MINECRAFT_HOME` | Dedicated runtime installation directory |
 | `MINECRAFT_JAVA` | Java 21 executable |
 | `MINECRAFT_SERVER_JAR` | Server JAR override |
+| `LIVEQUEST_BREAK_SERVER_LAUNCH` | Optional prebuilt passive-observer launch descriptor |
 
 Use the same settings for setup and evaluation. Do not rebuild an installation
 while it is in use.

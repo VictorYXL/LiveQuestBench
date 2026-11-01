@@ -273,7 +273,8 @@ def team_encounter_checks(initial: dict[str, dict], final: dict[str, dict], *, r
     if len({row["uid"] for row in contributors}) != len(contributors):
         raise ValueError("Team contributors must have distinct native identities")
     opening_sequence = max(row["opening_sequence"] for row in contributors)
-    if any(row["sequence"] <= opening_sequence
+    bindings = contributors + [row["binding"] for row in registry["targets"]]
+    if any(row["sequence"] <= opening_sequence and encounter_event_involves(row, bindings)
            for row in final[owner]["private_encounter_evidence"]["events"]):
         raise ValueError("Combat occurred across non-atomic team opening snapshots")
     for row in contributors:
@@ -295,6 +296,27 @@ def team_encounter_checks(initial: dict[str, dict], final: dict[str, dict], *, r
         "Sequential terminal snapshots are non-atomic; target evidence ends at the owner's snapshot."
     )
     return result
+
+
+def encounter_event_involves(event: dict, bindings: list[dict]) -> bool:
+    """The server journal also contains unrelated NPC combat elsewhere in the world."""
+    data = event["data"]
+    if event["event"] == "native_entity_death":
+        identities = [(data["uid"], data["entity"])]
+    elif event["event"] == "attack_health_effect_queued":
+        identities = [(data["source_uid"], data["source_entity"]),
+                      (data["target_uid"], data["target_entity"])]
+    elif event["event"] == "health_effect_applied":
+        contributor = data["contributor"] or {}
+        uid = contributor.get("Solo", (contributor.get("Group") or {}).get("entity_uid"))
+        identities = [(uid, data["contributor_entity"]),
+                      (data["target_uid"], data["target_entity"])]
+    else:
+        raise ValueError("Unsupported encounter evidence event")
+    # Either identity component is enough to reject contamination, including a
+    # malformed/rebound generation; the regular scorer still validates all rows.
+    return any(uid == binding["uid"] or entity == binding["server_entity"]
+               for uid, entity in identities for binding in bindings)
 
 
 def encounter_checks(initial: dict, final: dict, *, roles: list[str], **state) -> dict:

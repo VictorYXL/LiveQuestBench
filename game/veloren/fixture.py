@@ -529,7 +529,9 @@ def verify_encounter_opening(targets: list[dict], observation: dict, rows: list[
             raise RuntimeError("Designated target unavailable, replaced, dead or injured before measured play")
         if target["public"] is not None:
             entry = current.get(expected["uid"])
-            if (entry is None or entry["health"]["dead"] or entry["health"]["current"] != expected["health"]):
+            # Moving targets may leave the client's nearby view during setup.
+            # Their identity and health are still required by the private binding above.
+            if entry is not None and (entry["health"]["dead"] or entry["health"]["current"] != expected["health"]):
                 raise RuntimeError("Nearby designated target unavailable, dead or injured before measured play")
 
 
