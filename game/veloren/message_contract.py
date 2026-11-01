@@ -20,7 +20,17 @@ async def prepare_initial_message_offer(admin, actor, residents, fixture, comman
     source, *others = residents
 
     async def request(operation, *arguments):
-        text = await command("rtsim_info", protocol, operation, *arguments)
+        async with asyncio.timeout(10):
+            while True:
+                try:
+                    text = await command("rtsim_info", protocol, operation, *arguments)
+                    break
+                except RuntimeError as error:
+                    if (protocol != "initial-message-v3" or operation != "publish"
+                            or str(error) != "Native Message initialization: native_message_source_not_quiescent"):
+                        raise
+                    # This native refusal precedes mutation; retain the same prepared proposal.
+                    await asyncio.sleep(.1)
         responses = []
         for line in text.splitlines():
             try:
@@ -119,11 +129,27 @@ async def initialize_message(admin, actor, fixture):
     spec = fixture["message_contract"]
 
     async def command(name, *arguments):
+        initial_protocol = (name == "rtsim_info" and arguments[:1] in
+                            (("initial-message-v2",), ("initial-message-v3",)))
         try:
-            return await native_command_text(admin, commands, name, *arguments)
+            text = await native_command_text(admin, commands, name, *arguments)
+            if initial_protocol:
+                async with asyncio.timeout(10):
+                    while arguments[0] not in text:
+                        await asyncio.sleep(.1)
+                        events = await admin.request("events")
+                        commands[-1]["events"].extend(events)
+                        errors = [event["data"].get("content", {}).get("Plain", "")
+                                  for event in events
+                                  if event.get("data", {}).get("kind") == "command_error"]
+                        if errors:
+                            raise RuntimeError("Native Message initialization: " + "; ".join(errors))
+                        text += "\n" + "\n".join(
+                            event["data"].get("content", {}).get("Plain", "") for event in events
+                            if event.get("data", {}).get("kind") == "command_info")
+            return text
         except RuntimeError as error:
-            if (name == "rtsim_info" and arguments[:1] in
-                    (("initial-message-v2",), ("initial-message-v3",)) and commands):
+            if initial_protocol and commands:
                 errors = [event["data"].get("content", {}).get("Plain", "")
                           for event in commands[-1]["events"]
                           if event.get("data", {}).get("kind") == "command_error"]

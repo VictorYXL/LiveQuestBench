@@ -611,6 +611,8 @@ class Session:
                 return await setup.action(self.actor, origin="agent", require_completed=False, **args)
             except NativeRefusal as error:
                 expected = {
+                    ("wall_jump", "wall_jump_ineligible",
+                     "wall jump requires sampled wall contact and climb or wallrun state"),
                     ("glide", "glider_not_equipped", "no equipped glider"),
                     ("pickup", "invalid_action", "no pickable item within range"),
                     ("pickup", "pickup_send_rejected",
@@ -658,6 +660,10 @@ class Session:
                 write_fixture_record(
                     self.output, self.initialized, self.record["world_fixture"], self.authoring_digest,
                 )
+                # These receipts are now written and hashed. Release their potentially
+                # multi-gigabyte object graph before acknowledging worker cleanup.
+                self.initialized.pop("construction", None)
+                self.initialized.pop("blocks", None)
 
 
 async def main() -> None:

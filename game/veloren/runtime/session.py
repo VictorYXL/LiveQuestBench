@@ -136,11 +136,18 @@ class VelorenSession:
             self.pending.pop(identifier, None)
 
     async def close(self) -> None:
+        acknowledged_at = None
         try:
             if self.process is not None and self.process.returncode is None:
                 try:
-                    await self.request("close", timeout=90)
-                    await asyncio.wait_for(self.process.wait(), 10)
+                    if await self.request("close", timeout=90) != {"closed": True}:
+                        raise RuntimeError("Veloren worker did not acknowledge native cleanup")
+                    acknowledged_at = time.monotonic_ns()
+                    # Large private journals can leave a substantial Python object
+                    # graph to release after native cleanup has already completed.
+                    await asyncio.wait_for(self.process.wait(), 60)
+                    if self.process.returncode != 0:
+                        raise RuntimeError("Veloren worker exited unsuccessfully after cleanup")
                 except BaseException:
                     if self.process.returncode is None:
                         self.process.terminate()
@@ -159,5 +166,6 @@ class VelorenSession:
                     self.log.close()
                 (self.output / "cleanup.json").write_text(json.dumps({
                     "worker_returncode": self.process.returncode if self.process else None,
+                    "native_cleanup_acknowledged_at_ns": acknowledged_at,
                     "closed_at_ns": time.monotonic_ns(),
                 }, indent=2) + "\n")

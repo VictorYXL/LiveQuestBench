@@ -5,16 +5,18 @@ import math
 import re
 
 from game.veloren.native_bindings import NativeBindingCursor
-from game.veloren.settlement import native_command_text, quoted_stack
+from game.veloren.settlement import (
+    available_native_merchants, final_quote_trade, native_command_text, quoted_stack, visit_native_merchant,
+)
 
 COINS = "common.items.utility.coins"
 
 
-async def _locate_merchant(command, reader, identifier):
+async def _locate_merchant(admin, commands, reader, identifier):
     async with asyncio.timeout(60):
         for attempt in range(120):
             if attempt % 30 == 0:
-                await command("rtsim_tp", identifier)
+                await visit_native_merchant(admin, commands, identifier)
             bindings = [row for row in reader.poll() if row.get("rtsim_uid") == int(identifier)]
             if len(bindings) > 1:
                 raise RuntimeError("Selected native merchant has ambiguous loaded identities")
@@ -84,13 +86,10 @@ async def initialize_market(admin, actor, fixture):
     # Eligibility includes current native activity, so apply the declared setup time first.
     # The fixture still restores that same declared time at player admission.
     await command("time", fixture["time_of_day"])
-    listing = await command("rtsim_npc", "merchant,sell wares", 3)
-    identifiers = re.findall(r"\((\d+)\)", listing)
-    if len(identifiers) != 3 or len(set(identifiers)) != 3:
-        raise RuntimeError("Three distinct existing native merchants are unavailable")
+    identifiers = await available_native_merchants(admin, commands, 3)
     await setup.gift(admin, admin, COINS, 50000)
     for identifier, spec in zip(identifiers, market["merchants"]):
-        uid = await _locate_merchant(command, reader, identifier)
+        uid = await _locate_merchant(admin, commands, reader, identifier)
         if uid in {r["uid"] for r in residents}:
             raise RuntimeError("Native merchant identities are not distinct")
         await command("sudo", f"uid@{uid}", "goto", *spec["position"])
@@ -107,19 +106,7 @@ async def initialize_market(admin, actor, fixture):
             if merchant is None:
                 raise RuntimeError("The initialized merchant left the bounded preparation area")
             target = merchant["control_target"]
-            if merchant["distance"] > 3:
-                # Native collision can displace the administrator from the merchant's exact center.
-                await setup.goto(
-                    admin, admin, merchant["position"], horizontal_tolerance=1.0)
-            await setup.action(admin, "social_action", operation="invite_trade", target=target)
-            row = await setup.wait_observation(
-                admin, lambda r: r["social_and_trade"]["pending_trade"] is not None,
-                "ordinary market preparation trade", timeout=30)
-            trade = row["social_and_trade"]["pending_trade"]
-            ours = trade["self_party_index"]
-            if trade["parties"][1 - ours] != target["uid"]:
-                raise RuntimeError("Market preparation has the wrong counterparty")
-            return trade, ours
+            return await final_quote_trade(admin, target, transactions, commands)
 
         async def act(trade, operation, **arguments):
             receipt = await setup.action(

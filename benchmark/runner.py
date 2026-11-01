@@ -262,7 +262,7 @@ async def run_episode(
                 result["native_agent"] = {"admitted": agent.admitted, "forced_termination": agent.forced_termination}
         if binding is not None:
             try:
-                await asyncio.wait_for(binding.game.close(), timeout=60)
+                await asyncio.wait_for(binding.game.close(), timeout=360 if task.participants else 180)
             except Exception as error:
                 record_error(error, "game_cleanup")
         if client is not None:

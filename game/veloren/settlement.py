@@ -50,8 +50,7 @@ def nearby_merchants(observation: dict) -> list[dict]:
             and row["health"]["current"] > 0 and not row["health"]["dead"]]
 
 
-async def approach_merchant(admin, commands: list[dict]) -> tuple[dict, dict]:
-    target = None
+async def approach_merchant(admin, commands: list[dict], *, target: dict | None = None) -> tuple[dict, dict]:
     try:
         async with asyncio.timeout(60):
             while True:
@@ -73,6 +72,25 @@ async def approach_merchant(admin, commands: list[dict]) -> tuple[dict, dict]:
         raise RuntimeError("native setup did not establish loaded merchant trade range within60s") from error
 
 
+async def invite_merchant(admin, target: dict, commands: list[dict], transactions: list[dict]) -> dict:
+    from scripts.rpg_benchmark import setup
+    from scripts.rpg_benchmark.native import NativeRefusal
+
+    async with asyncio.timeout(30):
+        while True:
+            observed, _ = await approach_merchant(admin, commands, target=target)
+            try:
+                return await setup.action(
+                    admin, "social_action", operation="invite_trade", target=target, basis=observed,
+                )
+            except NativeRefusal as error:
+                if error.native_error.get("code") != "trade_target_changed":
+                    raise
+                transactions.append({"operation": "quote_invite_refused", "target": target,
+                                     "refusal": error.native_error})
+                await asyncio.sleep(.1)
+
+
 async def native_command_text(admin, commands: list[dict], name: str, *arguments) -> str:
     from scripts.rpg_benchmark import setup
 
@@ -87,66 +105,91 @@ async def native_command_text(admin, commands: list[dict], name: str, *arguments
                      and "Plain" in row["data"].get("content", {}))
 
 
-async def final_quote_trade(admin, target: dict, transactions: list[dict]) -> tuple[dict, int]:
-    from scripts.rpg_benchmark import setup
+async def visit_native_merchant(admin, commands: list[dict], identifier: str) -> None:
+    info = await native_command_text(admin, commands, "rtsim_info", identifier)
+    position = re.search(r"^Pos: Vec3 \{ x: ([^,]+), y: ([^,]+), z: ([^}]+) \}$", info, re.MULTILINE)
+    if position is None:
+        raise RuntimeError("Native merchant lookup did not provide its world position")
+    coordinates = [float(value) for value in position.groups()]
+    if not all(math.isfinite(value) for value in coordinates):
+        raise RuntimeError("Native merchant position is not finite")
+    # rtsim_tp's deferred free-space reposition can leave the client at the old
+    # loaded chunk. Move only the private preparer, then require native readback.
+    await native_command_text(admin, commands, "goto", *coordinates)
 
+
+async def available_native_merchants(admin, commands: list[dict], count: int) -> list[str]:
+    try:
+        async with asyncio.timeout(120):
+            while True:
+                listing = await native_command_text(admin, commands, "rtsim_npc", "merchant,sell wares", count)
+                blocks = re.findall(
+                    r"-- NPCs matching \[merchant, sell wares\] --\n(.*?)\nShowing \d+/\d+ matching NPCs\.",
+                    listing, re.DOTALL,
+                )
+                identifiers = re.findall(r"\((\d+)\)", blocks[-1]) if blocks else []
+                if len(identifiers) != len(set(identifiers)) or len(identifiers) > count:
+                    raise RuntimeError("Native merchant activity query returned ambiguous identities")
+                if len(identifiers) == count:
+                    return identifiers
+                # Sell-wares is a transient native activity, not the profession.
+                await asyncio.sleep(1)
+    except TimeoutError as error:
+        raise RuntimeError("Required existing native merchants did not become available within120s") from error
+
+
+async def final_quote_trade(admin, target: dict, transactions: list[dict],
+                            commands: list[dict]) -> tuple[dict, int]:
     def merchant(row):
         found = observed_merchant(row, target["uid"])
         if found["control_target"] != target:
-            raise RuntimeError("Prepared merchant lifecycle changed before final quote")
+            raise RuntimeError("Prepared merchant lifecycle changed before native trade")
         return found
 
     try:
-        async with asyncio.timeout(30):
-            for attempt in range(2):
-                ready = await setup.wait_observation(
-                    admin, lambda row: row["social_and_trade"]["pending_trade"] is None
-                    and not row["social_and_trade"]["outgoing_invitee_uids"],
-                    "merchant quote invitation ready", timeout=10,
-                )
+        async with asyncio.timeout(60):
+            last_invite = float("-inf")
+            attempt = 0
+            previous_result = None
+            while True:
+                ready = await admin.request("observe")
                 found = merchant(ready)
-                repositioned = found["distance"] >= 3
-                if repositioned:
-                    await setup.goto(admin, admin, found["position"], settle=False)
-                    ready = await setup.wait_observation(
-                        admin, lambda row: merchant(row)["distance"] < 3,
-                        "same merchant quote range", timeout=10,
-                    )
-                previous = ready["last_trade_result"]
-                actor = ready["control_actor"]
-                receipt = await setup.action(
-                    admin, "social_action", operation="invite_trade", target=target, basis=ready,
-                )
-                transactions.append({
-                    "operation": "quote_invite", "attempt": attempt + 1, "target": target,
-                    "repositioned_administrator": repositioned,
-                    "action_id": receipt.get("action_id"),
-                })
-
-                def declined(row):
-                    result = row["last_trade_result"]
-                    return (result is not None and result != previous
-                            and result["result"] == "Declined"
-                            and target in result["parties"] and actor in result["parties"]
-                            and result["trade"]["phase"] == "Mutate"
-                            and result["trade"]["offers"] == [[], []])
-
-                # A new empty trade can be declined between observe calls after a sale.
-                row = await setup.wait_observation(
-                    admin, lambda row: row["social_and_trade"]["pending_trade"] is not None
-                    or declined(row), "native merchant trade", timeout=30,
-                )
-                trade = row["social_and_trade"]["pending_trade"]
+                if attempt == 0:
+                    previous_result = ready["last_trade_result"]
+                elif ready["last_trade_result"] != previous_result:
+                    result = ready["last_trade_result"]
+                    if (result is None or result["result"] != "Declined"
+                            or target not in result["parties"] or ready["control_actor"] not in result["parties"]
+                            or result["trade"]["phase"] != "Mutate" or result["trade"]["offers"] != [[], []]):
+                        raise RuntimeError("Unexpected native trade completion without a preparation offer")
+                    transactions.append({"operation": "quote_declined", "result": result})
+                    previous_result = result
+                trade = ready["social_and_trade"]["pending_trade"]
                 if trade is not None:
                     own = trade["self_party_index"]
-                    if trade["parties"][1 - own] != target["uid"]:
+                    if attempt == 0 or trade["phase"] != "Mutate" or trade["parties"][1 - own] != target["uid"]:
                         raise RuntimeError("Native merchant trade has the wrong counterparty")
-                    merchant(row)
                     return trade, own
-                transactions.append({"operation": "quote_declined", "result": row["last_trade_result"]})
+                outgoing = ready["social_and_trade"]["outgoing_invitee_uids"]
+                if any(uid != target["uid"] for uid in outgoing):
+                    raise RuntimeError("Native preparation has an unrelated outstanding invitation")
+                if found["distance"] >= 3:
+                    await native_command_text(admin, commands, "goto", *found["position"])
+                clock = asyncio.get_running_loop().time()
+                if not outgoing and clock - last_invite >= 1:
+                    receipt = await invite_merchant(admin, target, commands, transactions)
+                    attempt += 1
+                    last_invite = asyncio.get_running_loop().time()
+                    transactions.append({
+                        "operation": "quote_invite", "attempt": attempt, "target": target,
+                        "action_id": receipt.get("action_id"), "server_trade_confirmed": False,
+                        "previous_native_trade_result": ready["last_trade_result"],
+                    })
+                # A submitted invite is not a server-confirmed trade. Busy native
+                # NPCs may decline it without ever creating a trade result.
+                await asyncio.sleep(.1)
     except TimeoutError as error:
-        raise RuntimeError("native setup did not establish native merchant trade within30s") from error
-    raise RuntimeError("native setup did not establish native merchant trade after two invitations")
+        raise RuntimeError("native setup did not establish native merchant trade within60s") from error
 
 
 async def initialize_merchant(admin, actor, fixture: dict) -> dict:
@@ -159,25 +202,15 @@ async def initialize_merchant(admin, actor, fixture: dict) -> dict:
     async def command(name, *arguments):
         return await native_command_text(admin, commands, name, *arguments)
 
-    listing = await command("rtsim_npc", "merchant", 1)
-    identifiers = re.findall(r"\((\d+)\)", listing)
-    if len(identifiers) != 1:
-        raise RuntimeError("Native merchant lookup did not identify exactly one existing resident")
-    await command("rtsim_info", identifiers[0])
-    await command("rtsim_tp", identifiers[0])
+    await command("time", fixture["time_of_day"])
+    identifiers = await available_native_merchants(admin, commands, 1)
+    await visit_native_merchant(admin, commands, identifiers[0])
     observed, target = await approach_merchant(admin, commands)
     if "native_site" in fixture and observed["current_site"]["location_name"] != fixture["native_site"]:
         raise RuntimeError("Nearest native merchant is not in the declared settlement")
 
     async def invite():
-        await setup.action(admin, "social_action", operation="invite_trade", target=target)
-        row = await setup.wait_observation(admin, lambda row: row["social_and_trade"]["pending_trade"] is not None,
-                                           "native merchant trade", timeout=30)
-        trade = row["social_and_trade"]["pending_trade"]
-        own = trade["self_party_index"]
-        if trade["parties"][1 - own] != target["uid"]:
-            raise RuntimeError("Native merchant trade has the wrong counterparty")
-        return trade, own
+        return await final_quote_trade(admin, target, transactions, commands)
 
     async def trade_action(trade, operation, **arguments):
         result = await setup.action(
@@ -227,7 +260,7 @@ async def initialize_merchant(admin, actor, fixture: dict) -> dict:
     inventory = await admin.request("observe")
     if not any(row["item"]["id"] == {"Simple": spec["payment_item"]} for row in inventory["inventory"]["items"]):
         await setup.gift(admin, admin, spec["payment_item"], 1)
-    trade, own = await final_quote_trade(admin, target, transactions)
+    trade, own = await final_quote_trade(admin, target, transactions, commands)
     product = quoted_stack(trade["inventories"][1 - own], spec["stock_item"])
     coins = quoted_stack(trade["inventories"][1 - own], "common.items.utility.coins")
     payment = quoted_stack(trade["inventories"][own], spec["payment_item"])

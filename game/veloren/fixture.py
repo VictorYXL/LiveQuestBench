@@ -502,6 +502,12 @@ async def initialize_encounter(admin, actor, spec: dict, position: list, *, bind
         )
         target = next(entry for entry in after["nearby_entities"] if entry["uid"] == target["uid"])
     binding = await binding_reader(actor, target["uid"])
+    if "initial_health" in spec:
+        # The server journal can lag the client's readback of the setup health command.
+        async with asyncio.timeout(10):
+            while binding["health"] != spec["initial_health"]:
+                await asyncio.sleep(.1)
+                binding = await binding_reader(actor, target["uid"])
     if (binding["body"] != expected or binding["alignment"] != "Enemy"
             or binding["dead"] or binding["health"] <= 0
             or target["health"]["dead"] or target["health"]["current"] <= 0):
@@ -633,6 +639,40 @@ async def initialize_companion(admin, actor, fixture: dict) -> dict:
             "initial_public": pet, "native_ai": True, "tethered": False}
 
 
+async def prepare_companion_stay(admin, actor, target: dict) -> None:
+    from scripts.rpg_benchmark import setup
+    from scripts.rpg_benchmark.native import NativeRefusal
+
+    try:
+        async with asyncio.timeout(10):
+            while True:
+                observed = await actor.request("observe")
+                pet = next((row for row in observed["nearby_entities"]
+                            if row["control_target"] == target), None)
+                if (pet is None or not pet["companion"]["owned_by_actor"]
+                        or pet["companion"]["already_mounted"] or not pet["same_native_group"]
+                        or pet["health"]["dead"]):
+                    raise RuntimeError("Prepared companion identity or ownership changed before Stay")
+                try:
+                    await setup.action(actor, "companion_action", operation="pet_stay",
+                                       target=target, stay=True, basis=observed)
+                    return
+                except NativeRefusal as error:
+                    if error.native_error.get("code") != "pet_not_owned_or_nearby":
+                        raise
+                    dx, dy = [observed["position"][axis] - pet["position"][axis] for axis in (0, 1)]
+                    length = math.hypot(dx, dy)
+                    direction = (dx / length, dy / length) if length else (1, 0)
+                    # Body collision may prevent exact arrival even inside the native Stay range.
+                    await setup.command(
+                        admin, "sudo", f"uid@{observed['self_identity']['uid']}", "goto",
+                        pet["position"][0] + direction[0], pet["position"][1] + direction[1], pet["position"][2],
+                    )
+                    await asyncio.sleep(.1)
+    except TimeoutError as error:
+        raise RuntimeError("Native companion Stay did not reach verified owned-pet range within10s") from error
+
+
 async def initialize_companions(admin, actor, fixture: dict) -> dict[str, dict]:
     """Prepare separate ordinary pets before enemies or measured controls exist."""
     from scripts.rpg_benchmark import setup
@@ -642,8 +682,7 @@ async def initialize_companions(admin, actor, fixture: dict) -> dict[str, dict]:
         target = specification["position"]
         await setup.goto(admin, actor, [target[0] + 3, target[1], target[2]])
         pet = await initialize_companion(admin, actor, {"companion": specification})
-        await setup.action(actor, "companion_action", operation="pet_stay",
-                           target=pet["player_target"], stay=True)
+        await prepare_companion_stay(admin, actor, pet["player_target"])
         await setup.wait_observation(actor, lambda observation: any(
             row["control_target"] == pet["player_target"]
             and row["companion"]["pet_staying"] is True
@@ -695,6 +734,40 @@ async def initialize_equipment(admin, actor, equipment: dict[str, str]) -> None:
         )
 
 
+async def settle_companion_player_start(admin, actor, fixture: dict, *, timeout: float = 10) -> dict:
+    """Restore the declared actor pose after native companion collision during preparation."""
+    from scripts.rpg_benchmark import setup
+
+    stable_since = None
+    mismatch = "player readback unavailable"
+    loop = asyncio.get_running_loop()
+    deadline = asyncio.timeout(timeout)
+    try:
+        async with deadline:
+            while True:
+                opening = await actor.request("observe", origin="private-validation")
+                if math.dist(opening["position"], fixture["player_state"]["position"]) > .2:
+                    await setup.goto(admin, actor, fixture["player_state"]["position"])
+                    stable_since = None
+                else:
+                    opening = await recipe_observation(actor, fixture, opening)
+                    try:
+                        verify_player(fixture, opening)
+                    except FixtureMismatch as error:
+                        mismatch = str(error)
+                        stable_since = None
+                    else:
+                        if stable_since is None:
+                            stable_since = loop.time()
+                        if loop.time() - stable_since >= 1:
+                            return opening
+                await asyncio.sleep(.1)
+    except TimeoutError as error:
+        if not deadline.expired():
+            raise
+        raise FixtureMismatch(f"Companion player start did not settle within {timeout}s: {mismatch}") from error
+
+
 async def initialize_encounters(admin, actor, fixture: dict, contract=None, *, binding_reader=None) -> dict:
     if binding_reader is None:
         from game.veloren.native_bindings import combat_binding as binding_reader
@@ -712,7 +785,11 @@ async def initialize_encounters(admin, actor, fixture: dict, contract=None, *, b
         encounters.append(await initialize_encounter(
             admin, actor, enemy, enemy["position"], binding_reader=binding_reader,
         ))
-    opening = await actor.request("observe", origin="private-validation")
+    # Companions remain native actors: their collisions can displace the player while enemies spawn.
+    if fixture.get("companions"):
+        opening = await settle_companion_player_start(admin, actor, fixture)
+    else:
+        opening = await actor.request("observe", origin="private-validation")
     verify_player(fixture, opening)
     source = await binding_reader(actor, opening["self_identity"]["uid"])
     if source["health"] <= 0 or source["dead"]:
