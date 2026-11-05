@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 560" fill="none">
+  <defs>
+    <linearGradient id="sky" x2="1440" y2="560" gradientUnits="userSpaceOnUse"><stop stop-color="#112e42"/><stop offset="1" stop-color="#285369"/></linearGradient>
+    <linearGradient id="land" x1="300" y1="170" x2="1000" y2="500" gradientUnits="userSpaceOnUse"><stop stop-color="#507c7a"/><stop offset="1" stop-color="#386372"/></linearGradient>
+    <pattern id="grid" width="70" height="40" patternUnits="userSpaceOnUse"><path d="m0 20 35-20 35 20-35 20Z" stroke="#7ea2ae" stroke-opacity=".09"/></pattern>
+    <g id="tree"><path d="M-5 0v30l10 5V4" fill="#714f39"/><path d="m0-60-30 17v41L0 15l30-17v-41Z" fill="#34756a"/><path d="m0-60 30 17L0-26l-30-17Z" fill="#77ad8b"/><path d="M0-26v41l30-17v-41Z" fill="#235c59"/></g>
+    <g id="pine"><path d="M-4 0v22h8V0" fill="#6d6150"/><path d="m0-80-30 62L0-5l30-13Z" fill="#759b92"/><path d="M0-80v75l30-13Z" fill="#3c706e"/><path d="m0-51-40 65L0 31l40-17Z" fill="#729c8f"/><path d="M0-51v82l40-17Z" fill="#3a6b63"/></g>
+    <g id="furnace"><path d="m0-34 34-19 34 19v47L34 32 0 13Z" fill="#4a5860"/><path d="m0-34 34 19 34-19-34-19Z" fill="#9aa7a7"/><path d="M34-15v47l34-19v-47Z" fill="#35464e"/><path d="m7-16 20 11v22L7 6Z" fill="#1d303a"/><path d="m10-2 14 8v8L10 6Z" fill="#edb96f"/><path d="m12-5 3-7 3 9 4-2v12L12 1Z" fill="#e88f4a"/></g>
+    <g id="flag"><path d="M0 0v-62" stroke="#e0e7dc" stroke-width="3"/><path d="M1-62h32l-7 12 7 11H1Z" fill="#edb96f"/><ellipse cy="2" rx="15" ry="7" stroke="#edb96f" stroke-opacity=".7"/></g>
+  </defs>
+  <path fill="url(#sky)" d="M0 0h1440v560H0z"/>
+  <path fill="url(#grid)" d="M0 0h1440v560H0z"/>
+  <circle cx="1184" cy="100" r="41" fill="#a2c6c5" opacity=".12"/>
+  <path d="m43 342 241-148 243 21 239-91 295 71 282 165-617 185Z" fill="#071d2b" opacity=".35"/>
+  <path d="m100 303 260-152 210 93 178-50 237-49 355 185-598 183Z" fill="url(#land)"/>
+  <path d="M100 303v52l642 207v-49Z" fill="#203d4b"/>
+  <path d="m742 513 598-183v52L742 562Z" fill="#182f41"/>
+  <path d="m100 303 260-152 210 93-226 144Z" fill="#65927e"/>
+  <path d="m100 303 244 85v17L100 320Z" fill="#46695d"/>
+  <path d="m344 388 226-144v18L344 405Z" fill="#2f5c57"/>
+  <path d="m171 272 202-79 131 68-155 97Z" fill="#7fa78a" opacity=".35"/>
+  <path d="m747 194 238-49 272 143-257 77-173-76Z" fill="#6f9191"/>
+  <path d="m827 289 69-158 85-91 98 210-79 115Z" fill="#68818c"/>
+  <path d="m981 40 98 210-79 115-27-147Z" fill="#3d6277"/>
+  <path d="m981 40-48 59 20 5 15 38 14-17 26 15 17-5Z" fill="#deebe6"/>
+  <path d="m1103 176 69-73 89 144-95 30Z" fill="#83999e"/>
+  <path d="m1172 103-8 100 2 74 95-30Z" fill="#557786"/>
+  <path d="m1172 103-31 33 19 8 12-10 21 4Z" fill="#c6d9d6"/>
+  <path d="m518 273 71 2 77 51 84 9 51 41-74 27-85-39-69-30-53 2-59-27Z" fill="#398a9b"/>
+  <path d="m518 273 71 2 77 51 84 9" stroke="#8ac4c6" stroke-width="3" opacity=".65"/>
+  <path d="m605 301 44-23 96 53-45 23Z" fill="#ab936b"/>
+  <path d="m605 301 95 53v12l-95-53Z" fill="#756954"/>
+  <path d="m622 292 94 52m-77-61 94 52" stroke="#655e4c" stroke-width="3"/>
+  <use href="#tree" x="226" y="238"/><use href="#tree" x="285" y="212"/><use href="#tree" x="184" y="281"/>
+  <use href="#tree" x="265" y="286"/><use href="#tree" x="331" y="248"/>
+  <use href="#pine" x="1092" y="316"/><use href="#pine" x="1233" y="312"/><use href="#pine" x="1160" y="344"/>
+  <path d="m378 292 64-37 91 48-64 39Z" fill="#bbaf8b"/>
+  <path d="m378 292 91 50v13l-91-49Z" fill="#847954"/>
+  <path d="m469 342 64-39v13l-64 39Z" fill="#776d52"/>
+  <use href="#furnace" x="387" y="277"/><use href="#furnace" x="456" y="315"/>
+  <path d="m410 207 8-11-5-13 9-12m53 55 7-14-4-10" stroke="#bdcbd0" stroke-width="6" stroke-linecap="round" opacity=".4"/>
+  <path d="m459 376 124 44 131-39 97 25 182-54 66 40-163 56-149 18-158-11-130-79" stroke="#edb96f" stroke-width="3" stroke-linejoin="round" stroke-dasharray="7 8"/>
+  <path d="m714 381 32-34 26-9 22-38 28-17" stroke="#edb96f" stroke-width="3" stroke-dasharray="7 8"/>
+  <path d="m754 314 39-21 26 15-39 21v13l-26-14Z" fill="#97aaa5"/>
+  <path d="m778 291 39-21 26 15-39 21v13l-26-14Z" fill="#b1bdb0"/>
+  <path d="m800 268 39-21 26 15-39 21v13l-26-14Z" fill="#c3cabc"/>
+  <use href="#flag" x="458" y="377"/>
+  <use href="#flag" x="822" y="266"/>
+  <use href="#flag" x="993" y="353"/>
+  <use href="#flag" x="745" y="465"/>
+  <g transform="translate(1018 384)">
+    <ellipse rx="25" ry="11" fill="#122e43" opacity=".4"/>
+    <path d="m-13-31 15-9 17 10v27L3 6l-16-9Z" fill="#b87b51"/>
+    <path d="m2-40 17 10L3-21l-16-10Z" fill="#e0ad74"/>
+    <path d="m3-21 16-9v27L3 6Z" fill="#875b46"/>
+    <path d="m-9-24 5 3v5l-5-3m10 3 5 3v5l-5-3" stroke="#102b37" stroke-width="3"/>
+  </g>
+  <g fill="#e8f2f1" font-family="Segoe UI,Arial,sans-serif" font-size="12" letter-spacing="2">
+    <text x="345" y="154">MINECRAFT</text>
+    <text x="1088" y="79">VELOREN</text>
+  </g>
+  <g font-family="Segoe UI,Arial,sans-serif" font-size="11">
+    <rect x="381" y="390" width="107" height="27" rx="3" fill="#122e43" fill-opacity=".92"/><text x="396" y="408" fill="#dbe9eb">01 / PREPARE</text>
+    <rect x="764" y="196" width="121" height="27" rx="3" fill="#122e43" fill-opacity=".92"/><text x="778" y="214" fill="#dbe9eb">02 / TRAVERSE</text>
+    <rect x="928" y="286" width="113" height="27" rx="3" fill="#122e43" fill-opacity=".92"/><text x="943" y="304" fill="#dbe9eb">03 / EXECUTE</text>
+    <rect x="774" y="455" width="104" height="27" rx="3" fill="#122e43" fill-opacity=".92"/><text x="788" y="473" fill="#dbe9eb">04 / RETURN</text>
+  </g>
+  <path d="M0 540h1440" stroke="#7ca0ac" stroke-opacity=".2"/>
+</svg>

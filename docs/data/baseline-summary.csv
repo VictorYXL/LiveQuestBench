@@ -1,0 +1,5 @@
+game,track,valid_episodes,successes,failures,usage_complete,usage_incomplete
+minecraft,ST,30,21,9,22,8
+minecraft,VM,30,6,24,13,17
+veloren,ST,30,10,20,29,1
+veloren,VM,30,0,30,24,6

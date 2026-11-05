@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Why LiveQuestBench studies persistent consequences in real-time 3D games, what its first 120 episodes show, and what remains unproven.">
+  <meta name="theme-color" content="#122e43">
+  <title>When the world does not wait — LiveQuestBench research notes</title>
+  <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="story-page">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="nav-wrap">
+      <a class="brand" href="./"><img src="assets/mark.svg" width="32" height="32" alt="">LiveQuest<span>Bench</span></a>
+      <nav aria-label="Main navigation"><a href="./#overview">Overview</a><a href="./#tasks">Tasks</a><a href="./#results">Results</a><a href="story.html" aria-current="page">Research story</a></nav>
+      <span class="preview-label">Article draft</span>
+    </div>
+  </header>
+  <main id="main">
+    <header class="article-header">
+      <div class="wrap article-cover">
+        <div>
+          <p class="eyebrow">The LiveQuestBench story / Research notes 001</p>
+          <h1>Long-term plans.<br>Real-time stakes.<br><em>No pause button.</em></h1>
+          <p class="article-deck">What happens to a plan when the world keeps moving? Inside LiveQuestBench and its first 120 game episodes.</p>
+          <p class="article-meta">November 2026 <span aria-hidden="true">/</span> Development report draft</p>
+          <a class="cover-link" href="#the-question">Enter the story <span aria-hidden="true">↓</span></a>
+        </div>
+        <figure class="cover-art">
+          <img src="assets/world.svg" width="1440" height="560" alt="A conceptual quest route through a workshop, mountains, an encounter, and the return journey.">
+          <div class="cover-art-message"><span class="mono">THE PLAN IS ONLY THE BEGINNING.</span><p>Fuel burns.<br>Enemies move.<br><strong>Choices persist.</strong></p></div>
+          <figcaption>Original task concept illustration, not gameplay.</figcaption>
+        </figure>
+      </div>
+    </header>
+    <div class="article-highlights wrap" aria-label="Article at a glance">
+      <p><span class="eyebrow">The question</span><strong>Can a plan survive its own consequences?</strong></p>
+      <p><span class="eyebrow">The evidence</span><strong>2 games. 60 tasks. 120 first-baseline episodes.</strong></p>
+      <p><span class="eyebrow">The boundary</span><strong>A development snapshot, not a final leaderboard.</strong></p>
+    </div>
+    <div class="reading-layout wrap">
+      <aside class="article-sidebar">
+        <nav aria-label="On this page">
+          <p class="eyebrow">Inside the story</p>
+          <a href="#the-question"><span>01</span> A connected quest</a>
+          <a href="#between-calls"><span>02</span> The live clock</a>
+          <a href="#task-stories"><span>03</span> Two worlds</a>
+          <a href="#interfaces"><span>04</span> Two interfaces</a>
+          <a href="#first-baseline"><span>05</span> The first baseline</a>
+          <a href="#zero-success"><span>06</span> Reading a zero</a>
+          <a href="#related-work"><span>07</span> Where we fit</a>
+          <a href="#next"><span>08</span> What comes next</a>
+        </nav>
+        <a class="sidebar-download" href="data/baseline-summary.csv" download>Baseline data <span aria-hidden="true">↓</span></a>
+      </aside>
+      <article class="article-content" aria-label="Design and first-baseline report">
+      <section id="the-question">
+        <p class="eyebrow chapter-label">01 / A connected quest</p>
+        <h2>A quest is more than a sequence of actions.</h2>
+        <p>Consider an agent sent to recover supplies, fight its way along a route, and return with the cargo. A good combat decision might still be a bad quest decision: fighting first may leave a loose supply to expire. Healing now may spend an item needed later. A death may return the player to the starting point without returning the world to its starting state.</p>
+        <p>These are examples of task mechanics, not a claim that every failure in our experiments followed this pattern. They motivate the question behind LiveQuestBench:</p>
+        <blockquote>Can an agent execute a multi-stage plan when the world keeps changing and the consequences of earlier choices persist?</blockquote>
+        <p>We are building a focused benchmark around this question in Minecraft and Veloren. We are not trying to cover every game genre. The goal is to make a particular kind of planning-and-execution problem available for inspection, reproduction, and improvement.</p>
+      </section>
+      <section id="between-calls">
+        <p class="eyebrow chapter-label">02 / The live clock</p>
+        <h2>What happens between two model calls?</h2>
+        <p>A model reasons over an observation captured in the past. While a response is being generated, a native game server can continue to advance. The next action may arrive after an enemy has moved, a production process has consumed fuel, or a pickup opportunity has changed.</p>
+        <figure class="clock-diagram">
+          <div class="diagram-heading"><span class="eyebrow">Two timelines. One world.</span><span class="mono">CONCEPTUAL / NOT TO SCALE</span></div>
+          <div class="clock-lane"><span class="lane-label">AGENT</span><div class="agent-timeline"><span>Observe</span><strong>Reason over an earlier state</strong><span>Act</span></div></div>
+          <div class="clock-lane"><span class="lane-label">WORLD</span><div class="world-timeline"><span>Fuel burns</span><span>Enemies move</span><span>Windows change</span></div></div>
+          <figcaption>The continuous protocol has no model-reasoning pause. Relevant changes depend on the task and native game mechanics.</figcaption>
+        </figure>
+        <p>In LiveQuestBench's continuous protocol, the world does not pause for model reasoning. But a live clock alone does not make a task scientifically useful. We need to establish that the relevant state actually changes, that the change matters for later goals, and that failures are not simply caused by a broken interface or a missing basic skill.</p>
+        <p>This distinction is central. A long recording is not proof of long-horizon planning. A resource counter is not proof that resources constrain the solution. A low success rate is not proof of a good benchmark.</p>
+      </section>
+      <section id="task-stories">
+        <p class="eyebrow chapter-label">03 / Two worlds</p>
+        <h2>Two examples from the task catalog.</h2>
+        <div class="quest-stories">
+          <div class="quest-story">
+            <div class="quest-story-top"><span class="eyebrow">Minecraft / Shared fuel dispatch</span><span class="quest-glyph" aria-hidden="true">01</span></div>
+            <h3>Three orders.<br>One fuel budget.</h3>
+            <div class="quest-inventory"><span><strong>8</strong> iron ingots</span><span><strong>8</strong> cooked beef</span><span><strong>8</strong> glass</span></div>
+            <p>The agent must return with all three orders while retaining at least one coal and two planks. Two furnaces are separated around the camp, and fuel burns continuously. Production order, movement, and resource use belong to the same objective.</p>
+            <p class="quest-caveat"><strong>The consequence:</strong> extra timber can be gathered. Poor allocation may introduce a recovery cost, not necessarily make success impossible.</p>
+          </div>
+          <div class="quest-story">
+            <div class="quest-story-top"><span class="eyebrow">Veloren / Hostile route supply recovery</span><span class="quest-glyph" aria-hidden="true">02</span></div>
+            <h3>Get the supply.<br>Make it home alive.</h3>
+            <div class="quest-inventory"><span><strong>~5 min</strong> loose bundle window</span><span><strong>2</strong> Green Legooms</span></div>
+            <p>Acquire leather, defeat two Green Legooms, and return alive. The supplied loose bundle normally disappears after about five minutes. Death does not restore supplies, enemies, equipment, or the time budget.</p>
+            <p class="quest-caveat"><strong>The consequence:</strong> other lawful leather sources count. Losing this bundle alone does not prove that no solution remains.</p>
+          </div>
+        </div>
+        <p>These qualifications matter. A useful analysis should distinguish an expensive detour, an increased risk, and genuine loss of feasibility. We should not use the strongest description when the evidence only supports the weaker one.</p>
+        <p>The current catalog contains 60 tasks, 30 per game, each configured for two tracks. Task-specific runtime preparation is required, and full independent reproduction remains ongoing.</p>
+      </section>
+      <section id="interfaces">
+        <p class="eyebrow chapter-label">04 / Two interfaces</p>
+        <h2>Two interfaces, not a pure vision experiment.</h2>
+        <p>The <strong>visual–motor (VM)</strong> track uses rendered game images and bounded keyboard/mouse actions, together with the public objective and control instructions. The benchmark does not supply hidden state, object coordinates, or inventory transcription to the agent.</p>
+        <p>The <strong>structured–tool (ST)</strong> track exposes permitted game state and fixed game-specific tools. The tools' privileges and internal control behavior are part of the setting, not invisible implementation details.</p>
+        <p>These tracks serve different research needs. Someone studying memory or resource allocation can begin with ST without first solving every visual-control problem. Someone studying end-to-end visual interaction can use VM. But the score difference changes both information and action capability: it cannot be interpreted as a clean measurement of vision alone.</p>
+      </section>
+      <section id="first-baseline">
+        <p class="eyebrow chapter-label">05 / The first baseline</p>
+        <h2>The first baseline: 120 accepted episodes.</h2>
+        <p>Our first completed collection uses GPT-6 Astra with low reasoning effort and the built-in tool-calling baseline. It contains one accepted episode per task–mode combination: 100 solo episodes and 20 team episodes.</p>
+        <div class="baseline-feature"><p><strong>37<span>/120</span></strong><span>successful episodes</span></p><div><span class="eyebrow">A starting point, not a verdict</span><p>One model. One scaffold. One accepted run per task–mode combination.</p></div></div>
+        <table class="article-table">
+          <caption>Accepted outcomes in the first development baseline</caption>
+          <thead><tr><th scope="col">Condition</th><th scope="col">Successes</th><th scope="col">Failures</th><th scope="col">Success rate</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Minecraft ST</th><td>21 / 30</td><td>9</td><td class="rate-cell" style="--rate:70%">70.0%</td></tr>
+            <tr><th scope="row">Minecraft VM</th><td>6 / 30</td><td>24</td><td class="rate-cell" style="--rate:20%">20.0%</td></tr>
+            <tr><th scope="row">Veloren ST</th><td>10 / 30</td><td>20</td><td class="rate-cell" style="--rate:33.333333%">33.3%</td></tr>
+            <tr><th scope="row">Veloren VM</th><td>0 / 30</td><td>30</td><td class="rate-cell" style="--rate:0%">0.0%</td></tr>
+          </tbody>
+        </table>
+        <p>Overall, 37 episodes succeeded and 83 ended in valid game failure. Historical infrastructure attempts are separate from these counts. Accepted failures were not replayed to replace unfavorable outcomes.</p>
+        <p>These are exploratory results, not a final leaderboard. The collection has already been inspected, each cell has only one accepted run, and execution spans 14 frozen input releases. A later source release does not retroactively change the historical conditions.</p>
+        <p>Accounting also has limits: 88 of the 120 episodes have complete token usage; 32 do not. Missing consumption is unknown, not zero. Neither reported tokens nor provider quota units should be silently converted into dollar costs.</p>
+      </section>
+      <section id="zero-success">
+        <p class="eyebrow chapter-label">06 / Reading a zero</p>
+        <h2>What does zero success tell us?</h2>
+        <p>The Veloren VM result prompted a closer audit rather than an immediate claim that the model lacked long-horizon reasoning. We reviewed all 30 accepted episodes and 35 actor traces, checked 6,899 logged prompts for latest-image matching, and reproduced all 30 evaluations from sealed evidence.</p>
+        <p>The checks found no latest-image mismatches, and the recomputed evaluations matched. Model-free native probes demonstrated movement, camera changes, and UI interaction. They also exposed a timing pitfall: near-zero-duration Space pulses did not trigger a jump in five trials, whereas 120 ms holds did in five trials.</p>
+        <p>That does not establish a systemic defect explaining all 30 failures. It also does not establish that every interface and task is bug-free. Most importantly, it does not separate visual-control limitations from planning limitations. Before claiming that a task reveals a failure to coordinate skills, we need evidence that the relevant skills can be executed in the first place.</p>
+      </section>
+      <section id="related-work">
+        <p class="eyebrow chapter-label">07 / Where we fit</p>
+        <h2>Why this direction, given existing benchmarks?</h2>
+        <p>Real-time control, task chains, and long-horizon strategy all have substantial precedents. <a href="https://arxiv.org/html/2610.24282v3#S4.SS3">ROAR</a> already studies asynchronous interaction and the tradeoff between agent-framework overhead and timely action. <a href="https://arxiv.org/html/2604.07429v1">GameWorld</a> includes state-verifiable outcomes and a real-time variant. <a href="https://mxlin043.github.io/OmniGameArena/">OmniGameArena</a> includes multi-step logistics, cooperation, and reflection.</p>
+        <p>A useful contrast is <a href="https://arxiv.org/html/2609.25001v2#S3.SS4">GameHorizon's online track</a>. It repairs the world to a subtask's success state after failure so that later skills can still be evaluated; the full task still requires all subtasks to succeed. That is a valuable diagnostic choice. Keeping the consequences of earlier mistakes offers a complementary view, but makes attribution harder.</p>
+        <p>Our candidate contribution is therefore not “games plus real time.” It is a reusable set of persistent tasks and evidence that can help explain how early resource and timing choices affect later outcomes. Whether our tasks provide enough additional measurement value remains a research question, not a claim settled by this first baseline.</p>
+      </section>
+      <section id="next">
+        <p class="eyebrow chapter-label">08 / What comes next</p>
+        <h2>What comes next.</h2>
+        <p>The immediate priority is a usable release: reliable external installation, task-level reference evidence, reviewed data, and reproducible analysis. We do not need another large paid-model campaign to make the existing work useful.</p>
+        <p>A subsequent focused study should establish local skill competence and test a small number of resource or timing mechanisms under controlled conditions. A diagnostic intervention must be versioned separately from the original task. Simply observing that a longer task fails more often is not enough; ordinary error accumulation is an alternative explanation.</p>
+        <p>If you work on game agents, the most valuable contributions at this stage are concrete: reproduce an entry task, identify an installation dependency, examine a task's public goal against its scorer, or connect an agent through the existing interfaces.</p>
+        <p class="callout"><strong>Release status.</strong> This article accompanies a public project-page preview, not a formal benchmark release. Independent clean-install qualification, licensing review, and public trajectory packaging are still in progress. There is no announced paper or official community leaderboard yet.</p>
+      </section>
+      <p class="article-footnote">Source: the archived <code>astra_baseline120_fixed20_20261101</code> collection, current task definitions, and the November 2 offline VM audit. An aggregate <a href="data/baseline-summary.json">provenance summary</a> and <a href="data/baseline-summary.csv" download>CSV</a> accompany this preview. They are not a substitute for the full episode-level evidence release.</p>
+      <div class="article-end"><a class="text-link" href="./">← Back to the project</a><a class="text-link" href="https://github.com/VictorYXL/LiveQuestBench">Explore the repository ↗</a></div>
+    </article>
+    </div>
+  </main>
+  <footer class="wrap site-footer"><a class="brand" href="./"><img src="assets/mark.svg" width="27" height="27" alt="">LiveQuest<span>Bench</span></a><p>Project page draft · November 2026</p><a href="#main">Back to top ↑</a></footer>
+</body>
+</html>

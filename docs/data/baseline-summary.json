@@ -1,0 +1,39 @@
+{
+  "collection": "astra_baseline120_fixed20_20261101",
+  "status": "development_baseline",
+  "model": "gpt-6-astra",
+  "reasoning_effort": "low",
+  "agent": "tool_calling",
+  "accepted_repetitions_per_task_mode": 1,
+  "valid_episodes": 120,
+  "successes": 37,
+  "failures": 83,
+  "solo_episodes": 100,
+  "team_episodes": 20,
+  "complete_token_usage_episodes": 88,
+  "incomplete_token_usage_episodes": 32,
+  "source_base_commit": "e80e26358576505baaebc04056aeae95581dbdc8",
+  "frozen_input_releases": 14,
+  "published_source_commit": "662f5ab0bbef36916045d771aaef8b7a3a0cf296",
+  "source": {
+    "completion_record": "output/results/astra_baseline120_fixed20_20261101/run-completion.json",
+    "completion_sha256": "98dbd00c3e3e2d49392f3fabe8720389db9d8cd69d8f1684826846f76fc9e207",
+    "results_index_sha256": "0a3622bca4f135ac0feebc072f505b18e153a838779c9302c26367981d21fab0",
+    "verified_at": "2026-11-01T12:39:39.308785+00:00"
+  },
+  "conditions": [
+    {"game": "minecraft", "track": "ST", "valid_episodes": 30, "successes": 21, "failures": 9, "usage_complete": 22, "usage_incomplete": 8},
+    {"game": "minecraft", "track": "VM", "valid_episodes": 30, "successes": 6, "failures": 24, "usage_complete": 13, "usage_incomplete": 17},
+    {"game": "veloren", "track": "ST", "valid_episodes": 30, "successes": 10, "failures": 20, "usage_complete": 29, "usage_incomplete": 1},
+    {"game": "veloren", "track": "VM", "valid_episodes": 30, "successes": 0, "failures": 30, "usage_complete": 24, "usage_incomplete": 6}
+  ],
+  "limitations": [
+    "This is an aggregate preview, not the complete episode-level evidence release.",
+    "The collection is already inspected development data, not a confirmatory holdout.",
+    "One accepted episode per combination does not establish per-task reliability.",
+    "VM and ST change both observation and action capabilities.",
+    "Historical execution inputs span 14 frozen releases; current source does not replace them.",
+    "Historical infrastructure attempts are not included in accepted outcome counts.",
+    "Unknown usage is not zero; a verified dollar cost is not available."
+  ]
+}
